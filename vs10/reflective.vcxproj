@@ -1,0 +1,536 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="DebugTest|Win32">
+      <Configuration>DebugTest</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="ReleaseTest|Win32">
+      <Configuration>ReleaseTest</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="SuperDebug|Win32">
+      <Configuration>SuperDebug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{2D7386B5-604C-4AAB-96F2-CAA9FAF7050A}</ProjectGuid>
+    <RootNamespace>reflective</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\bin\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\build\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\bin\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\build\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">$(SolutionDir)\bin\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">$(SolutionDir)\build\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">$(SolutionDir)\bin\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">$(SolutionDir)\build\$(Configuration)\</IntDir>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'" />
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>&lt;inherit from parent or project defaults&gt;</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;CONFIGURATION_$(Configuration);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <SmallerTypeCheck>true</SmallerTypeCheck>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>
+      </PrecompiledHeaderOutputFile>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>false</ExceptionHandling>
+      <ProgramDataBaseFileName>$(SolutionDir)\bin\$(Configuration)\$(ProjectName).pdb</ProgramDataBaseFileName>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;CONFIGURATION_$(Configuration);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>
+      </PrecompiledHeaderOutputFile>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <AdditionalIncludeDirectories>&lt;inherit from parent or project defaults&gt;</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_TEST_LIB;CONFIGURATION_$(Configuration);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <SmallerTypeCheck>true</SmallerTypeCheck>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>
+      </PrecompiledHeaderOutputFile>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <AdditionalIncludeDirectories>&lt;inherit from parent or project defaults&gt;</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;CONFIGURATION_$(Configuration);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <SmallerTypeCheck>true</SmallerTypeCheck>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>
+      </PrecompiledHeaderOutputFile>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <EnablePREfast>true</EnablePREfast>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_TEST_LIB;CONFIGURATION_$(Configuration);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>
+      </PrecompiledHeaderOutputFile>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <AdditionalIncludeDirectories>&lt;inherit from parent or project defaults&gt;</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\sources\array\array_data_property.h" />
+    <ClInclude Include="..\sources\array\array_type.h" />
+    <ClInclude Include="..\sources\class\action.h" />
+    <ClInclude Include="..\sources\class\class.h" />
+    <ClInclude Include="..\sources\class\class_member.h" />
+    <ClInclude Include="..\sources\class\class_template.h" />
+    <ClInclude Include="..\sources\class\data_property.h" />
+    <ClInclude Include="..\sources\class\event_descriptor.h" />
+    <ClInclude Include="..\sources\class\method_action.h" />
+    <ClInclude Include="..\sources\class\method_property.h" />
+    <ClInclude Include="..\sources\class\parameter.h" />
+    <ClInclude Include="..\sources\class\parameter_list_stringizer.h" />
+    <ClInclude Include="..\sources\class\property.h" />
+    <ClInclude Include="..\sources\class\template_argument.h" />
+    <ClInclude Include="..\sources\class\type_inspector.h" />
+    <ClInclude Include="..\sources\collections\abstract_iterator.h" />
+    <ClInclude Include="..\sources\collections\collection_handler.h" />
+    <ClInclude Include="..\sources\collections\watch.h" />
+    <ClInclude Include="..\sources\collections\watch_chain.h" />
+    <ClInclude Include="..\sources\functions\functions.h" />
+    <ClInclude Include="..\sources\iterators\const_iterator.h" />
+    <ClInclude Include="..\sources\iterators\const_void_iterator.h" />
+    <ClInclude Include="..\sources\iterators\iterator.h" />
+    <ClInclude Include="..\sources\iterators\iterators.h" />
+    <ClInclude Include="..\sources\iterators\void_iterator.h" />
+    <ClInclude Include="..\sources\misc\auto_string_buffer.h" />
+    <ClInclude Include="..\sources\misc\enum.h" />
+    <ClInclude Include="..\sources\misc\event.h" />
+    <ClInclude Include="..\sources\misc\from_string_buffer.h" />
+    <ClInclude Include="..\sources\misc\handler.h" />
+    <ClInclude Include="..\sources\misc\lexical_parser.h" />
+    <ClInclude Include="..\sources\misc\name_id.h" />
+    <ClInclude Include="..\sources\misc\primitive_type.h" />
+    <ClInclude Include="..\sources\misc\static_const_string.h" />
+    <ClInclude Include="..\sources\misc\to_string_buffer.h" />
+    <ClInclude Include="..\sources\misc\unreferencer.h" />
+    <ClInclude Include="..\sources\reflective_common.h" />
+    <ClInclude Include="..\sources\symbol\symbol.h" />
+    <ClInclude Include="..\sources\symbol\symbol_list.h" />
+    <ClInclude Include="..\sources\symbol\symbol_list_collection.h" />
+    <ClInclude Include="..\sources\type\default_life_functions.h" />
+    <ClInclude Include="..\sources\type\life_functions.h" />
+    <ClInclude Include="..\sources\type\namespace.h" />
+    <ClInclude Include="..\sources\type\qualified_type.h" />
+    <ClInclude Include="..\sources\type\strnig_functors.h" />
+    <ClInclude Include="..\sources\type\type.h" />
+    <ClInclude Include="..\sources\type\type_qualification.h" />
+    <ClInclude Include="..\sources\type\type_traits.h" />
+    <ClInclude Include="..\sources\up_down_caster\up_down_caster.h" />
+    <ClInclude Include="..\sources\up_down_caster\up_down_caster_acc.h" />
+    <ClInclude Include="..\sources\up_down_caster\up_down_caster_acc_diagnostic.h" />
+    <ClInclude Include="..\sources\up_down_caster\up_down_caster_fc.h" />
+    <ClInclude Include="..\sources\up_down_caster\up_down_caster_offsettng.h" />
+    <ClInclude Include="..\sources\up_down_caster\up_down_caster_offsettng_diagnostic.h" />
+    <ClInclude Include="..\sources\mem\memory.h" />
+    <ClInclude Include="..\sources\reflective.h" />
+    <ClInclude Include="..\sources\reflectve_externals.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\sources\array\array_data_property.inl" />
+    <None Include="..\sources\array\array_type.inl" />
+    <None Include="..\sources\class\action.inl" />
+    <None Include="..\sources\class\class.inl" />
+    <None Include="..\sources\class\class_member.inl" />
+    <None Include="..\sources\class\class_template.inl" />
+    <None Include="..\sources\class\data_property.inl" />
+    <None Include="..\sources\class\event_descriptor.inl" />
+    <None Include="..\sources\class\method_action_0.inl" />
+    <None Include="..\sources\class\method_action_1.inl" />
+    <None Include="..\sources\class\method_action_2.inl" />
+    <None Include="..\sources\class\method_action_3.inl" />
+    <None Include="..\sources\class\method_action_4.inl" />
+    <None Include="..\sources\class\method_action_5.inl" />
+    <None Include="..\sources\class\method_action_6.inl" />
+    <None Include="..\sources\class\method_action_7.inl" />
+    <None Include="..\sources\class\method_action_8.inl" />
+    <None Include="..\sources\class\method_property.inl" />
+    <None Include="..\sources\class\parameter.inl" />
+    <None Include="..\sources\class\property.inl" />
+    <None Include="..\sources\class\template_argument.inl" />
+    <None Include="..\sources\class\type_inspector.inl" />
+    <None Include="..\sources\collections\abstract_iterator.inl" />
+    <None Include="..\sources\collections\watch.inl" />
+    <None Include="..\sources\collections\watch_chain.inl" />
+    <None Include="..\sources\functions\functions.inl" />
+    <None Include="..\sources\iterators\const_iterator.inl" />
+    <None Include="..\sources\iterators\const_void_iterator.inl" />
+    <None Include="..\sources\iterators\iterator.inl" />
+    <None Include="..\sources\iterators\iterators.inl" />
+    <None Include="..\sources\iterators\void_iterator.inl" />
+    <None Include="..\sources\misc\auto_string_buffer.inl" />
+    <None Include="..\sources\misc\enum.inl" />
+    <None Include="..\sources\misc\event.inl" />
+    <None Include="..\sources\misc\from_string_buffer.inl" />
+    <None Include="..\sources\misc\handler.inl" />
+    <None Include="..\sources\misc\lexical_parser.inl" />
+    <None Include="..\sources\misc\name_id.inl" />
+    <None Include="..\sources\misc\name_id_pn.inl" />
+    <None Include="..\sources\misc\primitive_type.inl" />
+    <None Include="..\sources\misc\static_const_string.inl" />
+    <None Include="..\sources\misc\to_string_buffer.inl" />
+    <None Include="..\sources\symbol\symbol.inl" />
+    <None Include="..\sources\symbol\symbol_list.inl" />
+    <None Include="..\sources\symbol\symbol_list_collection.inl" />
+    <None Include="..\sources\type\default_life_functions.inl" />
+    <None Include="..\sources\type\life_functions.inl" />
+    <None Include="..\sources\type\namespace.inl" />
+    <None Include="..\sources\type\qualified_type.inl" />
+    <None Include="..\sources\type\strnig_functors.inl" />
+    <None Include="..\sources\type\type.inl" />
+    <None Include="..\sources\type\type_qualification.inl" />
+    <None Include="..\sources\type\type_traits.inl" />
+    <None Include="..\sources\up_down_caster\up_down_caster.inl" />
+    <None Include="..\sources\up_down_caster\up_down_caster_acc.inl" />
+    <None Include="..\sources\up_down_caster\up_down_caster_acc_diagnostic.inl" />
+    <None Include="..\sources\up_down_caster\up_down_caster_fc.inl" />
+    <None Include="..\sources\up_down_caster\up_down_caster_offsettng.inl" />
+    <None Include="..\sources\up_down_caster\up_down_caster_offsettng_diagnostic.inl" />
+    <None Include="..\sources\mem\memory.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\sources\array\array_type.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\class\action.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\class\class.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\class\class_member.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\class\class_template.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\class\event_descriptor.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\class\parameter.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\class\parameter_list_stringizer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\class\property.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\class\template_argument.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\class\type_inspector.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\collections\watch.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\collections\watch_chain.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\functions\functions.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\misc\auto_string_buffer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\misc\enum.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\misc\event.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\misc\from_string_buffer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\misc\lexical_parser.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\misc\name_id.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\misc\primitive_type.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\misc\static_const_string.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\symbol\symbol.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\type\life_functions.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\type\namespace.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\type\namespace_reflection.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\type\qualified_type.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\type\strnig_functors.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\type\type.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\type\type_qualification.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\up_down_caster\up_down_caster_test.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\mem\memory.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\reflective.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
