@@ -213,7 +213,6 @@
     <ClInclude Include="..\sources\misc\event.h" />
     <ClInclude Include="..\sources\misc\from_string_buffer.h" />
     <ClInclude Include="..\sources\misc\handler.h" />
-    <ClInclude Include="..\sources\misc\lexical_parser.h" />
     <ClInclude Include="..\sources\misc\name_id.h" />
     <ClInclude Include="..\sources\misc\primitive_type.h" />
     <ClInclude Include="..\sources\misc\static_const_string.h" />
@@ -278,7 +277,6 @@
     <None Include="..\sources\misc\event.inl" />
     <None Include="..\sources\misc\from_string_buffer.inl" />
     <None Include="..\sources\misc\handler.inl" />
-    <None Include="..\sources\misc\lexical_parser.inl" />
     <None Include="..\sources\misc\name_id.inl" />
     <None Include="..\sources\misc\name_id_pn.inl" />
     <None Include="..\sources\misc\primitive_type.inl" />
@@ -424,13 +422,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\sources\misc\from_string_buffer.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='SuperDebug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\sources\misc\lexical_parser.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugTest|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseTest|Win32'">true</ExcludedFromBuild>

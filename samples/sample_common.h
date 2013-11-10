@@ -25,46 +25,5 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ***********************************************************************************/
 
+
 #include "reflective.h"
-
-#define _IMPLEMENTING_REFLECTIVE
-
-#include "mem\memory.cpp"
-#include "misc\static_const_string.cpp"
-#include "misc\name_id.cpp"
-#include "misc\from_string_buffer.cpp"
-#include "misc\to_string_buffer.cpp"
-#include "misc\auto_string_buffer.cpp"
-#include "symbol\symbol.cpp"
-#include "type\life_functions.cpp"
-#include "type\strnig_functors.cpp"
-#include "type\type.cpp"
-#include "type\namespace.cpp"
-#include "type\namespace_reflection.cpp"
-#include "type\type_qualification.cpp"
-#include "type\qualified_type.cpp"
-#include "misc\primitive_type.cpp"
-#include "misc\enum.cpp"
-#include "class\class_member.cpp"
-#include "class\property.cpp"
-#include "class\action.cpp"
-#include "class\event_descriptor.cpp"
-#include "class\class.cpp"
-#include "class\class_template.cpp"
-#include "class\parameter.cpp"
-#include "class\parameter_list_stringizer.cpp"
-#include "class\template_argument.cpp"
-#include "class\type_inspector.cpp"
-#include "collections\watch.cpp"
-#include "collections\watch_chain.cpp"
-#include "misc\event.cpp"
-#include "functions\functions.cpp"
-#include "array\array_type.cpp"
-
-namespace reflective
-{
-	Null null;
-}
-
-#undef _IMPLEMENTING_REFLECTIVE
-

@@ -25,46 +25,87 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ***********************************************************************************/
 
-#include "reflective.h"
 
-#define _IMPLEMENTING_REFLECTIVE
+#include "Shapes.h"
 
-#include "mem\memory.cpp"
-#include "misc\static_const_string.cpp"
-#include "misc\name_id.cpp"
-#include "misc\from_string_buffer.cpp"
-#include "misc\to_string_buffer.cpp"
-#include "misc\auto_string_buffer.cpp"
-#include "symbol\symbol.cpp"
-#include "type\life_functions.cpp"
-#include "type\strnig_functors.cpp"
-#include "type\type.cpp"
-#include "type\namespace.cpp"
-#include "type\namespace_reflection.cpp"
-#include "type\type_qualification.cpp"
-#include "type\qualified_type.cpp"
-#include "misc\primitive_type.cpp"
-#include "misc\enum.cpp"
-#include "class\class_member.cpp"
-#include "class\property.cpp"
-#include "class\action.cpp"
-#include "class\event_descriptor.cpp"
-#include "class\class.cpp"
-#include "class\class_template.cpp"
-#include "class\parameter.cpp"
-#include "class\parameter_list_stringizer.cpp"
-#include "class\template_argument.cpp"
-#include "class\type_inspector.cpp"
-#include "collections\watch.cpp"
-#include "collections\watch_chain.cpp"
-#include "misc\event.cpp"
-#include "functions\functions.cpp"
-#include "array\array_type.cpp"
-
-namespace reflective
+namespace Shapes
 {
-	Null null;
+	// Shape::constructor
+	Shape::Shape()
+		: _color( eColorWhite )
+	{
+	}
+
+	// Shape::get_color
+	Color Shape::get_color() const
+	{
+		return _color;
+	}
+
+	// Shape::set_color
+	void Shape::set_color( Color color )
+	{
+		_color = color;
+	}
+
+	// Circle::default constructor
+	Circle::Circle()
+		: _radius( 0.f )
+	{
+	}
+
+	// Circle::constructor
+	Circle::Circle( Vector center, float radius )
+		: _center( center ), _radius( radius )
+	{
+	}
+
+	// Circle::get_center
+	const Vector & Circle::get_center() const
+	{
+		return _center;
+	}
+
+	// Circle::set_center
+	void Circle::set_center( const Vector & new_center )
+	{
+		_center = new_center;
+	}
+
+	// Circle::get_radius
+	float Circle::get_radius() const
+	{
+		return _radius;
+	}
+
+	// Circle::set_radius
+	void Circle::set_radius( float new_radius )
+	{
+		_radius = new_radius;
+	}
+
+	// Circle::perimeter
+	float Circle::perimeter() const
+	{
+		return _radius * 6.28f;
+	}
+
+	// Circle::area
+	float Circle::area() const
+	{
+		return _radius * _radius * 3.14f;
+	}
+
+	// Circle::move_by
+	void Circle::move_by( const Vector & offset )
+	{
+		_center.x += offset.x;
+		_center.y += offset.y;
+	}
+
+	// Circle::scale_radius
+	void Circle::scale_radius( float factor )
+	{
+		_radius *= factor;
+	}
 }
-
-#undef _IMPLEMENTING_REFLECTIVE
-

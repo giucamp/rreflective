@@ -195,9 +195,6 @@
       <Filter>array</Filter>
     </ClInclude>
     <ClInclude Include="..\sources\reflective_common.h" />
-    <ClInclude Include="..\sources\misc\lexical_parser.h">
-      <Filter>misc</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\sources\class\action.inl">
@@ -371,9 +368,6 @@
     <None Include="..\sources\array\array_type.inl">
       <Filter>array</Filter>
     </None>
-    <None Include="..\sources\misc\lexical_parser.inl">
-      <Filter>misc</Filter>
-    </None>
     <None Include="..\sources\class\method_action_8.inl">
       <Filter>class</Filter>
     </None>
@@ -475,9 +469,6 @@
     <ClCompile Include="..\sources\reflective.cpp" />
     <ClCompile Include="..\sources\array\array_type.cpp">
       <Filter>array</Filter>
-    </ClCompile>
-    <ClCompile Include="..\sources\misc\lexical_parser.cpp">
-      <Filter>misc</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

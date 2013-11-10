@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\dog.cpp" />
+    <ClCompile Include="..\shapes.cpp" />
+    <ClCompile Include="..\shapes_reflection.cpp" />
+    <ClCompile Include="..\vector.cpp" />
+    <ClCompile Include="..\reflectve_externals.cpp" />
+    <ClCompile Include="..\lifo_allocator.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\sample_common.h" />
+    <ClInclude Include="..\shapes.h" />
+    <ClInclude Include="..\lifo_allocator.h" />
+  </ItemGroup>
+</Project>
