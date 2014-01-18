@@ -35,7 +35,7 @@ namespace reflective
 
 	// AbstractHandler::constructor
 	inline AbstractHandler::AbstractHandler()
-			: _next_handler( null ), _event( null )
+			: _next_handler( nullptr ), _event( nullptr )
 	{
 	}
 
@@ -59,17 +59,16 @@ namespace reflective
 	// Handler::constructor
 	template <class ROOT_CLASS, class PARAM>
 		template <class OBJECT>
-			inline Handler<ROOT_CLASS, PARAM> & Handler<ROOT_CLASS, PARAM>::operator () ( OBJECT & object, 
+			inline void Handler<ROOT_CLASS, PARAM>::init( OBJECT & object, 
 				void (OBJECT::*handler_method)( PARAM & ) )
 	{
-		ROOT_CLASS * just_a_type_check = (OBJECT*)null; // ROOT_CLASS must be an accessible base of OBJECT
+		ROOT_CLASS * just_a_type_check = static_cast<OBJECT*>( nullptr ); // ROOT_CLASS must be an accessible base of OBJECT
 		REFLECTIVE_UNUSED( just_a_type_check );
 
 		typedef void (ROOT_CLASS::*RootHandlerMethod)( PARAM & );
 
 		_object = &object;
 		_handler_method = static_cast<RootHandlerMethod>( handler_method );
-		return *this;
 	}
 
 	// Handler::invoke
@@ -102,17 +101,15 @@ namespace reflective
 	// Handler::constructor
 	template <class ROOT_CLASS, class PARAM>
 		template <class OBJECT>
-			inline Handler<ROOT_CLASS, const PARAM> & Handler<ROOT_CLASS, 
-				const PARAM>::operator () ( OBJECT & object, 
+			inline void Handler< ROOT_CLASS, const PARAM >::init( OBJECT & object, 
 					void (OBJECT::*handler_method)( const PARAM & ) )
 	{
-		ROOT_CLASS * just_a_type_check = (OBJECT*)null; // ROOT_CLASS must be an accessible base of OBJECT
+		ROOT_CLASS * just_a_type_check = static_cast<OBJECT*>( nullptr ); // ROOT_CLASS must be an accessible base of OBJECT
 
-		typedef void (ROOT_CLASS::*RootHandlerMethod)( PARAM & );
+		typedef void (ROOT_CLASS::*RootHandlerMethod)( const PARAM & );
 
 		_object = &object;
 		_handler_method = static_cast<RootHandlerMethod>( handler_method );
-		return *this;
 	}
 
 	// Handler::invoke
@@ -127,7 +124,7 @@ namespace reflective
 	template <class ROOT_CLASS, class PARAM>
 		inline void Handler<ROOT_CLASS, const PARAM>::invoke( const void * param )
 	{
-		PARAM & typed_param = *static_cast< const PARAM * >( param );
+		const PARAM & typed_param = *static_cast< const PARAM * >( param );
 		(_object->*_handler_method)( typed_param );
 	}
 

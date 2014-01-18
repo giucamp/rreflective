@@ -106,7 +106,7 @@ namespace reflective
 			symbol_types[ eTypeEnum ]			= &safe_get_type<Enum>();
 			symbol_types[ eTypeEnumMember ]		= &safe_get_type<Enum::Member>();
 			symbol_types[ eTypeProperty ]		= &safe_get_type<Property>();
-			symbol_types[ eTypeEvent ]			= null;//&safe_get_type<AbstractEvent>();
+			symbol_types[ eTypeEvent ]			= nullptr;//&safe_get_type<AbstractEvent>();
 			symbol_types[ eTypeAction ]			= &safe_get_type<Action>();
 			symbol_types[ eTypeParameter ]		= &safe_get_type<Parameter>();
 			symbol_types[ eTypeClassTemplate ]	= &safe_get_type<ClassTemplate>();
@@ -115,7 +115,7 @@ namespace reflective
 
 		const Symbol & symbol = *static_cast<const Symbol*>( object );
 		REFLECTIVE_ASSERT( symbol._type_id < eMaxTypeIdCount );
-		REFLECTIVE_ASSERT( symbol_types[ symbol._type_id ] != null );
+		REFLECTIVE_ASSERT( symbol_types[ symbol._type_id ] != nullptr );
 		return *symbol_types[ symbol._type_id ];
 	}
 
@@ -142,8 +142,8 @@ namespace reflective_externals
 		using namespace ::reflective;
 		typedef reflective::Symbol ThisClass;
 		
-		static Class * result = null;
-		if( result != null )
+		static Class * result = nullptr;
+		if( result != nullptr )
 			return result;
 
 		Class * class_object = new_class<ThisClass>( "reflective", "Symbol" );

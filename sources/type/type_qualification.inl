@@ -63,7 +63,7 @@ namespace reflective
 
 	// TypeQualification::default constructor
 	inline TypeQualification::TypeQualification()
-			  : _final_type( null ), _indirection_word( 0 )
+			  : _final_type( nullptr ), _indirection_word( 0 )
 	{
 	}
 
@@ -110,7 +110,7 @@ namespace reflective
 		while( levels )
 		{
 			if( !object )
-				return null;
+				return nullptr;
 			object = *reinterpret_cast<const void * const *>( object );
 			levels--;
 		}
@@ -125,7 +125,7 @@ namespace reflective
 		unsigned levels = indirection_levels();
 		if( levels ) for(;;) {
 			if( !object )
-				return null;
+				return nullptr;
 			object = *reinterpret_cast<const void * const *>( object );
 			levels--;
 			if( !levels )
@@ -139,12 +139,12 @@ namespace reflective
 	inline const void * TypeQualification::indirection( const void * object, 
 		const Type * * out_resulting_type ) const
 	{
-		*out_resulting_type = null;
+		*out_resulting_type = nullptr;
 
 		const unsigned levels = indirection_levels();
 
 		if( !object )
-			return null;
+			return nullptr;
 
 		if( levels > 0 )
 		{
@@ -164,7 +164,7 @@ namespace reflective
 		const unsigned levels = indirection_levels();
 
 		if( !object )
-			return null;
+			return nullptr;
 
 		if( levels > 0 )
 		{

@@ -61,10 +61,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "functions\functions.cpp"
 #include "array\array_type.cpp"
 
-namespace reflective
-{
-	Null null;
-}
 
 #undef _IMPLEMENTING_REFLECTIVE
 

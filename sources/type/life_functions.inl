@@ -75,8 +75,8 @@ namespace reflective
 		return LifeFunctions( 
 			&objects_construct_void<TYPE>,
 			&objects_destroy_void<TYPE>,
-			null,
-			null );
+			nullptr,
+			nullptr );
 	}
 
 	// LifeFunctions::from_type
@@ -86,7 +86,7 @@ namespace reflective
 		REFLECTIVE_ASSERT( functions == eCopyAssignmentDestructor );
 		REFLECTIVE_UNUSED( functions );
 		return LifeFunctions( 
-			null,
+			nullptr,
 			&objects_destroy_void<TYPE>,
 			&objects_copy_void<TYPE>,
 			&objects_move_void<TYPE> );
@@ -107,13 +107,13 @@ namespace reflective
 		REFLECTIVE_ASSERT( (!_constructor_caller) == (!_destructor_caller) &&
 			(!_destructor_caller) == (!_mover) &&
 			(!_mover) == (!_copier) );
-		return _constructor_caller == null;
+		return _constructor_caller == nullptr;
 	}
 
 	// LifeFunctions::default_constructor
 	inline LifeFunctions::LifeFunctions()
-		: _constructor_caller( null ), _destructor_caller( null ),
-		  _mover( null ), _copier( null )
+		: _constructor_caller( nullptr ), _destructor_caller( nullptr ),
+		  _mover( nullptr ), _copier( nullptr )
 	{
 		// the functions
 		REFLECTIVE_ASSERT( (!_constructor_caller) == (!_destructor_caller) &&
@@ -130,9 +130,9 @@ namespace reflective
 		#if REFLECTIVE_ENABLE_ASSERT
 			if( _constructor_caller )
 			{
-				REFLECTIVE_ASSERT( _destructor_caller != null );
-				if( _mover != null )
-					REFLECTIVE_ASSERT( _copier != null );
+				REFLECTIVE_ASSERT( _destructor_caller != nullptr );
+				if( _mover != nullptr )
+					REFLECTIVE_ASSERT( _copier != nullptr );
 				else
 					REFLECTIVE_ASSERT( !_copier );
 			}

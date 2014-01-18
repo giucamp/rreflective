@@ -114,6 +114,9 @@ namespace reflective
 			std::map< SymbolNameHash, Namespace * >::const_iterator _inner_iterator;
 		};		
 
+		const std::map< SymbolNameHash, const Type * > & child_types() const;
+		const std::map< SymbolNameHash, Namespace * > & child_namespaces() const;
+
 		// collection handler
 		class CollectionHandler;
 		class ReflectiveIterator;

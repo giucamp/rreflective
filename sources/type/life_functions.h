@@ -80,7 +80,7 @@ namespace reflective
 			Copier copier, Mover mover );
 
 		// properties
-		bool is_abstract() const; // returns true if any of the functions is null
+		bool is_abstract() const; // returns true if any of the functions is nullptr
 		CtorCaller constructor_caller() const; // retrieves the function delegated to construct an array of objects
 		CtorCaller destructor_caller() const; // retrieves the function delegated to construct an array of objects
 		Mover mover() const; /* retrieves the function delegated to move an array of objects. The objects are destroyed 

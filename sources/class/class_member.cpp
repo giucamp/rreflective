@@ -27,7 +27,18 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-
+	// ClassMember::visibility_as_string
+	const char * ClassMember::visibility_as_string() const
+	{
+		if( is_private() )
+			return "private";
+		else if( is_protected() )
+			return "protected";
+		else if( is_public() )
+			return "public";
+		else
+			return "";
+	}
 
 } // namespace reflective
 
@@ -45,8 +56,8 @@ namespace reflective_externals
 		typedef reflective::ClassMember ThisClass;
 		typedef Symbol BaseClass;
 	
-		static Class * class_object = null;
-		if( class_object != null )
+		static Class * class_object = nullptr;
+		if( class_object != nullptr )
 			return class_object;
 	
 		// class object
@@ -81,8 +92,8 @@ namespace reflective_externals
 
 		using namespace ::reflective;
 		
-		static Enum * result = null;
-		if( result != null )
+		static Enum * result = nullptr;
+		if( result != nullptr )
 			return result;
 		
 		const Enum::Member * members[] = 
@@ -104,5 +115,5 @@ namespace reflective_externals
 		result = enum_object;
 		return result;
 	}
-
+	
 } // namespace reflective_externals

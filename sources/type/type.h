@@ -70,7 +70,7 @@ namespace reflective
 
 		/* Capabilities - enum of flags used to indicate which services are available with 
 			this type. The bitwise 'or' and and operators (|, &) are defined for this enum
-			to all,.ow mixing them. */
+			to allow mixing them. */
 		enum Capabilities
 		{
 			eCapabilitiesNone		= 0,
@@ -89,12 +89,12 @@ namespace reflective
 		// capabilities
 		Capabilities capabilities() const;
 		bool check_capabilities( Capabilities capabilities_to_check ) const; /* returns
-			false if any of the specified capabilies is not supported. */
+			false if any of the specified capabilities is not supported. */
 
 		/* size and alignment, as returned by sizeof() and alignment_of(). 
 			They are subject to 4 constraints:
 			- The size and the alignment are always greater than zero
-			- The size is always greather or equal to the alignment
+			- The size is always greater or equal to the alignment
 			- The alignment is always an integer power of 2
 			- The size itself must be aligned according to the alignment
 			When the memory for an object is allocated, the alignment 
@@ -102,18 +102,18 @@ namespace reflective
 		size_t size() const;
 		size_t alignment() const;
 		bool is_aligned( const void * address ) const; /* returns true if the parameter is
-			aligned according to the value returned by alignment(). If the address is null 
+			aligned according to the value returned by alignment(). If the address is nullptr 
 			or zero, the return is always true. */
 
 		// upper_align \ lower_align
 		template <class ADDRESS> ADDRESS upper_align( ADDRESS address ) const; /* returns
 			the lowest aligned address greater than or equal to the parameter. ADDRESS can
-			be a pointer or an size_t. If the addess is null\zero the return value is  
-			null\zero too. */
+			be a pointer or an size_t. If the address is nullptr\zero the return value is  
+			nullptr\zero too. */
 		template <class ADDRESS> ADDRESS lower_align( ADDRESS address ) const; /* returns
 			the highest aligned address less than or equal to the parameter. ADDRESS can
-			be a pointer or an size_t. If the addess is null\zero the return value is 
-			null\zero too.*/
+			be a pointer or an size_t. If the address is nullptr\zero the return value is 
+			nullptr\zero too.*/
 
 		// construct
 		void construct( void * object ) const;
@@ -208,13 +208,13 @@ namespace reflective
 
 		void destroy_instance( void * object ) const;
 
-		// to_string - gets a string rapresentation of an object of this type. 			
+		// to_string - gets a string representation of an object of this type. 			
 		void to_string( ToStringBuffer & dest_buffer, const void * object ) const;
 			/* before calling to_string, an array of chars must be assigned to
 				dest_buffer. If the buffer is not big enough, ToStringBuffer reports
 				the needed size (see ToStringBuffer). 
 				If to_string() is called on an object which has not the eHasToStringDumper
-				capability, a memory fault will occurr. Use check_capabilities to check if
+				capability, a memory fault will occur. Use check_capabilities to check if
 				it is supported by this type. */
 
 		size_t compute_to_string_required_length( const void * object ) const;
@@ -238,17 +238,17 @@ namespace reflective
 
 		/* try_cast_pointer_to - tries to cast a pointer from a type to another type. The cast
 			is possible only if dest_type is an indirect base class of this type (or if they are
-			the same type). Otherwise null is returned. If the parameter object is null, the 
-			result is null. */
+			the same type). Otherwise nullptr is returned. If the parameter object is nullptr, the 
+			result is nullptr. */
 		void * try_cast_pointer_to( const Type & dest_type, void * object ) const;
 		const void * try_cast_pointer_to( const Type & dest_type, const void * object ) const;
 
-		// query for relaction
+		// query for relation
 		bool can_cast_to( const Type & dest_type ) const;
 		bool is_related_to( const Type & dest_type ) const;
 		bool has_base_type_with_name( SymbolName name ) const;
 
-		// comparaison - A <= B if and only if B is A or can be implicitly casted to A
+		// comparison - A <= B if and only if B is A or can be implicitly casted to A
 		bool operator <= ( const Type & op ) const			{ return op.can_cast_to( *this ); }
 		bool operator >= ( const Type & op ) const			{ return can_cast_to( op ); }
 
@@ -264,10 +264,10 @@ namespace reflective
 		const void * pointer_to_base_type( const void * pointer, unsigned base_type_index ) const;
 		const void * pointer_from_base_type( const void * pointer, unsigned base_type_index ) const;
 			/* pointer_to_base_type casts a pointer to an object of this type to a pointer 
-				to an object of the base type. The pointer cannot be null, and base_type_index must
+				to an object of the base type. The pointer cannot be nullptr, and base_type_index must
 				be less than base_types_count(). */
 
-		/* type resolution - a type may be able to retrive the complete derived
+		/* type resolution - a type may be able to retrieve the complete derived
 			type of an object. Before calling this function the user must check 
 			that the type supports it by calling check_capabilities( eHasTypeResolver ).*/
 		TypeResolver type_resolver() const;
@@ -279,7 +279,7 @@ namespace reflective
 			class HierarchyIterator
 			{
 			public:
-				HierarchyIterator(); // iterarates root classes
+				HierarchyIterator(); // iterates root classes
 				HierarchyIterator( const Type & base_class ); // iterates classes deriving from base_class
 
 				operator bool () const; // test for end of iteration
@@ -349,13 +349,13 @@ namespace reflective
 		Type( Namespace & parent_namespace, const SymbolName & name, size_t size, size_t alignment );
 		Type( const StaticConstString & parent_namespace_path, const SymbolName & name, size_t size, size_t alignment );
 			/* 'namespace_path' is a SymbolNam that specifies the scope the type is declared within. 
-				The parts of the scope are separted by a double colon ("::"). For example "outer::inner" 
+				The parts of the scope are separated by a double colon ("::"). For example "outer::inner" 
 				tells that the class is inside the namespace inner, the latter nested inside the namespace outer.
 				The Namespace objects are created the first time they are encountered (see 
 				Namespace::find_or_add_child_namespace method), so there is no need to 
 				pre-declare them.
-				parent_namespace_path can be null. In this case the type is added to the global namespace.
-				The size and alignemnt must respect the 4 constraints listed previously 
+				parent_namespace_path can be nullptr. In this case the type is added to the global namespace.
+				The size and alignment must respect the 4 constraints listed previously 
 				(see size() and alignments() functions). */
 
 

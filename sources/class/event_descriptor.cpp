@@ -47,8 +47,8 @@ namespace reflective_externals
 		typedef reflective::EventDescriptor ThisClass;
 		typedef ClassMember BaseClass;
 		
-		static Class * result = null;
-		if( result != null )
+		static Class * result = nullptr;
+		if( result != nullptr )
 			return result;
 		
 		// class object

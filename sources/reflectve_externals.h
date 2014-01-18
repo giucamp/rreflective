@@ -44,7 +44,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace reflective		{ class ToStringBuffer; }
 
 // REFLECTIVE_PRESERVE_SYMBOL_PLAIN_NAMES
-#define REFLECTIVE_PRESERVE_SYMBOL_PLAIN_NAMES	1 /* (isDebug || isTest) /* If this is true, SymbolName will
+#define REFLECTIVE_PRESERVE_SYMBOL_PLAIN_NAMES	1 /* (isDebug || CMB_ENABLE_TESTING) /* If this is true, SymbolName will
 	keep both the string and the hash of the name. Otherwise SymbolName will keep only the
 	hash. Having the string is useful for debug purpose or to generate user interfaces. */
 

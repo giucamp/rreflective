@@ -80,10 +80,10 @@ namespace reflective
 				/* template parameters */
 
 		bool is_template_instance() const; /* returns true if this class is an instance of a class template.
-			This is the same as checking if class_template() returns null. */
+			This is the same as checking if class_template() returns nullptr. */
 
 		const ClassTemplate * class_template() const; /* returns the class template this class belongs to, 
-			if any.  Otherwise null is returned. All the instances of a class template share the same 
+			if any.  Otherwise nullptr is returned. All the instances of a class template share the same 
 			ClassTemplate object. */
 
 		size_t template_parameter_count() const; /* returns the number of template parameters. If this

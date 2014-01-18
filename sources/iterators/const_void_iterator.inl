@@ -34,7 +34,7 @@ namespace reflective
 	// Iterator::constructor( collection )
 	template <class COLLECTION_TYPE> 
 		inline Iterator<const void>::Iterator( const COLLECTION_TYPE & collection )
-			: _iteration_type( null )
+			: _iteration_type( nullptr )
 	{
 		_assign_collection( get_type<COLLECTION_TYPE>(), &collection );
 	}
@@ -50,7 +50,7 @@ namespace reflective
 
 	// Iterator::constructor( collection_type, collection )
 	inline Iterator<const void>::Iterator( const reflective::Type & collection_type, const void * collection )
-		: _iteration_type( null )
+		: _iteration_type( nullptr )
 	{
 		_assign_collection( collection_type, collection );
 	}
@@ -68,7 +68,7 @@ namespace reflective
 	template <class COLLECTION_TYPE> 
 		inline Iterator<const void>::Iterator( const COLLECTION_TYPE & collection, 
 			size_t offset_index )
-				: _iteration_type( null )
+				: _iteration_type( nullptr )
 	{
 		_assign_collection( get_type<COLLECTION_TYPE>(), &collection, offset_index );
 	}
@@ -83,7 +83,7 @@ namespace reflective
 
 	// Iterator::constructor( collection_type, collection, offset_index )
 	inline Iterator<const void>::Iterator( const reflective::Type & collection_type, const void * collection, size_t offset_index )
-		: _iteration_type( null )
+		: _iteration_type( nullptr )
 	{
 		_assign_collection( collection_type, collection, offset_index );
 	}
@@ -135,9 +135,9 @@ namespace reflective
 	inline void Iterator<const void>::_assign_collection( 
 		const reflective::Type & collection_type, const void * collection )
 	{
-		_abstract_iterator = null;
-		_group.curr_in_group = null;
-		_group.end_of_group = null;
+		_abstract_iterator = nullptr;
+		_group.curr_in_group = nullptr;
+		_group.end_of_group = nullptr;
 
 		const reflective::CollectionHandler * collection_handler = collection_type.collection_handler();
 		if( collection_handler )
@@ -166,9 +166,9 @@ namespace reflective
 	inline void Iterator<const void>::_assign_collection( 
 		const reflective::Type & collection_type, const void * collection, size_t offset_index )
 	{
-		_abstract_iterator = null;
-		_group.curr_in_group = null;
-		_group.end_of_group = null;
+		_abstract_iterator = nullptr;
+		_group.curr_in_group = nullptr;
+		_group.end_of_group = nullptr;
 
 		const reflective::CollectionHandler * collection_handler = collection_type.collection_handler();
 		if( collection_handler )

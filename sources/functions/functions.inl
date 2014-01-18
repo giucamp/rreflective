@@ -42,7 +42,7 @@ namespace reflective
 		const Type & type = TypeContainer<TYPE>::get();
 		if( is_instance_of< Class >( type ) )
 			return static_cast<const Class*>( &type );
-		return null;
+		return nullptr;
 	}
 
 	// safe_get_type<TYPE>()
@@ -145,6 +145,14 @@ namespace reflective
 		inline bool assign_from_string( TYPE & dest_object, FromStringBuffer & source_buffer )
 	{
 		ToStringBuffer error_buffer;
+		const Type & type = type_of( dest_object );
+		return type.assign_from_string( source_buffer, &dest_object, error_buffer );
+	}
+
+	// assign_from_string
+	template <class TYPE>
+		inline bool assign_from_string( TYPE & dest_object, FromStringBuffer & source_buffer, ToStringBuffer error_buffer )
+	{
 		const Type & type = type_of( dest_object );
 		return type.assign_from_string( source_buffer, &dest_object, error_buffer );
 	}

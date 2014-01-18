@@ -60,7 +60,7 @@ namespace reflective
 	}
 
 	// Type::alignment
-	inline unsigned Type::alignment() const
+	inline size_t Type::alignment() const
 	{
 		return _alignment;
 	}
@@ -111,13 +111,13 @@ namespace reflective
 	inline const Type * Type::base_type( unsigned index ) const
 	{
 		#if !REFLECTIVE_ALLOW_MULTIPLE_INHERITANCE
-			//REFLECTIVE_ASSERT( index == 0 && _single_base_type._base_type != null );
+			//REFLECTIVE_ASSERT( index == 0 && _single_base_type._base_type != nullptr );
 			return _single_base_type._base_type;
 		#else
 			if( index < _base_types_count )
 				return _multiple_base_types[ index ]._base_type;
 			else
-				return null;
+				return nullptr;
 		#endif
 	}
 
@@ -125,7 +125,7 @@ namespace reflective
 	inline unsigned Type::base_types_count() const
 	{
 		#if !REFLECTIVE_ALLOW_MULTIPLE_INHERITANCE
-			if( _single_base_type._base_type != null )
+			if( _single_base_type._base_type != nullptr )
 				return 1;
 			return 0;
 		#else
@@ -138,7 +138,7 @@ namespace reflective
 	{
 		#if !REFLECTIVE_ALLOW_MULTIPLE_INHERITANCE
 			REFLECTIVE_ASSERT( base_type_index <= 1 );
-			REFLECTIVE_ASSERT( _single_base_type._base_type != null );			
+			REFLECTIVE_ASSERT( _single_base_type._base_type != nullptr );			
 			return _single_base_type._updown_caster;
 		#else
 			REFLECTIVE_ASSERT( base_type_index < _base_types_count );
@@ -357,8 +357,8 @@ namespace reflective
 	{
 		_equality_comparer = equality_comparer;
 		_less_than_comparer = less_than_comparer;
-		_set_capabilities( eHasEqualityComparer, equality_comparer != null );
-		_set_capabilities( eHasLessThanComparer, less_than_comparer != null );
+		_set_capabilities( eHasEqualityComparer, equality_comparer != nullptr );
+		_set_capabilities( eHasLessThanComparer, less_than_comparer != nullptr );
 	}
 
 	// Type::set_default_equality_comparers
@@ -409,16 +409,16 @@ namespace reflective
 	// Type::set_collection_handler
 	inline void Type::set_collection_handler( const CollectionHandler * collection_interface )
 	{
-		REFLECTIVE_ASSERT( _abstract_collection == null ); // the collection interface can be set only once
+		REFLECTIVE_ASSERT( _abstract_collection == nullptr ); // the collection interface can be set only once
 		_abstract_collection = collection_interface; 
-		_set_capabilities( eHasCollectionHandler, collection_interface != null );
+		_set_capabilities( eHasCollectionHandler, collection_interface != nullptr );
 	}
 
 	// Type::set_type_resolver
 	inline void Type::set_type_resolver( TypeResolver type_resolver )
 	{
 		_type_resolver = type_resolver;
-		_set_capabilities( eHasTypeResolver, type_resolver != null );
+		_set_capabilities( eHasTypeResolver, type_resolver != nullptr );
 	}
 
 	// Type::collection_handler
@@ -688,7 +688,7 @@ namespace reflective
 
 		#if REFLECTIVE_ALLOW_MULTIPLE_INHERITANCE
 
-			if( _single_base_type._base_type != null )
+			if( _single_base_type._base_type != nullptr )
 				base_type_slot = &_single_base_type;
 			else
 				base_type_slot = _multiple_base_types + base_type_index;
@@ -710,7 +710,7 @@ namespace reflective
 
 		#if REFLECTIVE_ALLOW_MULTIPLE_INHERITANCE
 
-			if( _single_base_type._base_type != null )
+			if( _single_base_type._base_type != nullptr )
 				base_type_slot = &_single_base_type;
 			else
 				base_type_slot = _multiple_base_types + base_type_index;
@@ -732,7 +732,7 @@ namespace reflective
 
 		#if REFLECTIVE_ALLOW_MULTIPLE_INHERITANCE
 
-			if( _single_base_type._base_type != null )
+			if( _single_base_type._base_type != nullptr )
 				base_type_slot = &_single_base_type;
 			else
 				base_type_slot = _multiple_base_types + base_type_index;
@@ -754,7 +754,7 @@ namespace reflective
 
 		#if REFLECTIVE_ALLOW_MULTIPLE_INHERITANCE
 
-			if( _single_base_type._base_type != null )
+			if( _single_base_type._base_type != nullptr )
 				base_type_slot = &_single_base_type;
 			else
 				base_type_slot = _multiple_base_types + base_type_index;
@@ -784,20 +784,20 @@ namespace reflective
 		// Type::HierarchyIterator::operator bool
 		inline Type::HierarchyIterator::operator bool () const
 		{
-			return _current != null;
+			return _current != nullptr;
 		}
 
 		// Type::HierarchyIterator::operator *
 		inline const Type & Type::HierarchyIterator::operator * () const
 		{
-			REFLECTIVE_ASSERT( _current != null ); //reached end of iteration
+			REFLECTIVE_ASSERT( _current != nullptr ); //reached end of iteration
 			return *_current;
 		}
 
 		// Type::HierarchyIterator::operator ->
 		inline const Type * Type::HierarchyIterator::operator -> () const
 		{
-			REFLECTIVE_ASSERT( _current != null ); //reached end of iteration
+			REFLECTIVE_ASSERT( _current != nullptr ); //reached end of iteration
 			return _current;
 		}
 
@@ -816,7 +816,7 @@ namespace reflective
 
 		// Type::_DerivedChainItem::cosntructor
 		inline Type::_DerivedChainItem::_DerivedChainItem()
-			: _next_derived_brother( null ), _first_derived( null ), _last_derived( null )
+			: _next_derived_brother( nullptr ), _first_derived( nullptr ), _last_derived( nullptr )
 		{
 		}
 
@@ -825,13 +825,13 @@ namespace reflective
 		{
 			if( _last_derived )
 			{
-				REFLECTIVE_ASSERT( _first_derived != null );
-				REFLECTIVE_ASSERT( _last_derived->_derived_child_member._next_derived_brother == null );
+				REFLECTIVE_ASSERT( _first_derived != nullptr );
+				REFLECTIVE_ASSERT( _last_derived->_derived_child_member._next_derived_brother == nullptr );
 				_last_derived->_derived_child_member._next_derived_brother = &child;
 			}
 			else
 			{
-				REFLECTIVE_ASSERT( _first_derived == null );
+				REFLECTIVE_ASSERT( _first_derived == nullptr );
 				_first_derived = &child;
 			}
 

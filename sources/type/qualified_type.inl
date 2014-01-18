@@ -33,7 +33,7 @@ namespace reflective
 {
 	// QualifiedType::default constructor
 	inline QualifiedType::QualifiedType()
-		: _type( null )
+		: _type( nullptr )
 	{
 	}
 
@@ -44,7 +44,7 @@ namespace reflective
 	}
 
 	// QualifiedType::constructor( type, type_qualification )
-	inline QualifiedType::QualifiedType( const Type & type, const TypeQualification type_qualification )
+	inline QualifiedType::QualifiedType( const Type & type, const TypeQualification & type_qualification )
 		: _type( &type ), _type_qualification( type_qualification )
 	{
 	}

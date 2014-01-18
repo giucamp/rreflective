@@ -174,9 +174,9 @@ namespace reflective
 		inline void Iterator<const TYPE>::_assign_collection(
 			const reflective::Type & collection_type, const void * collection )
 	{
-		_abstract_iterator = null;
-		_group.curr_in_group = null;
-		_group.end_of_group = null;
+		_abstract_iterator = nullptr;
+		_group.curr_in_group = nullptr;
+		_group.end_of_group = nullptr;
 
 		const reflective::CollectionHandler * collection_handler = collection_type.collection_handler();
 		if( collection_handler )
@@ -204,9 +204,9 @@ namespace reflective
 			const reflective::Type & collection_type, const void * collection,
 			size_t offset_index )
 	{
-		_abstract_iterator = null;
-		_group.curr_in_group = null;
-		_group.end_of_group = null;
+		_abstract_iterator = nullptr;
+		_group.curr_in_group = nullptr;
+		_group.end_of_group = nullptr;
 
 		const reflective::CollectionHandler * collection_handler = collection_type.collection_handler();
 		if( collection_handler )

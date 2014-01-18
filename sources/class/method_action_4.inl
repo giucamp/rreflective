@@ -56,9 +56,11 @@ namespace reflective
 			ParameterList::parse_names( parameter_names, names, parameter_count );
 
 			// assign parameter list
-			unsigned parameter_index = 0; do {
-				_parameters[ parameter_index ] = new_parameter<PARAM_1>( names[ parameter_index ] );
-			} while( ++parameter_index < parameter_count );					
+			_parameters[0] = new_parameter<PARAM_1>( names[ 0 ] );
+			_parameters[1] = new_parameter<PARAM_2>( names[ 1 ] );
+			_parameters[2] = new_parameter<PARAM_3>( names[ 2 ] );
+			_parameters[3] = new_parameter<PARAM_4>( names[ 3 ] );
+								
 			edit_parameter_list().assign( _parameters, parameter_count );
 		}
 
@@ -134,9 +136,10 @@ namespace reflective
 			ParameterList::parse_names( parameter_names, names, parameter_count );
 
 			// assign parameter list
-			unsigned parameter_index = 0; do {
-				_parameters[ parameter_index ] = new_parameter<PARAM_1>( names[ parameter_index ] );
-			} while( ++parameter_index < parameter_count );					
+			_parameters[0] = new_parameter<PARAM_1>( names[ 0 ] );
+			_parameters[1] = new_parameter<PARAM_2>( names[ 1 ] );
+			_parameters[2] = new_parameter<PARAM_3>( names[ 2 ] );
+			_parameters[3] = new_parameter<PARAM_4>( names[ 3 ] );	
 			edit_parameter_list().assign( _parameters, parameter_count );
 		}
 

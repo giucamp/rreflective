@@ -59,6 +59,8 @@ namespace reflective
 		static int query_custom_type_id();
 		static void set_custom_type( int id, const Type * type );
 
+		int get_type_id() const			{ return _type_id; }
+
 		#if REFLECTIVE_ENABLE_ASSERT
 			static void dbg_check_sumbol_name( const StaticConstString & name );
 		#endif

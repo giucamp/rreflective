@@ -201,7 +201,7 @@ namespace reflective
 	// FromStringBuffer::accept_word
 	bool FromStringBuffer::accept_word( StaticConstString * out_result, AcceptOptions options )
 	{
-		REFLECTIVE_ASSERT( out_result != null );
+		REFLECTIVE_ASSERT( out_result != nullptr );
 
 		const char * buffer = _buffer;
 		size_t remaining_length = _length;

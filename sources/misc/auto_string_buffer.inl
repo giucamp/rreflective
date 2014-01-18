@@ -33,7 +33,7 @@ namespace reflective
 {
 	// AutoStringBuffer::constructor()
 	inline AutoStringBuffer::AutoStringBuffer()
-		: _chars( null ), _buffer_length( 0 ), _string_length( 0 )
+		: _chars( nullptr ), _buffer_length( 0 ), _string_length( 0 )
 	{
 	}
 
@@ -43,7 +43,7 @@ namespace reflective
 		: _buffer_length( initial_buffer_size ), _string_length( 0 )
 	{
 		_chars = static_cast<char*>( reflective_externals::mem_alloc( alignment_of( char ), initial_buffer_size * sizeof( char ) ) );
-		if( _chars == null )
+		if( _chars == nullptr )
 			_buffer_length = 0;
 	}
 
@@ -84,7 +84,7 @@ namespace reflective
 	// AutoStringBuffer::destructor
 	inline AutoStringBuffer::~AutoStringBuffer()
 	{
-		if( _chars != null )
+		if( _chars != nullptr )
 			reflective_externals::mem_free( _chars );
 	}
 

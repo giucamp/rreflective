@@ -54,8 +54,8 @@ namespace reflective
 			}
 			else
 			{
-				out_group.curr_in_group = null;
-				out_group.end_of_group = null;
+				out_group.curr_in_group = nullptr;
+				out_group.end_of_group = nullptr;
 			}
 		}
 
@@ -77,23 +77,23 @@ namespace reflective
 			}
 			else
 			{
-				out_group.curr_in_group = null;
-				out_group.end_of_group = null;
+				out_group.curr_in_group = nullptr;
+				out_group.end_of_group = nullptr;
 			}
 		}
 
 		void first_group( Group & out_group )
 		{
-			out_group.curr_in_group = null;
-			out_group.end_of_group = null;
-			out_group.type = null;
+			out_group.curr_in_group = nullptr;
+			out_group.end_of_group = nullptr;
+			out_group.type = nullptr;
 		}
 
 		void next_group( Group & out_group )
 		{
-			out_group.curr_in_group = null;
-			out_group.end_of_group = null;
-			out_group.type = null;
+			out_group.curr_in_group = nullptr;
+			out_group.end_of_group = nullptr;
+			out_group.type = nullptr;
 		}
 
 		bool insert( 
@@ -153,12 +153,12 @@ namespace reflective
 		reflective::AbstractIterator * create_iterator( void * collection_object, size_t offset_index ) const
 		{
 			if( offset_index != 0 )
-				return null;
+				return nullptr;
 				
 			const reflective::Namespace & namespace_obj = 
 				*static_cast<const reflective::Namespace*>( collection_object );
 
-			ReflectiveIterator * result = REFLECTIVE_NEW( ReflectiveIterator, namespace_obj );
+			ReflectiveIterator * result = REFLECTIVE_LIFO_NEW( ReflectiveIterator, namespace_obj );
 
 			return result;
 		}
@@ -215,8 +215,8 @@ namespace reflective_externals
 		typedef reflective::Namespace ThisClass;
 		typedef reflective::Symbol BaseClass;
 		
-		static Class * class_object = null;
-		if( class_object != null )
+		static Class * class_object = nullptr;
+		if( class_object != nullptr )
 			return class_object;
 		
 		// class object

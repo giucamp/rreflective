@@ -244,8 +244,8 @@ namespace reflective_externals
 		using namespace ::reflective;
 		typedef reflective::NameIdentifier<UINT,STRING,true> ThisClass;
 
-		static Class * result = null;
-		if( result != null )
+		static Class * result = nullptr;
+		if( result != nullptr )
 			return result;
 
 		void * allocation = reflective_externals::mem_lifo_alloc( 
@@ -287,7 +287,7 @@ namespace reflective_externals
 			new_property<ThisClass>( "uint_hash", &ThisClass::uint_hash ),
 		};
 
-		class_object->set_string_functions( NameIdentifier<UINT, STRING, true>::to_string, null );
+		class_object->set_string_functions( NameIdentifier<UINT, STRING, true>::to_string, nullptr );
 		
 		// assign members
 		class_object->assign_properties( properties );

@@ -35,9 +35,9 @@ namespace reflective
 	Type::Type( const StaticConstString & parent_namespace_path,
 			const SymbolName & name, size_t size, size_t alignment )
 		: Symbol( name ), 
-			_equality_comparer( null ), _less_than_comparer( null ), 
-			_type_resolver( null ),
-			_abstract_collection( null ),
+			_equality_comparer( nullptr ), _less_than_comparer( nullptr ), 
+			_type_resolver( nullptr ),
+			_abstract_collection( nullptr ),
 			_capabilities( eCapabilitiesNone )
 	{
 		set_type_id( eTypeType );
@@ -46,10 +46,10 @@ namespace reflective
 			_dbg_base_types_set = false;
 		#endif
 
-		_single_base_type._base_type = null;
+		_single_base_type._base_type = nullptr;
 
 		#if REFLECTIVE_ALLOW_MULTIPLE_INHERITANCE
-			_multiple_base_types = null;
+			_multiple_base_types = nullptr;
 			_base_types_count = 0;
 		#endif
 
@@ -65,7 +65,7 @@ namespace reflective
 		if( _alignment == 0 )
 			_alignment = 1;
 
-		_stringizer = null;
+		_stringizer = nullptr;
 
 		// set the namespace
 		Namespace & global_namespace = Namespace::edit_global();
@@ -76,9 +76,9 @@ namespace reflective
 	// Type::constructor
 	Type::Type( Namespace & parent_namespace, const SymbolName & name, size_t size, size_t alignment )
 		: Symbol( name ), 
-			_equality_comparer( null ), _less_than_comparer( null ), 
-			_type_resolver( null ),
-			_abstract_collection( null ),
+			_equality_comparer( nullptr ), _less_than_comparer( nullptr ), 
+			_type_resolver( nullptr ),
+			_abstract_collection( nullptr ),
 			_capabilities( eCapabilitiesNone )
 	{
 		set_type_id( eTypeType );
@@ -87,10 +87,10 @@ namespace reflective
 			_dbg_base_types_set = false;
 		#endif
 
-		_single_base_type._base_type = null;
+		_single_base_type._base_type = nullptr;
 
 		#if REFLECTIVE_ALLOW_MULTIPLE_INHERITANCE
-			_multiple_base_types = null;
+			_multiple_base_types = nullptr;
 			_base_types_count = 0;
 		#endif
 
@@ -106,7 +106,7 @@ namespace reflective
 		if( _alignment == 0 )
 			_alignment = 1;
 
-		_stringizer = null;
+		_stringizer = nullptr;
 
 		// set the namespace		
 		_parent_namespace = &parent_namespace;
@@ -187,7 +187,7 @@ namespace reflective
 						void * base_object = _multiple_base_types[base_type_index]._updown_caster.pointer_to_base_type( object );
 						void * result = _multiple_base_types[ base_type_index ]._base_type->
 							try_cast_pointer_to( dest_type, base_object );
-						if( result != null )
+						if( result != nullptr )
 							return result;
 					} while( ++base_type_index < _base_types_count );
 				}
@@ -198,7 +198,7 @@ namespace reflective
 
 		} while( curr_type );
 
-		return null;
+		return nullptr;
 	}
 
 	// Type::try_cast_pointer_to
@@ -217,7 +217,7 @@ namespace reflective
 					do {
 						const Type * base_type = _multiple_base_types[base_type_index]._base_type;
 						const void * result = base_type->try_cast_pointer_to( dest_type, object );
-						if( result != null )
+						if( result != nullptr )
 							return result;
 					} while( ++base_type_index < _base_types_count );
 				}
@@ -228,7 +228,7 @@ namespace reflective
 
 		} while( curr_type );
 
-		return null;
+		return nullptr;
 	}
 
 	// Type::set_life_functions
@@ -236,10 +236,10 @@ namespace reflective
 	{
 		_life_functors = new_life_functors;
 
-		_set_capabilities( eHasDefaultConstructor, _life_functors.constructor_caller() != null );
-		_set_capabilities( eHasDestructor, _life_functors.destructor_caller() != null );
-		_set_capabilities( eHasCopier, _life_functors.copier() != null );
-		_set_capabilities( eHasMover, _life_functors.mover() != null );
+		_set_capabilities( eHasDefaultConstructor, _life_functors.constructor_caller() != nullptr );
+		_set_capabilities( eHasDestructor, _life_functors.destructor_caller() != nullptr );
+		_set_capabilities( eHasCopier, _life_functors.copier() != nullptr );
+		_set_capabilities( eHasMover, _life_functors.mover() != nullptr );
 	}
 
 	// Type::type_full_name_to_string
@@ -257,7 +257,7 @@ namespace reflective
 				for(;;) 
 				{
 					const Namespace * next_namespace = curr_namespace->parent();
-					REFLECTIVE_ASSERT( next_namespace != null );
+					REFLECTIVE_ASSERT( next_namespace != nullptr );
 					if( next_namespace == last_dumped_namespace )
 						break;
 					curr_namespace = curr_namespace->parent();
@@ -308,7 +308,7 @@ namespace reflective
 		_string_skip_prefix( namespace_start, "enum " );
 
 		// find last "::"
-		const char * last_double_colon = null;
+		const char * last_double_colon = nullptr;
 		const char * curr_pos = namespace_start;
 		int brackets_depth = 0;
 		while( *curr_pos )
@@ -392,8 +392,8 @@ namespace reflective_externals
 
 		using namespace ::reflective;
 		
-		static Enum * enum_object = null;
-		if( enum_object != null )
+		static Enum * enum_object = nullptr;
+		if( enum_object != nullptr )
 			return enum_object;
 		
 		const Enum::Member * members[] = 
@@ -427,8 +427,8 @@ namespace reflective_externals
 		typedef reflective::Type ThisClass;
 		typedef Symbol BaseClass;
 		
-		static Class * result = null;
-		if( result != null )
+		static Class * result = nullptr;
+		if( result != nullptr )
 			return result;
 		
 		// class object

@@ -49,7 +49,7 @@ namespace reflective
 			if( curr_path < end_of_chars )
 				separator = _find_double_colon( curr_path, end_of_chars - curr_path );
 			else
-				separator = null;
+				separator = nullptr;
 
 			if( !separator )
 			{
@@ -60,7 +60,7 @@ namespace reflective
 				const SymbolName token_id( curr_path, separator - curr_path );
 				curr_namespace = curr_namespace->find_child_namespace( token_id );
 				if( !curr_namespace )
-					return null;
+					return nullptr;
 			}
 
 			curr_path = separator + 2;
@@ -74,12 +74,16 @@ namespace reflective
 		const char * curr_path = path.start_of_chars();
 		Namespace * curr_namespace = this;
 		const char * end_of_chars = path.end_of_chars();
+
+		if( curr_path == end_of_chars )
+			return this;
+
 		for(;;)
 		{
 			if( curr_path < end_of_chars )
 				separator = _find_double_colon( curr_path, end_of_chars - curr_path );
 			else
-				separator = null;
+				separator = nullptr;
 
 			if( !separator )
 			{
@@ -90,7 +94,7 @@ namespace reflective
 				const SymbolName token_id( curr_path, separator - curr_path );
 				curr_namespace = curr_namespace->find_child_namespace( token_id );
 				if( !curr_namespace )
-					return null;
+					return nullptr;
 			}
 
 			curr_path = separator + 2;
@@ -125,7 +129,7 @@ namespace reflective
 			if( curr_path < end_of_chars )
 				separator = _find_double_colon( curr_path, end_of_chars - curr_path );
 			else
-				separator = null;
+				separator = nullptr;
 
 			if( !separator )
 			{
@@ -164,14 +168,25 @@ namespace reflective
 	// Namespace::_find_double_colon
 	const char * Namespace::_find_double_colon( const char * src, size_t src_len )
 	{
+		int bracket_depth = 0;
 		if( src_len >= 2 ) do {
-			if( src[0] == ':' && src[1] == ':' )
-				return src;
+			if( src[0] == '<' )
+				bracket_depth++;
+			else if( src[0] == '>' )
+			{
+				REFLECTIVE_ASSERT( bracket_depth > 0 );
+				bracket_depth--;
+			}
+			if( bracket_depth == 0 )
+			{
+				if( src[0] == ':' && src[1] == ':' )
+					return src;
+			}
 			src_len--;
 			src++;
 		} while( src_len >= 2 ); 
 
-		return null;
+		return nullptr;
 	}
 
 	// Namespace::find_child_type
@@ -184,7 +199,7 @@ namespace reflective
 		std::map< SymbolNameHash, const Type * >::const_iterator it = _child_types.find( name.uint_hash() );
 		if( it != _child_types.end() )
 			return it->second;
-		return null;
+		return nullptr;
 	}
 
 	// Namespace::find_child_namespace
@@ -193,7 +208,7 @@ namespace reflective
 		std::map< SymbolNameHash, Namespace * >::const_iterator namespace_it = _child_namespaces.find( name.uint_hash() );
 		if( namespace_it != _child_namespaces.end() )
 			return namespace_it->second;
-		return null;
+		return nullptr;
 	}
 
 	// Namespace::find_child_type
@@ -202,7 +217,7 @@ namespace reflective
 		std::map< SymbolNameHash, const Type * >::const_iterator it = _child_types.find( hash );
 		if( it != _child_types.end() )
 			return it->second;
-		return null;
+		return nullptr;
 	}
 
 	// Namespace::find_child_namespace
@@ -211,7 +226,7 @@ namespace reflective
 		std::map< SymbolNameHash, Namespace * >::const_iterator namespace_it = _child_namespaces.find( hash );
 		if( namespace_it != _child_namespaces.end() )
 			return namespace_it->second;
-		return null;
+		return nullptr;
 	}
 
 	// Namespace::find_child_namespace (non const)
@@ -224,7 +239,7 @@ namespace reflective
 		std::map< SymbolNameHash, Namespace * >::iterator namespace_it = _child_namespaces.find( name.uint_hash() );
 		if( namespace_it != _child_namespaces.end() )
 			return namespace_it->second;
-		return null;
+		return nullptr;
 	}
 
 	// Namespace::add_child_type
@@ -232,7 +247,7 @@ namespace reflective
 	{
 		#if REFLECTIVE_IS_DEBUG && REFLECTIVE_ENABLE_ASSERT
 			const Type * existing_type = find_child_type( type.name() );
-			REFLECTIVE_ASSERT( existing_type == null );
+			REFLECTIVE_ASSERT( existing_type == nullptr );
 		#endif
 		_child_types[ type.name().uint_hash() ] = &type;
 	}
@@ -243,10 +258,10 @@ namespace reflective
 		#if REFLECTIVE_IS_DEBUG && REFLECTIVE_ENABLE_ASSERT
 			const Namespace * existing_namespace = find_child_namespace( namespace_obj.name() );
 			REFLECTIVE_ASSERT( this != &namespace_obj ); // self inclusion
-			REFLECTIVE_ASSERT( existing_namespace == null );
+			REFLECTIVE_ASSERT( existing_namespace == nullptr );
 		#endif
 
-		REFLECTIVE_ASSERT( namespace_obj._parent == null );
+		REFLECTIVE_ASSERT( namespace_obj._parent == nullptr );
 		namespace_obj._parent = this;
 		_child_namespaces[ namespace_obj.name().uint_hash() ] = &namespace_obj;
 	}

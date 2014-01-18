@@ -33,7 +33,7 @@ namespace reflective
 {
 	// WatchChain::constructor
 	inline WatchChain::WatchChain()
-		: _first_watch( null )
+		: _first_watch( nullptr )
 	{
 	}
 
@@ -41,7 +41,7 @@ namespace reflective
 	inline WatchChain::~WatchChain()
 	{
 		// no watch can be registered at destruction
-		REFLECTIVE_ASSERT( _first_watch == null );		
+		REFLECTIVE_ASSERT( _first_watch == nullptr );		
 	}
 
 } // namespace reflective

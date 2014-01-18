@@ -55,10 +55,10 @@ namespace reflective
 	// AutoStringBuffer::realloc
 	bool AutoStringBuffer::realloc( size_t new_buffer_size )
 	{
-		if( _chars != null )
+		if( _chars != nullptr )
 			reflective_externals::mem_free( _chars );
 		_chars = static_cast<char*>( reflective_externals::mem_alloc( alignment_of( char ), new_buffer_size * sizeof( char ) ) );
-		if( _chars == null )
+		if( _chars == nullptr )
 		{
 			_buffer_length = 0;
 			return false;

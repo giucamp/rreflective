@@ -36,8 +36,8 @@ namespace reflective
 
 	// Watch::constructor
 	inline Watch::Watch()
-		: _parent_chain( null ), _next_watch( null ),
-		  _collection_type( null ), _collection( null )
+		: _parent_chain( nullptr ), _next_watch( nullptr ),
+		  _collection_type( nullptr ), _collection( nullptr )
 	{
 	}
 
@@ -45,8 +45,8 @@ namespace reflective
 	inline Watch::~Watch()
 	{
 		// the watch cannot be attacched to a collection at destruction
-		REFLECTIVE_ASSERT( _parent_chain == null );
-		REFLECTIVE_ASSERT( _next_watch == null );
+		REFLECTIVE_ASSERT( _parent_chain == nullptr );
+		REFLECTIVE_ASSERT( _next_watch == nullptr );
 	}
 
 	// Watch::collection_type

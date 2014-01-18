@@ -38,7 +38,7 @@ namespace reflective
 
 		Watch * curr_watch = _first_watch;
 
-		if( curr_watch == null ) 
+		if( curr_watch == nullptr ) 
 			return;
 
 		do {
@@ -47,7 +47,7 @@ namespace reflective
 
 			curr_watch = curr_watch->_next_watch;
 
-		} while( curr_watch != null );
+		} while( curr_watch != nullptr );
 	}
 
 	// WatchChain::notify_changed_objects
@@ -57,7 +57,7 @@ namespace reflective
 
 		Watch * curr_watch = _first_watch;
 
-		if( curr_watch == null ) 
+		if( curr_watch == nullptr ) 
 			return;
 
 		do {
@@ -66,7 +66,7 @@ namespace reflective
 
 			curr_watch = curr_watch->_next_watch;
 
-		} while( curr_watch != null );
+		} while( curr_watch != nullptr );
 	}
 
 	// WatchChain::notify_removing_objects
@@ -76,7 +76,7 @@ namespace reflective
 
 		Watch * curr_watch = _first_watch;
 
-		if( curr_watch == null ) 
+		if( curr_watch == nullptr ) 
 			return;
 
 		do {
@@ -85,14 +85,14 @@ namespace reflective
 
 			curr_watch = curr_watch->_next_watch;
 
-		} while( curr_watch != null );
+		} while( curr_watch != nullptr );
 	}
 
 	// WatchChain::unregister_watch
 	void WatchChain::unregister_watch( Watch * watch )
 	{
 		Watch * curr_watch = _first_watch;
-		Watch * prev_watch = null;
+		Watch * prev_watch = nullptr;
 		if( curr_watch ) do {
 			
 			if( curr_watch == watch )
@@ -113,12 +113,12 @@ namespace reflective
 			prev_watch = curr_watch;
 			curr_watch = curr_watch->_next_watch;
 
-		} while( curr_watch != null );
+		} while( curr_watch != nullptr );
 
-		watch->_parent_chain = null;
-		watch->_next_watch = null;
-		watch->_collection_type = null;
-		watch->_collection = null;
+		watch->_parent_chain = nullptr;
+		watch->_next_watch = nullptr;
+		watch->_collection_type = nullptr;
+		watch->_collection = nullptr;
 	}
 
 	// WatchChain::unregister_all_watches
@@ -126,23 +126,23 @@ namespace reflective
 	{
 		Watch * curr_watch = _first_watch;
 
-		if( curr_watch == null ) 
+		if( curr_watch == nullptr ) 
 			return;
 
 		do {
 
-			curr_watch->_parent_chain = null;
-			curr_watch->_next_watch = null;
+			curr_watch->_parent_chain = nullptr;
+			curr_watch->_next_watch = nullptr;
 
 			curr_watch = curr_watch->_next_watch;
 
-		} while( curr_watch != null );
+		} while( curr_watch != nullptr );
 	}
 
 	// WatchChain::register_watch
 	void WatchChain::register_watch( Watch * watch, const Type & collection_type, void * collection )
 	{
-		REFLECTIVE_ASSERT( watch->_parent_chain == null ); // unregister first
+		REFLECTIVE_ASSERT( watch->_parent_chain == nullptr ); // unregister first
 
 		watch->_parent_chain = this;
 		watch->_next_watch = _first_watch;

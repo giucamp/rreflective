@@ -48,8 +48,8 @@ namespace reflective_externals
 		using namespace ::reflective;
 		typedef reflective::UpDownCaster<IMPLEMENTATION> ThisClass;
 		
-		static Class * class_object = null;
-		if( class_object != null )
+		static Class * class_object = nullptr;
+		if( class_object != nullptr )
 			return class_object;
 		
 		

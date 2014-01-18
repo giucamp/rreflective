@@ -54,6 +54,8 @@ namespace reflective
 		bool is_protected() const;
 		bool is_back_reference() const;
 
+		const char * visibility_as_string() const;
+
 		class Comparer
 		{
 		public:

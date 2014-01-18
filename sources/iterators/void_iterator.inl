@@ -34,7 +34,7 @@ namespace reflective
 	// Iterator::constructor( collection )
 	template <class COLLECTION_TYPE> 
 		inline Iterator<void>::Iterator( const COLLECTION_TYPE & collection )
-			: _iteration_type( null )
+			: _iteration_type( nullptr )
 	{
 		_assign_collection( get_type<COLLECTION_TYPE>(), &collection );
 	}
@@ -50,7 +50,7 @@ namespace reflective
 
 	// Iterator::constructor( collection_type, collection )
 	inline Iterator<void>::Iterator( const reflective::Type & collection_type, void * collection )
-		: _iteration_type( null )
+		: _iteration_type( nullptr )
 	{
 		_assign_collection( collection_type, collection );
 	}
@@ -67,7 +67,7 @@ namespace reflective
 	// Iterator::constructor( collection, offset_index )
 	template <class COLLECTION_TYPE> 
 		inline Iterator<void>::Iterator( const COLLECTION_TYPE & collection, size_t offset_index )
-			: _iteration_type( null )
+			: _iteration_type( nullptr )
 	{
 		_assign_collection( get_type<COLLECTION_TYPE>(), &collection, offset_index );
 	}
@@ -82,7 +82,7 @@ namespace reflective
 
 	// Iterator::constructor( collection_type, collection, offset_index )
 	inline Iterator<void>::Iterator( const reflective::Type & collection_type, void * collection, size_t offset_index )
-			: _iteration_type( null )
+			: _iteration_type( nullptr )
 	{
 		_assign_collection( collection_type, collection, offset_index );
 	}
@@ -134,9 +134,9 @@ namespace reflective
 	inline void Iterator<void>::_assign_collection(
 		const reflective::Type & collection_type, void * collection )
 	{
-		_abstract_iterator = null;
-		_group.curr_in_group = null;
-		_group.end_of_group = null;
+		_abstract_iterator = nullptr;
+		_group.curr_in_group = nullptr;
+		_group.end_of_group = nullptr;
 		_index_in_group = 0;
 
 		const reflective::CollectionHandler * collection_handler = collection_type.collection_handler();
@@ -148,7 +148,7 @@ namespace reflective
 				_abstract_iterator->first_group( _group );
 
 				// jump groups not compatible with _iteration_type
-				if( _iteration_type != null )
+				if( _iteration_type != nullptr )
 				{
 					if( !( *_iteration_type <= *_group.type ) ) do {
 						_abstract_iterator->next_group( _group );
@@ -164,9 +164,9 @@ namespace reflective
 	inline void Iterator<void>::_assign_collection( 
 		const reflective::Type & collection_type, void * collection, size_t offset_index )
 	{
-		_abstract_iterator = null;
-		_group.curr_in_group = null;
-		_group.end_of_group = null;
+		_abstract_iterator = nullptr;
+		_group.curr_in_group = nullptr;
+		_group.end_of_group = nullptr;
 		_index_in_group = 0;
 
 		const reflective::CollectionHandler * collection_handler = collection_type.collection_handler();
@@ -177,7 +177,7 @@ namespace reflective
 			{
 				_abstract_iterator->first_group( _group );
 
-				if( _iteration_type != null )
+				if( _iteration_type != nullptr )
 				{
 					// jump groups not compatible with _iteration_type
 					if( !( *_iteration_type <= *_group.type ) ) do {
@@ -246,7 +246,7 @@ namespace reflective
 	{
 		const Type & type = get_type< TYPE >();
 
-		return multi_insert( object_count, null, type );
+		return multi_insert( object_count, nullptr, type );
 	}
 
 	// Iterator<void>::multi_insert( object_count, source_object )

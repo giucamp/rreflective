@@ -37,7 +37,7 @@ namespace reflective
 			}
 		#endif
 
-		if( _needed_length + 1 >= _max_length )
+		if( _needed_length >= _max_length )
 		{
 			_needed_length += token_length;
 			return 0;
@@ -79,7 +79,7 @@ namespace reflective
 	{
 		REFLECTIVE_ASSERT( char_token != 0 );
 
-		if( _needed_length >= _max_length )
+		if( _needed_length + 1 >= _max_length )
 		{
 			_needed_length++;
 			return false;

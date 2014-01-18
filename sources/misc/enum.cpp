@@ -70,7 +70,7 @@ namespace reflective
 		int value = 0;
 
 		bool missing_pipe = false;
-		const char * start_of_token = null;
+		const char * start_of_token = nullptr;
 		size_t token_length = 0;
 		size_t recognized_members = 0;
 
@@ -106,7 +106,7 @@ namespace reflective
 
 			const Enum::Member * member = members.find( token );
 
-			if( member == null )
+			if( member == nullptr )
 			{				
 				// member not found
 				error_buffer.append( start_of_token, token_length );
@@ -205,7 +205,7 @@ namespace reflective
 	// Enum::find_member_by_value
 	const Enum::Member * Enum::find_member_by_value( int value, size_t * inout_index )
 	{
-		/* if inout_index is not null, the search will start from inout_index, and if
+		/* if inout_index is not nullptr, the search will start from inout_index, and if
 		   the member is found, inout_index wil be filled with the index of the member + 1.
 		   To get multiple members as result of the search, initialize a size_t with zero, 
 		   and pass it as inout_index untill nu is returned. */
@@ -224,7 +224,7 @@ namespace reflective
 		} while( ++index < count );
 
 		*inout_index = ~size_t(0);
-		return null;
+		return nullptr;
 	}
 
 } // namespace reflective
@@ -243,8 +243,8 @@ namespace reflective_externals
 		typedef reflective::Enum ThisClass;
 		typedef Type BaseClass;
 		
-		static Class * result = null;
-		if( result != null )
+		static Class * result = nullptr;
+		if( result != nullptr )
 			return result;
 		
 		// class object
@@ -286,8 +286,8 @@ namespace reflective_externals
 		typedef reflective::Enum::Member ThisClass;
 		typedef Symbol BaseClass;
 		
-		static Class * result = null;
-		if( result != null )
+		static Class * result = nullptr;
+		if( result != nullptr )
 			return result;
 		
 		// class object

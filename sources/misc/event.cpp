@@ -35,7 +35,7 @@ namespace reflective
 	void AbstractEvent::operator -= ( AbstractHandler & handler )
 	{		
 		AbstractHandler * curr_handler = _first_handler;
-		AbstractHandler * prev_handler = null;
+		AbstractHandler * prev_handler = nullptr;
 		if( curr_handler ) do {
 			
 			if( curr_handler == &handler )
@@ -57,7 +57,7 @@ namespace reflective
 			prev_handler = curr_handler;
 			curr_handler = curr_handler->_next_handler;
 
-		} while( curr_handler != null );
+		} while( curr_handler != nullptr );
 	}
 
 } // namespace reflective

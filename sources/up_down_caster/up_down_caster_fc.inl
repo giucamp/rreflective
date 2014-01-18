@@ -35,10 +35,10 @@ namespace reflective
 
 	// UpDownCaster<UpDownCasterFullCompliance>::constructor
 	inline UpDownCaster<UpDownCasterFullCompliance>::UpDownCaster()
-		: _to_base_caster( null ),
-		  _from_base_caster( null ),
-		  _to_const_base_caster( null ),
-		  _from_const_base_caster( null )
+		: _to_base_caster( nullptr ),
+		  _from_base_caster( nullptr ),
+		  _to_const_base_caster( nullptr ),
+		  _from_const_base_caster( nullptr )
 	{
 	}
 
@@ -74,36 +74,36 @@ namespace reflective
 	{
 		return UpDownCaster<UpDownCasterFullCompliance>(
 			&_typed_to_base_caster< BASE_CLASS, THIS_CLASS >,
-			null,
+			nullptr,
 			&_typed_to_const_base_caster< BASE_CLASS, THIS_CLASS >,
-			null );
+			nullptr );
 	}
 
 	// UpDownCaster<UpDownCasterFullCompliance>::pointer_to_base_type
 	inline void * UpDownCaster<UpDownCasterFullCompliance>::pointer_to_base_type( void * pointer ) const
 	{
-		REFLECTIVE_ASSERT( _to_base_caster != null );
+		REFLECTIVE_ASSERT( _to_base_caster != nullptr );
 		return (*_to_base_caster)( pointer );
 	}
 
 	// UpDownCaster<UpDownCasterFullCompliance>::pointer_from_base_type
 	inline void * UpDownCaster<UpDownCasterFullCompliance>::pointer_from_base_type( void * pointer ) const
 	{
-		REFLECTIVE_ASSERT( _from_base_caster != null );
+		REFLECTIVE_ASSERT( _from_base_caster != nullptr );
 		return (*_from_base_caster)( pointer );
 	}
 
 	// UpDownCaster<UpDownCasterFullCompliance>::pointer_to_base_type
 	inline const void * UpDownCaster<UpDownCasterFullCompliance>::pointer_to_base_type( const void * pointer ) const
 	{
-		REFLECTIVE_ASSERT( _to_const_base_caster != null );
+		REFLECTIVE_ASSERT( _to_const_base_caster != nullptr );
 		return (*_to_const_base_caster)( pointer );
 	}
 
 	// UpDownCaster<UpDownCasterFullCompliance>::pointer_from_base_type
 	inline const void * UpDownCaster<UpDownCasterFullCompliance>::pointer_from_base_type( const void * pointer ) const
 	{
-		REFLECTIVE_ASSERT( _from_const_base_caster != null );
+		REFLECTIVE_ASSERT( _from_const_base_caster != nullptr );
 		return (*_from_const_base_caster)( pointer );
 	}
 
@@ -111,8 +111,8 @@ namespace reflective
 	template < class BASE_CLASS, class THIS_CLASS >
 		void * UpDownCaster<UpDownCasterFullCompliance>::_typed_to_base_caster( void * pointer )
 	{
-		// the pointer cannot be null
-		REFLECTIVE_ASSERT( pointer != null );
+		// the pointer cannot be nullptr
+		REFLECTIVE_ASSERT( pointer != nullptr );
 
 		// this cast is just a type reinterpretation - the compiler shouldn't generate any code
 		THIS_CLASS * this_object = static_cast<THIS_CLASS*>( pointer );
@@ -131,8 +131,8 @@ namespace reflective
 	template < class BASE_CLASS, class THIS_CLASS >
 		void * UpDownCaster<UpDownCasterFullCompliance>::_typed_from_base_caster( void * pointer )
 	{
-		// the pointer cannot be null
-		REFLECTIVE_ASSERT( pointer != null );
+		// the pointer cannot be nullptr
+		REFLECTIVE_ASSERT( pointer != nullptr );
 
 		// this cast is just a type reinterpretation - the compiler shouldn't generate any code
 		BASE_CLASS * base_object = static_cast<BASE_CLASS*>( pointer );
@@ -151,8 +151,8 @@ namespace reflective
 	template < class BASE_CLASS, class THIS_CLASS >
 		const void * UpDownCaster<UpDownCasterFullCompliance>::_typed_to_const_base_caster( const void * pointer )
 	{
-		// the pointer cannot be null
-		REFLECTIVE_ASSERT( pointer != null );
+		// the pointer cannot be nullptr
+		REFLECTIVE_ASSERT( pointer != nullptr );
 
 		// this cast is just a type reinterpretation - the compiler shouldn't generate any code
 		const THIS_CLASS * this_object = static_cast<const THIS_CLASS*>( pointer );
@@ -171,8 +171,8 @@ namespace reflective
 	template < class BASE_CLASS, class THIS_CLASS >
 		const void * UpDownCaster<UpDownCasterFullCompliance>::_typed_from_const_base_caster( const void * pointer )
 	{
-		// the pointer cannot be null
-		REFLECTIVE_ASSERT( pointer != null );
+		// the pointer cannot be nullptr
+		REFLECTIVE_ASSERT( pointer != nullptr );
 
 		// this cast is just a type reinterpretation - the compiler shouldn't generate any code
 		const BASE_CLASS * base_object = static_cast<const BASE_CLASS*>( pointer );

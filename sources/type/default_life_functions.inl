@@ -60,7 +60,7 @@ namespace reflective
 		#endif
 
 		TYPE * object = dest_start; if( object < dest_end ) do {
-			REFLECTIVE_ASSERT( object != null );
+			REFLECTIVE_ASSERT( object != nullptr );
 
 			#ifdef _MSC_VER
 				#pragma warning( push )
@@ -92,7 +92,7 @@ namespace reflective
 		TYPE * dest_end = static_cast<TYPE *>( _dest_end );
 
 		TYPE * object = dest_end - 1; do {
-			REFLECTIVE_ASSERT( object != null );
+			REFLECTIVE_ASSERT( object != nullptr );
 			object->TYPE::~TYPE();
 		} while( --object >= dest_start );
 
@@ -122,7 +122,7 @@ namespace reflective
 		const TYPE * source = source_start;
 		if( dest < dest_end ) do {
 			REFLECTIVE_ASSERT( dest != source );
-			REFLECTIVE_ASSERT( dest != null );
+			REFLECTIVE_ASSERT( dest != nullptr );
 			::new( dest ) TYPE( *source );
 		} while( ++source, ++dest < dest_end );
 	}
@@ -158,7 +158,7 @@ namespace reflective
 				if( curr_dest >= source_end ) do {			
 					
 					REFLECTIVE_ASSERT( curr_source != curr_dest );
-					REFLECTIVE_ASSERT( curr_dest != null );
+					REFLECTIVE_ASSERT( curr_dest != nullptr );
 
 					::new( curr_dest ) TYPE( *curr_source );
 
@@ -214,7 +214,7 @@ namespace reflective
 				if( curr_dest < source_start ) do {			
 					
 					REFLECTIVE_ASSERT( curr_source != curr_dest );
-					REFLECTIVE_ASSERT( curr_dest != null ); // this is an hint for the optimizing compiler
+					REFLECTIVE_ASSERT( curr_dest != nullptr ); // this is an hint for the optimizing compiler
 
 					::new( curr_dest ) TYPE( *curr_source );
 
@@ -259,7 +259,7 @@ namespace reflective
 		do {			
 			
 			REFLECTIVE_ASSERT( curr_source != curr_dest );
-			REFLECTIVE_ASSERT( curr_dest != null );
+			REFLECTIVE_ASSERT( curr_dest != nullptr );
 
 			::new( curr_dest ) TYPE( *curr_source );
 			curr_source->TYPE::~TYPE();
@@ -283,7 +283,7 @@ namespace reflective
 		const TYPE * source = source_start;
 		TYPE * dest = dest_start; if( dest < dest_end ) do {
 			REFLECTIVE_ASSERT( dest != source );
-			REFLECTIVE_ASSERT( dest != null );
+			REFLECTIVE_ASSERT( dest != nullptr );
 			*dest = *source;
 		} while( ++source, ++dest < dest_end );
 	}
@@ -298,7 +298,7 @@ namespace reflective
 		dest--, source--;		
 		if( dest >= dest_start ) do {
 			REFLECTIVE_ASSERT( dest != source );
-			REFLECTIVE_ASSERT( dest != null );
+			REFLECTIVE_ASSERT( dest != nullptr );
 			*dest = *source;
 		} while( --source, --dest >= dest_start );
 	}

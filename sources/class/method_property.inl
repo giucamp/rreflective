@@ -36,7 +36,7 @@ namespace reflective
 		inline Property * new_property( SymbolName name, 
 			TYPE (OBJECT::*getter)() const,	ClassMember::Attributes attributes )
 	{
-		ROOT_OBJECT * just_a_type_check = static_cast<OBJECT*>( null );
+		ROOT_OBJECT * just_a_type_check = static_cast<OBJECT*>( nullptr );
 		REFLECTIVE_UNUSED( just_a_type_check );
 
 		typedef TYPE (ROOT_OBJECT::*BaseGetter)() const;
@@ -63,7 +63,7 @@ namespace reflective
 			void (OBJECT::*setter)( TYPE value ), 
 			ClassMember::Attributes attributes )
 	{
-		ROOT_OBJECT * just_a_type_check = static_cast<OBJECT*>( null );
+		ROOT_OBJECT * just_a_type_check = static_cast<OBJECT*>( nullptr );
 		REFLECTIVE_UNUSED( just_a_type_check );
 
 		typedef TYPE (ROOT_OBJECT::*BaseGetter)() const;
@@ -92,7 +92,7 @@ namespace reflective
 			void (OBJECT::*setter)( const TYPE & value ), 
 			ClassMember::Attributes attributes )
 	{
-		ROOT_OBJECT * just_a_type_check = static_cast<OBJECT*>( null );
+		ROOT_OBJECT * just_a_type_check = static_cast<OBJECT*>( nullptr );
 		REFLECTIVE_UNUSED( just_a_type_check );
 
 		typedef TYPE (ROOT_OBJECT::*BaseGetter)() const;

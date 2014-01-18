@@ -52,7 +52,6 @@ namespace reflective
 			SymbolName names[ parameter_count ];
 			ParameterList::parse_names( parameter_names, names, parameter_count );
 			_parameters[0] = new_parameter<PARAM_1>( names[0] );
-
 			edit_parameter_list().assign( _parameters, parameter_count );
 		}
 
@@ -61,7 +60,7 @@ namespace reflective
 		// on_invoke
 		void on_invoke( void * object, const void * actual_parameters, void * return_value ) const
 		{
-			REFLECTIVE_ASSERT( return_value == null );
+			REFLECTIVE_ASSERT( return_value == nullptr );
 			REFLECTIVE_UNUSED( return_value );
 
 			// parameters

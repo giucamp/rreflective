@@ -36,8 +36,8 @@ namespace reflective
 	TypeInspector::TypeInspector(
 			TypeInspector::InspectionFlags inspection_flags )
 		: _inspection_flags( inspection_flags ),
-			_type( null ), _clasess_and_objects( null ), _classes_count( 0 ),
-			_properties( null ), _property_count( 0 ), _property_values_buffer( null )
+			_type( nullptr ), _clasess_and_objects( nullptr ), _classes_count( 0 ),
+			_properties( nullptr ), _property_count( 0 ), _property_values_buffer( nullptr )
 	{
 
 	}
@@ -71,7 +71,7 @@ namespace reflective
 					unsigned base_type_index = 1;
 					do {
 						const Type * base_type = curr_class->base_type( base_type_index );
-						REFLECTIVE_ASSERT( base_type != null );
+						REFLECTIVE_ASSERT( base_type != nullptr );
 
 						REFLECTIVE_ASSERT( is_instance_of<Class>( *base_type ) ); /* non-class
 							types cannot be base of class types. */
@@ -115,7 +115,7 @@ namespace reflective
 					unsigned base_type_index = base_type_count - 1;
 					do {
 						const Type * base_type = curr_class->base_type( base_type_index );
-						REFLECTIVE_ASSERT( base_type != null );
+						REFLECTIVE_ASSERT( base_type != nullptr );
 
 						REFLECTIVE_ASSERT( is_instance_of<Class>( *base_type ) ); /* non-class
 							types cannot be base of class types. */
@@ -123,7 +123,7 @@ namespace reflective
 						const Class * base_class = static_cast<const Class*>( base_type );
 
 						const void * next_object_part = object;
-						if( next_object_part != null )
+						if( next_object_part != nullptr )
 							next_object_part = curr_class->pointer_to_base_type( next_object_part, base_type_index );
 
 						class_and_objects = _gather_classes_and_objects( 
@@ -141,7 +141,7 @@ namespace reflective
 			REFLECTIVE_ASSERT( is_instance_of<Class>( *base_type ) ); /* class types cannot 
 				have non-class bases. */
 
-			if( object != null )
+			if( object != nullptr )
 				object = curr_class->pointer_to_base_type( object, 0 );
 
 			curr_class = static_cast<const Class *>( base_type );
@@ -260,7 +260,7 @@ namespace reflective
 
 				_properties[ actual_total_property_count ].property = &curr_property;
 
-				if( clasess_and_objects[ class_index ].object_part != null )
+				if( clasess_and_objects[ class_index ].object_part != nullptr )
 					curr_property.get_value( clasess_and_objects[ class_index ].object_part, prop_value );
 				
 				_properties[ actual_total_property_count ].value = prop_value;
@@ -312,8 +312,8 @@ namespace reflective_externals
 		using namespace ::reflective;
 		typedef reflective::TypeInspector ThisClass;
 	
-		static Class * class_object = null;
-		if( class_object != null )
+		static Class * class_object = nullptr;
+		if( class_object != nullptr )
 			return class_object;
 	
 		// class object

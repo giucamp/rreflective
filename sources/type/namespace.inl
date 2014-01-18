@@ -58,7 +58,7 @@ namespace reflective
 
 	// Namespace::constructor
 	inline Namespace::Namespace( const SymbolName & name )
-		: Symbol( name ), _parent( null )
+		: Symbol( name ), _parent( nullptr )
 	{
 		set_type_id( eTypeNamespace );
 	}
@@ -90,6 +90,18 @@ namespace reflective
 	inline const Namespace * Namespace::find_child_namespace( const StaticConstString & path ) const
 	{
 		return const_cast<Namespace*>( this )->find_child_namespace( path );
+	}
+
+	// Namespace::child_types
+	inline const std::map< SymbolNameHash, const Type * > & Namespace::child_types() const
+	{
+		return _child_types; 
+	}
+
+	// Namespace::child_namespaces
+	inline const std::map< SymbolNameHash, Namespace * > & Namespace::child_namespaces() const
+	{
+		return _child_namespaces;
 	}
 
 

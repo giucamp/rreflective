@@ -35,8 +35,6 @@ template <class UINT>
 // mem
 namespace mem
 {
-	using reflective::null;
-
 				/**** address alignment ****/
 
 	// is_aligned

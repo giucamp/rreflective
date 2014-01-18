@@ -102,9 +102,19 @@ namespace reflective
 	template <class TYPE>
 		bool to_string( ToStringBuffer & dest_buffer, const TYPE & source_object );
 
+	// ToStringBuffer << object
+	template <class TYPE>
+		inline ToStringBuffer operator << ( ToStringBuffer & dest_buffer, const TYPE & source_object )
+	{
+		to_string( dest_buffer, source_object );
+		return dest_buffer;
+	}
+
 	// assign_from_string
 	template <class TYPE>
 		bool assign_from_string( TYPE & dest_object, FromStringBuffer & source_buffer );
+	template <class TYPE>
+		bool assign_from_string( TYPE & dest_object, FromStringBuffer & source_buffer, ToStringBuffer error_buffer );
 
 	/* count_inhertied_properties( type ) - count the number of properties of the type and
 		all the base types. If the type is not a class, the return value is always zero. */
@@ -117,7 +127,7 @@ namespace reflective
 		const Property & property, // current property
 		const void * object, /* the object passed to enum_inhertied_properties, after the 
 			cast to class_object. This object can be safely used with class_object. */
-		size_t index, // zero-based index of the property in th enumeration
+		size_t index, // zero-based index of the property in the enumeration
 		void * user_data ); // user param passed to enum_inhertied_properties
 
 	/* enum_inhertied_properties - enumerates all the properties of the given type and all
@@ -161,7 +171,7 @@ namespace reflective
 
 	const Property * find_inhertied_property( const Class & class_obj, 
 		SymbolName name, const Class * * out_owning_class,
-		void * * inout_object = null );
+		void * * inout_object = nullptr );
 
 	const Action * find_inhertied_action( const Class & class_obj, 
 		SymbolName name, const Class * * out_owning_class );

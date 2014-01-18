@@ -43,13 +43,6 @@ namespace reflective
 	class CollectionHandler;
 	class Type;
 
-	// null
-	extern class Null
-	{
-	public:
-		template <class TYPE> operator TYPE * () const		{ return 0; }
-	} null;
-
 	// SymbolTypeId
 	enum SymbolTypeId
 	{

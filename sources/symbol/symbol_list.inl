@@ -40,7 +40,7 @@ namespace reflective
 	template < class SYMBOL, bool ALLOW_DUPLICATES,
 		class SYMBOL_COMPARER >
 			inline SymbolList<SYMBOL, ALLOW_DUPLICATES, SYMBOL_COMPARER >::SymbolList()
-				: _items( null ), _count( 0 )
+				: _items( nullptr ), _count( 0 )
 	{
 	}
 
@@ -64,7 +64,7 @@ namespace reflective
 			void SymbolList<SYMBOL, ALLOW_DUPLICATES, SYMBOL_COMPARER >::assign(
 				const SYMBOL * * items, size_t count )
 	{
-		REFLECTIVE_ASSERT( _items == null ); // cannot reassign
+		REFLECTIVE_ASSERT( _items == nullptr ); // cannot reassign
 
 		void * allocation = reflective_externals::mem_lifo_alloc(
 			alignment_of( SYMBOL * ), count * sizeof( SYMBOL * ) );
@@ -145,7 +145,7 @@ namespace reflective
 			if( _items[index]->name() == name )
 				return _items[index];
 		} while( ++index < _count );
-		return null;
+		return nullptr;
 	}
 
 	// SymbolList::find
@@ -158,7 +158,7 @@ namespace reflective
 			if( _items[index]->name().uint_hash() == name_hash )
 				return _items[index];
 		} while( ++index < _count );
-		return null;
+		return nullptr;
 	}
 
 
@@ -279,8 +279,8 @@ namespace reflective_externals
 		using namespace ::reflective;
 		typedef reflective::SymbolList<SYMBOL, ALLOW_DUPLICATES, SYMBOL_COMPARER > ThisClass;
 
-		static Class * result = null;
-		if( result != null )
+		static Class * result = nullptr;
+		if( result != nullptr )
 			return result;
 
 		// dependencies

@@ -96,8 +96,8 @@ namespace reflective
 		}
 		else
 		{
-			out_group.curr_in_group = null;
-			out_group.end_of_group = null;
+			out_group.curr_in_group = nullptr;
+			out_group.end_of_group = nullptr;
 		}
 	}
 
@@ -118,8 +118,8 @@ namespace reflective
 		}
 		else
 		{
-			out_group.curr_in_group = null;
-			out_group.end_of_group = null;
+			out_group.curr_in_group = nullptr;
+			out_group.end_of_group = nullptr;
 		}
 	}
 }

@@ -64,7 +64,7 @@ namespace reflective
 
 			OBJECT * typed_object = static_cast<OBJECT *>( object );
 
-			REFLECTIVE_ASSERT( actual_parameters == null );
+			REFLECTIVE_ASSERT( actual_parameters == nullptr );
 
 			/* calls the method and copy-construct the return value in the
 				buffer pointed by return_value. */
@@ -105,8 +105,8 @@ namespace reflective
 	protected:
 		void on_invoke( void * object, const void * actual_parameters, void * return_value ) const
 		{			
-			REFLECTIVE_ASSERT( actual_parameters == null );
-			REFLECTIVE_ASSERT( return_value == null );
+			REFLECTIVE_ASSERT( actual_parameters == nullptr );
+			REFLECTIVE_ASSERT( return_value == nullptr );
 			REFLECTIVE_UNUSED_2( actual_parameters, return_value );
 
 			OBJECT * typed_object = static_cast<OBJECT *>( object );
@@ -129,7 +129,7 @@ namespace reflective
 	{
 		typedef MethodAction_0< OBJECT, RETURN_TYPE > MethodAction;
 
-		REFLECTIVE_ASSERT( parameter_names == null || *parameter_names == 0 );
+		REFLECTIVE_ASSERT( parameter_names == nullptr || *parameter_names == 0 );
 		REFLECTIVE_UNUSED( parameter_names );
 
 		void * allocation = reflective_externals::mem_lifo_alloc( 

@@ -118,7 +118,7 @@ namespace reflective_externals
 			inline bool primitive_assign_from_string<TYPE>( reflective::FromStringBuffer & source_buffer, \
 				const reflective::Type & type, void * object, ToStringBuffer & error_buffer ) \
 		{ \
-			REFLECTIVE_UNUSED_2( type, error_buffer ); \
+			REFLECTIVE_UNUSED( type ); \
 			_PRIMITIVE_STRING_FUNCTORS_SCANF(FORMAT_SPEC); \
 			if( result == 1 ) return true; \
 			error_buffer.append_literal( "not a number" ); \
@@ -134,8 +134,8 @@ namespace reflective_externals
 	_PRIMITIVE_STRING_FUNCTORS( unsigned long, "%d" );
 	_PRIMITIVE_STRING_FUNCTORS( uint8_t, "%d" );
 	_PRIMITIVE_STRING_FUNCTORS( uint16_t, "%d" );
+	_PRIMITIVE_STRING_FUNCTORS( uint32_t, "%d" );
 	_PRIMITIVE_STRING_FUNCTORS( uint64_t, "%lld" );
-	_PRIMITIVE_STRING_FUNCTORS( size_t, "%d" );
 	_PRIMITIVE_STRING_FUNCTORS( void*, "0x%p" );
 	_PRIMITIVE_STRING_FUNCTORS( char, "%d" );
 	_PRIMITIVE_STRING_FUNCTORS( wchar_t, "%d" );

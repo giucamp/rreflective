@@ -73,7 +73,7 @@ namespace reflective_externals
 
 	template <class TYPE>
 		bool primitive_assign_from_string( FromStringBuffer & source_buffer, 
-			const Type & type, void * object, ToStringBuffer & error_buffer );
+			const reflective::Type & type, void * object, ToStringBuffer & error_buffer );
 
 	template <class TYPE>
 		void primitive_to_string( 
@@ -98,10 +98,10 @@ namespace reflective_externals
 	IMPLEMENT_PRIMITIVE_TYPE( int )
 	IMPLEMENT_PRIMITIVE_TYPE( uint8_t )
 	IMPLEMENT_PRIMITIVE_TYPE( uint16_t )
+	IMPLEMENT_PRIMITIVE_TYPE( uint32_t )
 	IMPLEMENT_PRIMITIVE_TYPE( uint64_t )
 	IMPLEMENT_PRIMITIVE_TYPE( float )
 	IMPLEMENT_PRIMITIVE_TYPE( double )
-	IMPLEMENT_PRIMITIVE_TYPE( size_t )
 	IMPLEMENT_PRIMITIVE_TYPE( unsigned long )
 
 	#undef IMPLEMENT_PRIMITIVE_TYPE

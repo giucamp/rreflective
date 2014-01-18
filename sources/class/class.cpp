@@ -36,7 +36,7 @@ namespace reflective
 		const TemplateParameter * template_parameters, size_t template_parameter_count )
 	{
 		// compute length
-		ToStringBuffer class_name_buff( null, 0 );
+		ToStringBuffer class_name_buff( nullptr, 0 );
 		class_name_buff.append( class_name.start_of_chars(), class_name.length() );
 		class_name_buff.append_literal( "< " );
 		TemplateParameter::actual_parameters_to_string( class_name_buff, template_parameters, template_parameter_count );
@@ -77,26 +77,26 @@ namespace reflective
 	Class::Class( Namespace & parent_namespace, const SymbolName & name,
 		size_t alignment, size_t size )
 			: Type( parent_namespace, name, size, alignment ),
-				_template_paramaters_values( null ),
-				_identifier_property( null )
+				_template_paramaters_values( nullptr ),
+				_identifier_property( nullptr )
 	{		
 		set_type_id( eTypeClass );
 
 		_inner_namespace = edit_parent_namespace().find_or_add_child_namespace( name );
-		REFLECTIVE_ASSERT( _inner_namespace != null );
+		REFLECTIVE_ASSERT( _inner_namespace != nullptr );
 	}
 
 	// Class::constructor( namespace_path, name, size, alignment )
 	Class::Class( const StaticConstString & parent_namespace_path,
 		const SymbolName & name, size_t alignment, size_t size )
 			: Type( parent_namespace_path, name, size, alignment ),
-				_template_paramaters_values( null ),
-				_identifier_property( null )
+				_template_paramaters_values( nullptr ),
+				_identifier_property( nullptr )
 	{		
 		set_type_id( eTypeClass );
 
 		_inner_namespace = edit_parent_namespace().find_or_add_child_namespace( name );
-		REFLECTIVE_ASSERT( _inner_namespace != null );
+		REFLECTIVE_ASSERT( _inner_namespace != nullptr );
 	}
 
 	// Class::constructor( name, size, alignment, namespace_path )
@@ -106,8 +106,8 @@ namespace reflective
 	{
 		set_type_id( eTypeClass );
 
-		_inner_namespace = null;
-		_identifier_property = null;
+		_inner_namespace = nullptr;
+		_identifier_property = nullptr;
 
 		Namespace & parent = edit_parent_namespace();
 		//parent.add_child_namespace( _inner_namespace );
@@ -166,8 +166,8 @@ namespace reflective_externals
 		typedef reflective::Class ThisClass;
 		typedef Type BaseClass;
 	
-		static Class * class_object = null;
-		if( class_object != null )
+		static Class * class_object = nullptr;
+		if( class_object != nullptr )
 			return class_object;
 	
 		// class object

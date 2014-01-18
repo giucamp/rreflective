@@ -85,14 +85,14 @@ namespace reflective
 	// Class::is_template_instance
 	inline bool Class::is_template_instance() const
 	{
-		return _template_paramaters_values != null;
+		return _template_paramaters_values != nullptr;
 	}
 
 	// Class::class_template
 	inline const ClassTemplate * Class::class_template() const
 	{
 		if( !_template_paramaters_values )
-			return null;
+			return nullptr;
 
 		const Namespace & parent = parent_namespace();
 		return static_cast<const ClassTemplate*>( &parent );
@@ -114,7 +114,7 @@ namespace reflective
 	inline const ParameterList * Class::formal_template_parameters() const
 	{
 		if( !_template_paramaters_values )
-			return null;
+			return nullptr;
 
 		const Namespace & parent = parent_namespace();
 		const ClassTemplate & class_template = static_cast<const ClassTemplate&>( parent );

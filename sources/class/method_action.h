@@ -158,7 +158,7 @@ namespace reflective
 		Action * new_action( SymbolName name, 
 			METHOD method )
 	{
-		return _new_action<CLASS>( name, method, null, ClassMember::NO_ATTRIBUTES, 0 );
+		return _new_action<CLASS>( name, method, nullptr, ClassMember::NO_ATTRIBUTES, 0 );
 	}
 
 } // namespace reflective

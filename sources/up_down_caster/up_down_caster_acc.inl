@@ -35,8 +35,8 @@ namespace reflective
 
 	// UpDownCaster<UpDownCasterAllowConstCast>::constructor
 	inline UpDownCaster<UpDownCasterAllowConstCast>::UpDownCaster()
-		: _to_base_caster( null ),
-		  _from_base_caster( null )
+		: _to_base_caster( nullptr ),
+		  _from_base_caster( nullptr )
 	{
 	}
 
@@ -72,14 +72,14 @@ namespace reflective
 	// UpDownCaster<UpDownCasterAllowConstCast>::pointer_to_base_type
 	inline void * UpDownCaster<UpDownCasterAllowConstCast>::pointer_to_base_type( void * pointer ) const
 	{
-		REFLECTIVE_ASSERT( _to_base_caster != null );
+		REFLECTIVE_ASSERT( _to_base_caster != nullptr );
 		return (*_to_base_caster)( pointer );
 	}
 
 	// UpDownCaster<UpDownCasterAllowConstCast>::pointer_from_base_type
 	inline void * UpDownCaster<UpDownCasterAllowConstCast>::pointer_from_base_type( void * pointer ) const
 	{
-		REFLECTIVE_ASSERT( _from_base_caster != null );
+		REFLECTIVE_ASSERT( _from_base_caster != nullptr );
 		return (*_from_base_caster)( pointer );
 	}
 
@@ -101,8 +101,8 @@ namespace reflective
 	template < class BASE_CLASS, class THIS_CLASS >
 		void * UpDownCaster<UpDownCasterAllowConstCast>::_typed_to_base_caster( void * pointer )
 	{
-		// the pointer cannot be null
-		REFLECTIVE_ASSERT( pointer != null );
+		// the pointer cannot be nullptr
+		REFLECTIVE_ASSERT( pointer != nullptr );
 
 		// this cast is just a type reinterpretation - the compiler shouldn't generate any code
 		THIS_CLASS * this_object = static_cast<THIS_CLASS*>( pointer );
@@ -121,8 +121,8 @@ namespace reflective
 	template < class BASE_CLASS, class THIS_CLASS >
 		void * UpDownCaster<UpDownCasterAllowConstCast>::_typed_from_base_caster( void * pointer )
 	{
-		// the pointer cannot be null
-		REFLECTIVE_ASSERT( pointer != null );
+		// the pointer cannot be nullptr
+		REFLECTIVE_ASSERT( pointer != nullptr );
 
 		// this cast is just a type reinterpretation - the compiler shouldn't generate any code
 		BASE_CLASS * base_object = static_cast<BASE_CLASS*>( pointer );

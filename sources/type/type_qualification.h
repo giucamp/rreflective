@@ -68,7 +68,7 @@ namespace reflective
 			pointer is 1, for pointer to pointer is 2, and so on.
 		- a boolean value for each indirection level, which specifies if the level is const.
 		- an optional final type, which is the pointed type. If the number of indirection
-			levels is zero, the final type is null, otherwise it is != null.
+			levels is zero, the final type is nullptr, otherwise it is != nullptr.
 	   The TypeQualification should be used in couple with a reference to a Type. It is suitable 
 		to encode the type of properies, template parameters, action parameters and return types. */
 	class TypeQualification

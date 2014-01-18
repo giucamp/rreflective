@@ -63,13 +63,13 @@ namespace reflective_externals
 	{
 		REFLECTIVE_UNUSED_2( null_pointer_1, null_pointer_2 );
 
-		static ArrayType * result = null;
+		static ArrayType * result = nullptr;
 		if( result )
 			return result;
 
-		mem::AbstractLifoAllocator & lifo_allocator = reflective_externals::lifo_allocator();
+		memo::LifoAllocator & lifo_allocator = memo::get_lifo_allocator();
 
-		void * allocation = lifo_allocator.allocate( alignment_of( ArrayType ), sizeof( ArrayType ) );
+		void * allocation = lifo_allocator.alloc( alignment_of( ArrayType ), sizeof( ArrayType ) );
 
 		result = new( allocation ) ArrayType( safe_get_qualified_type<TYPE>(), SIZE );
 

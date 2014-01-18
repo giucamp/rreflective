@@ -35,7 +35,7 @@ namespace reflective
 	ClassTemplate * create_class_template( const StaticConstString & parent_namespace_path,
 		const StaticConstString & name, const TemplateParameter * template_parameters, size_t template_parameters_count )
 	{
-		// access (or create) parent namespace
+		// access (or create_instance) parent namespace
 		Namespace * parent_namespace = Namespace::edit_global().find_or_add_child_namespace( parent_namespace_path );
 		if( parent_namespace )
 		{
@@ -48,10 +48,10 @@ namespace reflective
 			}
 		}
 
-		// create class template
+		// create_instance class template
 		ClassTemplate * class_template = REFLECTIVE_LIFO_NEW( ClassTemplate, parent_namespace_path, name );
 
-		// create parameters
+		// create_instance parameters
 		const Parameter * * parameters = static_cast<const Parameter * *>( 
 				reflective_externals::mem_lifo_alloc( 
 				alignment_of( Parameter * ), template_parameters_count * sizeof( Parameter * ) ) );
@@ -84,8 +84,8 @@ namespace reflective_externals
 		typedef reflective::ClassTemplate ThisClass;
 		typedef Namespace BaseClass;
 	
-		static Class * class_object = null;
-		if( class_object != null )
+		static Class * class_object = nullptr;
+		if( class_object != nullptr )
 			return class_object;
 	
 		// class object

@@ -37,7 +37,7 @@ namespace reflective
 	{
 		#if REFLECTIVE_ENABLE_ASSERT
 			void * prev_collection = watch->collection();
-			REFLECTIVE_ASSERT( prev_collection == null ); // call unregister_watch first
+			REFLECTIVE_ASSERT( prev_collection == nullptr ); // call unregister_watch first
 		#endif
 
 		const CollectionHandler * collection_handler = collection_type.collection_handler();
@@ -52,8 +52,8 @@ namespace reflective
 		}
 		else
 		{
-			REFLECTIVE_ASSERT( watch->collection() == null );
-			REFLECTIVE_ASSERT( watch->collection_type() == null );
+			REFLECTIVE_ASSERT( watch->collection() == nullptr );
+			REFLECTIVE_ASSERT( watch->collection_type() == nullptr );
 		}
 		return result;
 	}
@@ -63,14 +63,14 @@ namespace reflective
 	{
 		const Type * collection_type = watch->collection_type();
 		void * collection = watch->collection();
-		if( collection == null )
+		if( collection == nullptr )
 		{
-			REFLECTIVE_ASSERT( collection_type == null );
+			REFLECTIVE_ASSERT( collection_type == nullptr );
 			return;
 		}
 		else
 		{
-			REFLECTIVE_ASSERT( collection_type != null );
+			REFLECTIVE_ASSERT( collection_type != nullptr );
 		}
 
 		const CollectionHandler * collection_handler = collection_type->collection_handler();
@@ -93,8 +93,8 @@ namespace reflective_externals
 		using namespace ::reflective;
 		typedef reflective::Watch ThisClass;
 	
-		static Class * class_object = null;
-		if( class_object != null )
+		static Class * class_object = nullptr;
+		if( class_object != nullptr )
 			return class_object;
 	
 		// class object

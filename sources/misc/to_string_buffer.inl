@@ -34,7 +34,7 @@ namespace reflective
 
 	// ToStringBuffer::default constructor
 	inline ToStringBuffer::ToStringBuffer()
-		: _buffer( null ), _needed_length( 0 ), _max_length( 0 )
+		: _buffer( nullptr ), _needed_length( 0 ), _max_length( 0 )
 	{
 	}
 
@@ -116,7 +116,7 @@ namespace reflective
 	// ToStringBuffer::uninit
 	inline void ToStringBuffer::uninit()
 	{
-		_buffer = null;
+		_buffer = nullptr;
 		_needed_length = 0;
 		_max_length = 0;
 	}
@@ -124,7 +124,7 @@ namespace reflective
 	// ToStringBuffer::is_initialized
 	inline bool ToStringBuffer::is_initialized() const
 	{
-		return _buffer != null;
+		return _buffer != nullptr;
 	}
 
 	// ToStringBuffer::get_bookmark

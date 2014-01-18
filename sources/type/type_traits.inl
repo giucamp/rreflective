@@ -138,8 +138,8 @@ namespace reflective_externals
 	{
 		REFLECTIVE_UNUSED_2( null_pointer_1, null_pointer_2 );		
 
-		static Type * type_instance;
-		if( type_instance == null )
+		static reflective::Type * type_instance;
+		if( type_instance == nullptr )
 		{		
 			#define __REFLECTIVE_HAS_CONSTRUCTOR		( reflective::has_default_constructor< TYPE >::value && reflective::has_destructor< TYPE >::value )
 			#define __REFLECTIVE_IS_ABSTRACT			reflective::is_abstract< TYPE >::value
@@ -211,7 +211,7 @@ namespace reflective
 		if( !_type )
 		{
 			_type = reflective_externals::init_type(
-				static_cast<TYPE *>( null ), static_cast<TYPE *>( null ) );
+				static_cast<TYPE *>( nullptr ), static_cast<TYPE *>( nullptr ) );
 		}
 	}
 
@@ -219,14 +219,14 @@ namespace reflective
 	template <class TYPE>
 		bool TypeContainer<TYPE>::is_initialized()
 	{
-		return _type != null;
+		return _type != nullptr;
 	}
 
 	// TypeContainer<TYPE>::get
 	template <class TYPE>
 		const Type & TypeContainer<TYPE>::get()
 	{
-		REFLECTIVE_ASSERT( _type != null ); /* the type has not been created - safe_get_type<TYPE>() 
+		REFLECTIVE_ASSERT( _type != nullptr ); /* the type has not been created - safe_get_type<TYPE>() 
 			instead of get_type<TYPE>() can be used during the initialization of the globals
 			to ensure that the type is instantiated. */
 		return *_type;

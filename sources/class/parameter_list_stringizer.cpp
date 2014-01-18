@@ -120,7 +120,7 @@ namespace reflective
 
 	// ActionInvoker::constructor
 	ActionInvoker::ActionInvoker()
-		: _action( null ), _parameters( null ), _return_value( null )
+		: _action( nullptr ), _parameters( nullptr ), _return_value( nullptr )
 	{
 	}
 
@@ -143,7 +143,7 @@ namespace reflective
 		bool allocation_failed = false;
 
 		_parameters = reflective_externals::mem_alloc( parameter_list.total_alignment(), parameter_list.total_size() );
-		if( _parameters == null )
+		if( _parameters == nullptr )
 			allocation_failed = true;
 
 		const Type & return_type = action->return_type();
@@ -152,16 +152,16 @@ namespace reflective
 		{
 			_return_value = reflective_externals::mem_alloc( return_type.alignment(), return_type.size() );
 
-			if( _return_value == null )
+			if( _return_value == nullptr )
 				allocation_failed = true;
 		}
 
 		if( allocation_failed )
 		{
-			if( _parameters != null )
+			if( _parameters != nullptr )
 				reflective_externals::mem_free( _parameters );
 
-			if( _return_value != null )
+			if( _return_value != nullptr )
 				reflective_externals::mem_free( _return_value );
 
 			out_error_message.append_literal( "allocation failed" );
@@ -196,14 +196,14 @@ namespace reflective
 
 		reflective_externals::mem_free( _parameters );
 
-		if( _return_value != null )
+		if( _return_value != nullptr )
 			reflective_externals::mem_free( _return_value );
 
-		_action = null;
+		_action = nullptr;
 
-		_parameters = null;
+		_parameters = nullptr;
 
-		_return_value = null;	
+		_return_value = nullptr;	
 
 		return false;
 	}
@@ -213,9 +213,9 @@ namespace reflective
 	{
 		_action = action;
 
-		_parameters = null;
+		_parameters = nullptr;
 
-		_return_value = null;	
+		_return_value = nullptr;	
 	}
 
 	// ActionInvoker::invoke
@@ -223,7 +223,7 @@ namespace reflective
 		ToStringBuffer * out_return_value,
 		ToStringBuffer * out_reason_text ) const
 	{
-		if( _action == null )
+		if( _action == nullptr )
 		{
 			if( out_reason_text )
 				out_reason_text->append_literal( "action not set" );
@@ -236,7 +236,7 @@ namespace reflective
 		{
 			const Type & return_type = _action->return_type();
 
-			if( _return_value != null )
+			if( _return_value != nullptr )
 			{
 				if( out_return_value )
 				{
@@ -281,7 +281,7 @@ namespace reflective
 	// ActionInvoker::close
 	void ActionInvoker::close()
 	{
-		if( _action == null )
+		if( _action == nullptr )
 			return;
 
 		const ParameterList & parameter_list = _action->parameter_list();
@@ -301,14 +301,14 @@ namespace reflective
 
 		reflective_externals::mem_free( _parameters );
 
-		if( _return_value != null )
+		if( _return_value != nullptr )
 			reflective_externals::mem_free( _return_value );
 
-		_action = null;
+		_action = nullptr;
 
-		_parameters = null;
+		_parameters = nullptr;
 
-		_return_value = null;	
+		_return_value = nullptr;	
 	}
 
 } // namespace reflective
@@ -326,8 +326,8 @@ namespace reflective_externals
 		using namespace ::reflective;
 		typedef reflective::ActionInvoker ThisClass;
 		
-		static Class * class_object = null;
-		if( class_object != null )
+		static Class * class_object = nullptr;
+		if( class_object != nullptr )
 			return class_object;
 		
 		// class object
@@ -366,8 +366,8 @@ namespace reflective_externals
 		using namespace ::reflective;
 		typedef reflective::ParameterStringizer ThisClass;
 		
-		static Class * class_object = null;
-		if( class_object != null )
+		static Class * class_object = nullptr;
+		if( class_object != nullptr )
 			return class_object;
 		
 		// class object

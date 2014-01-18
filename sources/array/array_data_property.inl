@@ -37,7 +37,7 @@ namespace reflective
 			TYPE (OBJECT::*data)[ SIZE ], 
 			ClassMember::Attributes attributes )
 	{
-		ROOT_OBJECT * just_a_type_check = (OBJECT*)null;
+		ROOT_OBJECT * just_a_type_check = (OBJECT*)nullptr;
 		REFLECTIVE_UNUSED( just_a_type_check );
 
 		typedef TYPE (ROOT_OBJECT::*BasePointer )[ SIZE ];

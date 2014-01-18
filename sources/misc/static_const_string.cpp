@@ -58,8 +58,8 @@ namespace reflective_externals
 		using namespace ::reflective;
 		typedef reflective::StaticConstString ThisClass;
 		
-		static Class * result = null;
-		if( result != null )
+		static Class * result = nullptr;
+		if( result != nullptr )
 			return result;	 
 		
 		// class object
@@ -69,7 +69,7 @@ namespace reflective_externals
 		// base types
 		class_object->set_life_functions( LifeFunctions::from_type<ThisClass>( eUngrabbedConstructorCopyAssignmentDestructor ) );
 		class_object->set_no_base_type();
-		class_object->set_string_functions( StaticConstString::to_string, null );
+		class_object->set_string_functions( StaticConstString::to_string, nullptr );
 		
 		// properties
 		const Property * properties[] = 

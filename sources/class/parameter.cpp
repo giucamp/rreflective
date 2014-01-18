@@ -131,7 +131,7 @@ namespace reflective
 						curr_name_start++;
 					names[curr_name_index] = SymbolName( curr_name_start,
 						curr_char_pointer - curr_name_start );
-					curr_name_start = null;
+					curr_name_start = nullptr;
 					curr_name_index++;
 					if( curr_name_index >= count )
 						return curr_name_index;
@@ -147,7 +147,7 @@ namespace reflective
 
 			names[curr_name_index] = SymbolName( curr_name_start,
 				curr_char_pointer - curr_name_start );
-			//curr_name_start = null;
+			//curr_name_start = nullptr;
 			curr_name_index++;
 		}
 
@@ -172,8 +172,8 @@ namespace reflective_externals
 		typedef reflective::Parameter ThisClass;
 		typedef reflective::Symbol BaseClass;
 		
-		static Class * class_object = null;
-		if( class_object != null )
+		static Class * class_object = nullptr;
+		if( class_object != nullptr )
 			return class_object;
 		
 		// class object
@@ -210,8 +210,8 @@ namespace reflective_externals
 		typedef reflective::ParameterList ThisClass;
 		typedef SymbolList<Parameter, false> BaseClass;
 	
-		static Class * class_object = null;
-		if( class_object != null )
+		static Class * class_object = nullptr;
+		if( class_object != nullptr )
 			return class_object;
 	
 		// class object

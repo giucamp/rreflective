@@ -39,7 +39,7 @@ namespace reflective
 		// constructor
 		QualifiedType();
 		QualifiedType( const Type & type );
-		QualifiedType( const Type & type, const TypeQualification type_qualification );
+		QualifiedType( const Type & type, const TypeQualification & type_qualification );
 		QualifiedType( const QualifiedType & source );
 
 		// assignment

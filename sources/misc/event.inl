@@ -44,13 +44,13 @@ namespace reflective
 		AbstractHandler * next_handler;
 		if( handler ) do {
 
-			handler->_event = null;
+			handler->_event = nullptr;
 			next_handler = handler->_next_handler;
-			handler->_next_handler = null;
+			handler->_next_handler = nullptr;
 
 			handler = next_handler;
 
-		} while( handler != null );
+		} while( handler != nullptr );
 	}
 
 	// AbstractEvent::raise
@@ -62,7 +62,7 @@ namespace reflective
 			handler->invoke( params );
 
 			handler = handler->_next_handler;
-		} while( handler != null );
+		} while( handler != nullptr );
 	}
 
 	// AbstractEvent::raise (const params)
@@ -74,7 +74,7 @@ namespace reflective
 			handler->invoke( params );
 
 			handler = handler->_next_handler;
-		} while( handler != null );
+		} while( handler != nullptr );
 	}
 
 	// AbstractEvent::operator +=

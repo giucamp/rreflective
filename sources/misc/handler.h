@@ -58,7 +58,7 @@ namespace reflective
 		Handler();
 
 		template <class OBJECT>
-			Handler & operator () ( OBJECT & object, void (OBJECT::*handler_method)( PARAM & ) );
+			void init( OBJECT & object, void (OBJECT::*handler_method)( PARAM & ) );
 
 		void invoke( void * param );
 		void invoke( const void * param );
@@ -79,7 +79,7 @@ namespace reflective
 		Handler();
 
 		template <class OBJECT>
-			Handler & operator () ( OBJECT & object, void (OBJECT::*handler_method)( const PARAM & ) );
+			void init( OBJECT & object, void (OBJECT::*handler_method)( const PARAM & ) );
 
 		void invoke( void * param );
 		void invoke( const void * param );

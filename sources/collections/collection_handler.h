@@ -64,7 +64,7 @@ namespace reflective
 			bool * out_allow_derived_types ) const = 0; /* Returns the Type from which all the objects
 				belonging to the collection are required to derive. query_item_base_type is set to
 				true is the collection can handle derived classes. If query_item_base_type returns
-				null the collection can handle any type of objects. */
+				nullptr the collection can handle any type of objects. */
 
 		// iteration
 		virtual AbstractIterator * create_iterator( void * collection_object, size_t offset_index ) const = 0;
