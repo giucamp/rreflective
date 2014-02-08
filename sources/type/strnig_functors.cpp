@@ -41,7 +41,7 @@ namespace reflective
 	}
 
 	// GlobalFunctionsStringizer::to_string - gives a string representation of an object
-	void GlobalFunctionsStringizer::to_string( ToStringBuffer & dest_buffer,
+	void GlobalFunctionsStringizer::to_string( StringOutputStream & dest_buffer,
 		const Type & type, const void * object ) const
 	{
 		(*_to_string)( dest_buffer, type, object );
@@ -50,7 +50,7 @@ namespace reflective
 	// GlobalFunctionsStringizer::assign_from_string
 	bool GlobalFunctionsStringizer::assign_from_string( FromStringBuffer & source_buffer, 
 		const Type & type, void * object, 
-		ToStringBuffer & error_buffer ) const
+		StringOutputStream & error_buffer ) const
 	{
 		return (*_from_string)( source_buffer, type, object, error_buffer );
 	}

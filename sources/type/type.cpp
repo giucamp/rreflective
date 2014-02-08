@@ -243,7 +243,7 @@ namespace reflective
 	}
 
 	// Type::type_full_name_to_string
-	void Type::type_full_name_to_string( ToStringBuffer & dest_buffer ) const
+	void Type::type_full_name_to_string( StringOutputStream & dest_buffer ) const
 	{
 		bool first = true;
 		const Namespace * last_dumped_namespace = &Namespace::global();
@@ -405,7 +405,7 @@ namespace reflective_externals
 			new_enum_member( "HasDestructor", reflective::Type::eHasDestructor ),
 			new_enum_member( "HasEqualityComparer", reflective::Type::eHasEqualityComparer ),
 			new_enum_member( "HasLessThanComparer", reflective::Type::eHasLessThanComparer ),
-			new_enum_member( "HasToStringDumper", reflective::Type::eHasToStringDumper ),
+			new_enum_member( "HasToStringDumper", reflective::Type::eHasToString ),
 			new_enum_member( "HasFromStringAssigner", reflective::Type::eHasFromStringAssigner ),
 			new_enum_member( "HasCollectionHandler", reflective::Type::eHasCollectionHandler ),
 		};

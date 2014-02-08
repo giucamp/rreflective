@@ -68,12 +68,12 @@ namespace reflective
 			readable reason. 
 			Note: If the same object is used with adjacent calls to inkoke\can_invoke, to ensure that 
 			the calls results are consistent, the object should not change its state . */
-		virtual bool can_invoke( const void * object, ToStringBuffer & out_reason_text ) const	
+		virtual bool can_invoke( const void * object, StringOutputStream & out_reason_text ) const	
 			{ REFLECTIVE_UNUSED_2( object, out_reason_text );  return true; }
 
 		// invoke
 		bool invoke( void * object, FromStringBuffer & parameters_string_buffer, 
-			ToStringBuffer & out_return_value_text, ToStringBuffer & out_error_text ) const;
+			StringOutputStream & out_return_value_text, StringOutputStream & out_error_text ) const;
 
 	protected:
 

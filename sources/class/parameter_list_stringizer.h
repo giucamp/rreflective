@@ -41,7 +41,7 @@ namespace reflective
 		// parse_actual_list
 		bool parse_actual_list( const ParameterList & parameter_list,
 			FromStringBuffer & source_string_buffer, void * destination,
-			ToStringBuffer & error_message, size_t * out_processed_parameters_count );
+			StringOutputStream & error_message, size_t * out_processed_parameters_count );
 
 	private:
 		ParameterStringizer & operator = ( const ParameterStringizer & ); // not supported
@@ -60,12 +60,12 @@ namespace reflective
 
 		bool setup( const Action * action, 
 			FromStringBuffer & parameters_string_buffer,
-			ToStringBuffer & out_error_message, 
+			StringOutputStream & out_error_message, 
 			size_t * out_processed_parameters_count );
 
 		bool invoke( void * object, 
-			ToStringBuffer * out_return_value,
-			ToStringBuffer * out_reason_text ) const;
+			StringOutputStream * out_return_value,
+			StringOutputStream * out_reason_text ) const;
 
 		void close();
 

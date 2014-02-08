@@ -32,7 +32,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace reflective
 {
 	// QualifiedType::to_string
-	void QualifiedType::to_string( ToStringBuffer & dest_buffer ) const
+	void QualifiedType::to_string( StringOutputStream & dest_buffer ) const
 	{
 		const unsigned indirection_levels = _type_qualification.indirection_levels();
 

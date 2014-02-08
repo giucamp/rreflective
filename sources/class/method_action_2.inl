@@ -38,7 +38,7 @@ namespace reflective
 	public:
 
 		typedef RETURN_TYPE (OBJECT::*Method)( PARAM_1 par1, PARAM_2 par2 );
-		typedef bool (OBJECT::*CanInvokeMethod)( ToStringBuffer & out_reason_text ) const;
+		typedef bool (OBJECT::*CanInvokeMethod)( StringOutputStream & out_reason_text ) const;
 
 		// constructor
 		MethodAction_2( SymbolName name, Attributes attributes, Method method,
@@ -59,7 +59,7 @@ namespace reflective
 		}
 
 		// can_invoke
-		bool can_invoke( const void * object, ToStringBuffer & out_reason_text ) const	
+		bool can_invoke( const void * object, StringOutputStream & out_reason_text ) const	
 		{
 			if( !_can_invoke_method )
 				return true;
@@ -111,7 +111,7 @@ namespace reflective
 	public:
 
 		typedef void (OBJECT::*Method)( PARAM_1 par1, PARAM_2 par2 );
-		typedef bool (OBJECT::*CanInvokeMethod)( ToStringBuffer & out_reason_text ) const;
+		typedef bool (OBJECT::*CanInvokeMethod)( StringOutputStream & out_reason_text ) const;
 
 		// constructor
 		MethodAction_2( SymbolName name, Attributes attributes, Method method,
@@ -132,7 +132,7 @@ namespace reflective
 		}
 
 		// can_invoke
-		bool can_invoke( const void * object, ToStringBuffer & out_reason_text ) const	
+		bool can_invoke( const void * object, StringOutputStream & out_reason_text ) const	
 		{
 			if( !_can_invoke_method )
 				return true;
@@ -185,7 +185,7 @@ namespace reflective
 			RETURN_TYPE (OBJECT::*method)( PARAM_1 par1, PARAM_2 par2 ), 
 			const char * parameter_names,			
 			ClassMember::Attributes attributes,
-			bool (OBJECT::*can_invoke_method)( ToStringBuffer & out_reason_text ) const )
+			bool (OBJECT::*can_invoke_method)( StringOutputStream & out_reason_text ) const )
 	{
 		typedef MethodAction_2< OBJECT, RETURN_TYPE, PARAM_1, PARAM_2 > MethodAction;
 		void * allocation = reflective_externals::mem_lifo_alloc( 

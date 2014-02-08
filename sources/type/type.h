@@ -80,7 +80,7 @@ namespace reflective
 			eHasDestructor			= 1 << 3,
 			eHasEqualityComparer	= 1 << 4,
 			eHasLessThanComparer	= 1 << 5,
-			eHasToStringDumper		= 1 << 6,
+			eHasToString		= 1 << 6,
 			eHasFromStringAssigner	= 1 << 7,
 			eHasTypeResolver		= 1 << 8,
 			eHasCollectionHandler	= 1 << 9
@@ -209,11 +209,11 @@ namespace reflective
 		void destroy_instance( void * object ) const;
 
 		// to_string - gets a string representation of an object of this type. 			
-		void to_string( ToStringBuffer & dest_buffer, const void * object ) const;
+		void to_string( StringOutputStream & dest_buffer, const void * object ) const;
 			/* before calling to_string, an array of chars must be assigned to
-				dest_buffer. If the buffer is not big enough, ToStringBuffer reports
-				the needed size (see ToStringBuffer). 
-				If to_string() is called on an object which has not the eHasToStringDumper
+				dest_buffer. If the buffer is not big enough, StringOutputStream reports
+				the needed size (see StringOutputStream). 
+				If to_string() is called on an object which has not the eHasToString
 				capability, a memory fault will occur. Use check_capabilities to check if
 				it is supported by this type. */
 
@@ -222,10 +222,14 @@ namespace reflective
 		size_t to_string( char * dest_buffer, size_t dest_buffer_size, const void * object ) const;
 
 		// type_full_name_to_string
-		void type_full_name_to_string( ToStringBuffer & dest_buffer ) const;
+		void type_full_name_to_string( StringOutputStream & dest_buffer ) const;
+		
+		// full_name
+		class FullName;
+		FullName full_name() const;
 
 		// assign_from_string
-		bool assign_from_string( FromStringBuffer & source_buffer, void * object, ToStringBuffer & error_buffer ) const; 
+		bool assign_from_string( FromStringBuffer & source_buffer, void * object, StringOutputStream & error_buffer ) const; 
 		
 		// comparers
 		bool object_equals( const void * first_operand, const void * second_operand ) const;
@@ -324,11 +328,11 @@ namespace reflective
 
 		// set_string_functions with methods
 		template <class TYPE> void set_string_functions( 
-			void (TYPE::*to_string)( ToStringBuffer & dest_buffer ) const );
+			void (TYPE::*to_string)( StringOutputStream & dest_buffer ) const );
 		template <class TYPE> void set_string_functions( 
-			void (TYPE::*to_string)( ToStringBuffer & dest_buffer ) const,
+			void (TYPE::*to_string)( StringOutputStream & dest_buffer ) const,
 			bool (TYPE::*from_string)( FromStringBuffer & source_buffer,
-				ToStringBuffer & error_buffer ) );
+				StringOutputStream & error_buffer ) );
 
 		void set_collection_handler( const CollectionHandler * collection_handler );
 

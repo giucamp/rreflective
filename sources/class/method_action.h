@@ -37,14 +37,14 @@ namespace reflective
 			RETURN_TYPE (OBJECT::*method)(), 
 			const char * parameter_names,
 			ClassMember::Attributes attributes,
-			bool (OBJECT::*can_invoke_method)( ToStringBuffer & out_reason_text ) const );
+			bool (OBJECT::*can_invoke_method)( StringOutputStream & out_reason_text ) const );
 
 	// _new_action( name, Class::method, [parameter_names], [attributes], [category] )
 	template <class OBJECT, class RETURN_TYPE, class PARAM_1 >
 		Action * _new_action( SymbolName name, RETURN_TYPE (OBJECT::*method)( PARAM_1 par1 ), 
 			const char * parameter_names,			
 			ClassMember::Attributes attributes,
-			bool (OBJECT::*can_invoke_method)( ToStringBuffer & out_reason_text ) const );
+			bool (OBJECT::*can_invoke_method)( StringOutputStream & out_reason_text ) const );
 
 	// _new_action( name, Class::method, [parameter_names], [attributes], [category] )
 	template <class OBJECT, class RETURN_TYPE,
@@ -52,7 +52,7 @@ namespace reflective
 		Action * _new_action( SymbolName name, RETURN_TYPE (OBJECT::*method)( PARAM_1 par1, PARAM_2 par2 ), 
 			const char * parameter_names,	
 			ClassMember::Attributes attributes,
-			bool (OBJECT::*can_invoke_method)( ToStringBuffer & out_reason_text ) const );
+			bool (OBJECT::*can_invoke_method)( StringOutputStream & out_reason_text ) const );
 
 	// _new_action( name, Class::method, [parameter_names], [attributes], [category] )
 	template <class OBJECT, class RETURN_TYPE,
@@ -61,7 +61,7 @@ namespace reflective
 			RETURN_TYPE (OBJECT::*method)( PARAM_1 par1, PARAM_2 par2, PARAM_3 par3 ), 
 			const char * parameter_names,				
 			ClassMember::Attributes attributes,
-			bool (OBJECT::*can_invoke_method)( ToStringBuffer & out_reason_text ) const );
+			bool (OBJECT::*can_invoke_method)( StringOutputStream & out_reason_text ) const );
 
 	// _new_action( name, Class::method, [parameter_names], [attributes], [category] )
 	template <class OBJECT, class RETURN_TYPE,
@@ -72,7 +72,7 @@ namespace reflective
 											PARAM_4 par4 ), 
 			const char * parameter_names,			
 			ClassMember::Attributes attributes,
-			bool (OBJECT::*can_invoke_method)( ToStringBuffer & out_reason_text ) const );
+			bool (OBJECT::*can_invoke_method)( StringOutputStream & out_reason_text ) const );
 
 	// _new_action( name, Class::method, [parameter_names], [attributes], [category] )
 	template <class OBJECT, class RETURN_TYPE,
@@ -83,7 +83,7 @@ namespace reflective
 											PARAM_4 par4, PARAM_5 par5 ), 
 			const char * parameter_names,			
 			ClassMember::Attributes attributes,
-			bool (OBJECT::*can_invoke_method)( ToStringBuffer & out_reason_text ) const );
+			bool (OBJECT::*can_invoke_method)( StringOutputStream & out_reason_text ) const );
 
 	// _new_action( name, Class::method, [parameter_names], [attributes], [category] )
 	template <class OBJECT, class RETURN_TYPE,
@@ -94,7 +94,7 @@ namespace reflective
 											PARAM_4 par4, PARAM_5 par5, PARAM_6 par6 ), 
 			const char * parameter_names,			
 			ClassMember::Attributes attributes,
-			bool (OBJECT::*can_invoke_method)( ToStringBuffer & out_reason_text ) const );
+			bool (OBJECT::*can_invoke_method)( StringOutputStream & out_reason_text ) const );
 
 	// _new_action( name, Class::method, [parameter_names], [attributes], [category] )
 	template <class OBJECT, class RETURN_TYPE,
@@ -107,7 +107,7 @@ namespace reflective
 											PARAM_7 par7 ), 
 			const char * parameter_names,			
 			ClassMember::Attributes attributes,
-			bool (OBJECT::*can_invoke_method)( ToStringBuffer & out_reason_text ) const );
+			bool (OBJECT::*can_invoke_method)( StringOutputStream & out_reason_text ) const );
 
 	// _new_action( name, Class::method, [parameter_names], [attributes], [category] )
 	template <class OBJECT, class RETURN_TYPE,
@@ -120,7 +120,7 @@ namespace reflective
 											PARAM_7 par7, PARAM_8 par8 ), 
 			const char * parameter_names,			
 			ClassMember::Attributes attributes,
-			bool (OBJECT::*can_invoke_method)( ToStringBuffer & out_reason_text ) const );
+			bool (OBJECT::*can_invoke_method)( StringOutputStream & out_reason_text ) const );
 
 
 	// new_action( name, Class::method, parameter_names, attributes, can_invoke_method )

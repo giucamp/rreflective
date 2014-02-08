@@ -89,9 +89,7 @@ namespace mem
 	const void * find( const void * start_address, const void * end_address, uint8_t value );
 	const void * find( const void * start_address, const void * end_address,
 					  const void * target_start, const void * target_end );
-	void invert( void * start_address, void * end_address );
-
-
+	
 	#if REFLECTIVE_IS_DEBUG
 		void dbg_invalidate( void * start_address, void * end_address );
 		void dbg_invalidate( volatile void * start_address, volatile void * end_address );

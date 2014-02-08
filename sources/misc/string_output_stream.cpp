@@ -27,46 +27,48 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	// ToStringBuffer::append
-	size_t ToStringBuffer::append( const char * start_of_token, size_t token_length )
+	// StringOutputStream::append
+	size_t StringOutputStream::append( const char * i_start_of_token, size_t i_token_length )
 	{
 		#if REFLECTIVE_ENABLE_ASSERT
-			for( size_t index = 0; index < token_length; index++ )
+			for( size_t index = 0; index < i_token_length; index++ )
 			{
-				REFLECTIVE_ASSERT( start_of_token[index] != 0 );
+				REFLECTIVE_ASSERT( i_start_of_token[index] != 0 );
 			}
 		#endif
 
-		if( _needed_length >= _max_length )
+		if( m_needed_length + 1 >= m_buffer_length )
 		{
-			_needed_length += token_length;
+			m_needed_length += i_token_length;
 			return 0;
 		}
 
-		if( _max_length == 0 )
+		if( m_buffer_length == 0 )
 		{
-			_buffer[0] = 0;
 			return 0;
 		}
 
 		// length_to_copy
-		const size_t max_length_to_copy = _max_length - _needed_length;
-		size_t length_to_copy = token_length;
+		const size_t max_length_to_copy = m_buffer_length - m_needed_length;
+		size_t length_to_copy = i_token_length;
 		if( length_to_copy >= max_length_to_copy )
 			length_to_copy = max_length_to_copy;
 
 		// copy
-		char * dest_start = _buffer + _needed_length;
-		memcpy( dest_start, start_of_token, length_to_copy * sizeof( char ) );
+		char * dest_start = m_buffer + m_needed_length;
+		memcpy( dest_start, i_start_of_token, length_to_copy * sizeof( char ) );
 
-		_needed_length += token_length;
-		if( _needed_length < _max_length )
-			_buffer[_needed_length] = 0;
+		m_needed_length += i_token_length;
+		if( m_needed_length < m_buffer_length )
+			m_buffer[m_needed_length] = 0;
+		else if( m_buffer_length > 0 )
+			m_buffer[m_buffer_length - 1] = 0;
 
 		#if REFLECTIVE_ENABLE_ASSERT
-			for( size_t index = 0; index < _needed_length; index++ )
+			size_t buff_actual_length = actual_length();
+			for( size_t index = 0; index < buff_actual_length; index++ )
 			{
-				REFLECTIVE_ASSERT( _buffer[index] != 0 );
+				REFLECTIVE_ASSERT( m_buffer[index] != 0 );
 			}
 		#endif
 
@@ -74,26 +76,29 @@ namespace reflective
 	}
 
 
-	// ToStringBuffer::append
-	bool ToStringBuffer::append( char char_token )
+	// StringOutputStream::append
+	bool StringOutputStream::append( char char_token )
 	{
 		REFLECTIVE_ASSERT( char_token != 0 );
 
-		if( _needed_length + 1 >= _max_length )
+		if( m_needed_length + 1 >= m_buffer_length )
 		{
-			_needed_length++;
+			m_needed_length++;
 			return false;
 		}
 
-		_buffer[ _needed_length ] = char_token;
-		_needed_length++;
-		if( _needed_length < _max_length )
-			_buffer[_needed_length] = 0;
+		m_buffer[ m_needed_length ] = char_token;
+		m_needed_length++;
+		if( m_needed_length < m_buffer_length )
+			m_buffer[m_needed_length] = 0;
+		else if( m_buffer_length > 0 )
+			m_buffer[m_buffer_length - 1] = 0;
 
 		#if REFLECTIVE_ENABLE_ASSERT
-			for( size_t index = 0; index < _needed_length; index++ )
+			size_t buff_actual_length = actual_length();
+			for( size_t index = 0; index < buff_actual_length; index++ )
 			{
-				REFLECTIVE_ASSERT( _buffer[index] != 0 );
+				REFLECTIVE_ASSERT( m_buffer[index] != 0 );
 			}
 		#endif
 	

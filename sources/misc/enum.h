@@ -78,10 +78,10 @@ namespace reflective
 
 		// from_string
 		static bool from_string( FromStringBuffer & source_buffer, const Type & type,
-			void * object, ToStringBuffer & error_buffer );
+			void * object, StringOutputStream & error_buffer );
 
 		// to_string
-		static void to_string( ToStringBuffer & dest_buffer, const Type & type, const void * object );
+		static void to_string( StringOutputStream & dest_buffer, const Type & type, const void * object );
 
 	private: // data members
 		MemberList _members;

@@ -32,7 +32,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace reflective
 {
 	// Parameter::to_string
-	void Parameter::to_string( ToStringBuffer & dest_buffer ) const
+	void Parameter::to_string( StringOutputStream & dest_buffer ) const
 	{
 		_qualified_type.to_string( dest_buffer );
 		dest_buffer.append( ' ' );
@@ -81,7 +81,7 @@ namespace reflective
 	}
 
 	// ParameterList::actual_params_to_string
-	void ParameterList::actual_params_to_string( ToStringBuffer & dest, const void * actual_parameters )
+	void ParameterList::actual_params_to_string( StringOutputStream & dest, const void * actual_parameters )
 	{
 		Walker<const void*> walker( *this, actual_parameters );
 		bool first = true;

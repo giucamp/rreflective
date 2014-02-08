@@ -183,7 +183,7 @@ namespace reflective
 	// NameIdentifier<UINT, STRING, true>::to_string
 	template <class UINT, class STRING>
 		inline void NameIdentifier<UINT, STRING, true>::to_string( 
-			ToStringBuffer & dest_buffer, 
+			StringOutputStream & dest_buffer, 
 			const Type & type, const void * object )
 	{
 		REFLECTIVE_UNUSED( type );
@@ -200,7 +200,7 @@ namespace reflective
 	// NameIdentifier<UINT, STRING, true>::to_string
 	template <class UINT, class STRING>
 		void NameIdentifier<UINT, STRING, true>::to_string( 
-			ToStringBuffer & dest_buffer ) const
+			StringOutputStream & dest_buffer ) const
 	{
 		const STRING & name_string = string();
 		return safe_get_type<STRING>().to_string( dest_buffer, &name_string );

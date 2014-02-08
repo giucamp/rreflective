@@ -75,8 +75,8 @@ namespace reflective
 		bool is_empty() const;
 
 		// to_string
-		void to_string( ToStringBuffer & dest_buffer ) const;
-		static void to_string( ToStringBuffer & dest_buffer, const Type & type, const void * object );	
+		void to_string( StringOutputStream & dest_buffer ) const;
+		static void to_string( StringOutputStream & dest_buffer, const Type & type, const void * object );	
 
 		static NameIdentifier<UINT, STRING, true> empty;
 
@@ -120,8 +120,8 @@ namespace reflective
 		bool is_empty() const;
 
 		// to_string
-		void to_string( ToStringBuffer & dest_buffer ) const;
-		static void to_string( ToStringBuffer & dest_buffer, const Type & type, const void * object );
+		void to_string( StringOutputStream & dest_buffer ) const;
+		static void to_string( StringOutputStream & dest_buffer, const Type & type, const void * object );
 
 		static NameIdentifier<UINT, STRING, false> empty;
 

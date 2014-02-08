@@ -67,9 +67,7 @@ namespace reflective_externals
 		if( result )
 			return result;
 
-		memo::LifoAllocator & lifo_allocator = memo::get_lifo_allocator();
-
-		void * allocation = lifo_allocator.alloc( alignment_of( ArrayType ), sizeof( ArrayType ) );
+		void * allocation = reflective_externals::mem_lifo_alloc( alignment_of( ArrayType ), sizeof( ArrayType ) );
 
 		result = new( allocation ) ArrayType( safe_get_qualified_type<TYPE>(), SIZE );
 

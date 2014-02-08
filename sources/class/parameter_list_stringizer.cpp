@@ -40,7 +40,7 @@ namespace reflective
 	// ParameterStringizer::parse_actual_list
 	bool ParameterStringizer::parse_actual_list( const ParameterList & parameter_list,
 			FromStringBuffer & source_string_buffer, void * destination,
-			ToStringBuffer & error_message, size_t * out_processed_parameters_count )
+			StringOutputStream & error_message, size_t * out_processed_parameters_count )
 	{
 		// const char * chars = source_string_buffer.chars();
 		// const size_t formal_parameter_count = parameter_list.count();
@@ -133,7 +133,7 @@ namespace reflective
 	// ActionInvoker::setup
 	bool ActionInvoker::setup( const reflective::Action * action, 
 			FromStringBuffer & parameters_string_buffer,
-			ToStringBuffer & out_error_message, 
+			StringOutputStream & out_error_message, 
 			size_t * out_processed_parameters_count )
 	{
 		close();
@@ -220,8 +220,8 @@ namespace reflective
 
 	// ActionInvoker::invoke
 	bool ActionInvoker::invoke( void * object, 
-		ToStringBuffer * out_return_value,
-		ToStringBuffer * out_reason_text ) const
+		StringOutputStream * out_return_value,
+		StringOutputStream * out_reason_text ) const
 	{
 		if( _action == nullptr )
 		{

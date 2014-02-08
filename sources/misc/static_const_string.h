@@ -31,7 +31,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	class ToStringBuffer;
+	class StringOutputStream;
 	class Class;
 
 	// StaticConstString
@@ -56,7 +56,7 @@ namespace reflective
 		bool is_empty() const;
 
 		// to_string
-		static void to_string( ToStringBuffer & dest_buffer, const Type & type, 
+		static void to_string( StringOutputStream & dest_buffer, const Type & type, 
 			const void * object );	
 
 	private:

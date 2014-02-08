@@ -60,7 +60,7 @@ namespace reflective
 		const Type * final_type() const;
 
 		// stringizer
-		void to_string( ToStringBuffer & dest_buffer ) const;
+		void to_string( StringOutputStream & dest_buffer ) const;
 
 	private: // data members
 		const Type * _type;

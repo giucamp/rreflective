@@ -194,7 +194,7 @@
     <ClInclude Include="..\sources\iterators\iterator.h" />
     <ClInclude Include="..\sources\iterators\iterators.h" />
     <ClInclude Include="..\sources\iterators\void_iterator.h" />
-    <ClInclude Include="..\sources\misc\auto_string_buffer.h" />
+    <ClInclude Include="..\sources\misc\dynamic_string_stream.h" />
     <ClInclude Include="..\sources\misc\enum.h" />
     <ClInclude Include="..\sources\misc\event.h" />
     <ClInclude Include="..\sources\misc\from_string_buffer.h" />
@@ -202,7 +202,7 @@
     <ClInclude Include="..\sources\misc\name_id.h" />
     <ClInclude Include="..\sources\misc\primitive_type.h" />
     <ClInclude Include="..\sources\misc\static_const_string.h" />
-    <ClInclude Include="..\sources\misc\to_string_buffer.h" />
+    <ClInclude Include="..\sources\misc\string_output_stream.h" />
     <ClInclude Include="..\sources\misc\unreferencer.h" />
     <ClInclude Include="..\sources\reflective_common.h" />
     <ClInclude Include="..\sources\symbol\symbol.h" />
@@ -258,7 +258,7 @@
     <None Include="..\sources\iterators\iterator.inl" />
     <None Include="..\sources\iterators\iterators.inl" />
     <None Include="..\sources\iterators\void_iterator.inl" />
-    <None Include="..\sources\misc\auto_string_buffer.inl" />
+    <None Include="..\sources\misc\dynamic_string_stream.inl" />
     <None Include="..\sources\misc\enum.inl" />
     <None Include="..\sources\misc\event.inl" />
     <None Include="..\sources\misc\from_string_buffer.inl" />
@@ -267,7 +267,7 @@
     <None Include="..\sources\misc\name_id_pn.inl" />
     <None Include="..\sources\misc\primitive_type.inl" />
     <None Include="..\sources\misc\static_const_string.inl" />
-    <None Include="..\sources\misc\to_string_buffer.inl" />
+    <None Include="..\sources\misc\string_output_stream.inl" />
     <None Include="..\sources\symbol\symbol.inl" />
     <None Include="..\sources\symbol\symbol_list.inl" />
     <None Include="..\sources\symbol\symbol_list_collection.inl" />
@@ -372,7 +372,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\sources\misc\auto_string_buffer.cpp">
+    <ClCompile Include="..\sources\misc\dynamic_string_stream.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -412,6 +412,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\misc\string_output_stream.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\sources\symbol\symbol.cpp">

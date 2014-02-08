@@ -78,7 +78,7 @@ namespace reflective
 
 	// MethodsStringizer<TYPE>::to_string - gives a string representation of an object
 	template <class TYPE>
-		void MethodsStringizer<TYPE>::to_string( ToStringBuffer & dest_buffer,
+		void MethodsStringizer<TYPE>::to_string( StringOutputStream & dest_buffer,
 			const Type & type, const void * object ) const
 	{
 		REFLECTIVE_UNUSED( type );
@@ -92,7 +92,7 @@ namespace reflective
 	template <class TYPE>
 		bool MethodsStringizer<TYPE>::assign_from_string( FromStringBuffer & source_buffer, 
 			const Type & type, void * object, 
-			ToStringBuffer & error_buffer ) const
+			StringOutputStream & error_buffer ) const
 	{
 		REFLECTIVE_UNUSED( type );
 

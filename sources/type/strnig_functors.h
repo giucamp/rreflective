@@ -39,13 +39,13 @@ namespace reflective
 	public:
 
 		// to_string - gives a string representation of an object
-		virtual void to_string( ToStringBuffer & dest_buffer,
+		virtual void to_string( StringOutputStream & dest_buffer,
 			const Type & type, const void * object ) const = 0;
 
 		// assign_from_string
 		virtual bool assign_from_string( FromStringBuffer & source_buffer, 
 			const Type & type, void * object, 
-			ToStringBuffer & error_buffer ) const = 0;
+			StringOutputStream & error_buffer ) const = 0;
 
 		// virtual destructor
 		virtual ~Stringizer() { }
@@ -57,10 +57,10 @@ namespace reflective
 	public:
 
 		// function types
-		typedef void (*ToStringDumper)( ToStringBuffer & dest_buffer, 
+		typedef void (*ToStringDumper)( StringOutputStream & dest_buffer, 
 			const Type & type, const void * object );
 		typedef bool (*FromStringAssigner)( FromStringBuffer & source_buffer,
-			const Type & type, void * object, ToStringBuffer & error_buffer );
+			const Type & type, void * object, StringOutputStream & error_buffer );
 
 		// lifo_create
 		static GlobalFunctionsStringizer * lifo_create( ToStringDumper to_string, FromStringAssigner from_string );
@@ -69,13 +69,13 @@ namespace reflective
 		GlobalFunctionsStringizer( ToStringDumper to_string, FromStringAssigner from_string );
 
 		// to_string - gives a string representation of an object
-		void to_string( ToStringBuffer & dest_buffer,
+		void to_string( StringOutputStream & dest_buffer,
 			const Type & type, const void * object ) const;
 
 		// assign_from_string
 		bool assign_from_string( FromStringBuffer & source_buffer, 
 			const Type & type, void * object, 
-			ToStringBuffer & error_buffer ) const;
+			StringOutputStream & error_buffer ) const;
 
 		// function getters
 		FromStringAssigner from_string() const;
@@ -93,9 +93,9 @@ namespace reflective
 	public:
 
 		// function types
-		typedef void (TYPE::*ToStringDumper)( ToStringBuffer & dest_buffer ) const;
+		typedef void (TYPE::*ToStringDumper)( StringOutputStream & dest_buffer ) const;
 		typedef bool (TYPE::*FromStringAssigner)( FromStringBuffer & source_buffer,
-			ToStringBuffer & error_buffer );
+			StringOutputStream & error_buffer );
 
 		// lifo_create
 		static MethodsStringizer * lifo_create( ToStringDumper to_string, FromStringAssigner from_string );
@@ -104,13 +104,13 @@ namespace reflective
 		MethodsStringizer( ToStringDumper to_string, FromStringAssigner from_string );
 
 		// to_string - gives a string representation of an object
-		void to_string( ToStringBuffer & dest_buffer,
+		void to_string( StringOutputStream & dest_buffer,
 			const Type & type, const void * object ) const;
 
 		// assign_from_string
 		bool assign_from_string( FromStringBuffer & source_buffer, 
 			const Type & type, void * object, 
-			ToStringBuffer & error_buffer ) const;
+			StringOutputStream & error_buffer ) const;
 
 		// function getters
 		FromStringAssigner from_string() const;

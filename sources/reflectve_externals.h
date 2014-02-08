@@ -41,7 +41,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define REFLECTIVE_ENABLE_ASSERT				(REFLECTIVE_IS_DEBUG || REFLECTIVE_IS_TEST)
 
 // forwards
-namespace reflective		{ class ToStringBuffer; }
+namespace reflective		{ class StringOutputStream; }
 
 // REFLECTIVE_PRESERVE_SYMBOL_PLAIN_NAMES
 #define REFLECTIVE_PRESERVE_SYMBOL_PLAIN_NAMES	1 /* (isDebug || CMB_ENABLE_TESTING) /* If this is true, SymbolName will

@@ -34,7 +34,7 @@ namespace reflective
 
 	// Action::invoke
 	bool Action::invoke( void * object, FromStringBuffer & parameters_string_buffer, 
-			ToStringBuffer & out_return_value_text, ToStringBuffer & out_error_text ) const
+			StringOutputStream & out_return_value_text, StringOutputStream & out_error_text ) const
 	{
 		if( !_return_type.check_capabilities( Type::eHasFromStringAssigner ) )
 		{
@@ -48,7 +48,7 @@ namespace reflective
 
 		// parse parameter actual list
 
-		ToStringBuffer error;
+		StringOutputStream error;
 
 		size_t constructed_parameters_count = 0;
 

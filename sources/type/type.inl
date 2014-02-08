@@ -296,30 +296,30 @@ namespace reflective
 	{
 		_stringizer = GlobalFunctionsStringizer::lifo_create( to_string, from_string );
 		_set_capabilities( eHasFromStringAssigner, from_string != 0 );
-		_set_capabilities( eHasToStringDumper, to_string != 0 );
+		_set_capabilities( eHasToString, to_string != 0 );
 	}
 
 	// Type::set_string_functions with methods
 	template <class TYPE> inline void Type::set_string_functions( 
-		void (TYPE::*to_string)( ToStringBuffer & dest_buffer ) const,
+		void (TYPE::*to_string)( StringOutputStream & dest_buffer ) const,
 		bool (TYPE::*from_string)( FromStringBuffer & source_buffer,
-			ToStringBuffer & error_buffer ) )
+			StringOutputStream & error_buffer ) )
 	{
 		_stringizer = MethodsStringizer<TYPE>::lifo_create( to_string, from_string );
 		_set_capabilities( eHasFromStringAssigner, from_string != 0 );
-		_set_capabilities( eHasToStringDumper, to_string != 0 );
+		_set_capabilities( eHasToString, to_string != 0 );
 	}
 
 	// Type::set_string_functions with methods
 	template <class TYPE> inline void Type::set_string_functions( 
-		void (TYPE::*to_string)( ToStringBuffer & dest_buffer ) const )
+		void (TYPE::*to_string)( StringOutputStream & dest_buffer ) const )
 	{
 		_stringizer = MethodsStringizer<TYPE>::lifo_create( to_string, 0 );
-		_set_capabilities( eHasToStringDumper, to_string != 0 );
+		_set_capabilities( eHasToString, to_string != 0 );
 	}
 
 	// Type::assign_from_string
-	inline bool Type::assign_from_string( FromStringBuffer & source_buffer, void * object, ToStringBuffer & error_buffer ) const
+	inline bool Type::assign_from_string( FromStringBuffer & source_buffer, void * object, StringOutputStream & error_buffer ) const
 	{
 		REFLECTIVE_ASSERT( is_aligned( object ) );
 		REFLECTIVE_ASSERT( check_capabilities( eHasFromStringAssigner ) );
@@ -328,10 +328,10 @@ namespace reflective
 	}
 
 	// Type::to_string
-	inline void Type::to_string( ToStringBuffer & dest_buffer, const void * object ) const
+	inline void Type::to_string( StringOutputStream & dest_buffer, const void * object ) const
 	{
 		REFLECTIVE_ASSERT( is_aligned( object ) );
-		REFLECTIVE_ASSERT( check_capabilities( eHasToStringDumper ) );
+		REFLECTIVE_ASSERT( check_capabilities( eHasToString ) );
 
 		return _stringizer->to_string( dest_buffer, *this, object );
 	}
@@ -339,7 +339,7 @@ namespace reflective
 	// Type::compute_to_string_required_length
 	inline size_t Type::compute_to_string_required_length( const void * object ) const
 	{
-		ToStringBuffer empty_buffer;
+		StringOutputStream empty_buffer;
 		to_string( empty_buffer, object );
 		return empty_buffer.needed_length();
 	}
@@ -347,7 +347,7 @@ namespace reflective
 	// Type::to_string
 	inline size_t Type::to_string( char * dest_buffer, size_t dest_buffer_size, const void * object ) const
 	{
-		ToStringBuffer buffer( dest_buffer, dest_buffer_size );
+		StringOutputStream buffer( dest_buffer, dest_buffer_size );
 		to_string( buffer, object );
 		return buffer.needed_length();
 	}
@@ -857,6 +857,39 @@ namespace reflective
 	{
 
 	}
+
+
+	// FullName
+	class Type::FullName
+	{
+	public:
+
+		typedef FullName ThisClass;
+
+		static void init_class( reflective::Class & class_obj )
+		{
+			class_obj.set_string_functions( &ThisClass::to_string );
+		}
+
+		FullName()
+			: m_type( nullptr ) {}
+
+		FullName( const Type * i_type )
+			 : m_type( i_type ) {}
+	
+		void to_string( StringOutputStream & dest_buffer ) const
+		{
+			if( m_type != nullptr )
+				m_type->type_full_name_to_string( dest_buffer );
+		}
+
+	private:
+		const Type * m_type;
+	};
+
+	// Type::full_name
+	inline Type::FullName Type::full_name() const
+		{ return FullName( this ); }
 
 } // namespace reflective
 

@@ -33,7 +33,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace reflective
 {
 	// StaticConstString::to_string
-	void StaticConstString::to_string( ToStringBuffer & dest_buffer,
+	void StaticConstString::to_string( StringOutputStream & dest_buffer,
 				const Type & type, const void * object )
 	{
 		REFLECTIVE_UNUSED( type );

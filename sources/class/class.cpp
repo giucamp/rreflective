@@ -36,19 +36,20 @@ namespace reflective
 		const TemplateParameter * template_parameters, size_t template_parameter_count )
 	{
 		// compute length
-		ToStringBuffer class_name_buff( nullptr, 0 );
+		StringOutputStream class_name_buff( nullptr, 0 );
 		class_name_buff.append( class_name.start_of_chars(), class_name.length() );
 		class_name_buff.append_literal( "< " );
 		TemplateParameter::actual_parameters_to_string( class_name_buff, template_parameters, template_parameter_count );
 		class_name_buff.append_literal( " >" );
-		const size_t class_name_length = class_name_buff.needed_length();
+		REFLECTIVE_ASSERT( class_name_buff.needed_length() > 0 );
+		const size_t class_name_length = class_name_buff.needed_length() - 1;
 
 		char * decorated_class_name = static_cast<char *>( 
 			reflective_externals::mem_lifo_alloc( 
 			alignment_of( char ), (class_name_length + 1) * sizeof( char ) ) );
 
 		// write name
-		class_name_buff.init( decorated_class_name, class_name_length + 1 );
+		class_name_buff.set_string_buffer( decorated_class_name, class_name_length + 1 );
 		class_name_buff.append( class_name.start_of_chars(), class_name.length() );
 		class_name_buff.append_literal( "< " );
 		TemplateParameter::actual_parameters_to_string( class_name_buff, template_parameters, template_parameter_count );

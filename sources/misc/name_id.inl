@@ -158,7 +158,7 @@ namespace reflective
 	// NameIdentifier<UINT, STRING, false>::to_string
 	template <class UINT, class STRING>
 		inline void NameIdentifier<UINT, STRING, false>::to_string(
-			ToStringBuffer & dest_buffer,
+			StringOutputStream & dest_buffer,
 			const Type & type, const void * object )
 	{
 		// cast object to a name
@@ -171,7 +171,7 @@ namespace reflective
 	// NameIdentifier<UINT, STRING, false>::to_string
 	template <class UINT, class STRING>
 		void NameIdentifier<UINT, STRING, false>::to_string(
-			ToStringBuffer & dest_buffer ) const
+			StringOutputStream & dest_buffer ) const
 	{
 		// NameIdentifier with no string. The hash will be stringized
 		const UINT hash = uint_hash();

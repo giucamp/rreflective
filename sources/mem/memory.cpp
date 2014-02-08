@@ -25,38 +25,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ***********************************************************************************/
 
-
-// mem::invert
-void mem::invert( void * start_address, void * end_address )
-{
-	REFLECTIVE_ASSERT( start_address <= end_address );
-	
-	uint8_t * from = (uint8_t*)start_address;
-	start_address = mem::upper_align( start_address, sizeof( unsigned ) );
-	if( start_address < end_address )
-	{
-		while( from < (uint8_t*)start_address )
-		{
-			*from = ~*from;
-			from++;
-		}
-
-		unsigned * from = (unsigned*)start_address;
-		start_address = mem::lower_align( end_address, sizeof( unsigned ) );
-		if( from < (unsigned*)start_address )
-		{
-			while( *from = ~*from, ++from < (unsigned*)start_address );
-		}
-	}
-
-
-	while( from < (uint8_t*)end_address )
-	{
-		*from = ~*from;
-		from++;
-	}
-}
-
 #if REFLECTIVE_IS_DEBUG
 
 	// mem::dbg_invalidate

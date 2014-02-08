@@ -31,61 +31,47 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	// AutoStringBuffer::constructor()
-	inline AutoStringBuffer::AutoStringBuffer()
-		: _chars( nullptr ), _buffer_length( 0 ), _string_length( 0 )
+	// DynamicStringStream::constructor()
+	inline DynamicStringStream::DynamicStringStream()
 	{
 	}
 
-	// AutoStringBuffer::constructor( initial_buffer_size )
-	inline AutoStringBuffer::AutoStringBuffer( 
-			size_t initial_buffer_size )
-		: _buffer_length( initial_buffer_size ), _string_length( 0 )
+	// DynamicStringStream::clear
+	inline void DynamicStringStream::clear()
 	{
-		_chars = static_cast<char*>( reflective_externals::mem_alloc( alignment_of( char ), initial_buffer_size * sizeof( char ) ) );
-		if( _chars == nullptr )
-			_buffer_length = 0;
+		m_stream.clear();
 	}
 
-	// AutoStringBuffer::object_to_string( object )
-	template <class OBJECT_TYPE>
-		inline bool AutoStringBuffer::object_to_string( const OBJECT_TYPE & object )
+	// DynamicStringStream::constructor( i_initial_buffer_length )
+	inline DynamicStringStream::DynamicStringStream( size_t i_initial_buffer_length )
 	{
-		// get the actual type
-		const Type & type = safe_type_of( object );
+		reserve( i_initial_buffer_length );
+	}
+		
+	// DynamicStringStream::string_length
+	inline size_t DynamicStringStream::string_length() const
+	{
+		return m_stream.actual_length();
+	}
 
-		return object_to_string( &object, type );
+	// DynamicStringStream::buffer_length
+	inline size_t DynamicStringStream::buffer_length() const
+	{
+		return m_stream.buffer_length();
+	}
+
+	// DynamicStringStream::chars (const)
+	inline const char * DynamicStringStream::chars() const
+	{
+		return m_stream.buffer();
 	}
 	
-	// AutoStringBuffer::string_length
-	inline size_t AutoStringBuffer::string_length() const
+	// DynamicStringStream::destructor
+	inline DynamicStringStream::~DynamicStringStream()
 	{
-		return _string_length;
-	}
-
-	// AutoStringBuffer::buffer_length
-	inline size_t AutoStringBuffer::buffer_length() const
-	{
-		return _buffer_length;
-	}
-
-	// AutoStringBuffer::chars (const)
-	inline const char * AutoStringBuffer::chars() const
-	{
-		return _chars;
-	}
-
-	// AutoStringBuffer::chars
-	inline char * AutoStringBuffer::chars()
-	{
-		return _chars;
-	}
-
-	// AutoStringBuffer::destructor
-	inline AutoStringBuffer::~AutoStringBuffer()
-	{
-		if( _chars != nullptr )
-			reflective_externals::mem_free( _chars );
+		char * buffer = m_stream.buffer();
+		if( buffer != nullptr )
+			reflective_externals::mem_free( buffer );
 	}
 
 } // namespace reflective

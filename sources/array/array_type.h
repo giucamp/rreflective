@@ -44,7 +44,7 @@ namespace reflective
 
 	private: // internal services
 
-		static void _name_to_string( ToStringBuffer & dest, const QualifiedType & type, size_t count );
+		static void _name_to_string( StringOutputStream & dest, const QualifiedType & type, size_t count );
 
 		static SymbolName _construct_name( const QualifiedType & type, size_t count );
 

@@ -44,7 +44,7 @@ namespace reflective
 		void * value();
 
 		// actual_parameters_to_string
-		static void actual_parameters_to_string( ToStringBuffer & dest,
+		static void actual_parameters_to_string( StringOutputStream & dest,
 			const TemplateParameter * parameters, size_t parameter_count );
 
 	private:

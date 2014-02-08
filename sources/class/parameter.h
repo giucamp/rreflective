@@ -44,7 +44,7 @@ namespace reflective
 		const TypeQualification & qualification() const;
 
 		// stringizer
-		void to_string( ToStringBuffer & dest_buffer ) const;
+		void to_string( StringOutputStream & dest_buffer ) const;
 
 	private:
 		Parameter & operator = ( const Parameter & ); // not supported
@@ -76,7 +76,7 @@ namespace reflective
 		void destroy_values( void * actual_parameters );
 
 		// actual_params_to_string
-		void actual_params_to_string( ToStringBuffer & dest, const void * actual_parameters );
+		void actual_params_to_string( StringOutputStream & dest, const void * actual_parameters );
 
 		/* parse_names - parses the string pointed by the first parameter as a comma separamed list of
 				parameter names and fills names with them. count is the maximum number of names. The

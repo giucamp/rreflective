@@ -361,7 +361,7 @@ namespace reflective
 	}
 
 	// object_identifier_to_string
-	bool object_identifier_to_string( ToStringBuffer & dest_buffer, const void * object, const Type & type )
+	bool object_identifier_to_string( StringOutputStream & dest_buffer, const void * object, const Type & type )
 	{
 		if( !is_instance_of<Class>( type ) )
 			return false;
@@ -370,7 +370,7 @@ namespace reflective
 			static_cast<const Class &>( type ) );		
 	}
 
-	bool object_identifier_to_string( ToStringBuffer & dest_buffer, const void * object, const Class & class_obj )
+	bool object_identifier_to_string( StringOutputStream & dest_buffer, const void * object, const Class & class_obj )
 	{
 		const void * curr_object = object;
 		const Class * curr_class = &class_obj;
@@ -381,7 +381,7 @@ namespace reflective
 			{
 				const Type & property_type = identifier_property->type();
 
-				if( property_type.check_capabilities( Type::eHasToStringDumper ) )
+				if( property_type.check_capabilities( Type::eHasToString ) )
 				{
 					LifoBuffer value_buffer( property_type.alignment(),
 						property_type.size() );

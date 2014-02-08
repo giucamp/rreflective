@@ -62,7 +62,7 @@ namespace reflective
 	// Action::invoke
 	inline bool Action::invoke( void * object, const void * actual_parameters, void * return_value ) const
 	{
-		ToStringBuffer empty_reason_text;
+		StringOutputStream empty_reason_text;
 		if( !can_invoke( object, empty_reason_text ) )
 			return false;
 

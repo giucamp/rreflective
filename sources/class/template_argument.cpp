@@ -33,7 +33,7 @@ namespace reflective
 {
 
 	// TemplateParameter::actual_parameters_to_string
-	void TemplateParameter::actual_parameters_to_string( ToStringBuffer & dest,
+	void TemplateParameter::actual_parameters_to_string( StringOutputStream & dest,
 			const TemplateParameter * parameters, size_t parameter_count )
 	{
 		if( parameter_count == 0 )

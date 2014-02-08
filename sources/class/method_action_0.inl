@@ -38,7 +38,7 @@ namespace reflective
 	public:
 
 		typedef RETURN_TYPE (OBJECT::*Method)();
-		typedef bool (OBJECT::*CanInvokeMethod)( ToStringBuffer & out_reason_text ) const;
+		typedef bool (OBJECT::*CanInvokeMethod)( StringOutputStream & out_reason_text ) const;
 
 		MethodAction_0( SymbolName name, Attributes attributes, Method method, CanInvokeMethod can_invoke_method )
 				: Action( name, attributes, safe_get_type<RETURN_TYPE>(), 
@@ -47,7 +47,7 @@ namespace reflective
 		}
 
 		// can_invoke
-		bool can_invoke( const void * object, ToStringBuffer & out_reason_text ) const	
+		bool can_invoke( const void * object, StringOutputStream & out_reason_text ) const	
 		{
 			if( !_can_invoke_method )
 				return true;
@@ -84,7 +84,7 @@ namespace reflective
 	public:
 
 		typedef void (OBJECT::*Method)();
-		typedef bool (OBJECT::*CanInvokeMethod)( ToStringBuffer & out_reason_text ) const;
+		typedef bool (OBJECT::*CanInvokeMethod)( StringOutputStream & out_reason_text ) const;
 
 		MethodAction_0( SymbolName name, Attributes attributes, Method method, CanInvokeMethod can_invoke_method )
 				: Action( name, attributes, safe_get_type<void>(), 
@@ -93,7 +93,7 @@ namespace reflective
 		}
 
 		// can_invoke
-		bool can_invoke( const void * object, ToStringBuffer & out_reason_text ) const	
+		bool can_invoke( const void * object, StringOutputStream & out_reason_text ) const	
 		{
 			if( !_can_invoke_method )
 				return true;
@@ -125,7 +125,7 @@ namespace reflective
 			RETURN_TYPE (OBJECT::*method)(), 
 			const char * parameter_names,			
 			ClassMember::Attributes attributes,
-			bool (OBJECT::*can_invoke_method)( ToStringBuffer & out_reason_text ) const )
+			bool (OBJECT::*can_invoke_method)( StringOutputStream & out_reason_text ) const )
 	{
 		typedef MethodAction_0< OBJECT, RETURN_TYPE > MethodAction;
 

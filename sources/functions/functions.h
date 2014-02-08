@@ -95,16 +95,16 @@ namespace reflective
 	template <class TYPE> QualifiedType qualified_type_of( const TYPE & object );
 
 	// object_identifier_to_string
-	bool object_identifier_to_string( ToStringBuffer & dest_buffer, const void * object, const Type & type );
-	bool object_identifier_to_string( ToStringBuffer & dest_buffer, const void * object, const Class & class_obj );
+	bool object_identifier_to_string( StringOutputStream & dest_buffer, const void * object, const Type & type );
+	bool object_identifier_to_string( StringOutputStream & dest_buffer, const void * object, const Class & class_obj );
 
 	// to_string
 	template <class TYPE>
-		bool to_string( ToStringBuffer & dest_buffer, const TYPE & source_object );
+		bool to_string( StringOutputStream & dest_buffer, const TYPE & source_object );
 
-	// ToStringBuffer << object
+	// StringOutputStream << object
 	template <class TYPE>
-		inline ToStringBuffer operator << ( ToStringBuffer & dest_buffer, const TYPE & source_object )
+		inline StringOutputStream operator << ( StringOutputStream & dest_buffer, const TYPE & source_object )
 	{
 		to_string( dest_buffer, source_object );
 		return dest_buffer;
@@ -114,7 +114,7 @@ namespace reflective
 	template <class TYPE>
 		bool assign_from_string( TYPE & dest_object, FromStringBuffer & source_buffer );
 	template <class TYPE>
-		bool assign_from_string( TYPE & dest_object, FromStringBuffer & source_buffer, ToStringBuffer error_buffer );
+		bool assign_from_string( TYPE & dest_object, FromStringBuffer & source_buffer, StringOutputStream error_buffer );
 
 	/* count_inhertied_properties( type ) - count the number of properties of the type and
 		all the base types. If the type is not a class, the return value is always zero. */

@@ -58,7 +58,7 @@ namespace reflective
 
 	// Enum::from_string
 	bool Enum::from_string( FromStringBuffer & source_buffer, const Type & type,
-		void * object, ToStringBuffer & error_buffer )
+		void * object, StringOutputStream & error_buffer )
 	{
 		REFLECTIVE_ASSERT( type_of( type ) >= get_type<Enum>() );
 
@@ -135,7 +135,7 @@ namespace reflective
 	}
 
 	// Enum::to_string
-	void Enum::to_string( ToStringBuffer & dest_buffer, const Type & type, 
+	void Enum::to_string( StringOutputStream & dest_buffer, const Type & type, 
 		const void * object )
 	{
 		REFLECTIVE_ASSERT( safe_type_of( type ) >= safe_get_type<Enum>() );

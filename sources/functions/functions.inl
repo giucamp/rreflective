@@ -130,10 +130,10 @@ namespace reflective
 
 	// to_string
 	template <class TYPE>
-		inline bool to_string( ToStringBuffer & dest_buffer, const TYPE & source_object )
+		inline bool to_string( StringOutputStream & dest_buffer, const TYPE & source_object )
 	{
 		const Type & type = safe_type_of( source_object );
-		if( !type.check_capabilities( Type::eHasToStringDumper ) )
+		if( !type.check_capabilities( Type::eHasToString ) )
 			return false;
 
 		type.to_string( dest_buffer, &source_object );
@@ -144,14 +144,14 @@ namespace reflective
 	template <class TYPE>
 		inline bool assign_from_string( TYPE & dest_object, FromStringBuffer & source_buffer )
 	{
-		ToStringBuffer error_buffer;
+		StringOutputStream error_buffer;
 		const Type & type = type_of( dest_object );
 		return type.assign_from_string( source_buffer, &dest_object, error_buffer );
 	}
 
 	// assign_from_string
 	template <class TYPE>
-		inline bool assign_from_string( TYPE & dest_object, FromStringBuffer & source_buffer, ToStringBuffer error_buffer )
+		inline bool assign_from_string( TYPE & dest_object, FromStringBuffer & source_buffer, StringOutputStream error_buffer )
 	{
 		const Type & type = type_of( dest_object );
 		return type.assign_from_string( source_buffer, &dest_object, error_buffer );

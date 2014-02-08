@@ -69,7 +69,7 @@ namespace reflective_externals
 {
 
 	template <>
-		void primitive_to_string<bool>( reflective::ToStringBuffer & dest_buffer,
+		void primitive_to_string<bool>( reflective::StringOutputStream & dest_buffer,
 			const reflective::Type & type, const void * object )
 	{
 		REFLECTIVE_ASSERT( type == reflective::get_type<bool>() );
@@ -84,7 +84,7 @@ namespace reflective_externals
 
 	template <>
 		bool primitive_assign_from_string<bool>( reflective::FromStringBuffer & source_buffer,
-			const reflective::Type & type, void * object, reflective::ToStringBuffer & error_buffer )
+			const reflective::Type & type, void * object, reflective::StringOutputStream & error_buffer )
 	{
 		#if REFLECTIVE_ENABLE_ASSERT
 			REFLECTIVE_ASSERT( type == reflective::get_type<bool>() );

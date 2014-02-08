@@ -72,7 +72,7 @@ namespace reflective_externals
 namespace reflective
 {
 	// ArrayType::_name_to_string
-	void ArrayType::_name_to_string( ToStringBuffer & dest, const QualifiedType & type, size_t count )
+	void ArrayType::_name_to_string( StringOutputStream & dest, const QualifiedType & type, size_t count )
 	{
 		reflective::to_string( dest, type );
 		dest.append( '[' );
@@ -85,7 +85,7 @@ namespace reflective
 	{
 		// compute count
 
-		ToStringBuffer buffer;
+		StringOutputStream buffer;
 
 		_name_to_string( buffer, type, count );
 
@@ -99,7 +99,7 @@ namespace reflective
 
 		// fill with chars
 
-		buffer.init( name, length );
+		buffer.set_string_buffer( name, length );
 
 		_name_to_string( buffer, type, count );
 

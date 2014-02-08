@@ -78,7 +78,7 @@ namespace mem
 
 			/**** buffer manipulation ****/
 
-			// mem::set
+	// mem::set
 	inline void set( void * start_address, void * end_address, uint8_t value )
 	{
 		REFLECTIVE_ASSERT( start_address <= end_address );

@@ -102,9 +102,6 @@
     <ClInclude Include="..\sources\iterators\void_iterator.h">
       <Filter>iterators</Filter>
     </ClInclude>
-    <ClInclude Include="..\sources\misc\auto_string_buffer.h">
-      <Filter>misc</Filter>
-    </ClInclude>
     <ClInclude Include="..\sources\misc\enum.h">
       <Filter>misc</Filter>
     </ClInclude>
@@ -124,9 +121,6 @@
       <Filter>misc</Filter>
     </ClInclude>
     <ClInclude Include="..\sources\misc\static_const_string.h">
-      <Filter>misc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sources\misc\to_string_buffer.h">
       <Filter>misc</Filter>
     </ClInclude>
     <ClInclude Include="..\sources\misc\unreferencer.h">
@@ -195,6 +189,12 @@
       <Filter>array</Filter>
     </ClInclude>
     <ClInclude Include="..\sources\reflective_common.h" />
+    <ClInclude Include="..\sources\misc\string_output_stream.h">
+      <Filter>misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\misc\dynamic_string_stream.h">
+      <Filter>misc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\sources\class\action.inl">
@@ -278,9 +278,6 @@
     <None Include="..\sources\iterators\void_iterator.inl">
       <Filter>iterators</Filter>
     </None>
-    <None Include="..\sources\misc\auto_string_buffer.inl">
-      <Filter>misc</Filter>
-    </None>
     <None Include="..\sources\misc\enum.inl">
       <Filter>misc</Filter>
     </None>
@@ -303,9 +300,6 @@
       <Filter>misc</Filter>
     </None>
     <None Include="..\sources\misc\static_const_string.inl">
-      <Filter>misc</Filter>
-    </None>
-    <None Include="..\sources\misc\to_string_buffer.inl">
       <Filter>misc</Filter>
     </None>
     <None Include="..\sources\symbol\symbol.inl">
@@ -374,6 +368,12 @@
     <None Include="..\sources\class\method_action_7.inl">
       <Filter>class</Filter>
     </None>
+    <None Include="..\sources\misc\string_output_stream.inl">
+      <Filter>misc</Filter>
+    </None>
+    <None Include="..\sources\misc\dynamic_string_stream.inl">
+      <Filter>misc</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\sources\class\action.cpp">
@@ -414,9 +414,6 @@
     </ClCompile>
     <ClCompile Include="..\sources\functions\functions.cpp">
       <Filter>functions</Filter>
-    </ClCompile>
-    <ClCompile Include="..\sources\misc\auto_string_buffer.cpp">
-      <Filter>misc</Filter>
     </ClCompile>
     <ClCompile Include="..\sources\misc\enum.cpp">
       <Filter>misc</Filter>
@@ -469,6 +466,12 @@
     <ClCompile Include="..\sources\reflective.cpp" />
     <ClCompile Include="..\sources\array\array_type.cpp">
       <Filter>array</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\misc\string_output_stream.cpp">
+      <Filter>misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\misc\dynamic_string_stream.cpp">
+      <Filter>misc</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

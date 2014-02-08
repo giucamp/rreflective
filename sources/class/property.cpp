@@ -31,6 +31,26 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
+	bool Property::set_value_from_string( void * object, const char * str_value, StringOutputStream & error_buffer ) const
+	{
+		FromStringBuffer str_buff( str_value, strlen(str_value) );
+		
+		const Type & final_type = *_qualified_type.final_type();
+		void * value = reflective_externals::mem_lifo_alloc( final_type.alignment(), final_type.size() );
+		if( value == nullptr )
+		{
+			error_buffer.append_literal( "lifo allocation failed" );
+			return false;
+		}
+
+		final_type.construct( value );
+		bool result = final_type.assign_from_string( str_buff, value, error_buffer );
+		if( result )
+			set_value( object, value );
+		final_type.destroy( value );
+		reflective_externals::mem_lifo_free( value );
+		return result;
+	}
 
 } // namespace reflective
 

@@ -104,7 +104,7 @@ namespace reflective_externals
 	// _PRIMITIVE_STRING_FUNCTORS
 	#define _PRIMITIVE_STRING_FUNCTORS( TYPE, FORMAT_SPEC )	\
 		template <> \
-			inline void primitive_to_string<TYPE>( reflective::ToStringBuffer & dest_buffer,  \
+			inline void primitive_to_string<TYPE>( reflective::StringOutputStream & dest_buffer,  \
 				const reflective::Type & type, const void * object ) \
 			{ \
 				REFLECTIVE_UNUSED( type ); \
@@ -116,7 +116,7 @@ namespace reflective_externals
 			} \
 		template <> \
 			inline bool primitive_assign_from_string<TYPE>( reflective::FromStringBuffer & source_buffer, \
-				const reflective::Type & type, void * object, ToStringBuffer & error_buffer ) \
+				const reflective::Type & type, void * object, StringOutputStream & error_buffer ) \
 		{ \
 			REFLECTIVE_UNUSED( type ); \
 			_PRIMITIVE_STRING_FUNCTORS_SCANF(FORMAT_SPEC); \

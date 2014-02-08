@@ -66,7 +66,7 @@ namespace reflective
 			read-only property, or maybe the value was not suitable), and no operation 
 			has been performed. */
 
-		// ...
+		bool set_value_from_string( void * object, const char * value, StringOutputStream & error_buffer ) const;
 
 		bool type_has_tostring() const;
 

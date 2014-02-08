@@ -73,6 +73,6 @@ namespace reflective
 	inline bool Property::type_has_tostring() const
 	{
 		const Type * type = _qualified_type.final_type();
-		return type->check_capabilities( Type::eHasToStringDumper );
+		return type->check_capabilities( Type::eHasToString );
 	}
 }
