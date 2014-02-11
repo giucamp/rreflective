@@ -33,21 +33,41 @@ namespace reflective
 {
 	bool Property::set_value_from_string( void * object, const char * str_value, StringOutputStream & error_buffer ) const
 	{
+		bool result = true;
+
+		if( attributes() & ClassMember::READONLY )
+		{
+			error_buffer << name() << " is readonly";
+			result = false; 
+		}
+
 		FromStringBuffer str_buff( str_value, strlen(str_value) );
 		
 		const Type & final_type = *_qualified_type.final_type();
 		void * value = reflective_externals::mem_lifo_alloc( final_type.alignment(), final_type.size() );
+		
 		if( value == nullptr )
 		{
 			error_buffer.append_literal( "lifo allocation failed" );
-			return false;
+			result = false;
 		}
 
-		final_type.construct( value );
-		bool result = final_type.assign_from_string( str_buff, value, error_buffer );
+		if( !final_type.check_capabilities(Type::eHasFromStringAssigner) )
+		{
+			error_buffer << final_type.full_name() << " does not support from_string";
+			result = false;
+		}
 		if( result )
-			set_value( object, value );
-		final_type.destroy( value );
+		{
+			final_type.construct( value );
+			result = final_type.assign_from_string( str_buff, value, error_buffer );
+			if( result )
+			{
+				result = set_value( object, value );
+			}
+			final_type.destroy( value );
+		}
+
 		reflective_externals::mem_lifo_free( value );
 		return result;
 	}

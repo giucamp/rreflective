@@ -95,10 +95,10 @@ namespace reflective_externals
 {
 	#ifdef _MSC_VER
 		#define _PRIMITIVE_STRING_FUNCTORS_SPRINTF(FORMAT_SPEC) const int result = sprintf_s( str, 256, FORMAT_SPEC, var )
-		#define _PRIMITIVE_STRING_FUNCTORS_SCANF(FORMAT_SPEC)	const int result = sscanf_s( source_buffer.chars(), FORMAT_SPEC, object )
+		#define _PRIMITIVE_STRING_FUNCTORS_SCANF(FORMAT_SPEC)	const int result = sscanf_s( source_buffer.chars(), FORMAT_SPEC, object, &read_size )
 	#else
 		#define _PRIMITIVE_STRING_FUNCTORS_SPRINTF(FORMAT_SPEC) const int result = sprintf( str, FORMAT_SPEC, var )
-		#define _PRIMITIVE_STRING_FUNCTORS_SCANF(FORMAT_SPEC)	const int result = sscanf( source_buffer.chars(), FORMAT_SPEC, object )
+		#define _PRIMITIVE_STRING_FUNCTORS_SCANF(FORMAT_SPEC)	const int result = sscanf( source_buffer.chars(), FORMAT_SPEC, object, &read_size )
 	#endif
 
 	// _PRIMITIVE_STRING_FUNCTORS
@@ -118,17 +118,17 @@ namespace reflective_externals
 			inline bool primitive_assign_from_string<TYPE>( reflective::FromStringBuffer & source_buffer, \
 				const reflective::Type & type, void * object, StringOutputStream & error_buffer ) \
 		{ \
-			REFLECTIVE_UNUSED( type ); \
-			_PRIMITIVE_STRING_FUNCTORS_SCANF(FORMAT_SPEC); \
-			if( result == 1 ) return true; \
-			error_buffer.append_literal( "not a number" ); \
-			return false; \
+			REFLECTIVE_UNUSED( type ); size_t read_size = 0; \
+			_PRIMITIVE_STRING_FUNCTORS_SCANF(FORMAT_SPEC "%n"); \
+			if( result != 1 ) { error_buffer.append_literal( "not a number" ); return false; } \
+			if( read_size < source_buffer.remaining_length() ) { error_buffer.append_literal( "spurious number" ); return false; } \
+			return true; \
 		} \
 
 
 	_PRIMITIVE_STRING_FUNCTORS( float, "%f" );
-	_PRIMITIVE_STRING_FUNCTORS( double, "%f" );
-	_PRIMITIVE_STRING_FUNCTORS( long double, "%f" );
+	_PRIMITIVE_STRING_FUNCTORS( double, "%lf" );
+	_PRIMITIVE_STRING_FUNCTORS( long double, "%Lf" );
 	_PRIMITIVE_STRING_FUNCTORS( int, "%d" );
 	_PRIMITIVE_STRING_FUNCTORS( long, "%d" );
 	_PRIMITIVE_STRING_FUNCTORS( unsigned long, "%d" );
