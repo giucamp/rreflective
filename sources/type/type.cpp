@@ -72,7 +72,7 @@ namespace reflective
 		_parent_namespace = global_namespace.find_or_add_child_namespace( parent_namespace_path );
 		_parent_namespace->add_child_type( *this );
 	}
-
+	
 	// Type::constructor
 	Type::Type( Namespace & parent_namespace, const SymbolName & name, size_t size, size_t alignment )
 		: Symbol( name ), 
@@ -379,12 +379,34 @@ namespace reflective
 		reflective_externals::mem_free( object );
 	}
 
+	// Type::set_user_data
+	void Type::set_user_data( SymbolName i_key, void * i_user_data )
+	{
+		std::pair< std::map< SymbolName, void * >::iterator, bool > insert_result = m_user_data.insert( std::make_pair( i_key, i_user_data ) );
+		REFLECTIVE_ASSERT( insert_result.second );
+	}
+
+	// Type::get_user_data
+	bool Type::get_user_data( SymbolName i_key, void * * io_user_data ) const
+	{
+		std::map< SymbolName, void * >::const_iterator it = m_user_data.find( i_key );
+		if( it != m_user_data.end() )
+		{
+			*io_user_data = it->second;
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
 } // namespace reflective
 
 namespace reflective_externals
 {
 	// reflection of reflective::Type::Capabilities
-	reflective::Enum * init_type(
+	void init_type( reflective::Type * volatile * o_result,
 		reflective::Type::Capabilities * null_pointer_1,
 		reflective::Type::Capabilities * null_pointer_2 )
 	{
@@ -392,9 +414,8 @@ namespace reflective_externals
 
 		using namespace ::reflective;
 		
-		static Enum * enum_object = nullptr;
-		if( enum_object != nullptr )
-			return enum_object;
+		if( *o_result != nullptr )
+			return;
 		
 		const Enum::Member * members[] = 
 		{
@@ -410,14 +431,14 @@ namespace reflective_externals
 			new_enum_member( "HasCollectionHandler", reflective::Type::eHasCollectionHandler ),
 		};
 		
-		enum_object = new_enum( "reflective::Type", "Capabilities" );
+		Enum * enum_object = new_enum( "reflective::Type", "Capabilities" );
+		*o_result = enum_object;
 		enum_object->edit_members().assign( members );
-		return enum_object;
 	}
 
 
 	// reflection of reflective::Type
-	reflective::Class * init_type(
+	void init_type( reflective::Type * volatile * o_result,
 		reflective::Type * null_pointer_1,
 		reflective::Type * null_pointer_2 )
 	{
@@ -427,13 +448,12 @@ namespace reflective_externals
 		typedef reflective::Type ThisClass;
 		typedef Symbol BaseClass;
 		
-		static Class * result = nullptr;
-		if( result != nullptr )
-			return result;
+		if( *o_result != nullptr )
+			return;
 		
 		// class object
 		Class * class_object = new_class<ThisClass>( "reflective", "Type" );
-		result = class_object;
+		*o_result = class_object;
 		
 		// services
 		class_object->set_base_type( BaseType::from_types<ThisClass,BaseClass>() );
@@ -451,9 +471,6 @@ namespace reflective_externals
 				
 		// assign members
 		class_object->assign_properties( properties );
-		
-		// return type
-		return result;
 	}
 
 

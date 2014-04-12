@@ -77,7 +77,7 @@ namespace reflective
 namespace reflective_externals
 {
 	// reflection of reflective::Property
-	reflective::Class * init_type(
+	void init_type( reflective::Type * volatile * o_result,
 		reflective::Property * null_pointer_1,
 		reflective::Property * null_pointer_2 )
 	{
@@ -87,13 +87,12 @@ namespace reflective_externals
 		typedef reflective::Property ThisClass;
 		typedef ClassMember BaseClass;
 		
-		static Class * result = nullptr;
-		if( result != nullptr )
-			return result;
+		if( *o_result != nullptr )
+			return;
 		
 		// class object
 		Class * class_object = new_class<ThisClass>( "reflective", "Property" );
-		result = class_object;
+		*o_result = class_object;
 		
 		// services
 		class_object->set_base_type( BaseType::from_types<ThisClass,BaseClass>() );
@@ -109,9 +108,6 @@ namespace reflective_externals
 		
 		// assign members
 		class_object->assign_properties( properties );
-		
-		// return type
-		return result;
 	}
 
 } // namespace reflective_externals

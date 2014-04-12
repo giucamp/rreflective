@@ -133,12 +133,12 @@ namespace reflective
 namespace reflective_externals
 {
 	template < typename UINT , typename STRING  >
-		reflective::Class * init_type(
+		void init_type( reflective::Type * volatile * o_result,
 			reflective::NameIdentifier<UINT,STRING,true> * null_pointer_1,
 			reflective::NameIdentifier<UINT,STRING,true> * null_pointer_2 );
 
 	template < typename UINT , typename STRING  >
-		reflective::Class * init_type(
+		void init_type( reflective::Type * volatile * o_result,
 			reflective::NameIdentifier<UINT,STRING,false> * null_pointer_1,
 			reflective::NameIdentifier<UINT,STRING,false> * null_pointer_2 );
 

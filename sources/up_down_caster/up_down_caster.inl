@@ -41,17 +41,15 @@ namespace reflective_externals
 
 	// reflection of reflective::UpDownCaster<IMPLEMENTATION>
 	template < reflective::UpDownCasterImplementation IMPLEMENTATION >
-		reflective::Class * init_type(
+		void init_type( reflective::Type * volatile * o_result,
 			reflective::UpDownCaster<IMPLEMENTATION> * null_pointer_1,
 			reflective::UpDownCaster<IMPLEMENTATION> * null_pointer_2 )
 	{
 		using namespace ::reflective;
 		typedef reflective::UpDownCaster<IMPLEMENTATION> ThisClass;
 		
-		static Class * class_object = nullptr;
-		if( class_object != nullptr )
-			return class_object;
-		
+		if( *o_result != nullptr )
+			return;		
 		
 		// template parameters
 		const TemplateParameter template_parameters[] = 
@@ -60,15 +58,11 @@ namespace reflective_externals
 		};
 		
 		// class object
-		class_object = new_class<ThisClass>( "reflective", "UpDownCaster", template_parameters );
+		Class * class_object = new_class<ThisClass>( "reflective", "UpDownCaster", template_parameters );
+		*o_result = class_object;
 		class_object->set_no_base_type();
 		class_object->set_life_functions( LifeFunctions::from_type<ThisClass>(
 			eUngrabbedConstructorCopyAssignmentDestructor ) );
-		
-		// assign members
-		
-		// return type
-		return class_object;
 	}
 	
 } // namespace reflective_externals

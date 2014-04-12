@@ -89,12 +89,12 @@ namespace reflective_externals
 {
 	
 	// reflection of reflective::ActionInvoker
-	reflective::Class * init_type(
+	void init_type( reflective::Type * volatile * o_result,
 		reflective::ActionInvoker * null_pointer_1,
 		reflective::ActionInvoker * null_pointer_2 );
 	
 	// reflection of reflective::ParameterStringizer
-	reflective::Class * init_type(
+	void init_type( reflective::Type * volatile * o_result,
 		reflective::ParameterStringizer * null_pointer_1,
 		reflective::ParameterStringizer * null_pointer_2 );
 

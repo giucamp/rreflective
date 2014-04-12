@@ -62,13 +62,13 @@ namespace reflective
 namespace reflective_externals
 {
 	// reflection of reflective::ArrayType
-	reflective::Class * init_type(
+	void init_type( reflective::Type * volatile * o_result,
 		reflective::ArrayType * null_pointer_1,
 		reflective::ArrayType * null_pointer_2 );
 
 	// reflection of reflective::ArrayType
 	template < class TYPE, size_t SIZE >
-		reflective::Type * init_type(
+		void init_type( reflective::Type * volatile * o_result,
 			TYPE (* null_pointer_1)[ SIZE ],
 			TYPE (* null_pointer_2)[ SIZE ] );
 }

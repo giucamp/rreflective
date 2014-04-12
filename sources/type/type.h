@@ -80,7 +80,7 @@ namespace reflective
 			eHasDestructor			= 1 << 3,
 			eHasEqualityComparer	= 1 << 4,
 			eHasLessThanComparer	= 1 << 5,
-			eHasToString		= 1 << 6,
+			eHasToString			= 1 << 6,
 			eHasFromStringAssigner	= 1 << 7,
 			eHasTypeResolver		= 1 << 8,
 			eHasCollectionHandler	= 1 << 9
@@ -347,6 +347,10 @@ namespace reflective
 		// set_type_resolver
 		void set_type_resolver( TypeResolver type_resolver );
 
+		void set_user_data( SymbolName i_key, void * i_user_data );
+
+		bool get_user_data( SymbolName i_key, void * * io_user_data ) const;
+
 	protected:
 
 		// constructors		
@@ -424,6 +428,7 @@ namespace reflective
 		const CollectionHandler * _abstract_collection;
 		Namespace * _parent_namespace;
 		Capabilities _capabilities;
+		std::map< SymbolName, void * > m_user_data;
 
 		#if REFLECTIVE_TRACK_TYPE_HIERARCHY
 
@@ -446,12 +451,12 @@ namespace reflective_externals
 {
 
 	// reflection of reflective::Type
-	reflective::Class * init_type(
+	void init_type( reflective::Type * volatile * o_result,
 		reflective::Type * null_pointer_1,
 		reflective::Type * null_pointer_2 );
 	
 	// reflection of reflective::Type::Capabilities
-	reflective::Enum * init_type(
+	void init_type( reflective::Type * volatile * o_result,
 		reflective::Type::Capabilities * null_pointer_1,
 		reflective::Type::Capabilities * null_pointer_2 );
 

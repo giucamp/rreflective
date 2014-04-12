@@ -99,12 +99,12 @@ namespace reflective
 namespace reflective_externals
 {
 	// reflection of reflective::Enum
-	reflective::Class * init_type(
+	void init_type( reflective::Type * volatile * o_result,
 		reflective::Enum * null_pointer_1,
 		reflective::Enum * null_pointer_2 );
 
 	// reflection of reflective::Enum::Member
-	reflective::Class * init_type(
+	void init_type( reflective::Type * volatile * o_result,
 		reflective::Enum::Member * null_pointer_1,
 		reflective::Enum::Member * null_pointer_2 );
 
@@ -114,7 +114,7 @@ namespace reflective_externals
 {
 	
 	// reflection of reflective::Enum
-	reflective::Class * init_type(
+	void init_type( reflective::Type * volatile * o_result,
 		reflective::Enum * null_pointer_1,
 		reflective::Enum * null_pointer_2 );
 

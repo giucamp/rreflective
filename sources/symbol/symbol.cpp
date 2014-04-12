@@ -133,7 +133,7 @@ namespace reflective
 namespace reflective_externals
 {
 	// reflection of reflective::Symbol
-	reflective::Class * init_type(
+	void init_type( reflective::Type * volatile * o_result,
 		reflective::Symbol * null_pointer_1,
 		reflective::Symbol * null_pointer_2 )
 	{
@@ -142,12 +142,11 @@ namespace reflective_externals
 		using namespace ::reflective;
 		typedef reflective::Symbol ThisClass;
 		
-		static Class * result = nullptr;
-		if( result != nullptr )
-			return result;
+		if( *o_result != nullptr )
+			return;
 
 		Class * class_object = new_class<ThisClass>( "reflective", "Symbol" );
-		result = class_object;		
+		*o_result = class_object;		
 
 		class_object->set_type_resolver( Symbol::resolve_type );
 		
@@ -159,8 +158,5 @@ namespace reflective_externals
 		
 		// assign members
 		class_object->assign_properties( properties );		
-		
-		// return type		
-		return class_object;
 	}
 }

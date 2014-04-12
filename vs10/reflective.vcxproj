@@ -144,6 +144,10 @@
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <AdditionalIncludeDirectories>&lt;inherit from parent or project defaults&gt;</AdditionalIncludeDirectories>
       <ProgramDataBaseFileName>$(SolutionDir)\..\bin\msc100\$(Platform)_$(Configuration)\$(ProjectName)\intermediate.pdb</ProgramDataBaseFileName>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
     </ClCompile>
     <BuildLog>
       <Path>$(SolutionDir)\..\..\bin\msc100\$(Platform)_$(Configuration)\$(ProjectName)\$(ProjectName).log</Path>

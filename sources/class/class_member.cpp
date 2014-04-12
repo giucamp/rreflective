@@ -46,7 +46,7 @@ namespace reflective
 namespace reflective_externals
 {
 	// reflection of reflective::ClassMember
-	reflective::Class * init_type(
+	void init_type( reflective::Type * volatile * o_result,
 		reflective::ClassMember * null_pointer_1,
 		reflective::ClassMember * null_pointer_2 )
 	{
@@ -56,12 +56,12 @@ namespace reflective_externals
 		typedef reflective::ClassMember ThisClass;
 		typedef Symbol BaseClass;
 	
-		static Class * class_object = nullptr;
-		if( class_object != nullptr )
-			return class_object;
+		if( *o_result != nullptr )
+			return;
 	
 		// class object
-		class_object = new_class<ThisClass>( "reflective", "ClassMember" );
+		Class * class_object = new_class<ThisClass>( "reflective", "ClassMember" );
+		*o_result = class_object;
 		class_object->set_base_type( BaseType::from_types<ThisClass,BaseClass>() );
 		class_object->set_life_functions( LifeFunctions::from_type<ThisClass>(
 			eCopyAssignmentDestructor ) );
@@ -78,13 +78,10 @@ namespace reflective_externals
 	
 		// assign members
 		class_object->assign_properties( properties );
-	
-		// return type
-		return class_object;
 	}
 
 	// reflection of reflective::ClassMember::Attributes
-	reflective::Enum * init_type(
+	void init_type( reflective::Type * volatile * o_result,
 		reflective::ClassMember::Attributes * null_pointer_1,
 		reflective::ClassMember::Attributes * null_pointer_2 )
 	{
@@ -92,9 +89,8 @@ namespace reflective_externals
 
 		using namespace ::reflective;
 		
-		static Enum * result = nullptr;
-		if( result != nullptr )
-			return result;
+		if( *o_result != nullptr )
+			return;
 		
 		const Enum::Member * members[] = 
 		{
@@ -109,11 +105,8 @@ namespace reflective_externals
 		};
 		
 		Enum * enum_object = new_enum( "reflective::ClassMember", "Attributes" );
+		*o_result = enum_object;
 		enum_object->edit_members().assign( members );
-		
-		// assign and return type
-		result = enum_object;
-		return result;
 	}
 	
 } // namespace reflective_externals

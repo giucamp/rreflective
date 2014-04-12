@@ -94,7 +94,7 @@ namespace reflective
 namespace reflective_externals
 {
 	// reflection of reflective::Property
-	reflective::Class * init_type(
+	void init_type( reflective::Type * volatile * o_result,
 		reflective::Property * null_pointer_1,
 		reflective::Property * null_pointer_2 );
 }

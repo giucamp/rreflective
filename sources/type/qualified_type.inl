@@ -49,6 +49,12 @@ namespace reflective
 	{
 	}
 
+	// QualifiedType::constructor( type, type_qualification )
+	inline QualifiedType::QualifiedType( const Type & type, unsigned number_of_indirection_levels, const reflective::Type & final_type, unsigned constness_word )
+		: _type( &type ), _type_qualification( number_of_indirection_levels, final_type, constness_word )
+	{
+	}
+
 	// QualifiedType::assignment
 	inline QualifiedType & QualifiedType::operator = ( const QualifiedType & source )		
 	{

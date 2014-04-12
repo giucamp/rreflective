@@ -130,7 +130,7 @@ namespace reflective
 namespace reflective_externals
 {
 	// reflection of reflective::Action
-	reflective::Class * init_type(
+	void init_type( reflective::Type * volatile * o_result,
 		reflective::Action * null_pointer_1,
 		reflective::Action * null_pointer_2 )
 	{
@@ -140,18 +140,16 @@ namespace reflective_externals
 		typedef reflective::Action ThisClass;
 		typedef ClassMember BaseClass;
 		
-		static Class * result = nullptr;
-		if( result != nullptr )
-			return result;
+		if( *o_result != nullptr )
+			return;
 		
 		// class object
-		Class * class_object = new_class<ThisClass>( "reflective", "Action" );		
+		Class * class_object = new_class<ThisClass>( "reflective", "Action" );
+		*o_result = class_object;
 		class_object->set_base_type( BaseType::from_types<ThisClass,BaseClass>() );
 		class_object->set_life_functions( LifeFunctions::from_type<ThisClass>(
 			eNoLifeFunctions ) );
 
-		result =  class_object;
-	
 		// properties
 		const Property * properties[] = 
 		{
@@ -169,9 +167,6 @@ namespace reflective_externals
 		// assign members
 		class_object->assign_properties( properties );
 		class_object->assign_actions( actions );
-	
-		// return type
-		return class_object;
 	}
 
 } // namespace reflective_externals

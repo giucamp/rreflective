@@ -187,16 +187,15 @@ namespace reflective_externals
 {
 	// reflection of reflective::NameIdentifier<UINT,STRING,false>
 	template < typename UINT , typename STRING  >
-		reflective::Class * init_type(
+		void init_type( reflective::Type * volatile * o_result,
 			reflective::NameIdentifier<UINT,STRING,false> * null_pointer_1,
 			reflective::NameIdentifier<UINT,STRING,false> * null_pointer_2 )
 	{
 		using namespace ::reflective;
 		typedef reflective::NameIdentifier<UINT,STRING,false> ThisClass;
-
-		static Class * result = nullptr;
-		if( result != nullptr )
-			return result;
+		
+		if( *o_result != nullptr )
+			return;
 
 		// template arguments
 		const TemplateParameter template_parameters[] =
@@ -207,9 +206,8 @@ namespace reflective_externals
 		};
 
 		Class * class_object = new_class<ThisClass>( "reflective", "NameIdentifier", template_parameters );
-		result = class_object;
-
-
+		*o_result = class_object;
+		
 		// properties
 		const Property * properties[] =
 		{
@@ -220,9 +218,6 @@ namespace reflective_externals
 
 		// assign members
 		class_object->assign_properties( properties );
-
-		// assign and return type
-		return class_object;
 	}
 
 } // namespace reflective_externals

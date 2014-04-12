@@ -134,12 +134,11 @@ namespace reflective
 namespace reflective_externals
 {
 	template< class TYPE >
-		inline reflective::Type * init_type( TYPE * null_pointer_1, TYPE * null_pointer_2 )
+		inline void init_type( reflective::Type * volatile * o_result, TYPE * null_pointer_1, TYPE * null_pointer_2 )
 	{
 		REFLECTIVE_UNUSED_2( null_pointer_1, null_pointer_2 );		
 
-		static reflective::Type * type_instance;
-		if( type_instance == nullptr )
+		if( *o_result == nullptr )
 		{		
 			#define __REFLECTIVE_HAS_CONSTRUCTOR		( reflective::has_default_constructor< TYPE >::value && reflective::has_destructor< TYPE >::value )
 			#define __REFLECTIVE_IS_ABSTRACT			reflective::is_abstract< TYPE >::value
@@ -163,7 +162,7 @@ namespace reflective_externals
 		
 			>::type LifeFuncEnum;
 
-			type_instance = reflective::DefaultTypeFactory< TYPE, LifeFuncEnum,
+			*o_result = reflective::DefaultTypeFactory< TYPE, LifeFuncEnum,
 				std::is_class< TYPE >::value,
 				std::is_enum< TYPE >::value 
 					>::create_type();
@@ -173,36 +172,23 @@ namespace reflective_externals
 			#undef __REFLECTIVE_HAS_COPY
 			#undef __REFLECTIVE_HAS_ASSIGN
 		}
-
-		return type_instance;
 	}
 }
 
 namespace reflective
-{
-	// DefaultTypeTraits<TYPE>::constants
-	template <class TYPE> const size_t DefaultTypeTraits<TYPE>::size = sizeof( TYPE );
-	template <class TYPE> const size_t DefaultTypeTraits<TYPE>::alignment = alignment_of( TYPE );
-
-	// NumericTraits<TYPE>
-	template <class TYPE> const TYPE NumericTraits<TYPE>::zero = TYPE( 0 );
-	template <class TYPE> const TYPE NumericTraits<TYPE>::min = std::numeric_limits<TYPE>::min();
-	template <class TYPE> const TYPE NumericTraits<TYPE>::max = std::numeric_limits<TYPE>::max();
-	template <class TYPE> const bool NumericTraits<TYPE>::is_signed = std::numeric_limits<TYPE>::is_signed;
-
-	// FloatTraits<TYPE>
-	template <class TYPE> const TYPE FloatTraits<TYPE>::one = TYPE(1);
-	template <class TYPE> const TYPE FloatTraits<TYPE>::infinity = std::numeric_limits<TYPE>::infinity();
-	template <class TYPE> const TYPE FloatTraits<TYPE>::minus_infinity = -std::numeric_limits<TYPE>::infinity();
-	template <class TYPE> const TYPE FloatTraits<TYPE>::indefinite = TYPE(0) / TYPE(0);
-	template <class TYPE> const TYPE FloatTraits<TYPE>::qnan = std::numeric_limits<TYPE>::quiet_NaN();
-	template <class TYPE> const TYPE FloatTraits<TYPE>::snan = std::numeric_limits<TYPE>::signalign_NaN();
-	template <class TYPE> const TYPE FloatTraits<TYPE>::pi = TYPE( 3.141592653589793238462643383279502884197169399375105820974944592307816406286 );
-
+{	
 	// TypeContainer<TYPE>::_type
 	template <class TYPE>
-		Type * TypeContainer<TYPE>::_type = reflective_externals::init_type(
-			static_cast<TYPE *>( 0 ), static_cast<TYPE *>( 0 ) );
+		Type * TypeContainer<TYPE>::_type = TypeContainer<TYPE>::_create_type();
+
+	// * TypeContainer<TYPE>::_create_type
+	template <class TYPE>
+		Type * TypeContainer<TYPE>::_create_type()
+	{
+		init_type();
+		REFLECTIVE_ASSERT( _type != nullptr );
+		return _type;
+	}
 
 	// TypeContainer<TYPE>::init_type
 	template <class TYPE>
@@ -210,8 +196,9 @@ namespace reflective
 	{
 		if( !_type )
 		{
-			_type = reflective_externals::init_type(
+			reflective_externals::init_type( &_type,
 				static_cast<TYPE *>( nullptr ), static_cast<TYPE *>( nullptr ) );
+			REFLECTIVE_ASSERT( _type != nullptr );
 		}
 	}
 

@@ -138,12 +138,12 @@ namespace reflective
 namespace reflective_externals
 {
 	// reflection of reflective::Parameter
-	reflective::Class * init_type(
+	void init_type( reflective::Type * volatile * o_result,
 		reflective::Parameter * null_pointer_1,
 		reflective::Parameter * null_pointer_2 );
 
 	// reflection of reflective::ParameterList
-	reflective::Class * init_type(
+	void init_type( reflective::Type * volatile * o_result,
 		reflective::ParameterList * null_pointer_1,
 		reflective::ParameterList * null_pointer_2 );
 	

@@ -32,7 +32,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace reflective_externals
 {
 	// reflection of reflective::TypeQualification
-	reflective::Class * init_type(
+	void init_type( reflective::Type * volatile * o_result,
 		reflective::TypeQualification * null_pointer_1,
 		reflective::TypeQualification * null_pointer_2 )
 	{
@@ -41,12 +41,12 @@ namespace reflective_externals
 		using namespace ::reflective;
 		typedef reflective::TypeQualification ThisClass;
 	
-		static Class * class_object = nullptr;
-		if( class_object != nullptr )
-			return class_object;
+		if( *o_result != nullptr )
+			return;
 	
 		// class object
-		class_object = new_class<ThisClass>( "reflective", "TypeQualification" );
+		Class * class_object = new_class<ThisClass>( "reflective", "TypeQualification" );
+		*o_result = class_object;
 		class_object->set_no_base_type();
 		class_object->set_life_functions( LifeFunctions::from_type<ThisClass>(
 			eConstructorCopyAssignmentDestructor ) );
@@ -70,9 +70,6 @@ namespace reflective_externals
 		// assign members
 		class_object->assign_properties( properties );
 		class_object->assign_actions( actions );
-	
-		// return type
-		return class_object;
 	}
 
 } // namespace reflective_externals

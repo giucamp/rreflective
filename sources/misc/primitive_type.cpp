@@ -114,7 +114,7 @@ namespace reflective_externals
 namespace reflective_externals
 {
 	// reflection of reflective::reflective::PrimitiveType
-	reflective::Class * init_type(
+	void init_type( reflective::Type * volatile * o_result,
 		reflective::PrimitiveType * null_pointer_1,
 		reflective::PrimitiveType * null_pointer_2 )
 	{
@@ -124,19 +124,15 @@ namespace reflective_externals
 		typedef reflective::PrimitiveType ThisClass;
 		typedef reflective::Type BaseClass;
 		
-		static Class * result = nullptr;
-		if( result != nullptr )
-			return result;
+		if( *o_result != nullptr )
+			return;
 
 		// class object
 		Class * class_object = new_class<ThisClass>( "reflective", "PrimitiveType" );
-		result = class_object;
+		*o_result = class_object;
 		
 		// services
 		class_object->set_base_type( BaseType::from_types<ThisClass,BaseClass>() );
-		
-		// return type
-		return result;
 	}
 
 } //namespace reflective_externals

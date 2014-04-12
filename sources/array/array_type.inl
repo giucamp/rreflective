@@ -57,21 +57,18 @@ namespace reflective
 namespace reflective_externals
 {
 	template < class TYPE, size_t SIZE >
-		inline reflective::Type * init_type(
+		inline void init_type( reflective::Type * volatile * o_result,
 			TYPE (* null_pointer_1)[ SIZE ],
 			TYPE (* null_pointer_2)[ SIZE ] )
 	{
 		REFLECTIVE_UNUSED_2( null_pointer_1, null_pointer_2 );
 
-		static ArrayType * result = nullptr;
-		if( result )
-			return result;
+		if( *o_result != nullptr )
+			return;
 
 		void * allocation = reflective_externals::mem_lifo_alloc( alignment_of( ArrayType ), sizeof( ArrayType ) );
 
-		result = new( allocation ) ArrayType( safe_get_qualified_type<TYPE>(), SIZE );
-
-		return result;
+		*o_result = new( allocation ) ArrayType( safe_get_qualified_type<TYPE>(), SIZE );
 	}
 
 } // namespace reflective_externals

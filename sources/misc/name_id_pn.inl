@@ -236,7 +236,7 @@ namespace reflective_externals
 {
 	// reflection of reflective::NameIdentifier<UINT,STRING,true>
 	template < typename UINT , typename STRING  >
-		reflective::Class * init_type(
+		void init_type( reflective::Type * volatile * o_result,
 			reflective::NameIdentifier<UINT,STRING,true> * null_pointer_1,
 			reflective::NameIdentifier<UINT,STRING,true> * null_pointer_2 )
 	{
@@ -244,14 +244,11 @@ namespace reflective_externals
 		using namespace ::reflective;
 		typedef reflective::NameIdentifier<UINT,STRING,true> ThisClass;
 
-		static Class * result = nullptr;
-		if( result != nullptr )
-			return result;
+		if( *o_result != nullptr )
+			return;
 
 		void * allocation = reflective_externals::mem_lifo_alloc( 
 			alignment_of( Class ), sizeof( Class ), &default_destroyer<Class> );
-
-		result = static_cast<Class *>( allocation );
 
 		// template arguments
 		const TemplateParameter template_parameters[] = 
@@ -273,7 +270,9 @@ namespace reflective_externals
 		Class * class_object = new( allocation ) Class( class_template, decorated_name,
 			alignment_of( ThisClass ), sizeof( ThisClass ) );
 
-		REFLECTIVE_ASSERT( result == class_object );
+		*o_result = class_object;
+
+		REFLECTIVE_ASSERT( *o_result == class_object );
 
 		class_object->set_no_base_type();
 
@@ -291,8 +290,6 @@ namespace reflective_externals
 		
 		// assign members
 		class_object->assign_properties( properties );
-		
-		return result;
 	}
 
 } // namespace reflective_externals

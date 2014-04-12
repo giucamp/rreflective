@@ -76,7 +76,7 @@ namespace reflective
 namespace reflective_externals
 {	
 	// reflection of reflective::QualifiedType
-	reflective::Class * init_type(
+	void init_type( reflective::Type * volatile * o_result,
 		reflective::QualifiedType * null_pointer_1,
 		reflective::QualifiedType * null_pointer_2 )
 	{
@@ -85,12 +85,12 @@ namespace reflective_externals
 		using namespace ::reflective;
 		typedef reflective::QualifiedType ThisClass;
 		
-		static Class * class_object = nullptr;
-		if( class_object != nullptr )
-			return class_object;
+		if( *o_result != nullptr )
+			return;
 		
 		// class object
-		class_object = new_class<ThisClass>( "reflective", "QualifiedType" );
+		Class * class_object = new_class<ThisClass>( "reflective", "QualifiedType" );
+		*o_result = class_object;
 		class_object->set_life_functions( LifeFunctions::from_type<ThisClass>( 
 			eUngrabbedConstructorCopyAssignmentDestructor ) );
 		class_object->set_no_base_type();
@@ -105,10 +105,7 @@ namespace reflective_externals
 		};
 		
 		// assign members
-		class_object->assign_properties( properties );		
-		
-		// return type
-		return class_object;
+		class_object->assign_properties( properties );	
 	}
 
 } // namespace reflective_externals

@@ -42,7 +42,7 @@ namespace reflective
 				namespace reflective_externals
 				{
 					// reflection of CLASS
-					reflective::Class * init_type( CLASS * null_pointer_1, CLASS * null_pointer_2 );
+					void init_type( reflective::Type * volatile * o_result, CLASS * null_pointer_1, CLASS * null_pointer_2 );
 				}
 
 		- intrusive definition:
@@ -308,59 +308,6 @@ namespace reflective
 		static const int value = B::val;
 	};
 
-	// DefaultTypeTraits<TYPE>
-	template <class TYPE>
-		class DefaultTypeTraits
-	{
-	public:
-		static const size_t size = sizeof( TYPE );
-		static const size_t alignment = alignment_of( TYPE );				
-	};
-
-	// TypeTraits<TYPE>
-	template <class TYPE>
-		class TypeTraits : public DefaultTypeTraits<TYPE>
-	{
-	public:
-	};
-
-	// NumericTraits<TYPE>
-	template <class TYPE>
-		class NumericTraits : public DefaultTypeTraits<TYPE>
-	{
-	public:
-		typedef bool CompareResult;
-		static const unsigned bit_count = sizeof( TYPE ) * 8;
-		static const TYPE zero;
-		static const TYPE min;
-		static const TYPE max;
-		static const bool is_integer;
-		static const bool is_signed;
-	};
-
-	// FloatTraits
-	template <class TYPE>
-		class FloatTraits : public NumericTraits<TYPE>
-	{
-	public:
-		static const TYPE one;
-		static const TYPE infinity;
-		static const TYPE minus_infinity;
-		static const TYPE indefinite;
-		static const TYPE qnan;
-		static const TYPE snan;
-		static const TYPE pi;
-	};
-
-
-	// IntegerTraits
-	template <class TYPE>
-		class IntegerTraits : public NumericTraits<TYPE>
-	{
-	public:
-
-	};
-
 
 	// TypeContainer
 	template <class TYPE>
@@ -374,6 +321,9 @@ namespace reflective
 
 		static const Type & get();
 		static Type & non_const_get();
+
+	private:
+		static Type * _create_type();
 
 	private: // data members
 		static Type * _type;

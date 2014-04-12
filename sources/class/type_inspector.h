@@ -112,7 +112,7 @@ namespace reflective
 namespace reflective_externals
 {
 	// reflection of reflective::TypeInspector
-	reflective::Class * init_type(
+	void init_type( reflective::Type * volatile * o_result,
 		reflective::TypeInspector * null_pointer_1,
 		reflective::TypeInspector * null_pointer_2 );
 }

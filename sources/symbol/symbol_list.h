@@ -95,7 +95,7 @@ namespace reflective_externals
 	// reflection of reflective::SymbolList<SYMBOL>
 	template < class SYMBOL, bool ALLOW_DUPLICATES,
 			class SYMBOL_COMPARER >
-		reflective::Class * init_type(
+		void init_type( reflective::Type * volatile * o_result,
 			reflective::SymbolList<SYMBOL,ALLOW_DUPLICATES,SYMBOL_COMPARER > * null_pointer_1,
 			reflective::SymbolList<SYMBOL,ALLOW_DUPLICATES,SYMBOL_COMPARER > * null_pointer_2 );
 

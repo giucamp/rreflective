@@ -86,19 +86,19 @@ namespace reflective
 namespace reflective_externals
 {
 	// reflection of reflective::Watch
-	reflective::Class * init_type( reflective::Watch * null_pointer_1, reflective::Watch * null_pointer_2 )
+	void init_type( reflective::Type * volatile * o_result, reflective::Watch * null_pointer_1, reflective::Watch * null_pointer_2 )
 	{
 		REFLECTIVE_UNUSED_2( null_pointer_1, null_pointer_2 );
 
 		using namespace ::reflective;
 		typedef reflective::Watch ThisClass;
 	
-		static Class * class_object = nullptr;
-		if( class_object != nullptr )
-			return class_object;
+		if( *o_result != nullptr )
+			return;
 	
 		// class object
-		class_object = new_class<ThisClass>( "reflective", "Watch" );
+		Class * class_object = new_class<ThisClass>( "reflective", "Watch" );
+		*o_result = class_object;
 		class_object->set_no_base_type();
 		class_object->set_life_functions( LifeFunctions::from_type<ThisClass>(
 			eNoLifeFunctions ) );
@@ -121,8 +121,5 @@ namespace reflective_externals
 		// assign members
 		class_object->assign_properties( properties );
 		class_object->assign_actions( actions );
-	
-		// return type
-		return class_object;
 	}
 }

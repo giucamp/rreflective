@@ -111,7 +111,7 @@ namespace reflective_externals
 
 	// reflection of reflective::UpDownCaster<IMPLEMENTATION>
 	template < reflective::UpDownCasterImplementation IMPLEMENTATION >
-		reflective::Class * init_type(
+		void init_type( reflective::Type * volatile * o_result,
 			reflective::UpDownCaster<IMPLEMENTATION> * null_pointer_1,
 			reflective::UpDownCaster<IMPLEMENTATION> * null_pointer_2 );
 	

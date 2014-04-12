@@ -61,7 +61,7 @@ namespace reflective
 		StringOutputStream & operator << ( const char * i_null_terminated_string )
 			{ append( i_null_terminated_string ); return *this; }
 		StringOutputStream & operator << ( char i_char )
-		{ append( i_char ); return *this; }
+			{ append( i_char ); return *this; }
 		template <typename TYPE>  StringOutputStream & operator << ( const TYPE & i_object );
 
 		// start_of_chars \ actual_length		

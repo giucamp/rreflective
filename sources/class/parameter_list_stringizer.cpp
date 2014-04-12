@@ -317,7 +317,7 @@ namespace reflective
 namespace reflective_externals
 {	
 	// reflection of reflective::ActionInvoker
-	reflective::Class * init_type(
+	void init_type( reflective::Type * volatile * o_result,
 		reflective::ActionInvoker * null_pointer_1,
 		reflective::ActionInvoker * null_pointer_2 )
 	{
@@ -326,12 +326,12 @@ namespace reflective_externals
 		using namespace ::reflective;
 		typedef reflective::ActionInvoker ThisClass;
 		
-		static Class * class_object = nullptr;
-		if( class_object != nullptr )
-			return class_object;
+		if( *o_result != nullptr )
+			return;
 		
 		// class object
-		class_object = new_class<ThisClass>( "reflective", "ActionInvoker" );
+		Class * class_object = new_class<ThisClass>( "reflective", "ActionInvoker" );
+		*o_result = class_object;
 		class_object->set_no_base_type();
 		class_object->set_life_functions( LifeFunctions::from_type<ThisClass>(
 			eConstructorDestructor ) );
@@ -351,13 +351,10 @@ namespace reflective_externals
 		// assign members
 		class_object->assign_properties( properties );
 		class_object->assign_actions( actions );
-		
-		// return type
-		return class_object;
 	}
 	
 	// reflection of reflective::ParameterStringizer
-	reflective::Class * init_type(
+	void init_type( reflective::Type * volatile * o_result,
 		reflective::ParameterStringizer * null_pointer_1,
 		reflective::ParameterStringizer * null_pointer_2 )
 	{
@@ -366,12 +363,12 @@ namespace reflective_externals
 		using namespace ::reflective;
 		typedef reflective::ParameterStringizer ThisClass;
 		
-		static Class * class_object = nullptr;
-		if( class_object != nullptr )
-			return class_object;
+		if( *o_result != nullptr )
+			return;
 		
 		// class object
-		class_object = new_class<ThisClass>( "reflective", "ParameterStringizer" );
+		Class * class_object = new_class<ThisClass>( "reflective", "ParameterStringizer" );
+		*o_result = class_object;
 		class_object->set_no_base_type();
 
 		// actions
@@ -382,9 +379,6 @@ namespace reflective_externals
 	
 		// assign members
 		class_object->assign_actions( actions );
-		
-		// return type
-		return class_object;
 	}
 
 } // namespace reflective_externals

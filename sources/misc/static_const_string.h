@@ -69,7 +69,7 @@ namespace reflective
 namespace reflective_externals
 {
 	// init_type with StaticConstString
-	reflective::Class * init_type(
+	void init_type( reflective::Type * volatile * o_result,
 		reflective::StaticConstString * null_pointer_1,
 		reflective::StaticConstString * null_pointer_2 );
 }

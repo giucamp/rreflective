@@ -82,7 +82,7 @@ namespace reflective
 namespace reflective_externals
 {
 	// reflection of reflective::EventDescriptor
-	reflective::Class * init_type(
+	void init_type( reflective::Type * volatile * o_result,
 		reflective::EventDescriptor * null_pointer_1,
 		reflective::EventDescriptor * null_pointer_2 );
 }

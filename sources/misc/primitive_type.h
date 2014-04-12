@@ -82,10 +82,10 @@ namespace reflective_externals
 
 
 	#define IMPLEMENT_PRIMITIVE_TYPE( PRIMITIVE_TYPE ) \
-		inline reflective::PrimitiveType * init_type( \
+		inline void init_type( reflective::Type * volatile * o_result, \
 			PRIMITIVE_TYPE * null_pointer_1, PRIMITIVE_TYPE * null_pointer_2 ) \
 				{ static reflective::TypedPrimitiveType<PRIMITIVE_TYPE> type( #PRIMITIVE_TYPE ); \
-					REFLECTIVE_UNUSED( null_pointer_1); REFLECTIVE_UNUSED( null_pointer_2 ); return &type; } \
+					REFLECTIVE_UNUSED( null_pointer_1); REFLECTIVE_UNUSED( null_pointer_2 ); *o_result = &type; } \
 		template <> void primitive_to_string<PRIMITIVE_TYPE>( reflective::StringOutputStream & dest_buffer,  \
 				const reflective::Type & type, const void * object ); \
 		template <> bool primitive_assign_from_string<PRIMITIVE_TYPE>( reflective::FromStringBuffer & source_buffer, \
@@ -111,7 +111,7 @@ namespace reflective_externals
 namespace reflective_externals
 {
 	// reflection of reflective::reflective::PrimitiveType
-	reflective::Class * init_type(
+	void init_type( reflective::Type * volatile * o_result,
 		reflective::PrimitiveType * null_pointer_1,
 		reflective::PrimitiveType * null_pointer_2 );
 }

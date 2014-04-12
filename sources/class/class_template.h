@@ -59,7 +59,7 @@ namespace reflective
 namespace reflective_externals
 {
 	// reflection of reflective::ClassTemplate
-	reflective::Class * init_type(
+	void init_type( reflective::Type * volatile * o_result,
 		reflective::ClassTemplate * null_pointer_1,
 		reflective::ClassTemplate * null_pointer_2 );
 

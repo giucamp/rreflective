@@ -233,7 +233,7 @@ namespace reflective
 namespace reflective_externals
 {
 	// reflection of reflective::Enum
-	reflective::Class * init_type(
+	void init_type( reflective::Type * volatile * o_result,
 		reflective::Enum * null_pointer_1,
 		reflective::Enum * null_pointer_2 )
 	{
@@ -243,13 +243,12 @@ namespace reflective_externals
 		typedef reflective::Enum ThisClass;
 		typedef Type BaseClass;
 		
-		static Class * result = nullptr;
-		if( result != nullptr )
-			return result;
+		if( *o_result != nullptr )
+			return;
 		
 		// class object
 		Class * class_object = new_class<ThisClass>( "reflective", "Enum" );
-		result = class_object;
+		*o_result = class_object;
 		
 		// services
 		class_object->set_base_type( BaseType::from_types<ThisClass,BaseClass>() );
@@ -270,13 +269,10 @@ namespace reflective_externals
 		// assign members
 		class_object->assign_properties( properties );
 		class_object->edit_actions().assign( actions );
-		
-		// return type
-		return result;
 	}
 	
 	// reflection of reflective::Enum::Member
-	reflective::Class * init_type(
+	void init_type( reflective::Type * volatile * o_result,
 		reflective::Enum::Member * null_pointer_1,
 		reflective::Enum::Member * null_pointer_2 )
 	{
@@ -286,13 +282,12 @@ namespace reflective_externals
 		typedef reflective::Enum::Member ThisClass;
 		typedef Symbol BaseClass;
 		
-		static Class * result = nullptr;
-		if( result != nullptr )
-			return result;
-		
+		if( *o_result != nullptr )
+			return;
+
 		// class object
 		Class * class_object = new_class<ThisClass>( "reflective::Enum", "Member" );
-		result = class_object;
+		*o_result = class_object;
 		
 		// services
 		class_object->set_base_type( BaseType::from_types<ThisClass,BaseClass>() );
@@ -305,9 +300,6 @@ namespace reflective_externals
 		
 		// assign members
 		class_object->assign_properties( properties );
-		
-		// return type
-		return result;
 	}
 
 } // namespace reflective_externals

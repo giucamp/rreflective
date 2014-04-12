@@ -40,6 +40,7 @@ namespace reflective
 		QualifiedType();
 		QualifiedType( const Type & type );
 		QualifiedType( const Type & type, const TypeQualification & type_qualification );
+		QualifiedType( const Type & type, unsigned number_of_indirection_levels, const reflective::Type & final_type, unsigned constness_word );
 		QualifiedType( const QualifiedType & source );
 
 		// assignment
@@ -73,7 +74,7 @@ namespace reflective_externals
 {
 
 	// reflection of reflective::QualifiedType
-	reflective::Class * init_type(
+	void init_type( reflective::Type * volatile * o_result,
 		reflective::QualifiedType * null_pointer_1,
 		reflective::QualifiedType * null_pointer_2 );	
 

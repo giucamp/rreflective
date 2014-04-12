@@ -205,7 +205,7 @@ namespace reflective
 namespace reflective_externals
 {
 	// reflection of reflective::Namespace
-	reflective::Class * init_type(
+	void init_type( reflective::Type * volatile * o_result,
 		reflective::Namespace * null_pointer_1,
 		reflective::Namespace * null_pointer_2 )
 	{
@@ -215,12 +215,12 @@ namespace reflective_externals
 		typedef reflective::Namespace ThisClass;
 		typedef reflective::Symbol BaseClass;
 		
-		static Class * class_object = nullptr;
-		if( class_object != nullptr )
-			return class_object;
+		if( *o_result != nullptr )
+			return;
 		
 		// class object
-		class_object = new_class<ThisClass>( "reflective", "Namespace" );
+		Class * class_object = new_class<ThisClass>( "reflective", "Namespace" );
+		*o_result = class_object;
 		class_object->set_base_type( BaseType::from_types<ThisClass,BaseClass>() );
 		
 		// properties
@@ -244,9 +244,6 @@ namespace reflective_externals
 		class_object->edit_actions().assign( actions );
 
 		class_object->set_collection_handler( &ThisClass::access_collection_handler() );
-		
-		// return type
-		return class_object;
 	}
 
 } // namespace reflective_externals

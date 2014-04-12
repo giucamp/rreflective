@@ -270,7 +270,7 @@ namespace reflective_externals
 	// reflection of reflective::SymbolList<SYMBOL, ALLOW_DUPLICATES, SYMBOL_COMPARER >
 	template < class SYMBOL, bool ALLOW_DUPLICATES,
 		class SYMBOL_COMPARER >
-			reflective::Class * init_type(
+			void init_type( reflective::Type * volatile * o_result,
 				reflective::SymbolList<SYMBOL, ALLOW_DUPLICATES, SYMBOL_COMPARER > * null_pointer_1,
 				reflective::SymbolList<SYMBOL, ALLOW_DUPLICATES, SYMBOL_COMPARER > * null_pointer_2 )
 	{
@@ -279,9 +279,8 @@ namespace reflective_externals
 		using namespace ::reflective;
 		typedef reflective::SymbolList<SYMBOL, ALLOW_DUPLICATES, SYMBOL_COMPARER > ThisClass;
 
-		static Class * result = nullptr;
-		if( result != nullptr )
-			return result;
+		if( *o_result != nullptr )
+			return;
 
 		// dependencies
 		TypeContainer< size_t >::init_type();
@@ -294,6 +293,7 @@ namespace reflective_externals
 		};
 
 		Class * class_object = new_class<ThisClass>( "reflective", "SymbolList", template_parameters );
+		*o_result = class_object;
 
 		// properties
 		const Property * properties[] =
@@ -305,10 +305,6 @@ namespace reflective_externals
 		class_object->assign_properties( properties );
 
 		class_object->set_collection_handler( &ThisClass::access_collection_handler() );
-
-		// assign and return type
-		result = class_object;
-		return result;
 	}
 
 } // namespace reflective_externals

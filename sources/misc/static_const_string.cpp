@@ -49,7 +49,7 @@ namespace reflective
 namespace reflective_externals
 {
 	// reflection of reflective::StaticConstString
-	reflective::Class * init_type(
+	void init_type( reflective::Type * volatile * o_result,
 		reflective::StaticConstString * null_pointer_1,
 		reflective::StaticConstString * null_pointer_2 )
 	{
@@ -58,13 +58,12 @@ namespace reflective_externals
 		using namespace ::reflective;
 		typedef reflective::StaticConstString ThisClass;
 		
-		static Class * result = nullptr;
-		if( result != nullptr )
-			return result;	 
+		if( *o_result != nullptr )
+			return;
 		
 		// class object
 		Class * class_object = new_class<ThisClass>( "reflective", "StaticConstString" );
-		result = class_object;
+		*o_result = class_object;
 
 		// base types
 		class_object->set_life_functions( LifeFunctions::from_type<ThisClass>( eUngrabbedConstructorCopyAssignmentDestructor ) );
@@ -81,9 +80,6 @@ namespace reflective_externals
 		
 		// assign members
 		class_object->assign_properties( properties );
-		
-		// return type		
-		return result;
 	}
 
 } // namespace reflective_externals
