@@ -40,7 +40,7 @@ namespace reflective
 	// forwards
 	class Namespace;
 	class Allocator;
-	class CollectionHandler;
+	class ICollectionHandler;
 	class Type;
 
 	// SymbolTypeId
@@ -109,6 +109,7 @@ namespace reflective
 #include "array\array_data_property.h"
 #include "type\type_traits.h"
 #include "functions\functions.h"
+#include "std_reflection\std_reflection.h"
 
 // inlines
 #include "mem\memory.inl"
@@ -162,6 +163,7 @@ namespace reflective
 #include "array\array_data_property.inl"
 #include "type\type_traits.inl"
 #include "functions\functions.inl"
+#include "std_reflection\std_reflection.inl"
 
 #ifdef _MSC_VER
 	#pragma warning( pop )

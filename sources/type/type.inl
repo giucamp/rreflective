@@ -407,7 +407,7 @@ namespace reflective
 	}
 
 	// Type::set_collection_handler
-	inline void Type::set_collection_handler( const CollectionHandler * collection_interface )
+	inline void Type::set_collection_handler( const ICollectionHandler * collection_interface )
 	{
 		REFLECTIVE_ASSERT( _abstract_collection == nullptr ); // the collection interface can be set only once
 		_abstract_collection = collection_interface; 
@@ -422,7 +422,7 @@ namespace reflective
 	}
 
 	// Type::collection_handler
-	inline const CollectionHandler * Type::collection_handler() const
+	inline const ICollectionHandler * Type::collection_handler() const
 	{
 		return _abstract_collection;
 	}

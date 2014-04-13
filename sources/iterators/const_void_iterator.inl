@@ -64,36 +64,36 @@ namespace reflective
 	}
 
 
-	// Iterator::constructor( collection, offset_index )
+	// Iterator::constructor( collection, i_key_value )
 	template <class COLLECTION_TYPE> 
 		inline Iterator<const void>::Iterator( const COLLECTION_TYPE & collection, 
-			size_t offset_index )
+			const void * i_key_value )
 				: _iteration_type( nullptr )
 	{
-		_assign_collection( get_type<COLLECTION_TYPE>(), &collection, offset_index );
+		_assign_collection( get_type<COLLECTION_TYPE>(), &collection, i_key_value );
 	}
 
-	// Iterator::constructor( collection, iteration_type, offset_index )
+	// Iterator::constructor( collection, iteration_type, i_key_value )
 	template <class COLLECTION_TYPE> 
-		inline Iterator<const void>::Iterator( const COLLECTION_TYPE & collection, const reflective::Type & iteration_type, size_t offset_index )
+		inline Iterator<const void>::Iterator( const COLLECTION_TYPE & collection, const reflective::Type & iteration_type, const void * i_key_value )
 			: _iteration_type( &iteration_type )
 	{
-		_assign_collection( get_type<COLLECTION_TYPE>(), &collection, offset_index );
+		_assign_collection( get_type<COLLECTION_TYPE>(), &collection, i_key_value );
 	}
 
-	// Iterator::constructor( collection_type, collection, offset_index )
-	inline Iterator<const void>::Iterator( const reflective::Type & collection_type, const void * collection, size_t offset_index )
+	// Iterator::constructor( collection_type, collection, i_key_value )
+	inline Iterator<const void>::Iterator( const reflective::Type & collection_type, const void * collection, const void * i_key_value )
 		: _iteration_type( nullptr )
 	{
-		_assign_collection( collection_type, collection, offset_index );
+		_assign_collection( collection_type, collection, i_key_value );
 	}
 
-	// Iterator::constructor( collection_type, collection, iteration_type, offset_index )
+	// Iterator::constructor( collection_type, collection, iteration_type, i_key_value )
 	inline Iterator<const void>::Iterator( const reflective::Type & collection_type, const void * collection,
-		const reflective::Type & iteration_type, size_t offset_index )
+		const reflective::Type & iteration_type, const void * i_key_value )
 			: _iteration_type( &iteration_type )
 	{
-		_assign_collection( collection_type, collection, offset_index );
+		_assign_collection( collection_type, collection, i_key_value );
 	}
 
 	// Iterator::destructor
@@ -139,7 +139,7 @@ namespace reflective
 		_group.curr_in_group = nullptr;
 		_group.end_of_group = nullptr;
 
-		const reflective::CollectionHandler * collection_handler = collection_type.collection_handler();
+		const reflective::ICollectionHandler * collection_handler = collection_type.collection_handler();
 		if( collection_handler )
 		{
 			_abstract_iterator = collection_handler->create_iterator( const_cast<void*>( collection ), 0 );	
@@ -164,16 +164,16 @@ namespace reflective
 
 	// Iterator<const void>::_assign_collection( collection_type, collection )
 	inline void Iterator<const void>::_assign_collection( 
-		const reflective::Type & collection_type, const void * collection, size_t offset_index )
+		const reflective::Type & collection_type, const void * collection, const void * i_key_value )
 	{
 		_abstract_iterator = nullptr;
 		_group.curr_in_group = nullptr;
 		_group.end_of_group = nullptr;
 
-		const reflective::CollectionHandler * collection_handler = collection_type.collection_handler();
+		const reflective::ICollectionHandler * collection_handler = collection_type.collection_handler();
 		if( collection_handler )
 		{
-			_abstract_iterator = collection_handler->create_iterator( const_cast<void*>( collection ), offset_index );	
+			_abstract_iterator = collection_handler->create_iterator( const_cast<void*>( collection ), i_key_value );	
 			if( _abstract_iterator )
 			{
 				_abstract_iterator->first_group( _group );

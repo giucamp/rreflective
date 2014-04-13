@@ -40,7 +40,7 @@ namespace reflective
 			REFLECTIVE_ASSERT( prev_collection == nullptr ); // call unregister_watch first
 		#endif
 
-		const CollectionHandler * collection_handler = collection_type.collection_handler();
+		const ICollectionHandler * collection_handler = collection_type.collection_handler();
 		if( !collection_handler )
 			return false;
 
@@ -73,7 +73,7 @@ namespace reflective
 			REFLECTIVE_ASSERT( collection_type != nullptr );
 		}
 
-		const CollectionHandler * collection_handler = collection_type->collection_handler();
+		const ICollectionHandler * collection_handler = collection_type->collection_handler();
 		if( !collection_handler )
 			return;
 

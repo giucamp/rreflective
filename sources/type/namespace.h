@@ -118,10 +118,10 @@ namespace reflective
 		const std::map< SymbolNameHash, Namespace * > & child_namespaces() const;
 
 		// collection handler
-		class CollectionHandler;
+		class ICollectionHandler;
 		class ReflectiveIterator;
 		class ReflectiveWatch;
-		static CollectionHandler & access_collection_handler();
+		static ICollectionHandler & access_collection_handler();
 
 	private: // internal services		
 		friend class Type;
@@ -132,7 +132,7 @@ namespace reflective
 		std::map< SymbolNameHash, const Type * > _child_types;
 		std::map< SymbolNameHash, Namespace * > _child_namespaces;
 		Namespace * _parent;
-		static CollectionHandler _collection_handler;
+		static ICollectionHandler _collection_handler;
 	};
 
 }

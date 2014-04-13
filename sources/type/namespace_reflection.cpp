@@ -28,7 +28,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace reflective
 {
 	// Namespace::ReflectiveIterator
-	class Namespace::ReflectiveIterator : public reflective::AbstractIterator
+	class Namespace::ReflectiveIterator : public reflective::IIterator
 	{
 	public:
 		ReflectiveIterator( const reflective::Namespace & namespace_obj )
@@ -99,15 +99,14 @@ namespace reflective
 		bool insert( 
 			size_t group_offset_index, const Type & items_type, 
 			const void * source_object, size_t item_count,
-			Group & out_curr_group )
+			const void * i_key_value, Group & out_curr_group )
 		{
 			REFLECTIVE_UNUSED_4( group_offset_index, items_type, source_object, item_count );
-			REFLECTIVE_UNUSED( out_curr_group );
+			REFLECTIVE_UNUSED_2( out_curr_group, i_key_value );
 			return false; // unsupported
 		}
 
-		bool remove( size_t offset_index, size_t item_count,
-			Group & out_curr_group )
+		bool remove( size_t offset_index, size_t item_count, Group & out_curr_group )
 		{
 			REFLECTIVE_UNUSED_2( offset_index, item_count );
 			REFLECTIVE_UNUSED( out_curr_group );
@@ -120,8 +119,8 @@ namespace reflective
 		reflective::Namespace::NamespaceIterator _namespaces;
 	};
 
-	// Namespace::CollectionHandler
-	class Namespace::CollectionHandler : public reflective::CollectionHandler
+	// Namespace::ICollectionHandler
+	class Namespace::ICollectionHandler : public reflective::ICollectionHandler
 	{
 	public:
 
@@ -150,13 +149,13 @@ namespace reflective
 		}
 
 		// create_iterator
-		reflective::AbstractIterator * create_iterator( void * collection_object, size_t offset_index ) const
+		reflective::IIterator * create_iterator( void * i_collection_object, const void * i_key_value ) const
 		{
-			if( offset_index != 0 )
+			if( i_key_value != 0 )
 				return nullptr;
 				
 			const reflective::Namespace & namespace_obj = 
-				*static_cast<const reflective::Namespace*>( collection_object );
+				*static_cast<const reflective::Namespace*>( i_collection_object );
 
 			ReflectiveIterator * result = REFLECTIVE_LIFO_NEW( ReflectiveIterator, namespace_obj );
 
@@ -171,13 +170,12 @@ namespace reflective
 		}
 
 		// get_indices_info
-		size_t get_indices_info( const void * collection_object,
-			bool * out_supports_positional_index,
-			reflective::CollectionIndexInfo * out_indices, size_t max_indices_count ) const
+		virtual bool get_key_type( const void * i_collection_object, uint32_t * o_flags, QualifiedType * o_index_type ) const
 		{
-			REFLECTIVE_UNUSED_3( collection_object, out_indices, max_indices_count );
-			*out_supports_positional_index = true;
-			return 0;
+			REFLECTIVE_UNUSED( i_collection_object );
+			*o_flags = 0;
+			*o_index_type = safe_get_qualified_type<SymbolName>();
+			return true;
 		}
 
 		bool register_watch( Watch * watch, void * collection_object ) const
@@ -193,10 +191,10 @@ namespace reflective
 	};
 
 	// Namespace::_collection_handler
-	Namespace::CollectionHandler Namespace::_collection_handler;
+	Namespace::ICollectionHandler Namespace::_collection_handler;
 
 	// Namespace::access_collection_handler
-	Namespace::CollectionHandler & Namespace::access_collection_handler()
+	Namespace::ICollectionHandler & Namespace::access_collection_handler()
 	{
 		return _collection_handler;
 	}

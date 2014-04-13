@@ -42,7 +42,7 @@ namespace reflective
 		/* 	constructor( [collection_type], collection, [iteration_type], [offset_index] )
 		
 			collection - object to iterate. If the object is not a collection, that is its type
-				does not implement the AbstractIterator interface, the iteration is empty.
+				does not implement the IIterator interface, the iteration is empty.
 			collection_type - optional - the type of the collection. If omitted, the type of
 				the collection is deduced by the 'collection' parameter.
 			iteration_type - optional - the type of iterated objects. If omitted, the reflective::Type 
@@ -66,23 +66,23 @@ namespace reflective
 		// constructor( collection_type, collection, iteration_type )
 		Iterator( const reflective::Type & collection_type, void * collection, const reflective::Type & iteration_type );
 
-		// constructor( collection, offset_index )
+		// constructor( collection, i_key_value )
 		template <class COLLECTION_TYPE> 
 			Iterator( COLLECTION_TYPE & collection, 
-				size_t offset_index );
+				const void * i_key_value );
 
-		// constructor( collection, iteration_type, offset_index )
+		// constructor( collection, iteration_type, i_key_value )
 		template <class COLLECTION_TYPE> 
 			Iterator( COLLECTION_TYPE & collection, const reflective::Type & iteration_type,
-				size_t offset_index );
+				const void * i_key_value );
 
-		// constructor( collection_type, collection, offset_index )
+		// constructor( collection_type, collection, i_key_value )
 		Iterator( const reflective::Type & collection_type, void * collection,
-			size_t offset_index );
+			const void * i_key_value );
 
-		// constructor( collection_type, collection, iteration_type, offset_index )
+		// constructor( collection_type, collection, iteration_type, i_key_value )
 		Iterator( const reflective::Type & collection_type, void * collection, const reflective::Type & iteration_type,
-			size_t offset_index );
+			const void * i_key_value );
 
 		// destructor
 		~Iterator();
@@ -107,6 +107,7 @@ namespace reflective
 		bool insert();
 		bool insert( const TYPE & source_object );
 		bool insert( const void * source_object, const Type & object_type );
+		bool insert( const void * source_object, const Type & object_type, const void * key_value );
 
 		// multi_insert
 		bool multi_insert( size_t object_count );
@@ -119,14 +120,14 @@ namespace reflective
 
 	private: // internal services		
 		void _assign_collection( const reflective::Type & collection_type, void * collection );
-		void _assign_collection( const reflective::Type & collection_type, void * collection, size_t offset_index );
+		void _assign_collection( const reflective::Type & collection_type, void * collection, const void * i_key_value );
 
 		Iterator & operator = ( const Iterator & ); // not supported
 
 	private: // data members		
-		reflective::AbstractIterator::Group _group;
+		reflective::IIterator::Group _group;
 		const reflective::Type & _iteration_type;
-		reflective::AbstractIterator * _abstract_iterator;
+		reflective::IIterator * _abstract_iterator;
 		size_t _index_in_group;
 	};
 

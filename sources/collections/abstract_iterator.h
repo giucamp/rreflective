@@ -31,8 +31,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	// AbstractIterator
-	class AbstractIterator
+	// IIterator
+	class IIterator
 	{
 	public:		
 
@@ -59,15 +59,14 @@ namespace reflective
 		virtual bool insert( 
 			size_t group_offset_index, const Type & items_type, 
 			const void * source_object, size_t item_count,
-			Group & out_curr_group ) = 0;
+			const void * i_key_value, Group & out_curr_group ) = 0;
 
-		virtual bool remove( size_t offset_index, size_t item_count,
-			Group & out_curr_group ) = 0;
+		virtual bool remove( size_t offset_index, size_t item_count, Group & out_curr_group ) = 0;
 
-		virtual ~AbstractIterator();
+		virtual ~IIterator();
 
 	protected:
-		AbstractIterator();
+		IIterator();
 	};
 
 

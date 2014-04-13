@@ -76,8 +76,7 @@ namespace reflective
 
 		// constructors
 		LifeFunctions();
-		LifeFunctions( CtorCaller constructor_caller, CtorCaller destructor_caller, 
-			Copier copier, Mover mover );
+		LifeFunctions( CtorCaller constructor_caller, CtorCaller destructor_caller, Copier copier, Mover mover );
 
 		// properties
 		bool is_abstract() const; // returns true if any of the functions is nullptr

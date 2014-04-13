@@ -257,7 +257,7 @@ namespace reflective
 
 	// SymbolList::access_collection_handler
 	template < class SYMBOL, bool ALLOW_DUPLICATES, class SYMBOL_COMPARER >
-		inline CollectionHandler & SymbolList<SYMBOL, ALLOW_DUPLICATES, SYMBOL_COMPARER >::access_collection_handler()
+		inline ICollectionHandler & SymbolList<SYMBOL, ALLOW_DUPLICATES, SYMBOL_COMPARER >::access_collection_handler()
 	{
 		return _collection_handler;
 	}

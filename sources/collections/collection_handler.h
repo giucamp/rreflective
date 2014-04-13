@@ -31,29 +31,23 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	struct CollectionIndexInfo
-	{
-		size_t id;
-		QualifiedType qualified_type;
-	};
-
-	/* CollectionHandler - provides an non-intrusive collection-like interface to the
+	/* ICollectionHandler - provides an non-intrusive collection-like interface to the
 		objects of the a given type suitable for iteration and watching. The collection
-		object is passed to the methods of CollectionHandler by a void pointer. Having
-		the CollectionHandler associated with the type, the collection type is not required
+		object is passed to the methods of ICollectionHandler by a void pointer. Having
+		the ICollectionHandler associated with the type, the collection type is not required
 		to derive and implement any interface (that's the non-intrusiveness).
 		Each collection handler is supposed to be associated with a class object (see
 		reflective::Class). So all the objects of the collection class share the
-		same instance of CollectionHandler. */
-	class CollectionHandler
+		same instance of ICollectionHandler. */
+	class ICollectionHandler
 	{
 	public:
 
 		// query_item_count
 		virtual bool query_item_count( const void * collection_object, size_t * out_count ) const = 0;
 			/* Not all the collections are able to return quickly their item count, so this method
-			may return false, and out_count is invalidated by the call. Morever, the item count may too big
-			to fit in a size_t. If the method returns true, out_count has been assigned with
+			may return false, and out_count is invalidated by the call. Furthermore, the item count may
+			too big to fit in a size_t. If the method returns true, out_count has been assigned with
 			the correct item count. */
 
 		// resize
@@ -67,12 +61,15 @@ namespace reflective
 				nullptr the collection can handle any type of objects. */
 
 		// iteration
-		virtual AbstractIterator * create_iterator( void * collection_object, size_t offset_index ) const = 0;
+		virtual IIterator * create_iterator( void * i_collection_object, const void * i_key_value ) const = 0;
 
-		// get_indices_info
-		virtual size_t get_indices_info( const void * collection_object,
-			bool * out_supports_positional_index,
-			CollectionIndexInfo * out_indices, size_t max_indices_count ) const = 0;
+		// get_key_type
+		enum KeyFlags
+		{
+			ePositionalIndex = 1 << 0,
+			eAllowDuplicates = 1 << 1,
+		};
+		virtual bool get_key_type( const void * i_collection_object, uint32_t * o_flags, QualifiedType * o_index_type ) const = 0;
 
 		
 				/* watching */

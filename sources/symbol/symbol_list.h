@@ -65,7 +65,7 @@ namespace reflective
 		void assign( const SYMBOL * * items, size_t count );
 		template < size_t ITEM_COUNT > void assign( const SYMBOL * (&items)[ ITEM_COUNT ] );
 
-		static CollectionHandler & access_collection_handler();
+		static ICollectionHandler & access_collection_handler();
 
 	protected:
 		class _CollectionHandler;

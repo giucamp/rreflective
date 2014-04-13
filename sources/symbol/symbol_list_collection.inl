@@ -30,7 +30,7 @@ namespace reflective
 	// MemberSetType::_CollectionHandler::constructor
 	template < class SYMBOL, bool ALLOW_DUPLICATES,	class SYMBOL_COMPARER >
 			inline SymbolList<SYMBOL, ALLOW_DUPLICATES, SYMBOL_COMPARER >::_CollectionHandler::_CollectionHandler()
-				: CollectionHandler()
+				: ICollectionHandler()
 	{
 	}
 
@@ -59,13 +59,13 @@ namespace reflective
 
 	// MemberSetType::_CollectionHandler::create_iterator
 	template < class SYMBOL, bool ALLOW_DUPLICATES,	class SYMBOL_COMPARER >
-			inline reflective::AbstractIterator * SymbolList<SYMBOL, ALLOW_DUPLICATES, SYMBOL_COMPARER >::_CollectionHandler::create_iterator(
-				void * collection_object, size_t offset_index ) const
+			inline reflective::IIterator * SymbolList<SYMBOL, ALLOW_DUPLICATES, SYMBOL_COMPARER >::_CollectionHandler::create_iterator(
+				void * collection_object, const void * i_key_value ) const
 	{
 		const reflective::SymbolList<SYMBOL, ALLOW_DUPLICATES, SYMBOL_COMPARER > & symbol_set =
 			*static_cast<const reflective::SymbolList<SYMBOL, ALLOW_DUPLICATES, SYMBOL_COMPARER >*>( collection_object );
 
-		_Iterator * iterator = REFLECTIVE_NEW( _Iterator, symbol_set, offset_index );
+		_Iterator * iterator = REFLECTIVE_NEW( _Iterator, symbol_set, *static_cast<const size_t*>( i_key_value ) );
 
 		return iterator;
 	}

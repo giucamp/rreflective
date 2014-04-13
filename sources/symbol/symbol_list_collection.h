@@ -31,7 +31,7 @@ namespace reflective
 	template < class SYMBOL, bool ALLOW_DUPLICATES,
 			class SYMBOL_COMPARER >
 		class SymbolList<SYMBOL,ALLOW_DUPLICATES, SYMBOL_COMPARER >::_CollectionHandler 
-			: public reflective::CollectionHandler
+			: public reflective::ICollectionHandler
 	{
 	public:
 		_CollectionHandler();
@@ -44,7 +44,7 @@ namespace reflective
 			bool * out_allow_derived_types ) const;
 
 		// create_iterator
-		reflective::AbstractIterator * create_iterator( void * collection_object, size_t offset_index ) const;
+		reflective::IIterator * create_iterator( void * i_collection_object, const void * i_key_value ) const;
 
 		// resize
 		bool resize( void * collection_object, size_t new_size ) const
@@ -54,13 +54,12 @@ namespace reflective
 		}
 
 		// get_indices_info
-		size_t get_indices_info( const void * collection_object,
-			bool * out_supports_positional_index,
-			reflective::CollectionIndexInfo * out_indices, size_t max_indices_count ) const
+		bool get_key_type( const void * i_collection_object, uint32_t * o_flags, QualifiedType * o_index_type ) const
 		{
-			REFLECTIVE_UNUSED_3( collection_object, out_indices, max_indices_count );
-			*out_supports_positional_index = true;
-			return 0;
+			REFLECTIVE_UNUSED( i_collection_object );
+			*o_flags = ePositionalIndex;
+			*o_index_type = safe_get_qualified_type<SymbolName>();
+			return true;
 		}
 
 		bool register_watch( Watch * watch, void * collection_object ) const
@@ -78,7 +77,7 @@ namespace reflective
 	// SymbolList<SYMBOL>::_Iterator
 	template < class SYMBOL, bool ALLOW_DUPLICATES,	class SYMBOL_COMPARER >
 			class SymbolList<SYMBOL,ALLOW_DUPLICATES, SYMBOL_COMPARER >::_Iterator 
-				: public reflective::AbstractIterator
+				: public reflective::IIterator
 	{
 	public:
 		_Iterator( const SymbolList<SYMBOL, ALLOW_DUPLICATES, SYMBOL_COMPARER > & symbol_set, size_t offset_index );
@@ -101,10 +100,10 @@ namespace reflective
 		bool insert( 
 			size_t group_offset_index, const Type & items_type, 
 			const void * source_object, size_t item_count,
-			Group & out_curr_group )
+			const void * i_key_value, Group & out_curr_group )
 		{
 			REFLECTIVE_UNUSED_4( group_offset_index, items_type, source_object, item_count );
-			REFLECTIVE_UNUSED( out_curr_group );
+			REFLECTIVE_UNUSED_2( out_curr_group, i_key_value );
 			return false; // unsupported
 		}
 

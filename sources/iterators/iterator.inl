@@ -68,39 +68,39 @@ namespace reflective
 	}
 
 
-	// Iterator::constructor( collection, offset_index )
+	// Iterator::constructor( collection, i_key_value )
 	template <class TYPE>
 		template <class COLLECTION_TYPE>
-			inline Iterator<TYPE>::Iterator( COLLECTION_TYPE & collection, size_t offset_index )
+			inline Iterator<TYPE>::Iterator( COLLECTION_TYPE & collection, const void * i_key_value )
 				: _iteration_type( get_type<TYPE>() )
 	{
-		_assign_collection( get_type<COLLECTION_TYPE>(), &collection, offset_index );
+		_assign_collection( get_type<COLLECTION_TYPE>(), &collection, i_key_value );
 	}
 
-	// Iterator::constructor( collection, iteration_type, offset_index )
+	// Iterator::constructor( collection, iteration_type, i_key_value )
 	template <class TYPE>
 		template <class COLLECTION_TYPE>
-			inline Iterator<TYPE>::Iterator( COLLECTION_TYPE & collection, const reflective::Type & iteration_type, size_t offset_index )
+			inline Iterator<TYPE>::Iterator( COLLECTION_TYPE & collection, const reflective::Type & iteration_type, const void * i_key_value )
 				: _iteration_type( iteration_type )
 	{
-		_assign_collection( get_type<COLLECTION_TYPE>(), &collection, offset_index );
+		_assign_collection( get_type<COLLECTION_TYPE>(), &collection, i_key_value );
 	}
 
-	// Iterator::constructor( collection_type, collection, offset_index )
+	// Iterator::constructor( collection_type, collection, i_key_value )
 	template <class TYPE>
-		inline Iterator<TYPE>::Iterator( const reflective::Type & collection_type, void * collection, size_t offset_index )
+		inline Iterator<TYPE>::Iterator( const reflective::Type & collection_type, void * collection, const void * i_key_value )
 			: _iteration_type( get_type<TYPE>() )
 	{
-		_assign_collection( collection_type, collection, offset_index );
+		_assign_collection( collection_type, collection, i_key_value );
 	}
 
-	// Iterator::constructor( collection_type, collection, iteration_type, offset_index )
+	// Iterator::constructor( collection_type, collection, iteration_type, i_key_value )
 	template <class TYPE>
 		inline Iterator<TYPE>::Iterator( const reflective::Type & collection_type, void * collection,
-			const reflective::Type & iteration_type, size_t offset_index )
+			const reflective::Type & iteration_type, const void * i_key_value )
 				: _iteration_type( iteration_type )
 	{
-		_assign_collection( collection_type, collection, offset_index );
+		_assign_collection( collection_type, collection, i_key_value );
 	}
 
 	// Iterator::destructor
@@ -177,7 +177,7 @@ namespace reflective
 		_group.end_of_group = nullptr;
 		_index_in_group = 0;
 
-		const reflective::CollectionHandler * collection_handler = collection_type.collection_handler();
+		const reflective::ICollectionHandler * collection_handler = collection_type.collection_handler();
 		if( collection_handler )
 		{
 			_abstract_iterator = collection_handler->create_iterator( collection, 0 );
@@ -198,17 +198,17 @@ namespace reflective
 	// Iterator<TYPE>::_assign_collection( collection_type, collection )
 	template <class TYPE>
 		inline void Iterator<TYPE>::_assign_collection(
-			const reflective::Type & collection_type, void * collection, size_t offset_index )
+			const reflective::Type & collection_type, void * collection, const void * i_key_value )
 	{
 		_abstract_iterator = nullptr;
 		_group.curr_in_group = nullptr;
 		_group.end_of_group = nullptr;
 		_index_in_group = 0;
 
-		const reflective::CollectionHandler * collection_handler = collection_type.collection_handler();
+		const reflective::ICollectionHandler * collection_handler = collection_type.collection_handler();
 		if( collection_handler )
 		{
-			_abstract_iterator = collection_handler->create_iterator( collection, offset_index );
+			_abstract_iterator = collection_handler->create_iterator( collection, i_key_value );
 			if( _abstract_iterator )
 			{
 				_abstract_iterator->first_group( _group );
@@ -286,6 +286,19 @@ namespace reflective
 		return multi_insert( 1, source_object, object_type );
 	}
 
+	// Iterator<TYPE>::insert( source_object, object_type )
+	template <class TYPE>
+		inline bool Iterator<TYPE>::insert( const void * source_object, const Type & object_type, const void * key_value )
+	{
+		const bool result = _abstract_iterator->insert( _index_in_group,
+			object_type, source_object, 1, key_value, _group );
+
+		if( result )
+			_index_in_group = 0;
+
+		return result;
+	}
+
 	// Iterator<TYPE>::multi_insert( object_count )
 	template <class TYPE>
 		inline bool Iterator<TYPE>::multi_insert( size_t object_count )
@@ -309,7 +322,7 @@ namespace reflective
 		inline bool Iterator<TYPE>::multi_insert( size_t object_count, const void * source_object, const Type & object_type )
 	{
 		const bool result = _abstract_iterator->insert( _index_in_group,
-			object_type, source_object, object_count, _group );
+			object_type, source_object, object_count, nullptr, _group );
 
 		if( result )
 			_index_in_group = 0;

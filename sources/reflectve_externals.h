@@ -44,11 +44,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace reflective		{ class StringOutputStream; }
 
 // REFLECTIVE_PRESERVE_SYMBOL_PLAIN_NAMES
-#define REFLECTIVE_PRESERVE_SYMBOL_PLAIN_NAMES	1 /* (isDebug || CMB_ENABLE_TESTING) /* If this is true, SymbolName will
+#define REFLECTIVE_PRESERVE_SYMBOL_PLAIN_NAMES	1 /* (REFLECTIVE_IS_DEBUG || CMB_ENABLE_TESTING) /* If this is true, SymbolName will
 	keep both the string and the hash of the name. Otherwise SymbolName will keep only the
 	hash. Having the string is useful for debug purpose or to generate user interfaces. */
 
-#define REFLECTIVE_NAME_CONSISTENCY_CHECKS		isDebug
+#define REFLECTIVE_NAME_CONSISTENCY_CHECKS		REFLECTIVE_IS_DEBUG
 
 // REFLECTIVE_TRACK_TYPE_HIERARCHY
 #define REFLECTIVE_TRACK_TYPE_HIERARCHY		(1 == 1) /* If true, the reflective::Class will
@@ -60,8 +60,8 @@ namespace reflective		{ class StringOutputStream; }
 	SymbolName, (see reflective::Namespace), but enumerating the derived classes may be useful
 	to generate user interfaces. */
 
-#define REFLECTIVE_WARN_ON_NONSORTED_SYMBOLS	isDebug
-#define REFLECTIVE_RECOVERY_NONSORTED_SYMBOLS	isDebug /*
+#define REFLECTIVE_WARN_ON_NONSORTED_SYMBOLS	0
+#define REFLECTIVE_RECOVERY_NONSORTED_SYMBOLS	1 /*
 	Class members are sorted by their visibility (first public members, then protected members and
 	finally private members). Enum members are sorted by their values in non-decreasing order.
 	reflective::Class and reflective::Enum objects may be constructed with the correct sorting,
@@ -69,9 +69,9 @@ namespace reflective		{ class StringOutputStream; }
 	If REFLECTIVE_RECOVERY_NONSORTED_SYMBOLS is defined as true, the memebers are automatically sorted.
 	Having members not sorted may lead to impredictable results. */
 
-#define REFLECTIVE_CHECK_FOR_DUPLICATE_SYMBOLS	isDebug
+#define REFLECTIVE_CHECK_FOR_DUPLICATE_SYMBOLS	REFLECTIVE_IS_DEBUG
 
-#define REFLECTIVE_DEBUG_LIFO_DESTRUCTION		isDebug
+#define REFLECTIVE_DEBUG_LIFO_DESTRUCTION		REFLECTIVE_IS_DEBUG
 
 #define REFLECTIVE_NO_CLEANUP_ON_EXIT			(0==1) /* if true, the allocation of
 	reflective objects is irreversible, otherwise they are destroyed during
@@ -81,7 +81,7 @@ namespace reflective		{ class StringOutputStream; }
 #define REFLECTIVE_ALLOW_MULTIPLE_INHERITANCE   (1==1) /* Determines if types can have multiple
 	base types (or base classes). Setting this to TRUE has impacts on performance. */
 
-#if isDebug
+#if REFLECTIVE_IS_DEBUG
 	#define REFLECTIVE_UPDOWN_CASTER_DEFAULT_IMPL	UpDownCasterOffsetting_Diagnostic // see UpDownCasterImplementation
 #else
 	#define REFLECTIVE_UPDOWN_CASTER_DEFAULT_IMPL	UpDownCasterOffsetting // see UpDownCasterImplementation

@@ -33,8 +33,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /*
 
 	The class Iterator<TYPE> iterates the objects inside any collection whose 
-		reflective::Type provides an implementation of reflective::CollectionHandler.
-	If the reflective::Type of the collections does not provoide a CollectionHandler,
+		reflective::Type provides an implementation of reflective::ICollectionHandler.
+	If the reflective::Type of the collections does not provoide a ICollectionHandler,
 		the object is considered an empty collection.
 
 	Iterator<void> \ Iterator<const void> - iterates a collection giving access to
