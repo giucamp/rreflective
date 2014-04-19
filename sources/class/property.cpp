@@ -40,11 +40,18 @@ namespace reflective
 			error_buffer << name() << " is readonly";
 			result = false; 
 		}
-
-		FromStringBuffer str_buff( str_value, strlen(str_value) );
 		
-		const Type & final_type = *_qualified_type.final_type();
-		void * value = reflective_externals::mem_lifo_alloc( final_type.alignment(), final_type.size() );
+		FromStringBuffer str_buff( str_value, strlen(str_value) );
+
+		const Type & type = *_qualified_type.type();
+
+		void * inplace_value = get_value_inplace( object );
+		if( inplace_value != nullptr )
+		{
+			return type.assign_from_string( str_buff, inplace_value, error_buffer );
+		}
+
+		void * value = reflective_externals::mem_lifo_alloc( type.alignment(), type.size() );
 		
 		if( value == nullptr )
 		{
@@ -52,20 +59,20 @@ namespace reflective
 			result = false;
 		}
 
-		if( !final_type.check_capabilities(Type::eHasFromStringAssigner) )
+		if( !type.check_capabilities(Type::eHasFromStringAssigner) )
 		{
-			error_buffer << final_type.full_name() << " does not support from_string";
+			error_buffer << type.full_name() << " does not support from_string";
 			result = false;
 		}
 		if( result )
 		{
-			final_type.construct( value );
-			result = final_type.assign_from_string( str_buff, value, error_buffer );
+			type.construct( value );
+			result = type.assign_from_string( str_buff, value, error_buffer );
 			if( result )
 			{
 				result = set_value( object, value );
 			}
-			final_type.destroy( value );
+			type.destroy( value );
 		}
 
 		reflective_externals::mem_lifo_free( value );

@@ -84,7 +84,7 @@ namespace reflective
 		~Iterator();
 
 		// access to object
-		const reflective::Type & type() const;
+		const QualifiedType & qualified_type() const;
 		const TYPE & object() const;
 		const TYPE & operator * () const;
 		const TYPE * operator -> () const;

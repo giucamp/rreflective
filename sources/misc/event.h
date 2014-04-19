@@ -37,8 +37,8 @@ namespace reflective
 		AbstractHandler objects. When the event is raised  with the raise() method, 
 		the invoke function is called on the attached handlers.
 		Listeners can derive a class from AbstractHandler to implement the invoke, or 
-		can use derived classes like Handler, whitch redirects the invoke to the listener 
-		by calling a method on it (see Handler<TYPE> class). 
+		can use derived classes like MethodHandler, whitch redirects the invoke to the listener 
+		by calling a method on it (see MethodHandler<TYPE> class). 
 		Events can be used (and handlers attached\detached) also in a reflective way, 
 		that is without compile-time knowlege of the owner type or params type,
 		given that the Event object is exposed by the owning class with an 
@@ -67,10 +67,6 @@ namespace reflective
 		// handlers methods
 		void add_handler( AbstractHandler & handler );
 		void remove_handler( AbstractHandler & handler );
-
-		// handlers operator - alias for add_handler \ remove_handler
-		void operator += ( AbstractHandler & handler );
-		void operator -= ( AbstractHandler & handler );
 
 	private: // data members
 		AbstractHandler * _first_handler;

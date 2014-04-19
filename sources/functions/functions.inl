@@ -214,8 +214,6 @@ namespace reflective
 		return get_inhertied_properties_count( class_obj );
 	}
 
-
-
 					/**** LifoBuffer ****/
 
 	// LifoBuffer::curr_alignment
@@ -235,6 +233,5 @@ namespace reflective
 	{
 		return _buffer;
 	}
-
 
 } // namespace reflective

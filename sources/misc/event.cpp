@@ -31,8 +31,49 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	// AbstractEvent::operator -=
-	void AbstractEvent::operator -= ( AbstractHandler & handler )
+
+	// AbstractEvent::destructor
+	AbstractEvent::~AbstractEvent()
+	{
+		AbstractHandler * handler = _first_handler;
+		AbstractHandler * next_handler;
+		if( handler ) do {
+
+			handler->_event = nullptr;
+			next_handler = handler->_next_handler;
+			handler->_next_handler = nullptr;
+
+			handler = next_handler;
+
+		} while( handler != nullptr );
+	}
+
+	// AbstractEvent::raise
+	void AbstractEvent::raise( void * params )
+	{
+		AbstractHandler * handler = _first_handler;
+		if( handler ) do {
+
+			handler->invoke( params );
+
+			handler = handler->_next_handler;
+		} while( handler != nullptr );
+	}
+
+	// AbstractEvent::raise (const params)
+	void AbstractEvent::raise( const void * params )
+	{
+		AbstractHandler * handler = _first_handler;
+		if( handler ) do {
+
+			handler->invoke( params );
+
+			handler = handler->_next_handler;
+		} while( handler != nullptr );
+	}
+
+	// AbstractEvent::remove_handler
+	void AbstractEvent::remove_handler( AbstractHandler & handler )
 	{		
 		AbstractHandler * curr_handler = _first_handler;
 		AbstractHandler * prev_handler = nullptr;
@@ -44,13 +85,15 @@ namespace reflective
 				{
 					REFLECTIVE_ASSERT( _first_handler != curr_handler );
 					prev_handler->_next_handler = handler._next_handler;
-					return;
+					handler._event = nullptr;
+					break;
 				}
 				else
 				{
 					REFLECTIVE_ASSERT( _first_handler == curr_handler );
 					_first_handler = handler._next_handler;
-					return;
+					handler._event = nullptr;
+					break;
 				}
 			}
 
@@ -58,6 +101,8 @@ namespace reflective
 			curr_handler = curr_handler->_next_handler;
 
 		} while( curr_handler != nullptr );
+
+		REFLECTIVE_ASSERT( curr_handler != nullptr ); // handler not found?
 	}
 
 } // namespace reflective

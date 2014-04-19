@@ -224,8 +224,9 @@ namespace reflective
 		// type_full_name_to_string
 		void type_full_name_to_string( StringOutputStream & dest_buffer ) const;
 		
-		// full_name
 		class FullName;
+
+		/** returns an object that provides a to_string() that stringize the full name of the qualified type */
 		FullName full_name() const;
 
 		// assign_from_string

@@ -63,6 +63,18 @@ namespace reflective
 		return on_set_value( object, value );
 	}
 
+	// Property::get_value_inplace
+	inline void * Property::get_value_inplace( void * object ) const
+	{
+		return on_get_value_inplace( object );
+	}
+
+	// Property::get_value_inplace - const
+	inline const void * Property::get_value_inplace( const void * object ) const
+	{
+		return on_get_value_inplace( const_cast<void*>( object ) );
+	}
+
 	// Property::get_value
 	inline bool Property::get_value( const void * object, void * value ) const
 	{

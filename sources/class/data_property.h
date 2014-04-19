@@ -47,8 +47,9 @@ namespace reflective
 			ClassMember::Attributes attributes );
 
 	protected:
-		bool on_set_value( void * object, const void * value ) const;
-		bool on_get_value( const void * object, void * value ) const;
+		void * on_get_value_inplace( void * object ) const;
+		bool on_set_value( void * object, const void * value ) const	{ REFLECTIVE_UNUSED_2( object, value ); return false; }
+		bool on_get_value( const void * object, void * value ) const	{ REFLECTIVE_UNUSED_2( object, value ); return false; }
 
 	private: // data members
 		TYPE (ROOT_OBJECT::*_data);
@@ -64,8 +65,9 @@ namespace reflective
 			ClassMember::Attributes attributes );
 
 	protected:
-		bool on_set_value( void * object, const void * value ) const;
-		bool on_get_value( const void * object, void * value ) const;
+		void * on_get_value_inplace( void * object ) const;
+		bool on_set_value( void * object, const void * value ) const	{ REFLECTIVE_UNUSED_2( object, value ); return false; }
+		bool on_get_value( const void * object, void * value ) const	{ REFLECTIVE_UNUSED_2( object, value ); return false; }
 
 	private: // data members
 		const TYPE (ROOT_OBJECT::*_data);

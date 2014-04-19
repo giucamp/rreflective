@@ -49,7 +49,7 @@ namespace reflective
 	template <class ROOT_OBJECT, class OBJECT, class TYPE>
 		Property * new_property( SymbolName name, 
 			TYPE (OBJECT::*getter)() const,			
-			ClassMember::Attributes attributes = ClassMember::READONLY | ClassMember::DO_NOT_SERIALIZE );
+			ClassMember::Attributes attributes = ClassMember::READONLY | ClassMember::TRANSIENT );
 
 	// MethodProperty - implements a Property given a getter and a setter
 	template <class ROOT_OBJECT, class TYPE>
@@ -62,6 +62,7 @@ namespace reflective
 			ClassMember::Attributes attributes );
 
 	protected:
+		void * on_get_value_inplace( void * object ) const;
 		bool on_set_value( void * object, const void * value ) const;
 		bool on_get_value( const void * object, void * value ) const;
 
@@ -81,6 +82,7 @@ namespace reflective
 			ClassMember::Attributes attributes );
 
 	protected:
+		void * on_get_value_inplace( void * object ) const;
 		bool on_set_value( void * object, const void * value ) const;
 		bool on_get_value( const void * object, void * value ) const;
 

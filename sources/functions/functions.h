@@ -201,7 +201,8 @@ namespace reflective
 	private: // data members
 		void * _buffer;
 		size_t _alignment, _length;
-	};
+	};		
+
 
 } // namespace reflective
 

@@ -61,7 +61,7 @@ namespace reflective
 		NameIdentifier( const NameIdentifier & name );
 		NameIdentifier & operator = ( const NameIdentifier & string );
 
-		// comparaison
+		// comparison
 		bool operator == ( const NameIdentifier & op ) const;
 		bool operator != ( const NameIdentifier & op ) const;
 		bool operator < ( const NameIdentifier & op ) const;
@@ -107,7 +107,7 @@ namespace reflective
 		NameIdentifier( const NameIdentifier & name );
 		NameIdentifier & operator = ( const NameIdentifier & string );
 
-		// comparaison
+		// comparison
 		bool operator == ( const NameIdentifier & op ) const;
 		bool operator != ( const NameIdentifier & op ) const;
 		bool operator < ( const NameIdentifier & op ) const;

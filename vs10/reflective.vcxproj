@@ -119,7 +119,7 @@
       </PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>
       </PrecompiledHeaderOutputFile>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ExceptionHandling>false</ExceptionHandling>
       <ProgramDataBaseFileName>$(SolutionDir)\..\bin\msc100\$(Platform)_$(Configuration)\$(ProjectName)\intermediate.pdb</ProgramDataBaseFileName>
@@ -139,7 +139,7 @@
       </PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>
       </PrecompiledHeaderOutputFile>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <AdditionalIncludeDirectories>&lt;inherit from parent or project defaults&gt;</AdditionalIncludeDirectories>
@@ -162,7 +162,7 @@
       </PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>
       </PrecompiledHeaderOutputFile>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <AdditionalIncludeDirectories>&lt;inherit from parent or project defaults&gt;</AdditionalIncludeDirectories>
@@ -209,6 +209,7 @@
     <ClInclude Include="..\sources\misc\string_output_stream.h" />
     <ClInclude Include="..\sources\misc\unreferencer.h" />
     <ClInclude Include="..\sources\reflective_common.h" />
+    <ClInclude Include="..\sources\std_reflection\std_reflection.h" />
     <ClInclude Include="..\sources\symbol\symbol.h" />
     <ClInclude Include="..\sources\symbol\symbol_list.h" />
     <ClInclude Include="..\sources\symbol\symbol_list_collection.h" />
@@ -272,6 +273,8 @@
     <None Include="..\sources\misc\primitive_type.inl" />
     <None Include="..\sources\misc\static_const_string.inl" />
     <None Include="..\sources\misc\string_output_stream.inl" />
+    <None Include="..\sources\std_reflection\std_map_reflection.inl" />
+    <None Include="..\sources\std_reflection\std_reflection.inl" />
     <None Include="..\sources\symbol\symbol.inl" />
     <None Include="..\sources\symbol\symbol_list.inl" />
     <None Include="..\sources\symbol\symbol_list_collection.inl" />

@@ -65,7 +65,7 @@ namespace reflective
 		const reflective::SymbolList<SYMBOL, ALLOW_DUPLICATES, SYMBOL_COMPARER > & symbol_set =
 			*static_cast<const reflective::SymbolList<SYMBOL, ALLOW_DUPLICATES, SYMBOL_COMPARER >*>( collection_object );
 
-		_Iterator * iterator = REFLECTIVE_NEW( _Iterator, symbol_set, *static_cast<const size_t*>( i_key_value ) );
+		_Iterator * iterator = REFLECTIVE_LIFO_NEW( _Iterator, symbol_set, *static_cast<const size_t*>( i_key_value ) );
 
 		return iterator;
 	}
@@ -92,7 +92,7 @@ namespace reflective
 			const SYMBOL * member = &_symbol_set[ 0 ];
 			out_group.curr_in_group = member;
 			out_group.end_of_group = member + 1;
-			out_group.type = &get_type<SYMBOL>();
+			out_group.qualified_type = get_qualified_type<SYMBOL>();
 		}
 		else
 		{
@@ -114,7 +114,7 @@ namespace reflective
 			const SYMBOL * member = &_symbol_set[ _index ];
 			out_group.curr_in_group = member;
 			out_group.end_of_group = member + 1;
-			out_group.type = &get_type<SYMBOL>();
+			out_group.qualified_type = get_qualified_type<SYMBOL>();
 		}
 		else
 		{

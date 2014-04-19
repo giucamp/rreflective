@@ -44,7 +44,7 @@ namespace reflective
 			BACK_REFERENCE		= 1 << 2,
 			READONLY			= 1 << 3,
 			IDENTIFIER			= 1 << 4,
-			DO_NOT_SERIALIZE	= 1 << 5,
+			TRANSIENT			= 1 << 5,
 			ALL_ATTRIBUTES		= (1 << 6) - 1
 		};		
 

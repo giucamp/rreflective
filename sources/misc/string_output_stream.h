@@ -41,7 +41,7 @@ namespace reflective
 		StringOutputStream();
 		StringOutputStream( char * buffer, size_t max_length );
 
-		void set_string_buffer( char * i_buffer, size_t i_buffer_length );
+		void set_string_buffer( char * i_buffer, size_t i_buffer_length, size_t buffer_used_length = 0 );
 		void unset_string_buffer();
 
 		void clear();
@@ -63,6 +63,8 @@ namespace reflective
 		StringOutputStream & operator << ( char i_char )
 			{ append( i_char ); return *this; }
 		template <typename TYPE>  StringOutputStream & operator << ( const TYPE & i_object );
+
+		void append( const void * i_object, const Type & i_type );
 
 		// start_of_chars \ actual_length		
 		const char * buffer() const; /* start of the string in the buffer*/

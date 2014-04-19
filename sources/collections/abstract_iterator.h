@@ -38,14 +38,14 @@ namespace reflective
 
 		struct Group
 		{
-			const Type * type;
+			QualifiedType qualified_type;
 			void * curr_in_group;
 			void * end_of_group;
 		};
 
 		struct ConstGroup
 		{
-			const Type * type;
+			QualifiedType qualified_type;
 			const void * curr_in_group;
 			const void * end_of_group;
 		};

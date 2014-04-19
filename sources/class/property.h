@@ -31,7 +31,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	// Property
+	/** Base class for a property. This class keeps information about the property.
+		Given an object, it can be used to set or get the value. */
 	class Property : public ClassMember
 	{
 	public:
@@ -42,22 +43,37 @@ namespace reflective
 		// type - type of the property
 		const Type & type() const;
 
-		const TypeQualification & qualification() const; /* the qualfication gives
+		const TypeQualification & qualification() const; /* the qualification gives
 			additional infos about the type, such the indirection level and the pointed
 			type (see TypeQualification) */
 
-		bool get_value( const void * object, void * value ) const; /* gets a copy of
-			the value of the property for the object pointed by 'object'. 
+		/** gets a pointer to the value of the property. The storage of the returned
+			value is handled by the object, but the caller can modify it. This method allows
+			to read and write the property without making a copy of it, but it is supported
+			only by some type of properties.
+			@return pointer to the value of the property, or nullptr if the property does not 
+				support the method.	*/
+		void * get_value_inplace( void * object ) const;
+
+		/** gets a pointer to the value of the property for read. The storage of the returned
+			value is handled by the object, but the caller can modify it. This method allows
+			to read the property without making a copy of it, but it is supported only by some 
+			type of properties.
+			@return pointer to the value of the property, or nullptr if the property does not 
+				support the method.	*/
+		const void * get_value_inplace( const void * object ) const;
+
+		/** gets a copy of the value of the property for the object pointed by 'object'. 
 			The value is copy-constructed in the buffer, which must be large enough. 
 			type().size() should be used to determine the required size. 
 			After using the value the caller must destroy it. type().destroy() method 
 			may be used.
 			If the method returns false, the property could not be read (maybe it's a 
 			write-only property), and no operation has been performed. */
+		bool get_value( const void * object, void * value ) const;
 
-		bool set_value( void * object, const void * value ) const; /* sets the value
-			of the property for the object pointed by 'object'. The buffer pointed
-			by 'value' must contain a valid object of the type of the property.
+		/** sets the value of the property for the object pointed by 'object'. The buffer
+			pointed by 'value' must contain a valid object of the type of the property.
 			The method may use the type assignment operator (if any) to set the value,
 			or may destroy and copy-construct it. 
 			The object pointed by 'value' is not modified by set_value(), and the
@@ -65,6 +81,7 @@ namespace reflective
 			If the method returns false, the property could not be written (maybe it's a 
 			read-only property, or maybe the value was not suitable), and no operation 
 			has been performed. */
+		bool set_value( void * object, const void * value ) const;
 
 		bool set_value_from_string( void * object, const char * value, StringOutputStream & error_buffer ) const;
 
@@ -78,9 +95,10 @@ namespace reflective
 			const TypeQualification & type_qualification,
 			ClassMember::Attributes attributes );
 
-		// overridable
+		// to implement
+		virtual void * on_get_value_inplace( void * object ) const = 0;
 		virtual bool on_get_value( const void * object, void * value ) const = 0;
-		virtual bool on_set_value( void * object, const void * value ) const = 0;	
+		virtual bool on_set_value( void * object, const void * value ) const = 0;
 
 	private: // data members
 		QualifiedType _qualified_type;

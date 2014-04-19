@@ -36,65 +36,15 @@ namespace reflective
 			: _first_handler( NULL )
 	{
 	}
-
-	// AbstractEvent::destructor
-	inline AbstractEvent::~AbstractEvent()
-	{
-		AbstractHandler * handler = _first_handler;
-		AbstractHandler * next_handler;
-		if( handler ) do {
-
-			handler->_event = nullptr;
-			next_handler = handler->_next_handler;
-			handler->_next_handler = nullptr;
-
-			handler = next_handler;
-
-		} while( handler != nullptr );
-	}
-
-	// AbstractEvent::raise
-	inline void AbstractEvent::raise( void * params )
-	{
-		AbstractHandler * handler = _first_handler;
-		if( handler ) do {
-
-			handler->invoke( params );
-
-			handler = handler->_next_handler;
-		} while( handler != nullptr );
-	}
-
-	// AbstractEvent::raise (const params)
-	inline void AbstractEvent::raise( const void * params )
-	{
-		AbstractHandler * handler = _first_handler;
-		if( handler ) do {
-
-			handler->invoke( params );
-
-			handler = handler->_next_handler;
-		} while( handler != nullptr );
-	}
-
-	// AbstractEvent::operator +=
-	inline void AbstractEvent::operator += ( AbstractHandler & handler )
-	{
-		handler._event = this;
-		handler._next_handler = _first_handler;
-		_first_handler = &handler;
-	}
-
+	
 	// AbstractEvent::add_handler
 	inline void AbstractEvent::add_handler( AbstractHandler & handler )
 	{
-		(*this) += handler;
-	}
+		REFLECTIVE_ASSERT( handler._event == nullptr ); // this handler is already registered to an event
 
-	// AbstractEvent::remove_handler
-	inline void AbstractEvent::remove_handler( AbstractHandler & handler )
-	{
-		(*this) -= handler;
+		handler._event = this;
+		handler._next_handler = _first_handler;
+		_first_handler = &handler;
 	}
 
 

@@ -63,25 +63,14 @@ namespace reflective
 	{
 	}
 
-	// DataProperty::on_set_value
+	// DataProperty::on_get_value_inplace
 	template <class ROOT_OBJECT, class TYPE>
-		bool DataProperty<ROOT_OBJECT, TYPE>::on_set_value( void * object, const void * value ) const
+		void * DataProperty<ROOT_OBJECT, TYPE>::on_get_value_inplace( void * object ) const
 	{
 		ROOT_OBJECT & obj = *static_cast<ROOT_OBJECT*>( object );
-		obj.*_data = *static_cast<const TYPE*>( value );
-		return true;
+		return &( obj.*_data );
 	}
-
-	// DataProperty::on_get_value
-	template <class ROOT_OBJECT, class TYPE>
-		bool DataProperty<ROOT_OBJECT, TYPE>::on_get_value( const void * object, void * value ) const
-	{
-		const ROOT_OBJECT & obj = *static_cast<const ROOT_OBJECT*>( object );
-		new( value ) TYPE( obj.*_data );
-		return true;
-	}
-
-
+		
 
 				/**** DataProperty (const member) *****/
 
@@ -95,36 +84,13 @@ namespace reflective
 					_data( data )
 	{
 	}
-
-	// DataProperty::on_set_value
+		
+	// DataProperty::on_get_value_inplace
 	template <class ROOT_OBJECT, class TYPE>
-		bool DataProperty<ROOT_OBJECT, const TYPE>::on_set_value( void * object, const void * value ) const
+		void * DataProperty<ROOT_OBJECT, const TYPE>::on_get_value_inplace( void * object ) const
 	{
-		return false;
+		ROOT_OBJECT & obj = *static_cast<ROOT_OBJECT*>( object );
+		return &( obj.*_data );
 	}
-
-	// DataProperty::on_get_value
-	template <class ROOT_OBJECT, class TYPE>
-		bool DataProperty<ROOT_OBJECT, const TYPE>::on_get_value( const void * object, void * value ) const
-	{
-		const ROOT_OBJECT & obj = *static_cast<const ROOT_OBJECT*>( object );
-
-		typedef typename Unreferencer<TYPE>::Type NONREF_TYPE;
-
-		#ifdef _MSC_VER
-			#pragma warning( push )
-			#pragma warning( disable: 4267 ) /* this warning (conversion from 'size_t' to 'type', possible loss 
-				of data) may be generated compiling with /Wp64, bacause the compiler uses the same template instance 
-				for size_t and unsigned int. */
-		#endif
-
-		Unreferencer<TYPE>::void_indirection( value ) = obj.*_data;
-
-		#ifdef _MSC_VER
-			#pragma warning( pop )
-		#endif
-
-		return true;
-	}
-
+		
 } //namespace reflective

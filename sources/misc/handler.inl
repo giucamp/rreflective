@@ -43,23 +43,23 @@ namespace reflective
 	inline AbstractHandler::~AbstractHandler()
 	{
 		if( _event )
-			(*_event) -= *this;
+			_event->remove_handler( *this );
 	}
 
-					/**** Handler ****/
+					/**** MethodHandler ****/
 
-	// Handler<ROOT_CLASS, PARAM>::constructor
+	// MethodHandler<ROOT_CLASS, PARAM>::constructor
 	template <class ROOT_CLASS, class PARAM>
-		inline Handler<ROOT_CLASS, PARAM>::Handler()
+		inline MethodHandler<ROOT_CLASS, PARAM>::MethodHandler()
 			: _object( NULL ), _handler_method( NULL )
 	{
 
 	}
 
-	// Handler::constructor
+	// MethodHandler::constructor
 	template <class ROOT_CLASS, class PARAM>
 		template <class OBJECT>
-			inline void Handler<ROOT_CLASS, PARAM>::init( OBJECT & object, 
+			inline void MethodHandler<ROOT_CLASS, PARAM>::init( OBJECT * object, 
 				void (OBJECT::*handler_method)( PARAM & ) )
 	{
 		ROOT_CLASS * just_a_type_check = static_cast<OBJECT*>( nullptr ); // ROOT_CLASS must be an accessible base of OBJECT
@@ -67,62 +67,62 @@ namespace reflective
 
 		typedef void (ROOT_CLASS::*RootHandlerMethod)( PARAM & );
 
-		_object = &object;
+		_object = object;
 		_handler_method = static_cast<RootHandlerMethod>( handler_method );
 	}
 
-	// Handler::invoke
+	// MethodHandler::invoke
 	template <class ROOT_CLASS, class PARAM>
-		inline void Handler<ROOT_CLASS, PARAM>::invoke( void * param )
+		inline void MethodHandler<ROOT_CLASS, PARAM>::invoke( void * param )
 	{
 		PARAM & typed_param = *static_cast< PARAM * >( param );
 		(_object->*_handler_method)( typed_param );
 	}
 
-	// Handler::invoke
+	// MethodHandler::invoke
 	template <class ROOT_CLASS, class PARAM>
-		inline void Handler<ROOT_CLASS, PARAM>::invoke( const void * param )
+		inline void MethodHandler<ROOT_CLASS, PARAM>::invoke( const void * param )
 	{
 		REFLECTIVE_UNUSED( param );
-		REFLECTIVE_ASSERT( false ); // const invoke not supported on Handler with a non-const PARAM
+		REFLECTIVE_ASSERT( false ); // const invoke not supported on MethodHandler with a non-const PARAM
 	}
 
 
-				/**** Handler (const PARAM) ****/
+				/**** MethodHandler (const PARAM) ****/
 
-	// Handler<ROOT_CLASS, PARAM>::constructor
+	// MethodHandler<ROOT_CLASS, PARAM>::constructor
 	template <class ROOT_CLASS, class PARAM>
-		inline Handler<ROOT_CLASS, const PARAM>::Handler()
+		inline MethodHandler<ROOT_CLASS, const PARAM>::MethodHandler()
 			: _object( NULL ), _handler_method( NULL )
 	{
 
 	}
 
-	// Handler::constructor
+	// MethodHandler::constructor
 	template <class ROOT_CLASS, class PARAM>
 		template <class OBJECT>
-			inline void Handler< ROOT_CLASS, const PARAM >::init( OBJECT & object, 
+			inline void MethodHandler< ROOT_CLASS, const PARAM >::init( OBJECT * object, 
 					void (OBJECT::*handler_method)( const PARAM & ) )
 	{
 		ROOT_CLASS * just_a_type_check = static_cast<OBJECT*>( nullptr ); // ROOT_CLASS must be an accessible base of OBJECT
 
 		typedef void (ROOT_CLASS::*RootHandlerMethod)( const PARAM & );
 
-		_object = &object;
+		_object = object;
 		_handler_method = static_cast<RootHandlerMethod>( handler_method );
 	}
 
-	// Handler::invoke
+	// MethodHandler::invoke
 	template <class ROOT_CLASS, class PARAM>
-		inline void Handler<ROOT_CLASS, const PARAM>::invoke( void * param )
+		inline void MethodHandler<ROOT_CLASS, const PARAM>::invoke( void * param )
 	{
 		const PARAM & typed_param = *static_cast< const PARAM * >( param );
 		(_object->*_handler_method)( typed_param );
 	}
 
-	// Handler::invoke
+	// MethodHandler::invoke
 	template <class ROOT_CLASS, class PARAM>
-		inline void Handler<ROOT_CLASS, const PARAM>::invoke( const void * param )
+		inline void MethodHandler<ROOT_CLASS, const PARAM>::invoke( const void * param )
 	{
 		const PARAM & typed_param = *static_cast< const PARAM * >( param );
 		(_object->*_handler_method)( typed_param );

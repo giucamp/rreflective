@@ -109,6 +109,35 @@ namespace reflective
 			_type_qualification != other._type_qualification;
 	}
 
+	// FullName
+	class QualifiedType::FullName
+	{
+	public:
+
+		typedef FullName ThisClass;
+
+		static void init_class( reflective::Class & class_obj )
+		{
+			class_obj.set_string_functions( &ThisClass::to_string );
+		}
+
+		FullName() {}
+
+		FullName( const QualifiedType  & i_qualified_type )
+			: m_qualified_type( i_qualified_type ) {}
+
+		void to_string( StringOutputStream & dest_buffer ) const
+		{
+			m_qualified_type.to_string( dest_buffer );
+		}
+
+	private:
+		QualifiedType m_qualified_type;
+	};
+
+	// QualifiedType::full_name
+	inline QualifiedType::FullName QualifiedType::full_name() const
+		{ return FullName( *this ); }
 
 } // namespace reflective
 

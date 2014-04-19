@@ -47,18 +47,18 @@ namespace reflective
 		friend class AbstractEvent;
 	};
 
-	// Handler
+	// MethodHandler
 	template <class ROOT_CLASS, class PARAM>
-		class Handler : public AbstractHandler
+		class MethodHandler : public AbstractHandler
 	{
 	public:
 
 		typedef void (ROOT_CLASS::*Action)( PARAM & param );
 
-		Handler();
+		MethodHandler();
 
 		template <class OBJECT>
-			void init( OBJECT & object, void (OBJECT::*handler_method)( PARAM & ) );
+			void init( OBJECT * object, void (OBJECT::*handler_method)( PARAM & ) );
 
 		void invoke( void * param );
 		void invoke( const void * param );
@@ -68,18 +68,18 @@ namespace reflective
 		Action _handler_method;
 	};
 
-	// Handler (const PARAM)
+	// MethodHandler (const PARAM)
 	template <class ROOT_CLASS, class PARAM>
-		class Handler<ROOT_CLASS, const PARAM> : public AbstractHandler
+		class MethodHandler<ROOT_CLASS, const PARAM> : public AbstractHandler
 	{
 	public:
 
 		typedef void (ROOT_CLASS::*Action)( const PARAM & param );
 
-		Handler();
+		MethodHandler();
 
 		template <class OBJECT>
-			void init( OBJECT & object, void (OBJECT::*handler_method)( const PARAM & ) );
+			void init( OBJECT * object, void (OBJECT::*handler_method)( const PARAM & ) );
 
 		void invoke( void * param );
 		void invoke( const void * param );

@@ -31,6 +31,9 @@
     <Filter Include="array">
       <UniqueIdentifier>{5a1feb57-5326-4c8a-857f-865f0c1d79c8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="std_reflection">
+      <UniqueIdentifier>{b24f78d7-b983-4406-8e70-22ee94850f9e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\sources\class\action.h">
@@ -194,6 +197,9 @@
     </ClInclude>
     <ClInclude Include="..\sources\misc\dynamic_string_stream.h">
       <Filter>misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\std_reflection\std_reflection.h">
+      <Filter>std_reflection</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -373,6 +379,12 @@
     </None>
     <None Include="..\sources\misc\dynamic_string_stream.inl">
       <Filter>misc</Filter>
+    </None>
+    <None Include="..\sources\std_reflection\std_map_reflection.inl">
+      <Filter>std_reflection</Filter>
+    </None>
+    <None Include="..\sources\std_reflection\std_reflection.inl">
+      <Filter>std_reflection</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

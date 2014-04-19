@@ -42,7 +42,8 @@ namespace reflective
 	inline StringOutputStream::StringOutputStream( char * buffer, size_t max_length )
 		: m_buffer( buffer ), m_needed_length( 0 ), m_buffer_length( max_length )
 	{
-
+		if( m_buffer_length > 0 )
+			*m_buffer = '\0';
 	}
 
 	// StringOutputStream::append
@@ -100,11 +101,13 @@ namespace reflective
 	}
 
 	// StringOutputStream::set_string_buffer
-	inline void StringOutputStream::set_string_buffer( char * buffer, size_t max_length )
+	inline void StringOutputStream::set_string_buffer( char * buffer, size_t max_length, size_t buffer_used_length )
 	{
 		m_buffer = buffer;
 		m_needed_length = 0;
 		m_buffer_length = max_length;
+		if( buffer_used_length < m_buffer_length )
+			m_buffer[buffer_used_length] = '\0';
 	}
 
 	// StringOutputStream::unset_string_buffer
@@ -142,6 +145,19 @@ namespace reflective
 		}
 
 		return *this; 
+	}
+
+	// StringOutputStream::append
+	inline void StringOutputStream::append( const void * i_object, const Type & i_type )
+	{ 
+		if( !i_type.check_capabilities( Type::eHasToString ) )
+		{
+			*this << i_type.name() << " does not have to_string";
+		}
+		else
+		{
+			i_type.to_string( *this, i_object );
+		}
 	}
 
 } // namespace reflective

@@ -111,11 +111,11 @@ namespace reflective
 		return _group.curr_in_group;
 	}
 
-	// Iterator::type
-	inline const reflective::Type & Iterator<void>::type() const
+	// Iterator::qualified_type
+	inline const QualifiedType & Iterator<void>::qualified_type() const
 	{
 		REFLECTIVE_ASSERT( is_not_over() );
-		return *_group.type;
+		return _group.qualified_type;
 	}
 
 	// Iterator::is_not_over
@@ -150,11 +150,11 @@ namespace reflective
 				// jump groups not compatible with _iteration_type
 				if( _iteration_type != nullptr )
 				{
-					if( !( *_iteration_type <= *_group.type ) ) do {
+					if( !( *_iteration_type <= *_group.qualified_type.type() ) ) do {
 						_abstract_iterator->next_group( _group );
 						if( _group.curr_in_group >= _group.end_of_group )
 							return;
-					} while( !( *_iteration_type <= *_group.type ) );
+					} while( !( *_iteration_type <= *_group.qualified_type.type() ) );
 				}
 			}
 		}
@@ -180,11 +180,11 @@ namespace reflective
 				if( _iteration_type != nullptr )
 				{
 					// jump groups not compatible with _iteration_type
-					if( !( *_iteration_type <= *_group.type ) ) do {
+					if( !( *_iteration_type <= *_group.qualified_type.type() ) ) do {
 						_abstract_iterator->next_group( _group );
 						if( _group.curr_in_group >= _group.end_of_group )
 							return;
-					} while( !( *_iteration_type <= *_group.type ) );
+					} while( !( *_iteration_type <= *_group.qualified_type.type() ) );
 				}
 			}
 		}
@@ -196,7 +196,7 @@ namespace reflective
 		REFLECTIVE_ASSERT( is_not_over() );
 
 		// get the next of the group
-		const size_t object_size = _group.type->size();
+		const size_t object_size = _group.qualified_type.type()->size();
 		_group.curr_in_group = mem::address_add( _group.curr_in_group, object_size );
 		_index_in_group++;
 		if( _group.curr_in_group < _group.end_of_group )
@@ -208,7 +208,7 @@ namespace reflective
 			_abstract_iterator->next_group( _group );
 			if( _group.curr_in_group >= _group.end_of_group )
 				return false;
-		} while( !_iteration_type || !( *_iteration_type <= *_group.type ) );
+		} while( !_iteration_type || !( *_iteration_type <= *_group.qualified_type.type() ) );
 
 		return true;
 	}

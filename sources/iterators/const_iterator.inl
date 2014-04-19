@@ -115,12 +115,12 @@ namespace reflective
 		}
 	}
 
-	// Iterator::type
+	// Iterator::qualified_type
 	template <class TYPE>
-		inline const reflective::Type & Iterator<const TYPE>::type() const
+		inline const reflective::QualifiedType & Iterator<const TYPE>::qualified_type() const
 	{
 		REFLECTIVE_ASSERT( is_not_over() );
-		return *_group.type;
+		return *_group.qualified_type;
 	}
 
 	// Iterator::object
@@ -233,7 +233,7 @@ namespace reflective
 		REFLECTIVE_ASSERT( is_not_over() );
 
 		// get the next of the group
-		const size_t object_size = _group.type->size();
+		const size_t object_size = _group.qualified_type.type()->size();
 		_group.curr_in_group = mem::address_add( _group.curr_in_group, object_size );
 		if( _group.curr_in_group < _group.end_of_group )
 			return true;

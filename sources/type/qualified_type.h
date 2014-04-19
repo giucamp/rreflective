@@ -53,12 +53,17 @@ namespace reflective
 		// can_cast_to
 		bool can_cast_to( const QualifiedType & dest_type ) const;
 
-		// comparaison
+		// comparison
 		bool operator == ( const QualifiedType & other ) const;
 		bool operator != ( const QualifiedType & other ) const;
 
 		// final_type
 		const Type * final_type() const;
+
+		class FullName;
+
+		/** gets an object that provides a to_string() that stringize the full name of the qualified type */
+		FullName full_name() const;
 
 		// stringizer
 		void to_string( StringOutputStream & dest_buffer ) const;

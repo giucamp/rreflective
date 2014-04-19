@@ -50,7 +50,7 @@ namespace reflective
 		// name
 		const SymbolName & name() const;
 
-		// comparaison
+		// comparison
 		bool operator == ( const Symbol & op ) const;
 		bool operator != ( const Symbol & op ) const;
 

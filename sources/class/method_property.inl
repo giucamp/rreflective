@@ -129,6 +129,14 @@ namespace reflective
 	{
 	}
 
+	// MethodProperty::on_get_value_inplace
+	template <class ROOT_OBJECT, class TYPE>
+		inline void * MethodProperty<ROOT_OBJECT,TYPE>::on_get_value_inplace( void * object ) const
+	{
+		REFLECTIVE_UNUSED( object );
+		return nullptr; // not supported
+	}
+
 	// MethodProperty::on_set_value
 	template <class ROOT_OBJECT, class TYPE>
 		inline bool MethodProperty<ROOT_OBJECT,TYPE>::on_set_value( void * object, const void * value ) const
@@ -183,6 +191,14 @@ namespace reflective
 				: Property( name, safe_get_type<TYPE>(), safe_get_type_qualification<TYPE>(), attributes ), 
 					_getter( getter ), _setter( setter )
 	{
+	}
+
+	// MethodProperty::on_get_value_inplace
+	template <class ROOT_OBJECT, class TYPE>
+		inline void * MethodPropertyRefSetter<ROOT_OBJECT,TYPE>::on_get_value_inplace( void * object ) const
+	{
+		REFLECTIVE_UNUSED( object );
+		return nullptr; // not supported
 	}
 
 	// MethodPropertyRefSetter::on_set_value

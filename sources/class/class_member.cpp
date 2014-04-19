@@ -100,7 +100,7 @@ namespace reflective_externals
 			new_enum_member( "BACK_REFERENCE", reflective::ClassMember::BACK_REFERENCE ),
 			new_enum_member( "READONLY", reflective::ClassMember::READONLY ),
 			new_enum_member( "IDENTIFIER", reflective::ClassMember::IDENTIFIER ),
-			new_enum_member( "DO_NOT_SERIALIZE", reflective::ClassMember::DO_NOT_SERIALIZE ),
+			new_enum_member( "TRANSIENT", reflective::ClassMember::TRANSIENT ),
 			new_enum_member( "ALL_ATTRIBUTES", reflective::ClassMember::ALL_ATTRIBUTES ),
 		};
 		

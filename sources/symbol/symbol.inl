@@ -46,7 +46,7 @@ namespace reflective
 		return _name;
 	}
 
-	// comparaison
+	// comparison
 	inline bool Symbol::operator == ( const Symbol & op ) const
 	{
 		#if REFLECTIVE_IS_DEBUG

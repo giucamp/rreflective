@@ -44,9 +44,11 @@ namespace reflective
 			if( !m_stream.is_truncated() )
 				return true;
 
+			const size_t needed_length = m_stream.needed_length();
+
 			m_stream.clear( prev_length - 1 );
 
-			reserve( m_stream.needed_length() * 2 + 32 );
+			reserve( needed_length * 2 + 32 );
 
 			i_type.to_string( m_stream, i_object );
 
@@ -114,8 +116,7 @@ namespace reflective
 		else
 			*new_buffer = 0;
 
-		m_stream.set_string_buffer( new_buffer, i_buffer_length );
-		m_stream.clear( prev_used_length );
+		m_stream.set_string_buffer( new_buffer, i_buffer_length, prev_used_length );
 	}
 
 } // namespace reflective

@@ -41,14 +41,14 @@ namespace reflective
 			if( _types )
 			{
 				const reflective::Type & type = *_types;
-				out_group.type = &type_of( type );
+				out_group.qualified_type = qualified_type_of( type );
 				out_group.curr_in_group = &type;
 				out_group.end_of_group = ( &type ) + 1;
 			}
 			else if( _namespaces )
 			{
 				const reflective::Namespace & namespace_obj = *_namespaces;
-				out_group.type = &type_of( namespace_obj );
+				out_group.qualified_type = qualified_type_of( namespace_obj );
 				out_group.curr_in_group = &namespace_obj;
 				out_group.end_of_group = ( &namespace_obj ) + 1;
 			}
@@ -64,14 +64,14 @@ namespace reflective
 			if( _types && ++_types )
 			{			
 				const reflective::Type & type = *_types;
-				out_group.type = &type_of( type );
+				out_group.qualified_type = qualified_type_of( type );
 				out_group.curr_in_group = &type;
 				out_group.end_of_group = ( &type ) + 1;
 			}
 			else if( _namespaces && ++_namespaces )
 			{
 				const reflective::Namespace & namespace_obj = *_namespaces;
-				out_group.type = &type_of( namespace_obj );
+				out_group.qualified_type = qualified_type_of( namespace_obj );
 				out_group.curr_in_group = &namespace_obj;
 				out_group.end_of_group = ( &namespace_obj ) + 1;
 			}
@@ -86,14 +86,14 @@ namespace reflective
 		{
 			out_group.curr_in_group = nullptr;
 			out_group.end_of_group = nullptr;
-			out_group.type = nullptr;
+			out_group.qualified_type = QualifiedType();
 		}
 
 		void next_group( Group & out_group )
 		{
 			out_group.curr_in_group = nullptr;
 			out_group.end_of_group = nullptr;
-			out_group.type = nullptr;
+			out_group.qualified_type = QualifiedType();
 		}
 
 		bool insert( 

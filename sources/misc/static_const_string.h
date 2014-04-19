@@ -45,7 +45,7 @@ namespace reflective
 		StaticConstString( const char * source, size_t length );		
 		template < size_t LENGTH > StaticConstString( const char (&source)[ LENGTH ] );
 
-		// comparaison
+		// comparison
 		bool operator == ( const StaticConstString & operand ) const;
 		bool operator != ( const StaticConstString & operand ) const;
 
