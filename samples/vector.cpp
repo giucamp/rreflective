@@ -106,7 +106,7 @@ int vector_main()
 
 	// write the template formal parameters
 	char chars[ 1024 ];
-	ToStringBuffer char_buffer( chars );
+	StringOutputStream char_buffer( chars, 1024 );
 	for( Iterator< const Parameter > parameter_iterator( parameters );
 		parameter_iterator; parameter_iterator++ )
 	{

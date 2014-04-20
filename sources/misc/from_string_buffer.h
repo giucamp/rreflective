@@ -62,8 +62,11 @@ namespace reflective
 		bool accept( char character, AcceptOptions options = eOptionsNone );
 		bool accept( const char * null_terminated_string, AcceptOptions options = eOptionsNone );
 		bool accept( const char * chars, size_t length, AcceptOptions options = eOptionsNone );
-		template <size_t LENGTH>
-			bool accept_literal( const char (&string_literal)[ LENGTH ], AcceptOptions options = eOptionsNone );
+		template <size_t LENGTH> bool accept_literal( const char (&string_literal)[ LENGTH ], AcceptOptions options = eOptionsNone );
+
+		// accept_from_end
+		bool accept_from_end( const char * chars, size_t length, AcceptOptions options = eOptionsNone );
+		template <size_t LENGTH> bool accept_literal_from_end( const char (&string_literal)[ LENGTH ], AcceptOptions options = eOptionsNone );
 
 		template <size_t TABLE_LENGTH>
 			int accept_indexed( const char * (&string_table)[ TABLE_LENGTH ], AcceptOptions options = eOptionsNone );

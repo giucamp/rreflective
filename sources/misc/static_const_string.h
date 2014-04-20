@@ -56,8 +56,7 @@ namespace reflective
 		bool is_empty() const;
 
 		// to_string
-		static void to_string( StringOutputStream & dest_buffer, const Type & type, 
-			const void * object );	
+		static void to_string( StringOutputStream & dest_buffer, const Type & type, const void * object );	
 
 	private:
 		const char * _string;

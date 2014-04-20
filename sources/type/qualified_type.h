@@ -65,8 +65,9 @@ namespace reflective
 		/** gets an object that provides a to_string() that stringize the full name of the qualified type */
 		FullName full_name() const;
 
-		// stringizer
+		// stringizing
 		void to_string( StringOutputStream & dest_buffer ) const;
+		bool assign_from_string( FromStringBuffer & source_buffer, StringOutputStream & error_buffer );
 
 	private: // data members
 		const Type * _type;

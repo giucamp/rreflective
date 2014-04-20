@@ -262,5 +262,55 @@ namespace reflective
 		return result;
 	}
 
+	// FromStringBuffer::accept_from_end
+	bool FromStringBuffer::accept_from_end( const char * i_chars, size_t i_length, AcceptOptions i_options )
+	{
+		size_t length = _length;
+		if( i_options & eIgnoreLeadingSpaces )
+		{
+			while( length > 0 && isspace( _buffer[ length - 1 ] ) )
+			{
+				length--;
+			}
+		}
+
+		bool result = true;
+
+		size_t length_to_check = i_length; 
+		while( length_to_check > 0 )
+		{
+			if( i_options & eIgnoreCase )
+			{
+				// case insensitive
+				result = tolower( _buffer[length - 1] ) == tolower( i_chars[length_to_check - 1] );
+			}
+			else
+			{
+				// case sensitive
+				result = _buffer[length - 1] == i_chars[length_to_check - 1];
+			}
+			if( !result )
+				break;
+
+			length--;
+			length_to_check--;
+		}
+
+		if( i_options & eIgnoreLeadingSpaces )
+		{
+			while( length > 0 && isspace( _buffer[ length - 1 ] ) )
+			{
+				length--;
+			}
+		}
+
+		if( result )
+		{
+			_length = length;
+		}
+
+		return result;
+	}
+
 } // namespace reflective
 

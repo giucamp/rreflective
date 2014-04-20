@@ -56,6 +56,32 @@ const reflective::Type * GetDogType()
 	return dog_type;
 }
 
+template <typename TYPE>
+	void test_qualified_type()
+{
+	using namespace reflective;
+
+	char str[ 1024 ], err[1024];
+	StringOutputStream str_buff( str, 1024 );
+	StringOutputStream err_buff( err, 1024 );
+
+	QualifiedType qual_type = reflective::get_qualified_type<TYPE>();
+	to_string( str_buff, qual_type );
+	printf( "%s\n", str_buff.buffer() );
+	printf( "%s\n", typeid(TYPE).name() );
+	
+	QualifiedType qual1;
+	FromStringBuffer ibuff( str, strlen(str) );
+	assign_from_string( qual1, ibuff, err_buff );
+
+	if( qual1 != qual_type )
+	{
+		printf( "DIFFF %s\n", str_buff.buffer() );
+	}
+
+	printf( "---------------------\n" );
+}
+
 int main()
 {
 	using namespace reflective;
@@ -72,9 +98,9 @@ int main()
 	const Type::Capabilities capabilities = animal_type.capabilities(); 
 		// Type::Capabilities is an enum with OR support
 
-	// create a ToStringBuffer on the stack
+	// create a StringOutputStream on the stack
 	char chars[ 1024 ];
-	ToStringBuffer char_buffer( chars );	
+	StringOutputStream char_buffer( chars, 1024 );	
 	
 	// write some info on the buffer
 	to_string( char_buffer, class_name ); char_buffer.append_literal( ", " );
@@ -97,6 +123,16 @@ int main()
 
 	const bool is_class = is_instance_of<Class>( dog_type );
 	const bool is_enum = type_of( dog_type ) == get_type<Enum>();
+
+	test_qualified_type<int>();
+	test_qualified_type<const int>();
+	test_qualified_type<int*>();
+	test_qualified_type<int***>();
+	test_qualified_type<int*const**>();
+	test_qualified_type<int const*const**>();
+	test_qualified_type<const int*const*const* const>();
+	test_qualified_type<const Type ********>();
+
 
 	return 0;
 }

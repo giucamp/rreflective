@@ -85,6 +85,12 @@ namespace reflective
 		return accept( string_literal, LENGTH - 1, options );
 	}
 
+	// FromStringBuffer::accept_literal_from_end
+	template <size_t LENGTH>
+		inline bool FromStringBuffer::accept_literal_from_end( const char (&string_literal)[ LENGTH ], AcceptOptions options )
+	{
+		return accept_from_end( string_literal, LENGTH - 1, options );
+	}
 
 	// FromStringBuffer::accept_indexed
 	template <size_t TABLE_LENGTH>

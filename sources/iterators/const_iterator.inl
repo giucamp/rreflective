@@ -189,11 +189,11 @@ namespace reflective
 					return;
 
 				// jump groups not compatible with _iteration_type
-				if( !( _iteration_type <= *_group.type ) ) do {
+				if( !( _iteration_type <= *_group.qualified_type.type() ) ) do {
 					_abstract_iterator->next_group( _group );
 					if( _group.curr_in_group >= _group.end_of_group )
 						return;
-				} while( !( _iteration_type <= *_group.type ) );
+				} while( !( _iteration_type <= *_group.qualified_type.type() ) );
 			}
 		}
 	}
@@ -217,11 +217,11 @@ namespace reflective
 				_abstract_iterator->first_group( _group );
 
 				// jump groups not compatible with _iteration_type
-				if( !( _iteration_type <= *_group.type ) ) do {
+				if( !( _iteration_type <= *_group.qualified_type.type() ) ) do {
 					_abstract_iterator->next_group( _group );
 					if( _group.curr_in_group >= _group.end_of_group )
 						return;
-				} while( !( _iteration_type <= *_group.type ) );
+				} while( !( _iteration_type <= *_group.qualified_type.type() ) );
 			}
 		}
 	}
@@ -243,7 +243,7 @@ namespace reflective
 			_abstract_iterator->next_group( _group );
 			if( _group.curr_in_group >= _group.end_of_group )
 				return false;
-		} while( !( _iteration_type <= *_group.type ) );
+		} while( !( _iteration_type <= *_group.qualified_type.type() ) );
 
 		return true;
 	}

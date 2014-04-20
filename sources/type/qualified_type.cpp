@@ -36,28 +36,69 @@ namespace reflective
 	{
 		const unsigned indirection_levels = _type_qualification.indirection_levels();
 
+		const Type * final_type; 
 		if( indirection_levels == 0 )
 		{
-			_type->type_full_name_to_string( dest_buffer );
-
-			if( _type_qualification.is_const( 0 ) )
-				dest_buffer.append_literal( " const" );
+			final_type = _type;
 		}
 		else
 		{
-			_type_qualification.final_type()->type_full_name_to_string( dest_buffer );
+			final_type = _type_qualification.final_type();
+		}
+		final_type->type_full_name_to_string( dest_buffer );
 
-			unsigned curr_indirection_level = 0;
-			do {
+		unsigned curr_indirection_level = 0;
+		do {
 
-				if( _type_qualification.is_const( indirection_levels - curr_indirection_level ) )
-					dest_buffer.append_literal( " const" );
+			if( _type_qualification.is_const( indirection_levels - curr_indirection_level ) )
+				dest_buffer.append_literal( " const" );
 
-				if( curr_indirection_level < indirection_levels )
-					dest_buffer.append_literal( " *" );	
+			if( curr_indirection_level < indirection_levels )
+				dest_buffer.append_literal( " *" );	
 
-			} while( ++curr_indirection_level <= indirection_levels );				
-		}	
+		} while( ++curr_indirection_level <= indirection_levels );	
+	}
+
+	// QualifiedType::assign_from_string
+	bool QualifiedType::assign_from_string( FromStringBuffer & source_buffer, StringOutputStream & error_buffer )
+	{
+		uint32_t constness_word = 0;
+		unsigned indirection_levels = 0; 
+		bool is_const, is_pointer;
+		for(;;)
+		{
+			is_const = source_buffer.accept_literal_from_end( " const", FromStringBuffer::eIgnoreLeadingSpaces );
+			is_pointer = source_buffer.accept_literal_from_end( "*", FromStringBuffer::eIgnoreLeadingSpaces );
+
+			if( is_const )
+				constness_word |= (1 << indirection_levels);
+			
+			if( !is_pointer )
+				break;
+			
+			indirection_levels++;
+		}
+
+		StaticConstString type_name( source_buffer.chars(), source_buffer.remaining_length() );
+		const Type * type = Namespace::global().find_child_type( type_name );
+		if( type == nullptr )
+		{
+			error_buffer.append_literal( "Could not find the type: " );
+			error_buffer.append( source_buffer.chars(), source_buffer.remaining_length() );
+			return false;
+		}
+
+		if( indirection_levels == 0 )
+		{
+			_type = type;
+		}
+		else
+		{
+			_type = &get_type<void*>();
+		}
+		_type_qualification = TypeQualification( indirection_levels, *type, constness_word );
+				
+		return true;
 	}
 
 	// QualifiedType::final_type
@@ -95,7 +136,7 @@ namespace reflective_externals
 			eUngrabbedConstructorCopyAssignmentDestructor ) );
 		class_object->set_no_base_type();
 
-		class_object->set_string_functions<ThisClass>( &ThisClass::to_string, 0 );
+		class_object->set_string_functions<ThisClass>( &ThisClass::to_string, &ThisClass::assign_from_string );
 		
 		// properties
 		const Property * properties[] = 
