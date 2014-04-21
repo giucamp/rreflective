@@ -66,12 +66,14 @@ namespace reflective
 	// Property::get_value_inplace
 	inline void * Property::get_value_inplace( void * object ) const
 	{
+		REFLECTIVE_ASSERT( object != nullptr );
 		return on_get_value_inplace( object );
 	}
 
 	// Property::get_value_inplace - const
 	inline const void * Property::get_value_inplace( const void * object ) const
 	{
+		REFLECTIVE_ASSERT( object != nullptr );
 		return on_get_value_inplace( const_cast<void*>( object ) );
 	}
 

@@ -46,6 +46,12 @@ namespace reflective
 		// create_iterator
 		reflective::IIterator * create_iterator( void * i_collection_object, const void * i_key_value ) const;
 
+		void * add_object( const QualifiedType & i_qualified_type, void * i_collection_object, const void * i_key_value ) const
+		{
+			REFLECTIVE_UNUSED_3( i_qualified_type, i_collection_object, i_key_value );
+			return nullptr;
+		}
+
 		// resize
 		bool resize( void * collection_object, size_t new_size ) const
 		{
@@ -113,6 +119,12 @@ namespace reflective
 			REFLECTIVE_UNUSED_2( offset_index, item_count );
 			REFLECTIVE_UNUSED( out_curr_group );
 			return false; // unsupported
+		}
+
+		const void * get_key_value( size_t group_offset_index )
+		{
+			REFLECTIVE_UNUSED( group_offset_index );
+			return nullptr;
 		}
 
 	private:

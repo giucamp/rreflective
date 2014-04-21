@@ -77,6 +77,12 @@ namespace reflective
 				break;
 			
 			indirection_levels++;
+
+			if( indirection_levels > TypeQualification::MAX_INDIRECTION_LEVELS )
+			{
+				error_buffer.append_literal( "Bad type qualification: exceeded the maximum indirection levels" );
+				return false;
+			}
 		}
 
 		StaticConstString type_name( source_buffer.chars(), source_buffer.remaining_length() );

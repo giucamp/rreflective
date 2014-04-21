@@ -31,51 +31,86 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	bool Property::set_value_from_string( void * object, const char * str_value, StringOutputStream & error_buffer ) const
-	{
-		bool result = true;
-
+	bool Property::set_value_from_string( void * i_object, const char * i_string, StringOutputStream & io_error_buffer ) const
+	{	
+		// check if the operation is supported by the property and by the type
 		if( attributes() & ClassMember::READONLY )
 		{
-			error_buffer << name() << " is readonly";
-			result = false; 
+			io_error_buffer << name() << " is readonly";
+			return false; 
 		}
-		
-		FromStringBuffer str_buff( str_value, strlen(str_value) );
-
-		const Type & type = *_qualified_type.type();
-
-		void * inplace_value = get_value_inplace( object );
-		if( inplace_value != nullptr )
+		const Type & final_type = *_qualified_type.final_type();
+		if( !final_type.check_capabilities(Type::eHasFromStringAssigner) )
 		{
-			return type.assign_from_string( str_buff, inplace_value, error_buffer );
+			io_error_buffer << final_type.full_name() << " does not support from_string";
+			return false;
 		}
 
-		void * value = reflective_externals::mem_lifo_alloc( type.alignment(), type.size() );
-		
+		const unsigned indirection_levels = _qualified_type.qualification().indirection_levels();
+
+		// get the value of the property
+		bool result = true;
+		bool value_constructed = false;
+		const Type & type = *_qualified_type.type();
+		void * allocated_value = nullptr;
+		void * value = get_value_inplace( i_object );
 		if( value == nullptr )
 		{
-			error_buffer.append_literal( "lifo allocation failed" );
-			result = false;
+			allocated_value = value = reflective_externals::mem_lifo_alloc( type.alignment(), type.size() );
+			if( allocated_value == nullptr )
+			{
+				io_error_buffer.append_literal( "lifo allocation failed" );
+				return false;
+			}
+			else 
+			{
+				if( indirection_levels == 0 )
+				{
+					type.construct( value ); // non pointer
+					value_constructed = true;
+				}
+				else
+				{
+					result = get_value( i_object, value ); // pointer: get the value
+					value_constructed = result;
+				}
+			}
 		}
 
-		if( !type.check_capabilities(Type::eHasFromStringAssigner) )
-		{
-			error_buffer << type.full_name() << " does not support from_string";
-			result = false;
-		}
+		// deference the pointers
 		if( result )
 		{
-			type.construct( value );
-			result = type.assign_from_string( str_buff, value, error_buffer );
-			if( result )
+			for( unsigned indirection_level = 0; indirection_level < indirection_levels; indirection_level++ )
 			{
-				result = set_value( object, value );
+				if( value == nullptr )
+				{
+					io_error_buffer.append_literal( "encountered null deferencing the pointers" );
+					result = false;
+					break;
+				}
+				value = *static_cast<void**>( value );
 			}
-			type.destroy( value );
 		}
 
-		reflective_externals::mem_lifo_free( value );
+		// parse the string
+		if( result )
+		{
+			FromStringBuffer str_buff( i_string, strlen(i_string) );
+			result = final_type.assign_from_string( str_buff, value, io_error_buffer );
+			if( result && allocated_value != nullptr )
+			{
+				result = set_value( i_object, allocated_value );
+			}
+		}
+
+		// destroy the value		
+		if( allocated_value != nullptr )
+		{
+			if( value_constructed )
+				type.destroy( allocated_value );
+			reflective_externals::mem_lifo_free( allocated_value );
+		}
+
 		return result;
 	}
 

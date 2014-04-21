@@ -114,6 +114,8 @@ namespace reflective
 		bool remove();
 		bool multi_remove( size_t object_count );
 
+		const void * get_key_value()		{ return _abstract_iterator->get_key_value( _index_in_group ); }
+
 	private: // internal services		
 		void _assign_collection( const reflective::Type & collection_type, void * collection );
 		void _assign_collection( const reflective::Type & collection_type, void * collection, const void * i_key_value );

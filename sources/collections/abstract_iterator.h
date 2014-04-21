@@ -63,6 +63,8 @@ namespace reflective
 
 		virtual bool remove( size_t offset_index, size_t item_count, Group & out_curr_group ) = 0;
 
+		virtual const void * get_key_value( size_t group_offset_index ) = 0;
+
 		virtual ~IIterator();
 
 	protected:

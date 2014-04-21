@@ -41,18 +41,18 @@ namespace reflective
 			REFLECTIVE_ASSERT( prev_length > 0 );
 
 			i_type.to_string( m_stream, i_object );
-			if( !m_stream.is_truncated() )
-				return true;
+			if( m_stream.is_truncated() )
+			{
+				const size_t needed_length = m_stream.needed_length();
 
-			const size_t needed_length = m_stream.needed_length();
+				m_stream.clear( prev_length - 1 );
 
-			m_stream.clear( prev_length - 1 );
+				reserve( needed_length * 2 + 32 );
 
-			reserve( needed_length * 2 + 32 );
+				i_type.to_string( m_stream, i_object );
 
-			i_type.to_string( m_stream, i_object );
-
-			REFLECTIVE_ASSERT( !m_stream.is_truncated() );
+				REFLECTIVE_ASSERT( !m_stream.is_truncated() );
+			}
 
 			return true;
 		}		
@@ -65,16 +65,16 @@ namespace reflective
 		REFLECTIVE_ASSERT( prev_length > 0 );
 
 		m_stream.append( i_string, i_length );
-		if( !m_stream.is_truncated() )
-			return;
+		if( m_stream.is_truncated() )
+		{
+			reserve( m_stream.needed_length() * 2 + 32 );
 
-		reserve( m_stream.needed_length() * 2 + 32 );
+			m_stream.clear( prev_length - 1 );
 
-		m_stream.clear( prev_length - 1 );
+			m_stream.append( i_string, i_length );
 
-		m_stream.append( i_string, i_length );
-
-		REFLECTIVE_ASSERT( !m_stream.is_truncated() );		
+			REFLECTIVE_ASSERT( !m_stream.is_truncated() );
+		}		
 	}
 
 	// DynamicStringStream::append_char

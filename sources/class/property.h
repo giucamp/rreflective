@@ -83,7 +83,9 @@ namespace reflective
 			has been performed. */
 		bool set_value( void * object, const void * value ) const;
 
-		bool set_value_from_string( void * object, const char * value, StringOutputStream & error_buffer ) const;
+		/** tries to assign to the property a value parsed from a string. The property may be a pointer,
+			or a pointer to a pointer, etc, but all the pointers must be non-null, otherwise the function fails. */
+		bool set_value_from_string( void * i_object, const char * i_string, StringOutputStream & io_error_buffer ) const;
 
 		bool type_has_tostring() const;
 

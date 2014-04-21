@@ -123,6 +123,7 @@ namespace reflective_externals
 			if( m_iterator != m_map.end() )
 			{
 				result = true;
+				REFLECTIVE_ASSERT( false ); // to do
 				/*for( size_t item_index = 0; item_index < item_count; item_index++ )
 				{
 					m_map.delete_at( m_current_index );
@@ -134,6 +135,21 @@ namespace reflective_externals
 
 			return result;
 		}
+
+		 const void * get_key_value( size_t group_offset_index )
+		 {
+			 REFLECTIVE_ASSERT( group_offset_index == 0 );
+			 REFLECTIVE_UNUSED( group_offset_index );
+
+			 if( m_iterator != m_map.end() )
+			 {
+				 return &(m_iterator->first);
+			 }
+			 else
+			 {
+				 return nullptr;
+			 }
+		 }
 	};
 
 	template < typename KEY, typename VALUE, typename PREDICATE, typename ALLOCATOR >
@@ -142,6 +158,7 @@ namespace reflective_externals
 	public:
 
 		typedef std::map< KEY, VALUE, PREDICATE, ALLOCATOR > Map;
+		typedef typename std::map< KEY, VALUE, PREDICATE, ALLOCATOR >::iterator MapIterator;
 
 		// query_item_count
 		bool query_item_count( const void * collection_object, size_t * out_count ) const
@@ -171,6 +188,23 @@ namespace reflective_externals
 		{
 			typedef StdMapIterator<KEY, VALUE, PREDICATE, ALLOCATOR> Iterator;
 			return REFLECTIVE_LIFO_NEW( Iterator, *static_cast<Map*>( i_collection_object ), i_key_value );
+		}
+
+		void * add_object( const QualifiedType & i_qualified_type, void * i_collection_object, const void * i_key_value ) const
+		{
+			if( i_qualified_type != get_qualified_type<VALUE>() || i_key_value == nullptr )
+				return nullptr;
+			Map & map = *static_cast<Map*>( i_collection_object );
+			const KEY & key_value = *static_cast<const KEY*>( i_key_value );
+			std::pair< MapIterator, bool > result = map.insert( std::make_pair( key_value, VALUE() ) );
+			if( result.second )
+			{
+				return &(result.first->second);
+			}
+			else
+			{
+				return nullptr;
+			}
 		}
 
 		// get_indices_info

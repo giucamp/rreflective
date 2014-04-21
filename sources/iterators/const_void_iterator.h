@@ -96,6 +96,8 @@ namespace reflective
 		// test for end
 		bool is_not_over() const;
 		operator bool() const;
+		
+		const void * get_key_value()		{ return _abstract_iterator->get_key_value( _index_in_group ); }
 
 	private: // internal services		
 		void _assign_collection( const reflective::Type & collection_type, const void * collection );
@@ -108,6 +110,7 @@ namespace reflective
 		reflective::IIterator::ConstGroup _group;
 		const reflective::Type * _iteration_type;
 		reflective::IIterator * _abstract_iterator;
+		size_t _index_in_group;
 	};
 
 } // namespace reflective

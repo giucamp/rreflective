@@ -84,7 +84,6 @@ namespace reflective
 		REFLECTIVE_ASSERT( indirection_levels() == number_of_indirection_levels );
 	}
 
-
 	// TypeQualification::final_type
 	inline const reflective::Type * TypeQualification::final_type() const
 	{

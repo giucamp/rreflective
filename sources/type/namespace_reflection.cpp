@@ -112,7 +112,12 @@ namespace reflective
 			REFLECTIVE_UNUSED( out_curr_group );
 			return false; // unsupported
 		}
-			
+
+		const void * get_key_value( size_t group_offset_index )
+		{
+			REFLECTIVE_UNUSED( group_offset_index );
+			return nullptr;
+		}			
 
 	private: // data members
 		reflective::Namespace::TypeIterator _types;
@@ -160,6 +165,12 @@ namespace reflective
 			ReflectiveIterator * result = REFLECTIVE_LIFO_NEW( ReflectiveIterator, namespace_obj );
 
 			return result;
+		}
+
+		void * add_object( const QualifiedType & i_qualified_type, void * i_collection_object, const void * i_key_value ) const
+		{
+			REFLECTIVE_UNUSED_3( i_qualified_type, i_collection_object, i_key_value );
+			return nullptr;
 		}
 
 		// resize

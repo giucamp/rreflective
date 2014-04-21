@@ -104,7 +104,7 @@ namespace reflective
 	inline void StringOutputStream::set_string_buffer( char * buffer, size_t max_length, size_t buffer_used_length )
 	{
 		m_buffer = buffer;
-		m_needed_length = 0;
+		m_needed_length = buffer_used_length;
 		m_buffer_length = max_length;
 		if( buffer_used_length < m_buffer_length )
 			m_buffer[buffer_used_length] = '\0';

@@ -138,6 +138,7 @@ namespace reflective
 		_abstract_iterator = nullptr;
 		_group.curr_in_group = nullptr;
 		_group.end_of_group = nullptr;
+		_index_in_group = 0;
 
 		const reflective::ICollectionHandler * collection_handler = collection_type.collection_handler();
 		if( collection_handler )
@@ -169,6 +170,7 @@ namespace reflective
 		_abstract_iterator = nullptr;
 		_group.curr_in_group = nullptr;
 		_group.end_of_group = nullptr;
+		_index_in_group = 0;
 
 		const reflective::ICollectionHandler * collection_handler = collection_type.collection_handler();
 		if( collection_handler )
@@ -199,10 +201,12 @@ namespace reflective
 		// get the next of the group
 		const size_t object_size = _group.qualified_type.type()->size();
 		_group.curr_in_group = mem::address_add( _group.curr_in_group, object_size );
+		_index_in_group++;
 		if( _group.curr_in_group < _group.end_of_group )
 			return true;
 
-		// group finished, ask another compatible with _iteration_type
+		// group finished, ask another one compatible with _iteration_type
+		_index_in_group = 0;	
 		do {
 
 			_abstract_iterator->next_group( _group );

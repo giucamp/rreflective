@@ -63,6 +63,9 @@ namespace reflective
 		// iteration
 		virtual IIterator * create_iterator( void * i_collection_object, const void * i_key_value ) const = 0;
 
+		// add_object
+		virtual void * add_object( const QualifiedType & i_qualified_type, void * i_collection_object, const void * i_key_value ) const = 0;
+
 		// get_key_type
 		enum KeyFlags
 		{
