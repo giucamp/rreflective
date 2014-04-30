@@ -5,14 +5,18 @@ namespace reflective_externals
 	template < typename KEY, typename VALUE, typename PREDICATE, typename ALLOCATOR >
 		class StdMapIterator : public reflective::IIterator
 	{
-	private:
-
+	private: // data members
 		typedef typename std::map< KEY, VALUE, PREDICATE, ALLOCATOR > Map;
 		typedef typename std::map< KEY, VALUE, PREDICATE, ALLOCATOR >::iterator Iterator;
 		typedef typename std::map< KEY, VALUE, PREDICATE, ALLOCATOR >::iterator ConstIterator;
-
 		Map & m_map;
 		Iterator m_iterator;
+
+	private: // unsupported
+		StdMapIterator( const StdMapIterator & );
+		StdMapIterator & operator = ( const StdMapIterator & );
+
+	private:
 
 		void get_group( Group & out_group )
 		{
@@ -116,7 +120,7 @@ namespace reflective_externals
 		bool remove( size_t offset_index, size_t item_count, Group & out_curr_group )
 		{
 			REFLECTIVE_ASSERT( offset_index == 0 );
-			REFLECTIVE_UNUSED( offset_index );
+			REFLECTIVE_UNUSED_2( offset_index, item_count );
 
 			bool result = false;
 

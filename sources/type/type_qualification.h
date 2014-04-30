@@ -94,6 +94,8 @@ namespace reflective
 
 		bool is_reference() const;
 
+		void change_final_type( const Type * i_new_final_type );
+
 		static const unsigned MAX_INDIRECTION_LEVELS = 15; 
 
 		// equality

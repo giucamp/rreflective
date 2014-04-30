@@ -59,7 +59,7 @@ namespace reflective
 		NameIdentifier( const char * string, size_t length );
 		NameIdentifier( const STRING & string );
 		NameIdentifier( const NameIdentifier & name );
-		NameIdentifier & operator = ( const NameIdentifier & string );
+		NameIdentifier & operator = ( const NameIdentifier & name );
 
 		// comparison
 		bool operator == ( const NameIdentifier & op ) const;
@@ -77,6 +77,10 @@ namespace reflective
 		// to_string
 		void to_string( StringOutputStream & dest_buffer ) const;
 		static void to_string( StringOutputStream & dest_buffer, const Type & type, const void * object );	
+
+		// from_string
+		static bool from_string( FromStringBuffer & i_source_buffer,
+			const reflective::Type & i_type, void * i_object, StringOutputStream & o_error_buffer );
 
 		static NameIdentifier<UINT, STRING, true> empty;
 

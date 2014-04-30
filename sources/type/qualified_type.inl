@@ -36,7 +36,6 @@ namespace reflective
 		: _type( nullptr )
 	{
 	}
-
 	// QualifiedType::copy constructor
 	inline QualifiedType::QualifiedType( const QualifiedType & source )
 		: _type( source._type ), _type_qualification( source._type_qualification )
@@ -90,6 +89,12 @@ namespace reflective
 		return true;
 	}
 
+	// QualifiedType::change_final_type
+	inline void QualifiedType::change_final_type( const Type * i_new_final_type )
+	{
+		_type_qualification.change_final_type( i_new_final_type );
+	}
+
 	// QualifiedType::operator ==
 	inline bool QualifiedType::operator == ( const QualifiedType & other ) const
 	{
@@ -108,37 +113,7 @@ namespace reflective
 		return *_type != *other._type ||
 			_type_qualification != other._type_qualification;
 	}
-
-	// FullName
-	class QualifiedType::FullName
-	{
-	public:
-
-		typedef FullName ThisClass;
-
-		static void init_class( reflective::Class & class_obj )
-		{
-			class_obj.set_string_functions( &ThisClass::to_string );
-		}
-
-		FullName() {}
-
-		FullName( const QualifiedType  & i_qualified_type )
-			: m_qualified_type( i_qualified_type ) {}
-
-		void to_string( StringOutputStream & dest_buffer ) const
-		{
-			m_qualified_type.to_string( dest_buffer );
-		}
-
-	private:
-		QualifiedType m_qualified_type;
-	};
-
-	// QualifiedType::full_name
-	inline QualifiedType::FullName QualifiedType::full_name() const
-		{ return FullName( *this ); }
-
+	
 } // namespace reflective
 
 

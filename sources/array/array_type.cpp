@@ -100,7 +100,7 @@ namespace reflective
 
 		_name_to_string( buffer, type, count );
 
-		SymbolName result( name, length );
+		SymbolName result( name, length - 1 );
 
 		#if !REFLECTIVE_PRESERVE_SYMBOL_PLAIN_NAMES
 			reflective_externals::mem_lifo_free( allocation );

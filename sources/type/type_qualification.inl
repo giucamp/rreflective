@@ -102,6 +102,12 @@ namespace reflective
 		return unsigned( word & INDIRECTION_LEVELS_MASK );
 	}
 
+	// TypeQualification::change_final_type
+	inline void TypeQualification::change_final_type( const Type * i_new_final_type )
+	{
+		_final_type = i_new_final_type;
+	}
+
 	// TypeQualification::full_indirection
 	inline const void * TypeQualification::full_indirection( const void * object ) const
 	{

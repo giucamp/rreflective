@@ -31,6 +31,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
+	QualifiedType QualifiedType::s_empty;
+
 	// QualifiedType::to_string
 	void QualifiedType::to_string( StringOutputStream & dest_buffer ) const
 	{

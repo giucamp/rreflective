@@ -182,7 +182,7 @@ namespace reflective
 
 	// NameIdentifier<UINT, STRING, true>::to_string
 	template <class UINT, class STRING>
-		inline void NameIdentifier<UINT, STRING, true>::to_string( 
+		void NameIdentifier<UINT, STRING, true>::to_string( 
 			StringOutputStream & dest_buffer, 
 			const Type & type, const void * object )
 	{
@@ -195,6 +195,28 @@ namespace reflective
 		const ThisType & name = *static_cast< const ThisType * >( object );
 
 		name.to_string( dest_buffer );
+	}
+
+	// NameIdentifier<UINT, STRING, true>::from_string
+	template <class UINT, class STRING>
+		bool NameIdentifier<UINT, STRING, true>::from_string( FromStringBuffer & i_source_buffer,
+			const reflective::Type & i_type, void * i_object, StringOutputStream & o_error_buffer )
+	{
+		REFLECTIVE_UNUSED( i_type );
+
+		typedef NameIdentifier<UINT, STRING, true> ThisType;
+
+		REFLECTIVE_ASSERT( i_type >= get_type< ThisType >() );
+
+		ThisType & name = *static_cast< ThisType * >( i_object );
+
+		STRING & name_string = name._string;
+		const bool result = safe_get_type<STRING>().assign_from_string( i_source_buffer, &name_string, o_error_buffer );
+		if( result )
+		{
+			name._hash = hash<UINT>( name._string );
+		}
+		return result;
 	}
 
 	// NameIdentifier<UINT, STRING, true>::to_string
@@ -286,7 +308,7 @@ namespace reflective_externals
 			new_property<ThisClass>( "uint_hash", &ThisClass::uint_hash ),
 		};
 
-		class_object->set_string_functions( NameIdentifier<UINT, STRING, true>::to_string, nullptr );
+		class_object->set_string_functions( NameIdentifier<UINT, STRING, true>::to_string, NameIdentifier<UINT, STRING, true>::from_string );
 		
 		// assign members
 		class_object->assign_properties( properties );

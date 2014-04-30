@@ -284,9 +284,14 @@ namespace reflective
 	inline const Type & Type::resolve_type( const void * object ) const
 	{
 		REFLECTIVE_ASSERT( is_aligned( object ) );
-		REFLECTIVE_ASSERT( check_capabilities( eHasTypeResolver ) );
-
-		return (*_type_resolver)( *this, object );
+		if( check_capabilities( eHasTypeResolver ) )
+		{
+			return (*_type_resolver)( *this, object );
+		}
+		else
+		{
+			return *this;
+		}
 	}
 
 	// Type::set_string_functions with global functions

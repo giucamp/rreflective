@@ -273,8 +273,7 @@ namespace reflective
 				be less than base_types_count(). */
 
 		/* type resolution - a type may be able to retrieve the complete derived
-			type of an object. Before calling this function the user must check 
-			that the type supports it by calling check_capabilities( eHasTypeResolver ).*/
+			type of an object. */
 		TypeResolver type_resolver() const;
 		const Type & resolve_type( const void * object ) const;
 
