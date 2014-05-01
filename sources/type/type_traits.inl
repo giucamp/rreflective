@@ -38,7 +38,7 @@ namespace reflective
 		class DefaultTypeFactory
 	{
 	public:
-		static reflective::Type * create_type();
+		static void create_type( reflective::Type * volatile * o_result );
 	};*/
 
 	// _CreateClass
@@ -94,9 +94,10 @@ namespace reflective
 		};
 
 	public:
-		static Type * create_type()
+		static void create_type( reflective::Type * volatile * o_result )
 		{
 			Class * new_class = _CreateClass< TYPE, has_create_class_static_func<TYPE>::value != 0 >::_create();
+			*o_result = new_class;
 
 			REFLECTIVE_ASSERT( new_class->size() == sizeof( TYPE ) );
 			REFLECTIVE_ASSERT( new_class->alignment() == alignment_of( TYPE ) );
@@ -109,8 +110,6 @@ namespace reflective
 				_SetBaseClass< has_base_class_indication<TYPE>::value != 0 >::_set( *new_class );
 
 			_InitClass< has_init_class_static_func<TYPE>::value != 0 >::_init( *new_class );
-
-			return new_class;
 		}
 	};
 
@@ -119,13 +118,13 @@ namespace reflective
 		class DefaultTypeFactory< TYPE, LIFE_EFUNC_ENUM, false, true >
 	{
 	public:
-		static Type * create_type()
+		static void create_type( reflective::Type * volatile * o_result )
 		{
 			StaticConstString parent_namespace_path, name;
 			const char * full_type_name = typeid( TYPE ).name();			
 			separate_symbol_name( full_type_name, &parent_namespace_path, &name, false );
 
-			return new_enum( parent_namespace_path, name );
+			*o_result = new_enum( parent_namespace_path, name );
 		}
 	};
 
@@ -162,10 +161,10 @@ namespace reflective_externals
 		
 			>::type LifeFuncEnum;
 
-			*o_result = reflective::DefaultTypeFactory< TYPE, LifeFuncEnum,
+			reflective::DefaultTypeFactory< TYPE, LifeFuncEnum,
 				std::is_class< TYPE >::value,
 				std::is_enum< TYPE >::value 
-					>::create_type();
+					>::create_type( o_result );
 
 			#undef __REFLECTIVE_HAS_CONSTRUCTOR
 			#undef __REFLECTIVE_IS_ABSTRACT

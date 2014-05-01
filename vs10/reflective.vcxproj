@@ -148,6 +148,9 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <FloatingPointExceptions>false</FloatingPointExceptions>
     </ClCompile>
     <BuildLog>
       <Path>$(SolutionDir)\..\..\bin\msc100\$(Platform)_$(Configuration)\$(ProjectName)\$(ProjectName).log</Path>
