@@ -38,7 +38,6 @@ namespace reflective
 	public:
 		AbstractHandler();
 		virtual void invoke( void * param ) = 0;
-		virtual void invoke( const void * param ) = 0;
 		virtual ~AbstractHandler();
 
 	private: // data members
@@ -53,39 +52,19 @@ namespace reflective
 	{
 	public:
 
-		typedef void (ROOT_CLASS::*Action)( PARAM & param );
+		typedef void (ROOT_CLASS::*Action)( PARAM param );
 
 		MethodHandler();
 
 		template <class OBJECT>
-			void init( OBJECT * object, void (OBJECT::*handler_method)( PARAM & ) );
+			void init( OBJECT * object, void (OBJECT::*handler_method)( PARAM ) );
 
 		void invoke( void * param );
-		void invoke( const void * param );
-
+		
 	private: // data members
 		ROOT_CLASS * _object;
 		Action _handler_method;
 	};
 
-	// MethodHandler (const PARAM)
-	template <class ROOT_CLASS, class PARAM>
-		class MethodHandler<ROOT_CLASS, const PARAM> : public AbstractHandler
-	{
-	public:
+} // namespace reflective
 
-		typedef void (ROOT_CLASS::*Action)( const PARAM & param );
-
-		MethodHandler();
-
-		template <class OBJECT>
-			void init( OBJECT * object, void (OBJECT::*handler_method)( const PARAM & ) );
-
-		void invoke( void * param );
-		void invoke( const void * param );
-
-	private: // data members
-		ROOT_CLASS * _object;
-		Action _handler_method;
-	};
-}

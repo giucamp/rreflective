@@ -31,6 +31,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
+	/** Provide an easy way to write to a string buffer.
+		StringOutputStream can be associated with a destination buffer, to which characters are written up to the specified length.
+		StringOutputStream measures the required buffer length. 
+	*/
 	class StringOutputStream
 	{
 	public:
@@ -73,7 +77,7 @@ namespace reflective
 			which can be truncated if the buffer is not big enough. */
 
 		// is_truncated
-		bool is_truncated() const; /* returns true*/
+		bool is_truncated() const;
 		
 		// needed_length \ max_length
 		size_t needed_length() const; /* needed length for the buffer, that is the sum 

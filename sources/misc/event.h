@@ -62,7 +62,6 @@ namespace reflective
 
 		// raise - raises the event, calling invoke( params ) on every attached handler
 		void raise( void * params );
-		void raise( const void * params );
 
 		// handlers methods
 		void add_handler( AbstractHandler & handler );
@@ -75,6 +74,16 @@ namespace reflective
 	// Event<PARAMS>
 	template <class PARAMS>
 		class Event : public AbstractEvent
+	{
+	public:
+
+		// raise - raises the event, calling invoke( params ) on every attached handler
+		void raise( PARAMS params );
+	};
+
+	// Event<PARAMS&>
+	template <class PARAMS>
+		class Event<PARAMS&> : public AbstractEvent
 	{
 	public:
 

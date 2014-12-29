@@ -60,18 +60,6 @@ namespace reflective
 		} while( handler != nullptr );
 	}
 
-	// AbstractEvent::raise (const params)
-	void AbstractEvent::raise( const void * params )
-	{
-		AbstractHandler * handler = _first_handler;
-		if( handler ) do {
-
-			handler->invoke( params );
-
-			handler = handler->_next_handler;
-		} while( handler != nullptr );
-	}
-
 	// AbstractEvent::remove_handler
 	void AbstractEvent::remove_handler( AbstractHandler & handler )
 	{		

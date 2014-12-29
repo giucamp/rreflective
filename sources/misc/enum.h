@@ -66,7 +66,7 @@ namespace reflective
 		const MemberList & members() const;
 
 		// finds
-		const Member * find_member_by_value( int value, size_t * inout_index = nullptr ); 
+		const Member * find_member_by_value( int value, size_t * inout_index = nullptr ) const; 
 			/* if inout_index is not nullptr, the search will start from *inout_index, and if
 			   the member is found, inout_index wil be filled with the index of the member + 1.
 			   To get multiple members as result of the search, initialize a size_t with zero, 

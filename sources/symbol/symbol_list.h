@@ -31,8 +31,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	// DefaultCompaper
-	class DefaultCompaper
+	// DefaultComparer
+	class DefaultComparer
 	{
 	public:
 		enum { Sort = 0 };
@@ -42,7 +42,7 @@ namespace reflective
 	};
 
 	// SymbolList< SYMBOL, ALLOW_DUPLICATES, SYMBOL_COMPARER >
-	template < class SYMBOL, bool ALLOW_DUPLICATES, class SYMBOL_COMPARER = DefaultCompaper >
+	template < class SYMBOL, bool ALLOW_DUPLICATES, class SYMBOL_COMPARER = DefaultComparer >
 		class SymbolList
 	{
 	public:

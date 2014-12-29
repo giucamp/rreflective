@@ -35,7 +35,7 @@ namespace reflective
 	template < class TYPE > void objects_construct( TYPE * dest );
 	template < class TYPE > void objects_construct( TYPE * dest_start, TYPE * dest_end );
 
-	// objects_construct - calls the destructor on an object or an array of objects
+	// objects_destruct - calls the destructor on an object or an array of objects
 	template < class TYPE > void objects_destruct( TYPE * dest );
 	template < class TYPE > void objects_destruct( TYPE * start_address, TYPE * end_address );
 
@@ -51,7 +51,7 @@ namespace reflective
 
 	/* objects_move - equvalent to grabbed_objects_move, but faster, for non-grabbed types. These functions 
 		assume that an object can be moved by memcpy to a new location and will work. This is true not only for
-		even pods, bur even	for object with construction\destruction side effects, such allocations and external 
+		pods, bur even	for object with construction\destruction side effects, such allocations and external 
 		resource instancing. For objects relying on their address (which are very rare) this function cannot be used, 
 		but they need grabbed_objects_move. */
 	template < class TYPE > void objects_move( TYPE * dest, TYPE * source );

@@ -55,10 +55,9 @@ namespace reflective
 				support the method.	*/
 		void * get_value_inplace( void * object ) const;
 
-		/** gets a pointer to the value of the property for read. The storage of the returned
-			value is handled by the object, but the caller can modify it. This method allows
-			to read the property without making a copy of it, but it is supported only by some 
-			type of properties.
+		/** gets a const pointer to the value of the property for read. The storage of the
+			returned value is handled by the object. This method allows to read the property
+			without making a copy of it, but it is supported only by some type of properties.
 			@return pointer to the value of the property, or nullptr if the property does not 
 				support the method.	*/
 		const void * get_value_inplace( const void * object ) const;

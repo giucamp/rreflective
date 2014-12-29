@@ -53,6 +53,18 @@ namespace reflective
 		return TypeContainer<TYPE>::get();
 	}
 
+	// safe_get_class<TYPE>()
+	template <class TYPE> inline const Class * safe_get_class()
+	{
+		TypeContainer<TYPE>::init_type();
+		TypeContainer< typename CompileTimeTypeQualification<TYPE>::FinalType >::init_type();
+		const Type & type = TypeContainer<TYPE>::get();
+		if( is_instance_of< Class >( type ) )
+			return static_cast<const Class*>( &type );
+		else
+			return nullptr;
+	}
+
 	// type_of( object )
 	template <class TYPE> inline const Type & type_of( const TYPE & object )
 	{

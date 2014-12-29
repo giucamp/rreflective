@@ -31,7 +31,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	/* Unreferencer - just translates a reference type in a const pointer type, which 
+	/* Unreferencer - just translates a reference type to a const pointer type, which 
 		is useful when a reference or pointer to a template type is necessary (the C++ does not 
 		allow pointer to references nor reference to references, but they are equivalent to const
 		pointers; indeed as a reference can be converted to a const pointer with the address-of 
@@ -51,6 +51,11 @@ namespace reflective
 				return *static_cast<const TYPE*>( address );
 			}
 
+			static void * address_of( const TYPE & )
+			{
+				return *static_cast<const TYPE*>( address );
+			}
+
 			static void copy_construct( void * destination, TYPE source )
 			{
 				new( destination ) TYPE( source );
@@ -61,10 +66,9 @@ namespace reflective
 		public:
 			typedef TYPE * const Type;
 
-
 			static TYPE & void_indirection( void * address )
 			{
-				return *static_cast<TYPE**>( address );
+				return **static_cast<TYPE**>( address );
 			}
 
 			static TYPE & void_indirection( const void * address )

@@ -52,8 +52,16 @@ namespace reflective
 
 	// Event<PARAM>::raise
 	template <class PARAM>
-		inline void Event<PARAM>::raise( PARAM & params )
+		inline void Event<PARAM>::raise( PARAM params )
 	{
 		AbstractEvent::raise( &params );
+	}
+
+	// Event<PARAM>::raise
+	template <class PARAM>
+		inline void Event<PARAM&>::raise( PARAM & params )
+	{
+		PARAM * pointer = &params;
+		AbstractEvent::raise( &pointer );
 	}
 }

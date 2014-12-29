@@ -203,7 +203,7 @@ namespace reflective
 	}
 
 	// Enum::find_member_by_value
-	const Enum::Member * Enum::find_member_by_value( int value, size_t * inout_index )
+	const Enum::Member * Enum::find_member_by_value( int value, size_t * inout_index ) const
 	{
 		/* if inout_index is not nullptr, the search will start from inout_index, and if
 		   the member is found, inout_index wil be filled with the index of the member + 1.
@@ -263,7 +263,6 @@ namespace reflective_externals
 		const Action * actions[] = 
 		{
 			new_action<ThisClass>( "edit_members", &ThisClass::edit_members ),
-			new_action<ThisClass>( "find_member_by_value", &ThisClass::find_member_by_value, "value, inout_index"),
 		};
 		
 		// assign members
