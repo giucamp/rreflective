@@ -1,3 +1,4 @@
+
 /***********************************************************************************
 
 Copyright 2011-2012 Giuseppe Campana - giu.campana@gmail.com
@@ -29,21 +30,45 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	#error include "reflective.h" instead of including this file
 #endif
 
+namespace reflective
+{
+	/** Pair of void object pointer and qualified type.
+		This class is useful to handle objects whose type is know only at runtime.
+	*/
+	class ObjectPointerWrapper
+	{
+	public:
 
-/*
+		ObjectPointerWrapper()
+			: m_object( nullptr ) { }
 
-	The class Iterator<TYPE> iterates the objects inside any collection whose 
-		reflective::Type provides an implementation of reflective::ICollectionHandler.
-	If the reflective::Type of the collections does not provoide a ICollectionHandler,
-		the object is considered an empty collection.
+		ObjectPointerWrapper( void * i_object, const QualifiedType & i_type )
+			: m_object( i_object ), m_type( i_type ) { }
 
-	Iterator<void> \ Iterator<const void> - iterates a collection giving access to
-		the current object through a (const) void pointer.
+		ObjectPointerWrapper( void * i_object, const Type & i_type )
+			: m_object( i_object ), m_type( QualifiedType( i_type ) ) { }
 
-*/
+		ObjectPointerWrapper( const ObjectPointerWrapper & i_source )
+			: m_object( i_source.m_object ), m_type( i_source.m_type ) {}
 
+		ObjectPointerWrapper & operator = ( const ObjectPointerWrapper & i_source )
+		{
+			m_object = i_source.m_object;
+			m_type = i_source.m_type;
+			return *this;
+		}
 
-#include "iterator.h"
-#include "const_iterator.h"
-#include "void_iterator.h"
-#include "const_void_iterator.h"
+		void * object() const					{ return m_object; }
+
+		const QualifiedType & type() const		{ return m_type; }
+
+		template< typename TYPE>
+			static ObjectPointerWrapper from_pointer( const TYPE * i_object )
+				{ return ObjectPointerWrapper( &i_object, qualified_type_of(i_object) ); }
+	
+	private:
+		void * m_object;
+		QualifiedType m_type;
+	};
+
+}

@@ -3,7 +3,7 @@
 namespace reflective_externals
 {
 	template < typename KEY, typename VALUE, typename PREDICATE, typename ALLOCATOR >
-		class StdMapIterator : public reflective::IIterator
+		class StdMapIterator : public reflective::AbstractIterator
 	{
 	private: // data members
 		typedef typename std::map< KEY, VALUE, PREDICATE, ALLOCATOR > Map;
@@ -16,222 +16,110 @@ namespace reflective_externals
 		StdMapIterator( const StdMapIterator & );
 		StdMapIterator & operator = ( const StdMapIterator & );
 
-	private:
-
-		void get_group( Group & out_group )
-		{
-			if( m_iterator != m_map.end() )
-			{
-				out_group.curr_in_group = &m_iterator->second;
-				out_group.qualified_type = reflective::qualified_type_of( m_iterator->second );
-				out_group.end_of_group = memo::address_add( out_group.curr_in_group, out_group.qualified_type.type()->size() ); 
-			}
-			else
-			{
-				out_group.curr_in_group = nullptr;
-				out_group.qualified_type = QualifiedType();
-				out_group.end_of_group = nullptr; 
-			}
-		}
-
-		void get_group( ConstGroup & out_group )
-		{
-			if( m_iterator != m_map.end() )
-			{
-				out_group.curr_in_group = &m_iterator->second;
-				out_group.qualified_type = reflective::qualified_type_of( m_iterator->second );
-				out_group.end_of_group = memo::address_add( out_group.curr_in_group, out_group.qualified_type.type()->size() );
-			}
-			else
-			{
-				out_group.curr_in_group = nullptr;
-				out_group.qualified_type = QualifiedType();
-				out_group.end_of_group = nullptr; 
-			}
-		}
-
 	public:
 
-		StdMapIterator( Map & i_map, const void * i_key_value )
+		StdMapIterator( Map & i_map )
 			: m_map( i_map ) 
 		{
-			if( i_key_value == nullptr )
-				m_iterator = m_map.begin();
-			else
-				m_iterator = m_map.find( *static_cast<const KEY*>(i_key_value) );
-		}
-
-		void first_group( Group & out_group )
-		{
-			get_group( out_group );
-		}
-
-		void next_group( Group & out_group )
-		{
-			m_iterator++;
-			get_group( out_group );
-		}
-
-		void first_group( ConstGroup & out_group )
-		{
-			get_group( out_group );
-		}
-		void next_group( ConstGroup & out_group )
-		{
-			m_iterator++;
-			get_group( out_group );
-		}
-
-		bool insert( 
-			size_t group_offset_index, const reflective::Type & items_type, 
-			const void * source_object, size_t item_count,
-			const void * i_key_value, Group & out_curr_group )
-		{
-			REFLECTIVE_ASSERT( group_offset_index == 0 );
-			REFLECTIVE_UNUSED( group_offset_index );
-
-			REFLECTIVE_ASSERT( i_key_value == nullptr );
-			REFLECTIVE_UNUSED( i_key_value );
-			bool result = false;
-
-			if( items_type == reflective::get_type<VALUE>() && item_count == 1 && group_offset_index == 0 && i_key_value != nullptr )
-			{
-				std::pair< Iterator, bool > insert_result;
-				if( source_object != nullptr )
-				{
-					insert_result = m_map.insert( std::make_pair( *static_cast<const KEY*>(i_key_value), *static_cast<const VALUE*>(source_object) ) );
-				}
-				else
-				{
-					insert_result = m_map.insert( std::make_pair( *static_cast<const KEY*>(i_key_value), VALUE() ) );
-				}
-				if( insert_result.second )
-				{
-					result = true;
-					m_iterator = insert_result.first;
-				}
-			}
-
-			get_group( out_curr_group );
-
-			return result;
-		}
-
-		bool remove( size_t offset_index, size_t item_count, Group & out_curr_group )
-		{
-			REFLECTIVE_ASSERT( offset_index == 0 );
-			REFLECTIVE_UNUSED_2( offset_index, item_count );
-
-			bool result = false;
-
+			m_iterator = m_map.begin();
 			if( m_iterator != m_map.end() )
-			{
-				result = true;
-				REFLECTIVE_ASSERT( false ); // to do
-				/*for( size_t item_index = 0; item_index < item_count; item_index++ )
-				{
-					m_map.delete_at( m_current_index );
-				}*/
-			}
-
-
-			get_group( out_curr_group );
-
-			return result;
+				set_item( &m_iterator->second, reflective::get_type<VALUE>(), &m_iterator->first );
+			else
+				set_item_null();
 		}
 
-		 const void * get_key_value( size_t group_offset_index )
-		 {
-			 REFLECTIVE_ASSERT( group_offset_index == 0 );
-			 REFLECTIVE_UNUSED( group_offset_index );
-
-			 if( m_iterator != m_map.end() )
-			 {
-				 return &(m_iterator->first);
-			 }
-			 else
-			 {
-				 return nullptr;
-			 }
-		 }
+		void move_next()
+		{
+			m_iterator++;
+			if( m_iterator != m_map.end() )
+				set_item( &m_iterator->second, reflective::get_type<VALUE>(), &m_iterator->first );
+			else
+				set_item_null();
+		}
 	};
 
 	template < typename KEY, typename VALUE, typename PREDICATE, typename ALLOCATOR >
-		class StdMapCollectionHandler : public ICollectionHandler
+		class StdMapCollectionHandler : public CollectionHandler
 	{
 	public:
 
 		typedef std::map< KEY, VALUE, PREDICATE, ALLOCATOR > Map;
 		typedef typename std::map< KEY, VALUE, PREDICATE, ALLOCATOR >::iterator MapIterator;
+		typedef typename std::map< KEY, VALUE, PREDICATE, ALLOCATOR >::const_iterator MapConstIterator;
 
-		// query_item_count
-		bool query_item_count( const void * collection_object, size_t * out_count ) const
+		StdMapCollectionHandler()
+			: CollectionHandler( sizeof(StdMapIterator< KEY, VALUE, PREDICATE, ALLOCATOR >), alignment_of(StdMapIterator< KEY, VALUE, PREDICATE, ALLOCATOR >) ) {}
+
+		Flags get_flags( const void * /*i_colection_object*/ ) const
+			{ return eSupportKey | eSupportGetCount | eAllowEdit; }
+		
+		QualifiedType get_item_type( const void * /*i_collection_object*/ ) const
+			{ return safe_get_qualified_type<VALUE>(); }
+
+		QualifiedType get_key_type( const void * /*i_collection_object*/ ) const
+			{ return safe_get_qualified_type<KEY>(); }
+
+		size_t get_count( const void * i_collection_object ) const
+			{ return static_cast<const Map*>( i_collection_object )->size(); }
+
+		ObjectPointerWrapper get_at_key( const void * i_collection_object, const void * i_key ) const
 		{
-			*out_count = static_cast<const Map*>( collection_object )->size();
-			return true;
+			const Map & map = *static_cast<const Map*>( i_collection_object );
+			MapConstIterator it = map.find( *static_cast<const KEY*>(i_key) ); 
+			if( it != map.end() )
+				return ObjectPointerWrapper::from_pointer( const_cast<VALUE*>( &it->second ) );
+			else
+				return ObjectPointerWrapper();
 		}
 
-		// resize
-		bool resize( void * collection_object, size_t new_size ) const
+		void * insert_item_at_key( void * i_collection_object, const void * i_key, const ObjectPointerWrapper & i_source_object ) const
 		{
-			REFLECTIVE_UNUSED_2( collection_object, new_size );
-			return false;
-		}
-
-		// query_item_base_type
-		const reflective::Type * query_item_base_type( const void * collection_object,
-			bool * out_allow_derived_types ) const
-		{
-			REFLECTIVE_UNUSED( collection_object );
-			*out_allow_derived_types = false;
-			return &safe_get_type<VALUE>();
-		}
-
-		// iteration
-		IIterator * create_iterator( void * i_collection_object, const void * i_key_value ) const
-		{
-			typedef StdMapIterator<KEY, VALUE, PREDICATE, ALLOCATOR> Iterator;
-			return REFLECTIVE_LIFO_NEW( Iterator, *static_cast<Map*>( i_collection_object ), i_key_value );
-		}
-
-		void * add_object( const QualifiedType & i_qualified_type, void * i_collection_object, const void * i_key_value ) const
-		{
-			if( i_qualified_type != get_qualified_type<VALUE>() || i_key_value == nullptr )
-				return nullptr;
 			Map & map = *static_cast<Map*>( i_collection_object );
-			const KEY & key_value = *static_cast<const KEY*>( i_key_value );
-			std::pair< MapIterator, bool > result = map.insert( std::make_pair( key_value, VALUE() ) );
-			if( result.second )
+
+			if( i_source_object.type() == safe_get_qualified_type<VALUE>() )
 			{
-				return &(result.first->second);
+				const KEY & key = *static_cast<const KEY*>(i_key);
+				
+				if( i_source_object.object() == nullptr )
+				{
+					VALUE & val = map[ key ];	
+					return &val;
+				}
+				else
+				{
+					std::pair<MapIterator,bool> res = map.insert( std::make_pair(key, *static_cast<VALUE*>( i_source_object.object() ) ) );
+					VALUE & val = res.first->second;	
+					return &val;
+				}
 			}
 			else
 			{
 				return nullptr;
 			}
 		}
-
-		// get_indices_info
-		virtual bool get_key_type( const void * i_collection_object, uint32_t * o_flags, QualifiedType * o_index_type ) const
-		{
-			REFLECTIVE_UNUSED( i_collection_object );
-			*o_flags = 0;
-			*o_index_type = safe_get_qualified_type<KEY>();
-			return true;
-		}
-
 		
-				/* watching */
+		bool resize( void * /*i_collection_object*/, size_t /*new_size*/ ) const
+			{ return false; }
 
-		bool register_watch( reflective::Watch * watch, void * collection_object ) const 
+		bool delete_item_at_key( void * i_collection_object, const void * i_key_value ) const
 		{
-			REFLECTIVE_UNUSED_2( watch, collection_object );
-			return false;
+			Map & map = *static_cast<Map*>( i_collection_object );
+			MapIterator it = map.find( *static_cast<const KEY*>(i_key_value) );
+			if( it != map.end() )
+			{
+				map.erase( it );
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 
-		void unregister_watch( reflective::Watch * watch, void * collection_object ) const
+		AbstractIterator * construct_iterator( void * i_collection_object, void * i_iterator_buffer ) const
 		{
-			REFLECTIVE_UNUSED_2( watch, collection_object );
+			Map & map = *static_cast<Map*>( i_collection_object );
+			return new( i_iterator_buffer ) StdMapIterator< KEY, VALUE, PREDICATE, ALLOCATOR >( map );
 		}
 	};
 

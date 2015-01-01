@@ -40,7 +40,7 @@ namespace reflective
 	// forwards
 	class Namespace;
 	class Allocator;
-	class ICollectionHandler;
+	class CollectionHandler;
 	class Type;
 
 	// SymbolTypeId
@@ -87,6 +87,7 @@ namespace reflective
 #include "misc\event.h"
 #include "misc\handler.h"
 #include "misc\dynamic_string_stream.h"
+#include "misc\object_pointer_wrapper.h"
 #include "class\class_member.h"
 #include "class\property.h"
 #include "class\data_property.h"
@@ -101,10 +102,10 @@ namespace reflective
 #include "class\class_template.h"
 #include "class\type_inspector.h"
 #include "collections\abstract_iterator.h"
+#include "collections\iterator.h"
 #include "collections\watch.h"
 #include "collections\watch_chain.h"
 #include "collections\collection_handler.h"
-#include "iterators\iterators.h"
 #include "array\array_type.h"
 #include "array\array_data_property.h"
 #include "type\type_traits.h"
@@ -158,7 +159,6 @@ namespace reflective
 #include "collections\abstract_iterator.inl"
 #include "collections\watch.inl"
 #include "collections\watch_chain.inl"
-#include "iterators\iterators.inl"
 #include "array\array_type.inl"
 #include "array\array_data_property.inl"
 #include "type\type_traits.inl"

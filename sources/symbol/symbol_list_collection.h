@@ -31,41 +31,39 @@ namespace reflective
 	template < class SYMBOL, bool ALLOW_DUPLICATES,
 			class SYMBOL_COMPARER >
 		class SymbolList<SYMBOL,ALLOW_DUPLICATES, SYMBOL_COMPARER >::_CollectionHandler 
-			: public reflective::ICollectionHandler
+			: public reflective::CollectionHandler
 	{
 	public:
-		_CollectionHandler();
 
-		// query_item_count
-		bool query_item_count( const void * collection_object, size_t * out_count ) const;
+		typedef reflective::SymbolList<SYMBOL,ALLOW_DUPLICATES, SYMBOL_COMPARER > SymbolList;
 
-		// query_item_base_type
-		const Type * query_item_base_type( const void * collection_object, 
-			bool * out_allow_derived_types ) const;
+		_CollectionHandler() : CollectionHandler( sizeof(_Iterator), alignment_of(_Iterator) ) {}
 
-		// create_iterator
-		reflective::IIterator * create_iterator( void * i_collection_object, const void * i_key_value ) const;
+		Flags get_flags( const void * /*i_colection_object*/ ) const
+			{ return eSupportPositionalIndex | eSupportGetCount | eAllowDerivedItems; }
 
-		void * add_object( const QualifiedType & i_qualified_type, void * i_collection_object, const void * i_key_value ) const
-		{
-			REFLECTIVE_UNUSED_3( i_qualified_type, i_collection_object, i_key_value );
-			return nullptr;
+		QualifiedType get_key_type( const void * /*i_collection_object*/ ) const
+			{ return QualifiedType::s_empty; }
+
+		QualifiedType get_item_type( const void * /*i_collection_object*/ ) const
+			{ return safe_get_qualified_type<SYMBOL*>(); }
+
+		size_t get_count( const void * i_collection_object ) const
+		{ 
+			const SymbolList & list = *static_cast<const SymbolList*>(i_collection_object);
+			return list.count(); 
 		}
 
-		// resize
-		bool resize( void * collection_object, size_t new_size ) const
+		ObjectPointerWrapper get_at_index( const void * i_collection_object, size_t i_index ) const
 		{
-			REFLECTIVE_UNUSED_2( collection_object, new_size );
-			return false;
-		}
+			const SymbolList & list = *static_cast<const SymbolList*>(i_collection_object);
+			return ObjectPointerWrapper( const_cast<SYMBOL*>( &(list[i_index]) ), get_qualified_type<SYMBOL*>() ); 
+		}		
 
-		// get_indices_info
-		bool get_key_type( const void * i_collection_object, uint32_t * o_flags, QualifiedType * o_index_type ) const
+		AbstractIterator * construct_iterator( void * i_collection_object, void * i_iterator_buffer ) const
 		{
-			REFLECTIVE_UNUSED( i_collection_object );
-			*o_flags = ePositionalIndex;
-			*o_index_type = safe_get_qualified_type<SymbolName>();
-			return true;
+			const SymbolList & list = *static_cast<const SymbolList*>(i_collection_object);
+			return new( i_iterator_buffer ) _Iterator( &list );
 		}
 
 		bool register_watch( Watch * watch, void * collection_object ) const
@@ -83,56 +81,36 @@ namespace reflective
 	// SymbolList<SYMBOL>::_Iterator
 	template < class SYMBOL, bool ALLOW_DUPLICATES,	class SYMBOL_COMPARER >
 			class SymbolList<SYMBOL,ALLOW_DUPLICATES, SYMBOL_COMPARER >::_Iterator 
-				: public reflective::IIterator
+				: public reflective::AbstractIterator
 	{
 	public:
-		_Iterator( const SymbolList<SYMBOL, ALLOW_DUPLICATES, SYMBOL_COMPARER > & symbol_set, size_t offset_index );
-
-		void first_group( ConstGroup & out_group );
-		void next_group( ConstGroup & out_group );
-
-		void first_group( Group & out_group )
+		_Iterator( const SymbolList<SYMBOL, ALLOW_DUPLICATES, SYMBOL_COMPARER > * i_symbol_set )
+			: m_symbol_set( i_symbol_set ), m_index(0)
 		{
-			REFLECTIVE_UNUSED( out_group );
-			REFLECTIVE_ASSERT( false ); // unsupported
+			if( m_index < m_symbol_set->count() )
+			{
+				SYMBOL & symbol = const_cast<SYMBOL &>( (*m_symbol_set)[m_index] );
+				set_item( &symbol, get_qualified_type<SYMBOL*>(), nullptr );
+			}
+			else
+				set_item_null();
 		}
 
-		void next_group( Group & out_group )
+		void move_next()
 		{
-			REFLECTIVE_UNUSED( out_group );
-			REFLECTIVE_ASSERT( false ); // unsupported
+			m_index++;
+			if( m_index < m_symbol_set->count() )
+			{
+				SYMBOL & symbol = const_cast<SYMBOL &>( (*m_symbol_set)[m_index] );
+				set_item( &symbol, get_qualified_type<SYMBOL*>(), nullptr );
+			}
+			else
+				set_item_null();
 		}
-
-		bool insert( 
-			size_t group_offset_index, const Type & items_type, 
-			const void * source_object, size_t item_count,
-			const void * i_key_value, Group & out_curr_group )
-		{
-			REFLECTIVE_UNUSED_4( group_offset_index, items_type, source_object, item_count );
-			REFLECTIVE_UNUSED_2( out_curr_group, i_key_value );
-			return false; // unsupported
-		}
-
-		bool remove( size_t offset_index, size_t item_count,
-			Group & out_curr_group )
-		{
-			REFLECTIVE_UNUSED_2( offset_index, item_count );
-			REFLECTIVE_UNUSED( out_curr_group );
-			return false; // unsupported
-		}
-
-		const void * get_key_value( size_t group_offset_index )
-		{
-			REFLECTIVE_UNUSED( group_offset_index );
-			return nullptr;
-		}
-
-	private:
-		_Iterator & operator = ( const _Iterator & ); // not supported
-
+		
 	private: // data members
-		const SymbolList<SYMBOL, ALLOW_DUPLICATES, SYMBOL_COMPARER > & _symbol_set;
-		size_t _index;
+		const SymbolList<SYMBOL, ALLOW_DUPLICATES, SYMBOL_COMPARER > * m_symbol_set;
+		size_t m_index;
 	};
 
 } // namespace reflective

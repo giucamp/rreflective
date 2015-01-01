@@ -31,54 +31,166 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	/* ICollectionHandler - provides an non-intrusive collection-like interface to the
+	/* CollectionHandler - provides an non-intrusive collection-like interface to the
 		objects of the a given type suitable for iteration and watching. The collection
-		object is passed to the methods of ICollectionHandler by a void pointer. Having
-		the ICollectionHandler associated with the type, the collection type is not required
+		object is passed to the methods of CollectionHandler by a void pointer. Having
+		the CollectionHandler associated with the type, the collection type is not required
 		to derive and implement any interface (that's the non-intrusiveness).
 		Each collection handler is supposed to be associated with a class object (see
 		reflective::Class). So all the objects of the collection class share the
-		same instance of ICollectionHandler. */
-	class ICollectionHandler
+		same instance of CollectionHandler.
+	*/
+	class CollectionHandler
 	{
+	protected:
+
+		/** Constructs the handler, assigning the size and alignment required for an iterator */
+		CollectionHandler( size_t i_iterator_size, size_t i_iterator_alignment )
+			: m_iterator_size( i_iterator_size ), m_iterator_alignment( i_iterator_alignment ) { }
+
 	public:
 
-		// query_item_count
-		virtual bool query_item_count( const void * collection_object, size_t * out_count ) const = 0;
-			/* Not all the collections are able to return quickly their item count, so this method
-			may return false, and out_count is invalidated by the call. Furthermore, the item count may
-			too big to fit in a size_t. If the method returns true, out_count has been assigned with
-			the correct item count. */
-
-		// resize
-		virtual bool resize( void * collection_object, size_t new_size ) const = 0;
-
-		// query_item_base_type
-		virtual const Type * query_item_base_type( const void * collection_object,
-			bool * out_allow_derived_types ) const = 0; /* Returns the Type from which all the objects
-				belonging to the collection are required to derive. query_item_base_type is set to
-				true is the collection can handle derived classes. If query_item_base_type returns
-				nullptr the collection can handle any type of objects. */
-
-		// iteration
-		virtual IIterator * create_iterator( void * i_collection_object, const void * i_key_value ) const = 0;
-
-		// add_object
-		virtual void * add_object( const QualifiedType & i_qualified_type, void * i_collection_object, const void * i_key_value ) const = 0;
-
-		// get_key_type
-		enum KeyFlags
-		{
-			ePositionalIndex = 1 << 0,
-			eAllowDuplicates = 1 << 1,
+		enum Flags
+		{	
+			eNoFlags					= 0,
+			eSupportPositionalIndex		= 1 << 0, /**< the collection support get, set, insertion and deletion of items 
+														given a positional index. If the collection has this flag, it 
+														should have eSupportGetCount too. */
+			eSupportGetCount			= 1 << 1, /**< the collection supports the method get_count */
+			eSupportKey					= 1 << 2, /**< the collection support get, set, insertion and deletion of items 
+														given a key. The type of the key can be retrieved by get_key_type.  */
+			//eSupportDuplicateKeys		= 1 << 3, /**< the key of the collection is not unique */
+			eAllowDerivedItems			= 1 << 4, /**< the items of the collection can be instances of the type returned by 
+													   get_item_type or of a derived type. */
+			eAllowEdit					= 1 << 5, /**< the collection can be altered */
+			eSupportReserve				= 1 << 6, /**< the collection supports the reserve, to efficiently fill it
+													   when an estimate of the total item count is known in advance */
+			eSupportWatch				= 1 << 7
 		};
-		virtual bool get_key_type( const void * i_collection_object, uint32_t * o_flags, QualifiedType * o_index_type ) const = 0;
 
+		/** Flags values can be combined with the bitwise or, and the result is still a valid Flags value */
+		friend inline Flags operator | ( Flags i_first, Flags i_second )
+			{ return static_cast<Flags>( static_cast<int>(i_first) | static_cast<int>(i_second) ); }
+
+		/** Returns the flags associated to the specified collection */
+		virtual Flags get_flags( const void * i_colection_object ) const = 0;
+
+		/** Returns the type of the items in the collection. If the collection has the flag eAllowDerivedItems,
+			items may be instance of a type derived from the returned one. If the returned type is empty (its type()
+			method returns true), the collection can contain items of any type. */
+		virtual QualifiedType get_item_type( const void * i_collection_object ) const = 0; 
+
+		/** Returns the type of the keys. 
+			Required flags: eSupportKey */
+		virtual QualifiedType get_key_type( const void * /*i_collection_object*/ ) const
+			{ REFLECTIVE_ASSERT(false); /* unsupported */ return QualifiedType::s_empty; }
+
+		/** Returns the count of items in the collection.
+			Required flags: eSupportGetCount */
+		virtual size_t get_count( const void * /*i_collection_object*/ ) const
+			{ REFLECTIVE_ASSERT(false); /* unsupported */ return 0; }
+
+		/** Returns the item at the specified index. 
+			@param i_index the index must be >= 0 and < the resullt of get_count. If the index is out of range the behaviour is undefined.
+			Required flags: eSupportPositionalIndex, eSupportGetCount */
+		virtual ObjectPointerWrapper get_at_index( const void * /*i_collection_object*/, size_t /*i_index*/ ) const
+			{ REFLECTIVE_ASSERT(false); /* unsupported */ return ObjectPointerWrapper(); }
+
+		/** Returns the item at the specified key. If there's no object in the collection with the specified key, the return
+			value is an empty ObjectPointerWrapper.
+			Required flags: eSupportKey */
+		virtual ObjectPointerWrapper get_at_key( const void * /*i_collection_object*/, const void * /*i_key*/ ) const
+			{ REFLECTIVE_ASSERT(false); /* unsupported */ return ObjectPointerWrapper(); }
+
+		/** Tries to set the item at the specified index. This method maybe unsupported by the collection.
+			@return pointer to the item in the collection
+			Required flags: eSupportPositionalIndex, eAllowEdit */
+		virtual void * set_at_index( void * /*i_collection_object*/, size_t /*i_index*/, const ObjectPointerWrapper & /*i_new_item*/ ) const
+			{ REFLECTIVE_ASSERT(false); /* unsupported */ return nullptr; }
 		
+		/** Reserve memory space in the collection for the specified item count.
+			Required flags: eAllowEdit, eSupportReserve */
+		virtual void reserve( void * /*i_collection_object*/, size_t /*i_total_item_count*/ ) const
+			{ REFLECTIVE_ASSERT(false); /* unsupported */ }
+
+		/** Tries to insert an item with the specified key. The collection may not support this method.
+			If an object with the same key is already present, no item is inserted, the parameter i_source_object 
+			is ignored, and a pointer to the existing item is returned.
+			@param i_source_object object to use as source to copy-construct the new item. If the object of i_source_object
+				is null, the new item is default-constructed. The object of i_source_object mus always be valid.
+			@return pointer to the item in the collection, or nullptr on failure
+			Required flags: eSupportKey, eAllowEdit */
+		virtual void * insert_item_at_key( void * /*i_collection_object*/, const void * /*i_key*/, const ObjectPointerWrapper & /*i_source_object*/ ) const
+			{ REFLECTIVE_ASSERT(false); /* unsupported */ return nullptr; }
+				
+		/** Tries to add an item to the collection at the specified index
+			Required flags: eSupportPositionalIndex, eAllowEdit */
+		virtual void * insert_item_at_index( void * /*i_collection_object*/, ObjectPointerWrapper /*i_source_object*/, size_t /*i_source_object*/ ) const
+			{ REFLECTIVE_ASSERT(false); /* unsupported */ return nullptr; }
+
+		/** Tries to delete the item of the collection at the specified key 
+			Required flags: eSupportKey, eAllowEdit */
+		virtual bool delete_item_at_key( void * /*i_collection_object*/, const void * /*i_key_value*/ ) const
+			{ REFLECTIVE_ASSERT(false); /* unsupported */ return false; }
+
+		/** Tries to delete the item of the collection at the specified index
+			Required flags: eSupportPositionalIndex, eAllowEdit */
+		virtual bool delete_item_at_index( void * /*i_collection_object*/, size_t /*i_index*/ ) const
+			{ REFLECTIVE_ASSERT(false); /* unsupported */ return false; }
+		
+
+				/* iterator */
+
+		/** Returns the size of the iterator, that can be used to allocate a buffer before calling construct_iterator */
+		size_t iterator_size() const			{ return m_iterator_size; }
+
+		/** Returns the alignment of the iterator, that can be used to allocate a buffer before calling construct_iterator */
+		size_t iterator_alignment() const		{ return m_iterator_alignment; }
+		
+		/** Constructs an iterator for the specified collection in the provided buffer. The size and alignment required for the
+				buffer can be retrieved with the methods iterator_size and iterator_alignment 
+			@return the iterator or nullptr is the iterator could not be constructed. */
+		virtual AbstractIterator * construct_iterator( void * i_collection_object, void * i_iterator_buffer ) const = 0;
+
+		/** creates an iterator for the specified collection, allocating it in the lifo memory container.
+			@return the iterator or nullptr is the iterator could not be created. The iterator must be destroyed with REFLECTIVE_LIFO_DELETE. */
+		AbstractIterator * create_iterator_lifo( void * i_collection_object ) const
+		{
+			void * alloc = reflective_externals::mem_lifo_alloc( m_iterator_alignment, m_iterator_size, &default_destructor_callback<AbstractIterator> );
+			if( alloc != nullptr )
+			{
+				AbstractIterator * iter = construct_iterator(i_collection_object, alloc );
+				if( iter != nullptr )
+					return iter;
+				reflective_externals::mem_lifo_free(alloc);
+			}
+			return nullptr;
+		}
+
+		/** creates an iterator for the specified collection, allocating it in the dynamic memory container.
+			@return the iterator or nullptr is the iterator could not be created. The iterator must be destroyed with REFLECTIVE_DELETE. */
+		AbstractIterator * create_iterator_dynamic( void * i_collection_object ) const
+		{
+			void * alloc = reflective_externals::mem_alloc( m_iterator_alignment, m_iterator_size );
+			if( alloc != nullptr )
+			{
+				AbstractIterator * iter = construct_iterator(i_collection_object, alloc );
+				if( iter != nullptr )
+					return iter;
+				reflective_externals::mem_free(alloc);
+			}
+			return nullptr;
+		}
+
 				/* watching */
 
-		virtual bool register_watch( Watch * watch, void * collection_object ) const = 0;
+		virtual bool register_watch( Watch * /*i_watch*/, void * /*i_collection_object*/ ) const
+			{ REFLECTIVE_ASSERT(false); /* unsupported */ return false; }
 
-		virtual void unregister_watch( Watch * watch, void * collection_object ) const = 0;
+		virtual void unregister_watch( Watch * /*i_watch*/, void * /*i_collection_object*/ ) const
+			{ REFLECTIVE_ASSERT(false); /* unsupported */ }
+
+	private:
+		size_t m_iterator_size, m_iterator_alignment;
 	};
 }

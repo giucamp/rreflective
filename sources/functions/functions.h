@@ -205,31 +205,7 @@ namespace reflective
 		size_t _alignment, _length;
 	};		
 
-	class ObjectPointerWrapper
-	{
-	public:
 
-		ObjectPointerWrapper( void * i_object, const QualifiedType & i_type )
-			: m_object( i_object ), m_type( i_type ) {}
-
-		ObjectPointerWrapper( const ObjectPointerWrapper & i_source )
-			: m_object( i_source.m_object ), m_type( i_source.m_type ) {}
-
-		ObjectPointerWrapper & operator = ( const ObjectPointerWrapper & i_source )
-		{
-			m_object = i_source.m_object;
-			m_type = i_source.m_type;
-			return *this;
-		}
-
-		void * object() const					{ return m_object; }
-
-		const QualifiedType & type() const		{ return m_type; }
-
-	private:
-		void * m_object;
-		QualifiedType m_type;
-	};
 
 } // namespace reflective
 

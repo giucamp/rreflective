@@ -10,9 +10,6 @@
     <Filter Include="functions">
       <UniqueIdentifier>{b827c1ef-0972-4762-bb47-6e5ac2d3ff1d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="iterators">
-      <UniqueIdentifier>{fa3bdf6f-b294-481c-aa54-85568603f7bb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="misc">
       <UniqueIdentifier>{fb203b2b-64a0-4d88-9d31-86a15378e528}</UniqueIdentifier>
     </Filter>
@@ -89,21 +86,6 @@
     </ClInclude>
     <ClInclude Include="..\sources\functions\functions.h">
       <Filter>functions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sources\iterators\const_iterator.h">
-      <Filter>iterators</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sources\iterators\const_void_iterator.h">
-      <Filter>iterators</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sources\iterators\iterator.h">
-      <Filter>iterators</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sources\iterators\iterators.h">
-      <Filter>iterators</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sources\iterators\void_iterator.h">
-      <Filter>iterators</Filter>
     </ClInclude>
     <ClInclude Include="..\sources\misc\enum.h">
       <Filter>misc</Filter>
@@ -201,6 +183,12 @@
     <ClInclude Include="..\sources\std_reflection\std_reflection.h">
       <Filter>std_reflection</Filter>
     </ClInclude>
+    <ClInclude Include="..\sources\misc\object_pointer_wrapper.h">
+      <Filter>misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\collections\iterator.h">
+      <Filter>collections</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\sources\class\action.inl">
@@ -268,21 +256,6 @@
     </None>
     <None Include="..\sources\functions\functions.inl">
       <Filter>functions</Filter>
-    </None>
-    <None Include="..\sources\iterators\const_iterator.inl">
-      <Filter>iterators</Filter>
-    </None>
-    <None Include="..\sources\iterators\const_void_iterator.inl">
-      <Filter>iterators</Filter>
-    </None>
-    <None Include="..\sources\iterators\iterator.inl">
-      <Filter>iterators</Filter>
-    </None>
-    <None Include="..\sources\iterators\iterators.inl">
-      <Filter>iterators</Filter>
-    </None>
-    <None Include="..\sources\iterators\void_iterator.inl">
-      <Filter>iterators</Filter>
     </None>
     <None Include="..\sources\misc\enum.inl">
       <Filter>misc</Filter>
@@ -484,6 +457,9 @@
     </ClCompile>
     <ClCompile Include="..\sources\misc\dynamic_string_stream.cpp">
       <Filter>misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\collections\iterator.cpp">
+      <Filter>collections</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

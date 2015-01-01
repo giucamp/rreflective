@@ -28,184 +28,116 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace reflective
 {
 	// Namespace::ReflectiveIterator
-	class Namespace::ReflectiveIterator : public reflective::IIterator
+	class Namespace::ReflectiveIterator : public reflective::AbstractIterator
 	{
+	private:
+		
 	public:
+
 		ReflectiveIterator( const reflective::Namespace & namespace_obj )
-				: _types( namespace_obj ), _namespaces( namespace_obj )
+				: m_type_iterator( namespace_obj ), m_namespace_iterator( namespace_obj )
 		{
-		}
-
-		void first_group( ConstGroup & out_group )
-		{
-			if( _types )
+			if( m_type_iterator )
 			{
-				const reflective::Type & type = *_types;
-				out_group.qualified_type = qualified_type_of( type );
-				out_group.curr_in_group = &type;
-				out_group.end_of_group = ( &type ) + 1;
+				const reflective::Type & type = *m_type_iterator;
+				set_item( ObjectPointerWrapper::from_pointer(&type), &type.name() );
 			}
-			else if( _namespaces )
+			else if( m_namespace_iterator )
 			{
-				const reflective::Namespace & namespace_obj = *_namespaces;
-				out_group.qualified_type = qualified_type_of( namespace_obj );
-				out_group.curr_in_group = &namespace_obj;
-				out_group.end_of_group = ( &namespace_obj ) + 1;
+				const reflective::Namespace & namespace_obj = *m_namespace_iterator;
+				set_item( ObjectPointerWrapper::from_pointer(&namespace_obj), &namespace_obj.name() );
 			}
 			else
 			{
-				out_group.curr_in_group = nullptr;
-				out_group.end_of_group = nullptr;
+				set_item_null();
 			}
 		}
 
-		void next_group( ConstGroup & out_group )
+		void move_next()
 		{
-			if( _types && ++_types )
+			if( m_type_iterator && ++m_type_iterator )
 			{			
-				const reflective::Type & type = *_types;
-				out_group.qualified_type = qualified_type_of( type );
-				out_group.curr_in_group = &type;
-				out_group.end_of_group = ( &type ) + 1;
+				const reflective::Type & type = *m_type_iterator;
+				set_item( ObjectPointerWrapper::from_pointer(&type), &type.name() );
 			}
-			else if( _namespaces && ++_namespaces )
+			else if( m_namespace_iterator && ++m_namespace_iterator )
 			{
-				const reflective::Namespace & namespace_obj = *_namespaces;
-				out_group.qualified_type = qualified_type_of( namespace_obj );
-				out_group.curr_in_group = &namespace_obj;
-				out_group.end_of_group = ( &namespace_obj ) + 1;
+				const reflective::Namespace & namespace_obj = *m_namespace_iterator;
+				set_item( ObjectPointerWrapper::from_pointer(&namespace_obj), &namespace_obj.name() );
 			}
 			else
 			{
-				out_group.curr_in_group = nullptr;
-				out_group.end_of_group = nullptr;
+				set_item_null();
 			}
 		}
-
-		void first_group( Group & out_group )
-		{
-			out_group.curr_in_group = nullptr;
-			out_group.end_of_group = nullptr;
-			out_group.qualified_type = QualifiedType();
-		}
-
-		void next_group( Group & out_group )
-		{
-			out_group.curr_in_group = nullptr;
-			out_group.end_of_group = nullptr;
-			out_group.qualified_type = QualifiedType();
-		}
-
-		bool insert( 
-			size_t group_offset_index, const Type & items_type, 
-			const void * source_object, size_t item_count,
-			const void * i_key_value, Group & out_curr_group )
-		{
-			REFLECTIVE_UNUSED_4( group_offset_index, items_type, source_object, item_count );
-			REFLECTIVE_UNUSED_2( out_curr_group, i_key_value );
-			return false; // unsupported
-		}
-
-		bool remove( size_t offset_index, size_t item_count, Group & out_curr_group )
-		{
-			REFLECTIVE_UNUSED_2( offset_index, item_count );
-			REFLECTIVE_UNUSED( out_curr_group );
-			return false; // unsupported
-		}
-
-		const void * get_key_value( size_t group_offset_index )
-		{
-			REFLECTIVE_UNUSED( group_offset_index );
-			return nullptr;
-		}			
 
 	private: // data members
-		reflective::Namespace::TypeIterator _types;
-		reflective::Namespace::NamespaceIterator _namespaces;
+		reflective::Namespace::TypeIterator m_type_iterator;
+		reflective::Namespace::NamespaceIterator m_namespace_iterator;
 	};
 
-	// Namespace::ICollectionHandler
-	class Namespace::ICollectionHandler : public reflective::ICollectionHandler
+	// Namespace::CollectionHandler
+	class Namespace::CollectionHandler : public reflective::CollectionHandler
 	{
 	public:
 
-		// query_item_count
-		bool query_item_count( const void * collection_object, size_t * out_count ) const
+		CollectionHandler() : reflective::CollectionHandler( sizeof(ReflectiveIterator), alignment_of(ReflectiveIterator) ) {}
+
+		Flags get_flags( const void * /*i_colection_object*/ ) const
+			{ return eSupportPositionalIndex | eSupportGetCount | eAllowDerivedItems; }
+
+		QualifiedType get_key_type( const void * /*i_collection_object*/ ) const
+			{ return safe_get_qualified_type<SymbolName>(); }
+
+		QualifiedType get_item_type( const void * /*i_collection_object*/ ) const
+			{ return safe_get_qualified_type<Symbol>(); }
+
+
+		size_t get_count( const void * i_collection_object ) const
 		{
 			const reflective::Namespace & namespace_obj = 
-				*static_cast<const reflective::Namespace*>( collection_object );
+				*static_cast<const reflective::Namespace*>( i_collection_object );
 
 			const size_t type_count = namespace_obj.type_count();
 			const size_t namespace_count = namespace_obj.namespace_count();
 
-			*out_count = type_count + namespace_count;
-
-			return true;
+			return type_count + namespace_count;
 		}
 
-		// query_item_base_type
-		const reflective::Type * query_item_base_type( const void * collection_object,
-			bool * out_allow_derived_types ) const
+		ObjectPointerWrapper get_at_key( const void * i_collection_object, const void * i_key ) const
 		{
-			REFLECTIVE_UNUSED( collection_object );
-
-			*out_allow_derived_types = true;
-			return &safe_get_type<reflective::Symbol>();
-		}
-
-		// create_iterator
-		reflective::IIterator * create_iterator( void * i_collection_object, const void * i_key_value ) const
-		{
-			if( i_key_value != 0 )
-				return nullptr;
-				
+			const SymbolName & key = *static_cast<const SymbolName*>( i_key );
 			const reflective::Namespace & namespace_obj = 
 				*static_cast<const reflective::Namespace*>( i_collection_object );
+			
+			const Type * child_type = namespace_obj.find_child_type(key);
+			if( child_type != nullptr )
+			{
+				return ObjectPointerWrapper::from_pointer(child_type);
+			}
 
-			ReflectiveIterator * result = REFLECTIVE_LIFO_NEW( ReflectiveIterator, namespace_obj );
+			const Namespace * child_namespace = namespace_obj.find_child_namespace(key);
+			if( child_namespace != nullptr )
+			{
+				return ObjectPointerWrapper::from_pointer(child_namespace);
+			}
 
-			return result;
+			return ObjectPointerWrapper();
 		}
 
-		void * add_object( const QualifiedType & i_qualified_type, void * i_collection_object, const void * i_key_value ) const
+		AbstractIterator * construct_iterator( void * i_collection_object, void * i_iterator_buffer ) const
 		{
-			REFLECTIVE_UNUSED_3( i_qualified_type, i_collection_object, i_key_value );
-			return nullptr;
-		}
-
-		// resize
-		bool resize( void * collection_object, size_t new_size ) const
-		{
-			REFLECTIVE_UNUSED_2( collection_object, new_size );
-			return false;
-		}
-
-		// get_indices_info
-		virtual bool get_key_type( const void * i_collection_object, uint32_t * o_flags, QualifiedType * o_index_type ) const
-		{
-			REFLECTIVE_UNUSED( i_collection_object );
-			*o_flags = 0;
-			*o_index_type = safe_get_qualified_type<SymbolName>();
-			return true;
-		}
-
-		bool register_watch( Watch * watch, void * collection_object ) const
-		{
-			REFLECTIVE_UNUSED_2( watch, collection_object );
-			return false;
-		}
-
-		void unregister_watch( Watch * watch, void * collection_object ) const
-		{
-			REFLECTIVE_UNUSED_2( watch, collection_object );
+			const reflective::Namespace & namespace_obj = 
+				*static_cast<const reflective::Namespace*>( i_collection_object );
+			return new( i_iterator_buffer ) ReflectiveIterator( namespace_obj );
 		}
 	};
 
 	// Namespace::_collection_handler
-	Namespace::ICollectionHandler Namespace::_collection_handler;
+	Namespace::CollectionHandler Namespace::_collection_handler;
 
 	// Namespace::access_collection_handler
-	Namespace::ICollectionHandler & Namespace::access_collection_handler()
+	Namespace::CollectionHandler & Namespace::access_collection_handler()
 	{
 		return _collection_handler;
 	}

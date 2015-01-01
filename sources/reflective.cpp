@@ -55,6 +55,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "class\parameter_list_stringizer.cpp"
 #include "class\template_argument.cpp"
 #include "class\type_inspector.cpp"
+#include "collections\iterator.cpp"
 #include "collections\watch.cpp"
 #include "collections\watch_chain.cpp"
 #include "misc\event.cpp"

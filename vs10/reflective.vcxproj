@@ -193,20 +193,17 @@
     <ClInclude Include="..\sources\class\type_inspector.h" />
     <ClInclude Include="..\sources\collections\abstract_iterator.h" />
     <ClInclude Include="..\sources\collections\collection_handler.h" />
+    <ClInclude Include="..\sources\collections\iterator.h" />
     <ClInclude Include="..\sources\collections\watch.h" />
     <ClInclude Include="..\sources\collections\watch_chain.h" />
     <ClInclude Include="..\sources\functions\functions.h" />
-    <ClInclude Include="..\sources\iterators\const_iterator.h" />
-    <ClInclude Include="..\sources\iterators\const_void_iterator.h" />
-    <ClInclude Include="..\sources\iterators\iterator.h" />
-    <ClInclude Include="..\sources\iterators\iterators.h" />
-    <ClInclude Include="..\sources\iterators\void_iterator.h" />
     <ClInclude Include="..\sources\misc\dynamic_string_stream.h" />
     <ClInclude Include="..\sources\misc\enum.h" />
     <ClInclude Include="..\sources\misc\event.h" />
     <ClInclude Include="..\sources\misc\from_string_buffer.h" />
     <ClInclude Include="..\sources\misc\handler.h" />
     <ClInclude Include="..\sources\misc\name_id.h" />
+    <ClInclude Include="..\sources\misc\object_pointer_wrapper.h" />
     <ClInclude Include="..\sources\misc\primitive_type.h" />
     <ClInclude Include="..\sources\misc\static_const_string.h" />
     <ClInclude Include="..\sources\misc\string_output_stream.h" />
@@ -261,11 +258,6 @@
     <None Include="..\sources\collections\watch.inl" />
     <None Include="..\sources\collections\watch_chain.inl" />
     <None Include="..\sources\functions\functions.inl" />
-    <None Include="..\sources\iterators\const_iterator.inl" />
-    <None Include="..\sources\iterators\const_void_iterator.inl" />
-    <None Include="..\sources\iterators\iterator.inl" />
-    <None Include="..\sources\iterators\iterators.inl" />
-    <None Include="..\sources\iterators\void_iterator.inl" />
     <None Include="..\sources\misc\dynamic_string_stream.inl" />
     <None Include="..\sources\misc\enum.inl" />
     <None Include="..\sources\misc\event.inl" />
@@ -362,6 +354,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\collections\iterator.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\sources\collections\watch.cpp">

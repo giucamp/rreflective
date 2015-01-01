@@ -32,14 +32,4 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace reflective
 {	
 
-	// IIterator::constructor
-	inline IIterator::IIterator()
-	{
-	}
-
-	// IIterator::destructor
-	inline IIterator::~IIterator()
-	{
-	}
-
 } // namespace reflective

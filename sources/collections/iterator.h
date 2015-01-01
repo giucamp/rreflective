@@ -25,71 +25,46 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ***********************************************************************************/
 
-#ifndef _INCLUDING_REFLECTIVE
-	#error include "reflective.h" instead of including this file
-#endif
-
 namespace reflective
 {
-	/** Abstract class that handles the iteration over a collection. See CollectionHandler.
-		Usage:
-		for( AbstractIterator * iter = collection_handler->create_iterator( ... ); !it->is_end(); it->move_next() )
-		{
-			// ...
-		}
-	*/
-	class AbstractIterator
+	/** Wraps an abstract iterator, providing easy construction and automatic destruction. */
+	class Iterator
 	{
-	public:		
+	public:
+
+		/** Construct an iterator for the specified object. If the object is a pointer, the pointed object is considered.
+			If the object is not a collection, the iteration ends before the first step (is_end returns always false). */
+		Iterator( ObjectPointerWrapper i_collection );
 
 		/** moves the iterator to the next item */
-		virtual void move_next() = 0;
+		void move_next()									{ REFLECTIVE_ASSERT(!is_end()); m_iterator->move_next(); }
 
 		/** postfix increment, alias for move_next */
-		void operator ++ ( int )							{ REFLECTIVE_ASSERT(!is_end()); move_next(); }
+		void operator ++ ( int )							{ REFLECTIVE_ASSERT(!is_end()); m_iterator->move_next(); }
 
 		/** prefix increment, alias for move_next */
-		AbstractIterator & operator ++ ()					{ REFLECTIVE_ASSERT(!is_end()); move_next(); return *this; }
+		Iterator & operator ++ ()							{ REFLECTIVE_ASSERT(!is_end()); m_iterator->move_next(); return *this; }
 
 		/** returns true if there are no more items */
-		bool is_end() const									{ return m_curr_item.object() == nullptr; }
+		bool is_end() const									{ return m_iterator != nullptr ? m_iterator->is_end() : true; }
 
 		/** returns true if there are still items */
 		operator bool () const								{ return !is_end(); }
 
 		/** retrieves the current item. At each iteration check the result of is_end() before calling this method. */
-		const ObjectPointerWrapper & curr_item() const		{ REFLECTIVE_ASSERT(!is_end()); return m_curr_item; }
+		const ObjectPointerWrapper & curr_item() const		{ REFLECTIVE_ASSERT(!is_end()); return m_iterator->curr_item(); }
 
 		/** retrieves the current key, or nullptr if the collection does not have a key. At each iteration check the result of is_end() before calling this method. */
-		const void * key_value() const						{ REFLECTIVE_ASSERT(!is_end());return m_key; }
+		const void * key_value() const						{ REFLECTIVE_ASSERT(!is_end()); return m_iterator->key_value(); }
 
-		virtual ~AbstractIterator() { }
-
-	protected:
-		
-		AbstractIterator()									: m_key( nullptr ) { }
-		
-		void set_item( const ObjectPointerWrapper & i_curr_item, const void * i_key )
-		{
-			m_curr_item = i_curr_item;
-			m_key = i_key;
-		}
-
-		void set_item( void * i_curr_item, const QualifiedType & i_type, const void * i_key )
-		{
-			m_curr_item = ObjectPointerWrapper( i_curr_item, i_type );
-			m_key = i_key;
-		}
-
-		void set_item_null()
-		{
-			m_curr_item = ObjectPointerWrapper();
-			m_key = nullptr;
-		}
+		~Iterator();
 
 	private:
-		ObjectPointerWrapper m_curr_item;
-		const void * m_key;
+		Iterator( const Iterator & );
+		Iterator & operator = ( const Iterator & );
+
+	private:
+		AbstractIterator * m_iterator;
 	};
 
 } // namespace reflective

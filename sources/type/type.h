@@ -305,7 +305,7 @@ namespace reflective
 					/* collection handler */
 
 		// collection interface		
-		const ICollectionHandler * collection_handler() const;
+		const CollectionHandler * collection_handler() const;
 
 		// indicize
 		void * indicize( void * start_address, size_t index ) const;
@@ -334,7 +334,7 @@ namespace reflective
 			bool (TYPE::*from_string)( FromStringBuffer & source_buffer,
 				StringOutputStream & error_buffer ) );
 
-		void set_collection_handler( const ICollectionHandler * collection_handler );
+		void set_collection_handler( const CollectionHandler * collection_handler );
 
 		// set_base_type - set_base_types
 		void set_no_base_type();
@@ -425,7 +425,7 @@ namespace reflective
 		LessThanComparer _less_than_comparer;
 		TypeResolver _type_resolver;
 
-		const ICollectionHandler * _abstract_collection;
+		const CollectionHandler * _abstract_collection;
 		Namespace * _parent_namespace;
 		Capabilities _capabilities;
 		std::map< SymbolName, void * > m_user_data;
