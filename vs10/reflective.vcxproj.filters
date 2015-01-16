@@ -269,12 +269,6 @@
     <None Include="..\sources\misc\handler.inl">
       <Filter>misc</Filter>
     </None>
-    <None Include="..\sources\misc\name_id.inl">
-      <Filter>misc</Filter>
-    </None>
-    <None Include="..\sources\misc\name_id_pn.inl">
-      <Filter>misc</Filter>
-    </None>
     <None Include="..\sources\misc\primitive_type.inl">
       <Filter>misc</Filter>
     </None>
@@ -358,6 +352,12 @@
     </None>
     <None Include="..\sources\std_reflection\std_reflection.inl">
       <Filter>std_reflection</Filter>
+    </None>
+    <None Include="..\sources\misc\name_id_void.inl">
+      <Filter>misc</Filter>
+    </None>
+    <None Include="..\sources\misc\name_id.inl">
+      <Filter>misc</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

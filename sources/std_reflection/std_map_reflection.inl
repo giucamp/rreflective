@@ -74,10 +74,9 @@ namespace reflective_externals
 
 		void * insert_item_at_key( void * i_collection_object, const void * i_key, const ObjectPointerWrapper & i_source_object ) const
 		{
-			Map & map = *static_cast<Map*>( i_collection_object );
-
-			if( i_source_object.type() == safe_get_qualified_type<VALUE>() )
+			if( i_key != nullptr && i_source_object.type() == safe_get_qualified_type<VALUE>() )
 			{
+				Map & map = *static_cast<Map*>( i_collection_object );
 				const KEY & key = *static_cast<const KEY*>(i_key);
 				
 				if( i_source_object.object() == nullptr )

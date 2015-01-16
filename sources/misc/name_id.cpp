@@ -43,7 +43,7 @@ namespace reflective
 		int c;
 		while (c = *str++)
 			hash = ((hash << 5) + hash) + c; // hash * 33 + c
-		REFLECTIVE_ASSERT( hash == result );*/
+		*/
 
 		uint32_t result = empty_hash<uint32_t>();
 		const char * str = name;

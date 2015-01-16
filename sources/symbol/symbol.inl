@@ -33,7 +33,7 @@ namespace reflective
 {
 	// Symbol::constructor( name )
 	inline Symbol::Symbol( const SymbolName & name )
-		: _name( name ), _type_id( eTypeSymbol )
+		: m_name( name ), m_type_id( eTypeSymbol )
 	{
 		#if REFLECTIVE_PRESERVE_SYMBOL_PLAIN_NAMES && REFLECTIVE_ENABLE_ASSERT
 			dbg_check_sumbol_name( name.string() );
@@ -43,7 +43,7 @@ namespace reflective
 	// Symbol::name
 	inline const SymbolName & Symbol::name() const
 	{
-		return _name;
+		return m_name;
 	}
 
 	// comparison
@@ -51,7 +51,7 @@ namespace reflective
 	{
 		#if REFLECTIVE_IS_DEBUG
 			const bool ref_eq = this == &op;
-			const bool name_eq = _name == op._name;
+			const bool name_eq = m_name == op.m_name;
 			REFLECTIVE_ASSERT( ref_eq == name_eq );
 			REFLECTIVE_UNUSED( name_eq );
 			return ref_eq;
@@ -65,7 +65,7 @@ namespace reflective
 	{
 		#if REFLECTIVE_IS_DEBUG
 			const bool ref_eq = this == &op;
-			const bool name_eq = _name == op._name;
+			const bool name_eq = m_name == op.m_name;
 			REFLECTIVE_ASSERT( ref_eq == name_eq );
 			return !ref_eq;
 		#else
@@ -76,7 +76,7 @@ namespace reflective
 	// Symbol::set_type_id
 	inline void Symbol::set_type_id( int type_id )
 	{
-		_type_id = type_id;		
+		m_type_id = type_id;		
 	}
 
 	// Symbol::set_custom_type

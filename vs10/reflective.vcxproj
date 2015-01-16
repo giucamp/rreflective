@@ -263,8 +263,8 @@
     <None Include="..\sources\misc\event.inl" />
     <None Include="..\sources\misc\from_string_buffer.inl" />
     <None Include="..\sources\misc\handler.inl" />
+    <None Include="..\sources\misc\name_id_void.inl" />
     <None Include="..\sources\misc\name_id.inl" />
-    <None Include="..\sources\misc\name_id_pn.inl" />
     <None Include="..\sources\misc\primitive_type.inl" />
     <None Include="..\sources\misc\static_const_string.inl" />
     <None Include="..\sources\misc\string_output_stream.inl" />

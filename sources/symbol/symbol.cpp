@@ -114,9 +114,9 @@ namespace reflective
 		}
 
 		const Symbol & symbol = *static_cast<const Symbol*>( object );
-		REFLECTIVE_ASSERT( symbol._type_id < eMaxTypeIdCount );
-		REFLECTIVE_ASSERT( symbol_types[ symbol._type_id ] != nullptr );
-		return *symbol_types[ symbol._type_id ];
+		REFLECTIVE_ASSERT( symbol.m_type_id < eMaxTypeIdCount );
+		REFLECTIVE_ASSERT( symbol_types[ symbol.m_type_id ] != nullptr );
+		return *symbol_types[ symbol.m_type_id ];
 	}
 
 	// Symbol::query_custom_type_id

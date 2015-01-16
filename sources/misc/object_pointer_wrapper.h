@@ -64,8 +64,15 @@ namespace reflective
 
 		template< typename TYPE>
 			static ObjectPointerWrapper from_pointer( const TYPE * i_object )
-				{ return ObjectPointerWrapper( &i_object, qualified_type_of(i_object) ); }
+				{ return ObjectPointerWrapper( const_cast<TYPE *>( i_object ), qualified_type_of(*i_object) ); }
 	
+		ObjectPointerWrapper full_indirection() const
+		{
+			const Type * type_ptr;
+			void * const object = const_cast<void*>( m_type.qualification().full_indirection(m_object, &type_ptr) );
+			return ObjectPointerWrapper( object, QualifiedType(*type_ptr) );
+		}
+
 	private:
 		void * m_object;
 		QualifiedType m_type;

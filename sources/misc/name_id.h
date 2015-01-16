@@ -32,22 +32,25 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	// hash - empty_hash
+	// hash
 	template <class UINT> UINT hash( const char * string );
 	template <class UINT> UINT hash( const char * string, size_t length );
+	template <class UINT> UINT hash( const StaticConstString & string );
+	
+	template <class UINT, typename ALLOCATOR> 
+		inline UINT hash( const std::basic_string< char, std::char_traits<char>, ALLOCATOR > & i_string )
+			{ return hash<UINT>( i_string.c_str(), i_string.length() ); }
+
 	template <class UINT> UINT hash( const StaticConstString & string );
 	template <class UINT> UINT empty_hash();
 
 	template <> uint32_t hash<uint32_t>( const char * string, size_t length );
+	
 	template <> uint32_t empty_hash<uint32_t>();
-
-	// NameIdentifier
-	template <class UINT, class STRING, bool PRESERVE_NAME>
-		class NameIdentifier; // non-specialized version
-
-	// NameIdentifier<UINT, STRING, true>
+	
+	/** A NameIdentifier stores a string and its hash. */
 	template <class UINT, class STRING>
-		class NameIdentifier<UINT, STRING, true>
+		class NameIdentifier
 	{
 	public:
 
@@ -60,6 +63,8 @@ namespace reflective
 		NameIdentifier( const STRING & string );
 		NameIdentifier( const NameIdentifier & name );
 		NameIdentifier & operator = ( const NameIdentifier & name );
+
+		NameIdentifier from_hash( UINT i_hash );
 
 		// comparison
 		bool operator == ( const NameIdentifier & op ) const;
@@ -82,34 +87,41 @@ namespace reflective
 		static bool from_string( FromStringBuffer & i_source_buffer,
 			const reflective::Type & i_type, void * i_object, StringOutputStream & o_error_buffer );
 
-		static NameIdentifier<UINT, STRING, true> empty;
+		static const NameIdentifier<UINT, STRING> s_empty;
 
 	private: // internal services
+		
 		#if REFLECTIVE_NAME_CONSISTENCY_CHECKS
 			void _dbg_check() const;
 			static void _dbg_check_pair( const NameIdentifier & first, const NameIdentifier & second );
 		#endif
 
+		enum ConstructFromHash { eConstructFromHash };
+		
+		NameIdentifier( ConstructFromHash, UINT i_hash )
+			: m_hash( i_hash ), m_string( s_unknown_string ) {}
+
 	private: // data members
-		UINT _hash;
-		STRING _string;		
+		UINT m_hash;
+		STRING m_string;
+
+		static const STRING s_unknown_string;
 	};
 
-	// NameIdentifier<UINT, STRING, true>
-	template <class UINT, class STRING>
-		class NameIdentifier<UINT, STRING, false>
+	template <class UINT>
+		class NameIdentifier<UINT, void>
 	{
 	public:
-
 		typedef UINT UIntHash;
-		typedef STRING String;
-
+		
 		NameIdentifier();
 		NameIdentifier( const char * string );
 		NameIdentifier( const char * string, size_t length );
-		NameIdentifier( const STRING & string );
+		template <class STRING> NameIdentifier( const STRING & string );
 		NameIdentifier( const NameIdentifier & name );
 		NameIdentifier & operator = ( const NameIdentifier & string );
+
+		NameIdentifier from_hash( UINT i_hash );
 
 		// comparison
 		bool operator == ( const NameIdentifier & op ) const;
@@ -127,24 +139,28 @@ namespace reflective
 		void to_string( StringOutputStream & dest_buffer ) const;
 		static void to_string( StringOutputStream & dest_buffer, const Type & type, const void * object );
 
-		static NameIdentifier<UINT, STRING, false> empty;
+		// from_string
+		static bool from_string( FromStringBuffer & i_source_buffer,
+			const reflective::Type & i_type, void * i_object, StringOutputStream & o_error_buffer );
+
+		static const NameIdentifier<UINT, void> s_empty;
 
 	private: // data members
-		UINT _hash;
+		UINT m_hash;
 	};
 }
 
 namespace reflective_externals
 {
-	template < typename UINT , typename STRING  >
+	template < typename UINT, typename STRING >
 		void init_type( reflective::Type * volatile * o_result,
-			reflective::NameIdentifier<UINT,STRING,true> * null_pointer_1,
-			reflective::NameIdentifier<UINT,STRING,true> * null_pointer_2 );
+			reflective::NameIdentifier<UINT,STRING> * null_pointer_1,
+			reflective::NameIdentifier<UINT,STRING> * null_pointer_2 );
 
-	template < typename UINT , typename STRING  >
+	template < typename UINT >
 		void init_type( reflective::Type * volatile * o_result,
-			reflective::NameIdentifier<UINT,STRING,false> * null_pointer_1,
-			reflective::NameIdentifier<UINT,STRING,false> * null_pointer_2 );
+			reflective::NameIdentifier<UINT,void> * null_pointer_1,
+			reflective::NameIdentifier<UINT,void> * null_pointer_2 );
 
 } // namespace reflective_externals
 

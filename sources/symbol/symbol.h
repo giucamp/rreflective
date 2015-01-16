@@ -33,18 +33,17 @@ namespace reflective
 {
 	// SymbolName
 	typedef uint32_t SymbolNameHash;
-	typedef NameIdentifier< SymbolNameHash, StaticConstString, 
-		REFLECTIVE_PRESERVE_SYMBOL_PLAIN_NAMES > SymbolName;
-
+	#if	REFLECTIVE_PRESERVE_SYMBOL_PLAIN_NAMES
+		typedef NameIdentifier< SymbolNameHash, StaticConstString > SymbolName;
+	#else
+		typedef NameIdentifier< SymbolNameHash, void > SymbolName;
+	#endif
+		
 	class Type;
 
-	// Symbol
+	/** Base for most class defined in reflective. */
 	class Symbol
-	{
-	protected:
-		Symbol( const SymbolName & name ); // the name can be empty, in which case the symbol is unnamed
-		virtual ~Symbol() {}
-
+	{	
 	public:
 
 		// name
@@ -59,18 +58,26 @@ namespace reflective
 		static int query_custom_type_id();
 		static void set_custom_type( int id, const Type * type );
 
-		int get_type_id() const			{ return _type_id; }
+		int get_type_id() const			{ return m_type_id; }
 
 		#if REFLECTIVE_ENABLE_ASSERT
 			static void dbg_check_sumbol_name( const StaticConstString & name );
 		#endif
 
 	protected:
+		
 		void set_type_id( int type_id );
 
+		Symbol( const SymbolName & name ); // the name can be empty, in which case the symbol is unnamed
+		
+		virtual ~Symbol() {}
+
+	private:
+		Symbol & operator = ( const Symbol & );
+
 	private: // data members
-		SymbolName _name;
-		int _type_id;
+		const SymbolName m_name;
+		int m_type_id;
 
 	public:
 		static const Type * symbol_types[ eMaxTypeIdCount ];

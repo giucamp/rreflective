@@ -81,13 +81,15 @@ namespace reflective
 	{
 	public:
 
+		typedef NameIdentifier< SymbolNameHash, void > SymbolNameNoStr;
+
 		CollectionHandler() : reflective::CollectionHandler( sizeof(ReflectiveIterator), alignment_of(ReflectiveIterator) ) {}
 
 		Flags get_flags( const void * /*i_colection_object*/ ) const
-			{ return eSupportPositionalIndex | eSupportGetCount | eAllowDerivedItems; }
+			{ return eSupportKey | eSupportGetCount | eAllowDerivedItems; }
 
 		QualifiedType get_key_type( const void * /*i_collection_object*/ ) const
-			{ return safe_get_qualified_type<SymbolName>(); }
+			{ return safe_get_qualified_type<SymbolNameNoStr>(); }
 
 		QualifiedType get_item_type( const void * /*i_collection_object*/ ) const
 			{ return safe_get_qualified_type<Symbol>(); }
@@ -106,17 +108,17 @@ namespace reflective
 
 		ObjectPointerWrapper get_at_key( const void * i_collection_object, const void * i_key ) const
 		{
-			const SymbolName & key = *static_cast<const SymbolName*>( i_key );
+			const SymbolNameNoStr & key = *static_cast<const SymbolNameNoStr*>( i_key );
 			const reflective::Namespace & namespace_obj = 
 				*static_cast<const reflective::Namespace*>( i_collection_object );
 			
-			const Type * child_type = namespace_obj.find_child_type(key);
+			const Type * child_type = namespace_obj.find_child_type(key.uint_hash());
 			if( child_type != nullptr )
 			{
 				return ObjectPointerWrapper::from_pointer(child_type);
 			}
 
-			const Namespace * child_namespace = namespace_obj.find_child_namespace(key);
+			const Namespace * child_namespace = namespace_obj.find_child_namespace(key.uint_hash());
 			if( child_namespace != nullptr )
 			{
 				return ObjectPointerWrapper::from_pointer(child_namespace);

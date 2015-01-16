@@ -112,10 +112,8 @@ namespace reflective
 	inline const void * TypeQualification::full_indirection( const void * object ) const
 	{
 		unsigned levels = indirection_levels();
-		while( levels )
+		while( levels > 0 && object != nullptr )
 		{
-			if( !object )
-				return nullptr;
 			object = *reinterpret_cast<const void * const *>( object );
 			levels--;
 		}
@@ -128,13 +126,12 @@ namespace reflective
 	{
 		*out_resulting_type = &pointer_type();
 		unsigned levels = indirection_levels();
-		if( levels ) for(;;) {
+		while( levels > 0 ) 
+		{
 			if( !object )
 				return nullptr;
 			object = *reinterpret_cast<const void * const *>( object );
 			levels--;
-			if( !levels )
-				break;
 		}
 		*out_resulting_type = _final_type;
 		return object;
@@ -148,7 +145,7 @@ namespace reflective
 
 		const unsigned levels = indirection_levels();
 
-		if( !object )
+		if( object == nullptr )
 			return nullptr;
 
 		if( levels > 0 )
@@ -168,7 +165,7 @@ namespace reflective
 	{
 		const unsigned levels = indirection_levels();
 
-		if( !object )
+		if( object == nullptr )
 			return nullptr;
 
 		if( levels > 0 )

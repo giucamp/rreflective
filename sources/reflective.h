@@ -119,7 +119,7 @@ namespace reflective
 #include "misc\from_string_buffer.inl"
 #include "misc\dynamic_string_stream.inl"
 #include "misc\name_id.inl"
-#include "misc\name_id_pn.inl"
+#include "misc\name_id_void.inl"
 #include "symbol\symbol.inl"
 #include "symbol\symbol_list_collection.h"
 #include "symbol\symbol_list.inl"

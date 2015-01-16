@@ -61,9 +61,8 @@ namespace reflective
 	template <class TYPE> class CompileTimeTypeQualification<TYPE&>;
 	template <class TYPE> class CompileTimeTypeQualification<TYPE*>;
 	template <class TYPE> class CompileTimeTypeQualification<const TYPE>;
-
-
-	/* TypeQualification. Gives additional info about a type:
+	
+	/** Gives additional info about a type:
 		- the number of indirection levels. For non-pointer type this is zero, for simple
 			pointer is 1, for pointer to pointer is 2, and so on.
 		- a boolean value for each indirection level, which specifies if the level is const.

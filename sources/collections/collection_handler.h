@@ -91,7 +91,7 @@ namespace reflective
 			{ REFLECTIVE_ASSERT(false); /* unsupported */ return 0; }
 
 		/** Returns the item at the specified index. 
-			@param i_index the index must be >= 0 and < the resullt of get_count. If the index is out of range the behaviour is undefined.
+			@param i_index the index must be < the result of get_count. If the index is out of range the behaviour is undefined.
 			Required flags: eSupportPositionalIndex, eSupportGetCount */
 		virtual ObjectPointerWrapper get_at_index( const void * /*i_collection_object*/, size_t /*i_index*/ ) const
 			{ REFLECTIVE_ASSERT(false); /* unsupported */ return ObjectPointerWrapper(); }
