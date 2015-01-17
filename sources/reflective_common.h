@@ -31,6 +31,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	#endif
 #endif
 #include <map>
+#include <vector>
 #ifdef _MSC_VER
 	#ifdef _HAS_EXCEPTIONS
 		//#undef _HAS_EXCEPTIONS

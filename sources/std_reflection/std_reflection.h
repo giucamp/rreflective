@@ -4,10 +4,10 @@
 namespace reflective_externals
 {
 	// reflection of std::vector
-	/*template< typename TYPE, typename ALLOCATOR >
+	template< typename TYPE, typename ALLOCATOR >
 		void init_type( reflective::Type * volatile * o_result,
 			std::vector< TYPE, ALLOCATOR > * null_pointer_1,
-			std::vector< TYPE, ALLOCATOR > * null_pointer_2 );*/
+			std::vector< TYPE, ALLOCATOR > * null_pointer_2 );
 
 	// reflection of std::map
 	template< typename KEY, typename VALUE, typename PREDICATE, typename ALLOCATOR >

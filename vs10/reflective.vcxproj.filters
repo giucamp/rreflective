@@ -359,6 +359,9 @@
     <None Include="..\sources\misc\name_id.inl">
       <Filter>misc</Filter>
     </None>
+    <None Include="..\sources\std_reflection\std_vector_reflection.inl">
+      <Filter>std_reflection</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\sources\class\action.cpp">

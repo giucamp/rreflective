@@ -125,7 +125,7 @@ namespace reflective
 				
 		/** Tries to add an item to the collection at the specified index
 			Required flags: eSupportPositionalIndex, eAllowEdit */
-		virtual void * insert_item_at_index( void * /*i_collection_object*/, ObjectPointerWrapper /*i_source_object*/, size_t /*i_source_object*/ ) const
+		virtual void * insert_item_at_index( void * /*i_collection_object*/, size_t /*i_index*/, const ObjectPointerWrapper & /*i_source_object*/ ) const
 			{ REFLECTIVE_ASSERT(false); /* unsupported */ return nullptr; }
 
 		/** Tries to delete the item of the collection at the specified key 
