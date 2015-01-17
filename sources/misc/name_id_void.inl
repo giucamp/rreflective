@@ -227,6 +227,8 @@ namespace reflective_externals
 			reflective::NameIdentifier<UINT,void> * null_pointer_1,
 			reflective::NameIdentifier<UINT,void> * null_pointer_2 )
 	{
+		REFLECTIVE_UNUSED_2( null_pointer_1, null_pointer_2 );
+
 		using namespace ::reflective;
 		typedef reflective::NameIdentifier<UINT,void> ThisClass;
 		

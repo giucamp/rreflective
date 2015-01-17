@@ -36,23 +36,23 @@ namespace reflective
 	// QualifiedType::to_string
 	void QualifiedType::to_string( StringOutputStream & dest_buffer ) const
 	{
-		const unsigned indirection_levels = _type_qualification.indirection_levels();
+		const unsigned indirection_levels = m_type_qualification.indirection_levels();
 
 		const Type * final_type; 
 		if( indirection_levels == 0 )
 		{
-			final_type = _type;
+			final_type = m_font_type;
 		}
 		else
 		{
-			final_type = _type_qualification.final_type();
+			final_type = m_type_qualification.final_type();
 		}
 		final_type->type_full_name_to_string( dest_buffer );
 
 		unsigned curr_indirection_level = 0;
 		do {
 
-			if( _type_qualification.is_const( indirection_levels - curr_indirection_level ) )
+			if( m_type_qualification.is_const( indirection_levels - curr_indirection_level ) )
 				dest_buffer.append_literal( " const" );
 
 			if( curr_indirection_level < indirection_levels )
@@ -98,13 +98,13 @@ namespace reflective
 
 		if( indirection_levels == 0 )
 		{
-			_type = type;
+			m_font_type = type;
 		}
 		else
 		{
-			_type = &get_type<void*>();
+			m_font_type = &get_type<void*>();
 		}
-		_type_qualification = TypeQualification( indirection_levels, *type, constness_word );
+		m_type_qualification = TypeQualification( indirection_levels, *type, constness_word );
 				
 		return true;
 	}
@@ -112,11 +112,16 @@ namespace reflective
 	// QualifiedType::final_type
 	const Type * QualifiedType::final_type() const
 	{
-		const reflective::Type * const qualification_final_type = _type_qualification.final_type();
+		const reflective::Type * const qualification_final_type = m_type_qualification.final_type();
 		if( qualification_final_type )
 			return qualification_final_type;
 
-		return _type;
+		return m_font_type;
+	}
+
+	QualifiedType QualifiedType::make_pointer() const
+	{
+		return QualifiedType( safe_get_type<void*>(), m_type_qualification.make_pointer() );
 	}
 
 } // namespace reflective
@@ -149,7 +154,7 @@ namespace reflective_externals
 		// properties
 		const Property * properties[] = 
 		{
-			new_property<ThisClass>( "type", &ThisClass::type, ClassMember::BACK_REFERENCE ),
+			new_property<ThisClass>( "type", &ThisClass::front_type, ClassMember::BACK_REFERENCE ),
 			new_property<ThisClass>( "qualification", &ThisClass::qualification ),
 		};
 		

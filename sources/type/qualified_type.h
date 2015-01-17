@@ -49,7 +49,7 @@ namespace reflective
 		QualifiedType & operator = ( const QualifiedType & source );
 
 		// properties
-		const Type * type() const;
+		const Type * front_type() const;
 		const TypeQualification & qualification() const;
 
 		// can_cast_to
@@ -64,13 +64,15 @@ namespace reflective
 		// final_type
 		const Type * final_type() const;
 
+		QualifiedType make_pointer() const;
+
 		// stringizing
 		void to_string( StringOutputStream & dest_buffer ) const;
 		bool assign_from_string( FromStringBuffer & source_buffer, StringOutputStream & error_buffer );
 
 	private: // data members
-		const Type * _type;
-		TypeQualification _type_qualification;
+		const Type * m_font_type;
+		TypeQualification m_type_qualification;
 	};
 
 } // namespace reflective

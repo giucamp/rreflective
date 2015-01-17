@@ -33,85 +33,85 @@ namespace reflective
 {
 	// QualifiedType::default constructor
 	inline QualifiedType::QualifiedType()
-		: _type( nullptr )
+		: m_font_type( nullptr )
 	{
 	}
 	// QualifiedType::copy constructor
 	inline QualifiedType::QualifiedType( const QualifiedType & source )
-		: _type( source._type ), _type_qualification( source._type_qualification )
+		: m_font_type( source.m_font_type ), m_type_qualification( source.m_type_qualification )
 	{
 	}
 
 	// QualifiedType::constructor( type, type_qualification )
 	inline QualifiedType::QualifiedType( const Type & type, const TypeQualification & type_qualification )
-		: _type( &type ), _type_qualification( type_qualification )
+		: m_font_type( &type ), m_type_qualification( type_qualification )
 	{
 	}
 
 	// QualifiedType::constructor( type, type_qualification )
 	inline QualifiedType::QualifiedType( const Type & type, unsigned number_of_indirection_levels, const reflective::Type & final_type, unsigned constness_word )
-		: _type( &type ), _type_qualification( number_of_indirection_levels, final_type, constness_word )
+		: m_font_type( &type ), m_type_qualification( number_of_indirection_levels, final_type, constness_word )
 	{
 	}
 
 	// QualifiedType::assignment
 	inline QualifiedType & QualifiedType::operator = ( const QualifiedType & source )		
 	{
-		_type = source._type;
-		_type_qualification = source._type_qualification;
+		m_font_type = source.m_font_type;
+		m_type_qualification = source.m_type_qualification;
 		return *this;
 	}
 
 	// QualifiedType::constructor( type )
 	inline QualifiedType::QualifiedType( const Type & type )
-		: _type( &type )
+		: m_font_type( &type )
 	{
 	}
 
 	// QualifiedType::type
-	inline const Type * QualifiedType::type() const
+	inline const Type * QualifiedType::front_type() const
 	{
-		return _type;
+		return m_font_type;
 	}
 
 	// QualifiedType::type_qualification
 	inline const TypeQualification & QualifiedType::qualification() const
 	{
-		return _type_qualification;
+		return m_type_qualification;
 	}
 
 
 	// QualifiedType::can_cast_to
 	inline bool QualifiedType::can_cast_to( const QualifiedType & dest_type ) const
 	{
-		if( _type && dest_type._type )
-			return _type->can_cast_to( *dest_type._type );
+		if( m_font_type && dest_type.m_font_type )
+			return m_font_type->can_cast_to( *dest_type.m_font_type );
 		return true;
 	}
 
 	// QualifiedType::change_final_type
 	inline void QualifiedType::change_final_type( const Type * i_new_final_type )
 	{
-		_type_qualification.change_final_type( i_new_final_type );
+		m_type_qualification.change_final_type( i_new_final_type );
 	}
 
 	// QualifiedType::operator ==
 	inline bool QualifiedType::operator == ( const QualifiedType & other ) const
 	{
-		if( _type == other._type && _type )
+		if( m_font_type == other.m_font_type && m_font_type )
 		{
-			REFLECTIVE_ASSERT( *_type == *other._type );
+			REFLECTIVE_ASSERT( *m_font_type == *other.m_font_type );
 		}
 
-		return _type == other._type &&
-			_type_qualification == other._type_qualification;
+		return m_font_type == other.m_font_type &&
+			m_type_qualification == other.m_type_qualification;
 	}
 
 	// QualifiedType::operator !=
 	inline bool QualifiedType::operator != ( const QualifiedType & other ) const
 	{
-		return *_type != *other._type ||
-			_type_qualification != other._type_qualification;
+		return *m_font_type != *other.m_font_type ||
+			m_type_qualification != other.m_type_qualification;
 	}
 	
 } // namespace reflective

@@ -34,7 +34,7 @@ namespace reflective
 {
 	// ArrayType::constructor
 	inline ArrayType::ArrayType( const QualifiedType & type, size_t count )
-		: Type( Namespace::edit_global(), _construct_name( type, count ), type.type()->size() * count, type.type()->alignment() ),
+		: Type( Namespace::edit_global(), _construct_name( type, count ), type.front_type()->size() * count, type.front_type()->alignment() ),
 		  _type( type ), _count( count )
 	{
 	}

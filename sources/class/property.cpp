@@ -51,7 +51,7 @@ namespace reflective
 		// get the value of the property
 		bool result = true;
 		bool value_constructed = false;
-		const Type & type = *_qualified_type.type();
+		const Type & type = *_qualified_type.front_type();
 		void * allocated_value = nullptr;
 		void * value = get_value_inplace( i_object );
 		if( value == nullptr )

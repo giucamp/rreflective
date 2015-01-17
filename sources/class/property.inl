@@ -48,7 +48,7 @@ namespace reflective
 	// Property::type
 	inline const Type & Property::type() const
 	{
-		return *_qualified_type.type();
+		return *_qualified_type.front_type();
 	}
 
 	// Property::qualified_type

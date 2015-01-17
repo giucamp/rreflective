@@ -279,7 +279,6 @@ namespace reflective
 
 		ThisType & name = *static_cast< ThisType * >( i_object );
 
-		const char * chars = i_source_buffer.chars();
 		if( i_source_buffer.accept( "0x", FromStringBuffer::eIgnoreLeadingSpaces | FromStringBuffer::eIgnoreLeadingSpaces ) )
 		{
 			bool result = parse_hash( i_source_buffer, o_error_buffer, &name.m_hash );

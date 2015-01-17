@@ -105,9 +105,9 @@ namespace reflective_externals
 	#define _PRIMITIVE_STRING_FUNCTORS( TYPE, FORMAT_SPEC )	\
 		template <> \
 			inline void primitive_to_string<TYPE>( reflective::StringOutputStream & dest_buffer,  \
-				const reflective::Type & type, const void * object ) \
+				const reflective::Type & front_type, const void * object ) \
 			{ \
-				REFLECTIVE_UNUSED( type ); \
+				REFLECTIVE_UNUSED( front_type ); \
 				const TYPE & var = *(const TYPE*)( object ); \
 				char str[ 256 ]; \
 				_PRIMITIVE_STRING_FUNCTORS_SPRINTF(FORMAT_SPEC); \
@@ -116,9 +116,9 @@ namespace reflective_externals
 			} \
 		template <> \
 			inline bool primitive_assign_from_string<TYPE>( reflective::FromStringBuffer & source_buffer, \
-				const reflective::Type & type, void * object, StringOutputStream & error_buffer ) \
+				const reflective::Type & front_type, void * object, StringOutputStream & error_buffer ) \
 		{ \
-			REFLECTIVE_UNUSED( type ); size_t read_size = 0; \
+			REFLECTIVE_UNUSED( front_type ); size_t read_size = 0; \
 			_PRIMITIVE_STRING_FUNCTORS_SCANF(FORMAT_SPEC "%n"); \
 			if( result != 1 ) { error_buffer.append_literal( "not a number" ); return false; } \
 			if( read_size < source_buffer.remaining_length() ) { error_buffer.append_literal( "spurious number" ); return false; } \

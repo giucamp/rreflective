@@ -69,7 +69,7 @@ namespace reflective
 	// Parameter::type
 	inline const Type & Parameter::type() const
 	{
-		return *_qualified_type.type();
+		return *_qualified_type.front_type();
 	}
 
 	// Parameter::qualified_type

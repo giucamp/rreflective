@@ -29,6 +29,38 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	#error compile "reflective.cpp" instead of this file
 #endif
 
+namespace reflective
+{
+	// TypeQualification::full_indirection
+	const void * TypeQualification::full_indirection( const void * object ) const
+	{
+		unsigned levels = indirection_levels();
+		while( levels > 0 && object != nullptr )
+		{
+			object = *reinterpret_cast<const void * const *>( object );
+			levels--;
+		}
+		return object;
+	}
+
+	// TypeQualification::full_indirection
+	const void * TypeQualification::full_indirection( const void * object,
+		const Type * * out_resulting_type ) const
+	{
+		*out_resulting_type = &pointer_type();
+		unsigned levels = indirection_levels();
+		while( levels > 0 ) 
+		{
+			if( !object )
+				return nullptr;
+			object = *reinterpret_cast<const void * const *>( object );
+			levels--;
+		}
+		*out_resulting_type = m_final_type;
+		return object;
+	}
+}
+
 namespace reflective_externals
 {
 	// reflection of reflective::TypeQualification
@@ -56,6 +88,7 @@ namespace reflective_externals
 		{
 			new_property<ThisClass>( "final_type", &ThisClass::final_type, ClassMember::BACK_REFERENCE ),
 			new_property<ThisClass>( "indirection_levels", &ThisClass::indirection_levels ),
+			new_property<ThisClass>( "constness_word", &ThisClass::constness_word ),
 			new_property<ThisClass>( "is_pointer", &ThisClass::is_pointer ),
 			new_property<ThisClass>( "is_reference", &ThisClass::is_reference ),
 			new_property<ThisClass>( "indirection_word", &ThisClass::get_indirection_word ),

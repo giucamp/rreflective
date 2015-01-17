@@ -63,14 +63,14 @@ namespace reflective
 
 	// TypeQualification::default constructor
 	inline TypeQualification::TypeQualification()
-			  : _final_type( nullptr ), _indirection_word( 0 )
+			  : m_final_type( nullptr ), _indirection_word( 0 )
 	{
 	}
 
 	// TypeQualification::constructor
 	inline TypeQualification::TypeQualification( unsigned number_of_indirection_levels,
 		const reflective::Type & final_type, unsigned constness_word )
-			  : _final_type( &final_type ),
+			  : m_final_type( &final_type ),
 			    _indirection_word( number_of_indirection_levels )
 	{
 		REFLECTIVE_ASSERT( number_of_indirection_levels <= MAX_INDIRECTION_LEVELS );
@@ -87,13 +87,19 @@ namespace reflective
 	// TypeQualification::final_type
 	inline const reflective::Type * TypeQualification::final_type() const
 	{
-		return _final_type;
+		return m_final_type;
 	}
 
 	// TypeQualification::indirection_levels
 	inline unsigned TypeQualification::indirection_levels() const
 	{
 		return unsigned( _indirection_word & INDIRECTION_LEVELS_MASK );
+	}
+
+	// TypeQualification::constness_word
+	inline unsigned TypeQualification::constness_word() const
+	{
+		return _indirection_word >> INDIRECTION_CONSTNESS_OFFSET;
 	}
 
 	// TypeQualification::indirection_levels_from_word
@@ -105,36 +111,15 @@ namespace reflective
 	// TypeQualification::change_final_type
 	inline void TypeQualification::change_final_type( const Type * i_new_final_type )
 	{
-		_final_type = i_new_final_type;
+		m_final_type = i_new_final_type;
 	}
 
-	// TypeQualification::full_indirection
-	inline const void * TypeQualification::full_indirection( const void * object ) const
+	inline TypeQualification TypeQualification::make_pointer() const
 	{
-		unsigned levels = indirection_levels();
-		while( levels > 0 && object != nullptr )
-		{
-			object = *reinterpret_cast<const void * const *>( object );
-			levels--;
-		}
-		return object;
-	}
-
-	// TypeQualification::full_indirection
-	inline const void * TypeQualification::full_indirection( const void * object,
-		const Type * * out_resulting_type ) const
-	{
-		*out_resulting_type = &pointer_type();
-		unsigned levels = indirection_levels();
-		while( levels > 0 ) 
-		{
-			if( !object )
-				return nullptr;
-			object = *reinterpret_cast<const void * const *>( object );
-			levels--;
-		}
-		*out_resulting_type = _final_type;
-		return object;
+		unsigned this_constness_word = constness_word();
+		unsigned res_constness_word = this_constness_word << 1;
+		REFLECTIVE_ASSERT( res_constness_word >> 1 == this_constness_word );
+		return TypeQualification( indirection_levels() + 1, *m_final_type, res_constness_word );
 	}
 
 	// TypeQualification::indirection
@@ -153,7 +138,7 @@ namespace reflective
 			if( levels > 1 )
 				*out_resulting_type = &reflective_externals::pointer_type();
 			else
-				*out_resulting_type = _final_type;
+				*out_resulting_type = m_final_type;
 			return *reinterpret_cast<const void * const *>( object );
 		}
 
@@ -202,14 +187,14 @@ namespace reflective
 	inline bool TypeQualification::operator == ( const TypeQualification & other ) const
 	{
 		return _indirection_word == other._indirection_word &&
-			_final_type == other._final_type;
+			m_final_type == other.m_final_type;
 	}
 
 	// TypeQualification::operator !=
 	inline bool TypeQualification::operator != ( const TypeQualification & other ) const
 	{
 		return _indirection_word != other._indirection_word ||
-			_final_type != other._final_type;
+			m_final_type != other.m_final_type;
 	}
 
 	// TypeQualification::get_indirection_word
@@ -223,7 +208,7 @@ namespace reflective
 		const reflective::Type * final_type )
 	{
 		_indirection_word = indirection_word;
-		_final_type = final_type;
+		m_final_type = final_type;
 	}
 
 } // namespace reflective

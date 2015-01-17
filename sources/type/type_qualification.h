@@ -41,7 +41,7 @@ namespace reflective
 			C++ language remainder: a reference is like a const pointer, that is 'int &' is 
 			the same as 'int * const', except that the first exposes directly its last 
 			level of indirection. */
-		static const unsigned indirection_levels = 0; /* the number ofindirection levels,
+		static const unsigned indirection_levels = 0; /* the number of indirection levels,
 			which is zero for non-pointers, 1 for pointers, 2 for pointers to pointers, 
 			and so on. */
 		static const unsigned constness_word = 0; /* specifies, for each indirection 
@@ -69,7 +69,7 @@ namespace reflective
 		- an optional final type, which is the pointed type. If the number of indirection
 			levels is zero, the final type is nullptr, otherwise it is != nullptr.
 	   The TypeQualification should be used in couple with a reference to a Type. It is suitable 
-		to encode the type of properies, template parameters, action parameters and return types. */
+		to encode the type of properties, template parameters, action parameters and return types. */
 	class TypeQualification
 	{
 	public:
@@ -81,6 +81,8 @@ namespace reflective
 		const reflective::Type * final_type() const;
 
 		unsigned indirection_levels() const;
+		unsigned constness_word() const;
+
 		bool is_const( unsigned indirection_level ) const;
 
 		const void * indirection( const void * object ) const;
@@ -88,6 +90,8 @@ namespace reflective
 
 		const void * full_indirection( const void * object ) const;
 		const void * full_indirection( const void * object, const Type * * out_resulting_type ) const;
+
+		TypeQualification make_pointer() const;
 
 		bool is_pointer() const;
 
@@ -110,8 +114,8 @@ namespace reflective
 		static unsigned indirection_levels_from_word( IndirectionWordType word );
 
 	private: // data members
-		const reflective::Type * _final_type;		
-		uint32_t _indirection_word; /* this word encodes the number of indiretion levels 
+		const reflective::Type * m_final_type;		
+		uint32_t _indirection_word; /* this word encodes the number of indirection levels 
 			and the constness of each of them. */
 		static const uint32_t INDIRECTION_LEVELS_MASK = (1 << 4) - 1;
 		static const uint32_t INDIRECTION_CONSTNESS_OFFSET = 4;
