@@ -84,7 +84,7 @@ namespace reflective
 		REFLECTIVE_UNUSED( type );
 
 		const TYPE & obj = *static_cast< const TYPE * >( object );
-		REFLECTIVE_ASSERT( type <= get_type<TYPE>() );
+		REFLECTIVE_ASSERT( get_type<TYPE>().can_cast_to(type) );
 		(obj.*_to_string)( dest_buffer );
 	}
 
@@ -97,7 +97,7 @@ namespace reflective
 		REFLECTIVE_UNUSED( type );
 
 		TYPE & obj = *static_cast< TYPE * >( object );
-		REFLECTIVE_ASSERT( type <= get_type<TYPE>() );
+		REFLECTIVE_ASSERT( get_type<TYPE>().can_cast_to(type) );
 		return (obj.*_from_string)( source_buffer, error_buffer );
 	}
 	

@@ -171,6 +171,8 @@ namespace reflective
 			StringOutputStream & dest_buffer,
 			const Type & type, const void * object )
 	{
+		REFLECTIVE_UNUSED(type);
+
 		// cast object to a name
 		const NameIdentifier<UINT, void> & name =
 			*static_cast< const NameIdentifier<UINT, void> * >( object );
@@ -200,11 +202,10 @@ namespace reflective
 
 		typedef NameIdentifier<UINT, void> ThisType;
 
-		REFLECTIVE_ASSERT( i_type >= get_type< ThisType >() );
+		REFLECTIVE_ASSERT( i_type.can_cast_to( get_type< ThisType >() ) );
 
 		ThisType & name = *static_cast< ThisType * >( i_object );
 
-		const char * chars = i_source_buffer.chars();
 		if( i_source_buffer.accept( "0x", FromStringBuffer::eIgnoreLeadingSpaces | FromStringBuffer::eIgnoreLeadingSpaces ) )
 		{
 			bool result = parse_hash( i_source_buffer, o_error_buffer, &name.m_hash );

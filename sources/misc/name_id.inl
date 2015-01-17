@@ -259,7 +259,7 @@ namespace reflective
 
 		typedef NameIdentifier<UINT, STRING> ThisType;
 
-		REFLECTIVE_ASSERT( type >= get_type< ThisType >() );
+		REFLECTIVE_ASSERT( type.can_cast_to( get_type< ThisType >() ) );
 
 		const ThisType & name = *static_cast< const ThisType * >( object );
 
@@ -275,7 +275,7 @@ namespace reflective
 
 		typedef NameIdentifier<UINT, STRING> ThisType;
 
-		REFLECTIVE_ASSERT( i_type >= get_type< ThisType >() );
+		REFLECTIVE_ASSERT( i_type.can_cast_to( get_type< ThisType >() ) );
 
 		ThisType & name = *static_cast< ThisType * >( i_object );
 

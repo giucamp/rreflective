@@ -56,31 +56,31 @@ namespace reflective
 	// Type::size
 	inline size_t Type::size() const
 	{
-		return _size;
+		return m_size;
 	}
 
 	// Type::alignment
 	inline size_t Type::alignment() const
 	{
-		return _alignment;
+		return m_alignment;
 	}
 
 	// Type::is_aligned
 	inline bool Type::is_aligned( const void * address ) const
 	{
-		return mem::is_aligned( address, _alignment );
+		return mem::is_aligned( address, m_alignment );
 	}
 
 	// Type::upper_align
 	template <class ADDRESS> inline ADDRESS Type::upper_align( ADDRESS address ) const
 	{
-		return mem::upper_align( address, _alignment );
+		return mem::upper_align( address, m_alignment );
 	}
 
 	// Type::lower_align
 	template <class ADDRESS> inline ADDRESS Type::lower_align( ADDRESS address ) const
 	{
-		return mem::lower_align( address, _alignment );
+		return mem::lower_align( address, m_alignment );
 	}
 
 	// Type::parent_namespace
@@ -111,11 +111,11 @@ namespace reflective
 	inline const Type * Type::base_type( unsigned index ) const
 	{
 		#if !REFLECTIVE_ALLOW_MULTIPLE_INHERITANCE
-			//REFLECTIVE_ASSERT( index == 0 && _single_base_type._base_type != nullptr );
-			return _single_base_type._base_type;
+			//REFLECTIVE_ASSERT( index == 0 && m_single_base_type._base_type != nullptr );
+			return m_single_base_type._base_type;
 		#else
-			if( index < _base_types_count )
-				return _multiple_base_types[ index ]._base_type;
+			if( index < m_base_types_count )
+				return m_multiple_base_types[ index ]._base_type;
 			else
 				return nullptr;
 		#endif
@@ -125,11 +125,11 @@ namespace reflective
 	inline unsigned Type::base_types_count() const
 	{
 		#if !REFLECTIVE_ALLOW_MULTIPLE_INHERITANCE
-			if( _single_base_type._base_type != nullptr )
+			if( m_single_base_type._base_type != nullptr )
 				return 1;
 			return 0;
 		#else
-			return _base_types_count;
+			return m_base_types_count;
 		#endif
 	}
 
@@ -138,11 +138,11 @@ namespace reflective
 	{
 		#if !REFLECTIVE_ALLOW_MULTIPLE_INHERITANCE
 			REFLECTIVE_ASSERT( base_type_index <= 1 );
-			REFLECTIVE_ASSERT( _single_base_type._base_type != nullptr );			
-			return _single_base_type._updown_caster;
+			REFLECTIVE_ASSERT( m_single_base_type._base_type != nullptr );			
+			return m_single_base_type._updown_caster;
 		#else
-			REFLECTIVE_ASSERT( base_type_index < _base_types_count );
-			return _multiple_base_types[ base_type_index ]._updown_caster;
+			REFLECTIVE_ASSERT( base_type_index < m_base_types_count );
+			return m_multiple_base_types[ base_type_index ]._updown_caster;
 		#endif
 	}
 
@@ -151,8 +151,8 @@ namespace reflective
 	{
 		// the base types can be set only once
 		#if REFLECTIVE_IS_DEBUG
-			REFLECTIVE_ASSERT( !_dbg_base_types_set );
-			_dbg_base_types_set = true;
+			REFLECTIVE_ASSERT( !m_dbg_base_types_set );
+			m_dbg_base_types_set = true;
 		#endif
 
 		#if REFLECTIVE_TRACK_TYPE_HIERARCHY
@@ -160,7 +160,7 @@ namespace reflective
 		#endif
 
 		#if REFLECTIVE_ALLOW_MULTIPLE_INHERITANCE
-			_base_types_count = 0;
+			m_base_types_count = 0;
 		#endif
 	}
 
@@ -170,16 +170,16 @@ namespace reflective
 	{
 		// the base types can be set only once
 		#if REFLECTIVE_IS_DEBUG
-			REFLECTIVE_ASSERT( !_dbg_base_types_set );
-			_dbg_base_types_set = true;
+			REFLECTIVE_ASSERT( !m_dbg_base_types_set );
+			m_dbg_base_types_set = true;
 		#endif
 
-		_single_base_type._base_type = &base_type.base_type;
-		_single_base_type._updown_caster = base_type.updown_caster;
+		m_single_base_type._base_type = &base_type.base_type;
+		m_single_base_type._updown_caster = base_type.updown_caster;
 
 		#if REFLECTIVE_ALLOW_MULTIPLE_INHERITANCE
-			_base_types_count = 1;					
-			_multiple_base_types = &_single_base_type;
+			m_base_types_count = 1;					
+			m_multiple_base_types = &m_single_base_type;
 		#endif
 
 		if( !_type_resolver )
@@ -198,16 +198,16 @@ namespace reflective
 	{
 		// the base types can be set only once
 		#if REFLECTIVE_IS_DEBUG
-			REFLECTIVE_ASSERT( !_dbg_base_types_set );
-			_dbg_base_types_set = true;
+			REFLECTIVE_ASSERT( !m_dbg_base_types_set );
+			m_dbg_base_types_set = true;
 		#endif
 
-		_single_base_type._base_type = &base_type;
-		_single_base_type._updown_caster = updown_caster;
+		m_single_base_type._base_type = &base_type;
+		m_single_base_type._updown_caster = updown_caster;
 
 		#if REFLECTIVE_ALLOW_MULTIPLE_INHERITANCE
-			_base_types_count = 1;
-			_multiple_base_types = &_single_base_type;
+			m_base_types_count = 1;
+			m_multiple_base_types = &m_single_base_type;
 		#endif
 
 		if( !_type_resolver )
@@ -235,34 +235,34 @@ namespace reflective
 		{
 			// the base types can be set only once
 			#if REFLECTIVE_IS_DEBUG
-				REFLECTIVE_ASSERT( !_dbg_base_types_set );
-				_dbg_base_types_set = true;
+				REFLECTIVE_ASSERT( !m_dbg_base_types_set );
+				m_dbg_base_types_set = true;
 			#endif
 
 			#if REFLECTIVE_ALLOW_MULTIPLE_INHERITANCE
 
-				_base_types_count = COUNT;
+				m_base_types_count = COUNT;
 
-				_multiple_base_types = static_cast<_BaseTypeSlot*>(
+				m_multiple_base_types = static_cast<BaseTypeSlot*>(
 					reflective_externals::mem_lifo_alloc(
-						alignment_of( _BaseTypeSlot ), sizeof( _BaseTypeSlot ) * COUNT ) );
+						alignment_of( BaseTypeSlot ), sizeof( BaseTypeSlot ) * COUNT ) );
 
 				unsigned index = 0; do {
-					_multiple_base_types[ index ]._base_type = &base_types[index].base_type;
-					_multiple_base_types[ index ]._updown_caster = base_types[index].updown_caster;
+					m_multiple_base_types[ index ]._base_type = &base_types[index].base_type;
+					m_multiple_base_types[ index ]._updown_caster = base_types[index].updown_caster;
 
 					if( !_type_resolver )
-						set_type_resolver( _multiple_base_types[ index ]._base_type->_type_resolver );
+						set_type_resolver( m_multiple_base_types[ index ]._base_type->_type_resolver );
 
 					if( !_abstract_collection )
-						set_collection_handler( _multiple_base_types[ index ]._base_type->_abstract_collection );
+						set_collection_handler( m_multiple_base_types[ index ]._base_type->_abstract_collection );
 
 					#if REFLECTIVE_TRACK_TYPE_HIERARCHY
-						_multiple_base_types[ index ]._base_type->_derived_child_member.add_child( *this );
+						m_multiple_base_types[ index ]._base_type->_derived_child_member.add_child( *this );
 					#endif
 
 				} while( ++index < COUNT );
-				_base_types_count = COUNT;
+				m_base_types_count = COUNT;
 			#endif
 
 		}
@@ -443,7 +443,7 @@ namespace reflective
 
 		#endif
 		const LifeFunctions::CtorCaller caller = _life_functors.constructor_caller();
-		void * end_of_object = (void *)( size_t( object ) + _size );
+		void * end_of_object = (void *)( size_t( object ) + m_size );
 		(*caller)( object, end_of_object );
 	}
 
@@ -483,7 +483,7 @@ namespace reflective
 		#endif
 
 		const LifeFunctions::CtorCaller caller = _life_functors.destructor_caller();
-		void * end_of_object = (void *)( size_t( object ) + _size );
+		void * end_of_object = (void *)( size_t( object ) + m_size );
 		(*caller)( object, end_of_object );
 	}
 
@@ -527,7 +527,7 @@ namespace reflective
 		#endif
 
 		const LifeFunctions::Copier copier = _life_functors.copier();
-		void * end_of_object = (void *)( size_t( object ) + _size );
+		void * end_of_object = (void *)( size_t( object ) + m_size );
 		(*copier)( object, end_of_object, source_object );
 	}
 
@@ -562,7 +562,7 @@ namespace reflective
 		void * curr = start_address, * next;
 		do {
 
-			next = mem::address_add( curr, _size );
+			next = mem::address_add( curr, m_size );
 
 			(*copier)( curr, next, source_object );
 
@@ -657,7 +657,7 @@ namespace reflective
 	inline void * Type::indicize( void * start_address, size_t index ) const
 	{
 		REFLECTIVE_ASSERT( is_aligned( start_address ) );
-		size_t address = index * _size;
+		size_t address = index * m_size;
 		address += reinterpret_cast<size_t>( start_address );
 		return reinterpret_cast<void *>( address );
 	}
@@ -666,7 +666,7 @@ namespace reflective
 	inline const void * Type::indicize( const void * start_address, size_t index ) const
 	{
 		REFLECTIVE_ASSERT( is_aligned( start_address ) );
-		size_t address = index * _size;
+		size_t address = index * m_size;
 		address += reinterpret_cast<size_t>( start_address );
 		return reinterpret_cast<const void *>( address );
 	}
@@ -689,18 +689,18 @@ namespace reflective
 	inline void * Type::pointer_to_base_type( void * pointer, unsigned base_type_index ) const
 	{
 		REFLECTIVE_ASSERT( base_type_index < base_types_count() );
-		const _BaseTypeSlot * base_type_slot;
+		const BaseTypeSlot * base_type_slot;
 
 		#if REFLECTIVE_ALLOW_MULTIPLE_INHERITANCE
 
-			if( _single_base_type._base_type != nullptr )
-				base_type_slot = &_single_base_type;
+			if( m_single_base_type._base_type != nullptr )
+				base_type_slot = &m_single_base_type;
 			else
-				base_type_slot = _multiple_base_types + base_type_index;
+				base_type_slot = m_multiple_base_types + base_type_index;
 
 		#else
 			
-			base_type_slot = &_single_base_type;
+			base_type_slot = &m_single_base_type;
 
 		#endif
 
@@ -711,18 +711,18 @@ namespace reflective
 	inline void * Type::pointer_from_base_type( void * pointer, unsigned base_type_index ) const
 	{
 		REFLECTIVE_ASSERT( base_type_index < base_types_count() );
-		const _BaseTypeSlot * base_type_slot;
+		const BaseTypeSlot * base_type_slot;
 
 		#if REFLECTIVE_ALLOW_MULTIPLE_INHERITANCE
 
-			if( _single_base_type._base_type != nullptr )
-				base_type_slot = &_single_base_type;
+			if( m_single_base_type._base_type != nullptr )
+				base_type_slot = &m_single_base_type;
 			else
-				base_type_slot = _multiple_base_types + base_type_index;
+				base_type_slot = m_multiple_base_types + base_type_index;
 
 		#else
 			
-			base_type_slot = &_single_base_type;
+			base_type_slot = &m_single_base_type;
 
 		#endif
 
@@ -733,18 +733,18 @@ namespace reflective
 	inline const void * Type::pointer_to_base_type( const void * pointer, unsigned base_type_index ) const
 	{
 		REFLECTIVE_ASSERT( base_type_index < base_types_count() );
-		const _BaseTypeSlot * base_type_slot;
+		const BaseTypeSlot * base_type_slot;
 
 		#if REFLECTIVE_ALLOW_MULTIPLE_INHERITANCE
 
-			if( _single_base_type._base_type != nullptr )
-				base_type_slot = &_single_base_type;
+			if( m_single_base_type._base_type != nullptr )
+				base_type_slot = &m_single_base_type;
 			else
-				base_type_slot = _multiple_base_types + base_type_index;
+				base_type_slot = m_multiple_base_types + base_type_index;
 
 		#else
 			
-			base_type_slot = &_single_base_type;
+			base_type_slot = &m_single_base_type;
 
 		#endif
 
@@ -755,18 +755,18 @@ namespace reflective
 	inline const void * Type::pointer_from_base_type( const void * pointer, unsigned base_type_index ) const
 	{
 		REFLECTIVE_ASSERT( base_type_index < base_types_count() );
-		const _BaseTypeSlot * base_type_slot;
+		const BaseTypeSlot * base_type_slot;
 
 		#if REFLECTIVE_ALLOW_MULTIPLE_INHERITANCE
 
-			if( _single_base_type._base_type != nullptr )
-				base_type_slot = &_single_base_type;
+			if( m_single_base_type._base_type != nullptr )
+				base_type_slot = &m_single_base_type;
 			else
-				base_type_slot = _multiple_base_types + base_type_index;
+				base_type_slot = m_multiple_base_types + base_type_index;
 
 		#else
 			
-			base_type_slot = &_single_base_type;
+			base_type_slot = &m_single_base_type;
 
 		#endif
 
@@ -819,40 +819,40 @@ namespace reflective
 			return *this;
 		}
 
-		// Type::_DerivedChainItem::cosntructor
-		inline Type::_DerivedChainItem::_DerivedChainItem()
-			: _next_derived_brother( nullptr ), _first_derived( nullptr ), _last_derived( nullptr )
+		// Type::DerivedChainItem::cosntructor
+		inline Type::DerivedChainItem::DerivedChainItem()
+			: m_next_derived_brother( nullptr ), m_first_derived( nullptr ), m_last_derived( nullptr )
 		{
 		}
 
-		// Type::_DerivedChainItem::add_child
-		inline void Type::_DerivedChainItem::add_child( const Type & child )
+		// Type::DerivedChainItem::add_child
+		inline void Type::DerivedChainItem::add_child( const Type & child )
 		{
-			if( _last_derived )
+			if( m_last_derived )
 			{
-				REFLECTIVE_ASSERT( _first_derived != nullptr );
-				REFLECTIVE_ASSERT( _last_derived->_derived_child_member._next_derived_brother == nullptr );
-				_last_derived->_derived_child_member._next_derived_brother = &child;
+				REFLECTIVE_ASSERT( m_first_derived != nullptr );
+				REFLECTIVE_ASSERT( m_last_derived->_derived_child_member.m_next_derived_brother == nullptr );
+				m_last_derived->_derived_child_member.m_next_derived_brother = &child;
 			}
 			else
 			{
-				REFLECTIVE_ASSERT( _first_derived == nullptr );
-				_first_derived = &child;
+				REFLECTIVE_ASSERT( m_first_derived == nullptr );
+				m_first_derived = &child;
 			}
 
-			_last_derived = &child;
+			m_last_derived = &child;
 		}
 
-		// Type::_DerivedChainItem::next
-		inline const Type * Type::_DerivedChainItem::next() const
+		// Type::DerivedChainItem::next
+		inline const Type * Type::DerivedChainItem::next() const
 		{
-			return _next_derived_brother;
+			return m_next_derived_brother;
 		}
 
-		// Type::_DerivedChainItem::first_derived_class
-		inline const Type * Type::_DerivedChainItem::first_derived_class() const
+		// Type::DerivedChainItem::first_derived_class
+		inline const Type * Type::DerivedChainItem::first_derived_class() const
 		{
-			return _first_derived;
+			return m_first_derived;
 		}
 
 	#endif // #if REFLECTIVE_TRACK_TYPE_HIERARCHY

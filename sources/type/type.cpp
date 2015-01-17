@@ -43,14 +43,14 @@ namespace reflective
 		set_type_id( eTypeType );
 
 		#if REFLECTIVE_IS_DEBUG
-			_dbg_base_types_set = false;
+			m_dbg_base_types_set = false;
 		#endif
 
-		_single_base_type._base_type = nullptr;
+		m_single_base_type._base_type = nullptr;
 
 		#if REFLECTIVE_ALLOW_MULTIPLE_INHERITANCE
-			_multiple_base_types = nullptr;
-			_base_types_count = 0;
+			m_multiple_base_types = nullptr;
+			m_base_types_count = 0;
 		#endif
 
 		// check size and alignment
@@ -60,10 +60,10 @@ namespace reflective
 			zero or an integer power of 2 */
 		REFLECTIVE_ASSERT( ( size & ( alignment - 1 ) ) == 0 ); // the size must be aligned
 
-		_size = size;
-		_alignment = alignment;
-		if( _alignment == 0 )
-			_alignment = 1;
+		m_size = size;
+		m_alignment = alignment;
+		if( m_alignment == 0 )
+			m_alignment = 1;
 
 		_stringizer = nullptr;
 
@@ -84,14 +84,14 @@ namespace reflective
 		set_type_id( eTypeType );
 
 		#if REFLECTIVE_IS_DEBUG
-			_dbg_base_types_set = false;
+			m_dbg_base_types_set = false;
 		#endif
 
-		_single_base_type._base_type = nullptr;
+		m_single_base_type._base_type = nullptr;
 
 		#if REFLECTIVE_ALLOW_MULTIPLE_INHERITANCE
-			_multiple_base_types = nullptr;
-			_base_types_count = 0;
+			m_multiple_base_types = nullptr;
+			m_base_types_count = 0;
 		#endif
 
 		// check size and alignment
@@ -101,10 +101,10 @@ namespace reflective
 			zero or an integer power of 2 */
 		REFLECTIVE_ASSERT( ( size & ( alignment - 1 ) ) == 0 ); // the size must be aligned
 
-		_size = size;
-		_alignment = alignment;
-		if( _alignment == 0 )
-			_alignment = 1;
+		m_size = size;
+		m_alignment = alignment;
+		if( m_alignment == 0 )
+			m_alignment = 1;
 
 		_stringizer = nullptr;
 
@@ -124,18 +124,18 @@ namespace reflective
 				return true;
 
 			#if REFLECTIVE_ALLOW_MULTIPLE_INHERITANCE
-				if( _base_types_count > 1 )
+				if( m_base_types_count > 1 )
 				{
 					unsigned base_type_index = 1;
 					do {
- 						const Type * base_type = _multiple_base_types[base_type_index]._base_type;
+ 						const Type * base_type = m_multiple_base_types[base_type_index]._base_type;
 						if( base_type->can_cast_to( op ) )
 							return true;
-					} while( ++base_type_index < _base_types_count );
+					} while( ++base_type_index < m_base_types_count );
 				}
 			#endif
 
-			curr_type = curr_type->_single_base_type._base_type;
+			curr_type = curr_type->m_single_base_type._base_type;
 
 		} while( curr_type );
 
@@ -152,18 +152,18 @@ namespace reflective
 				return true;
 
 			#if REFLECTIVE_ALLOW_MULTIPLE_INHERITANCE
-				if( _base_types_count > 1 )
+				if( m_base_types_count > 1 )
 				{
 					unsigned base_type_index = 1;
 					do {
-						const Type * base_type = _multiple_base_types[base_type_index]._base_type;
+						const Type * base_type = m_multiple_base_types[base_type_index]._base_type;
 						if( base_type->has_base_type_with_name( name ) )
 							return true;
-					} while( ++base_type_index < _base_types_count );
+					} while( ++base_type_index < m_base_types_count );
 				}
 			#endif
 
-			curr_type = curr_type->_single_base_type._base_type;
+			curr_type = curr_type->m_single_base_type._base_type;
 
 		} while( curr_type );
 		return false;
@@ -179,22 +179,22 @@ namespace reflective
 				return object;
 
 			#if REFLECTIVE_ALLOW_MULTIPLE_INHERITANCE
-				if( _base_types_count > 1 )
+				if( m_base_types_count > 1 )
 				{
 					unsigned base_type_index = 1;
 					do {	
 
-						void * base_object = _multiple_base_types[base_type_index]._updown_caster.pointer_to_base_type( object );
-						void * result = _multiple_base_types[ base_type_index ]._base_type->
+						void * base_object = m_multiple_base_types[base_type_index]._updown_caster.pointer_to_base_type( object );
+						void * result = m_multiple_base_types[ base_type_index ]._base_type->
 							try_cast_pointer_to( dest_type, base_object );
 						if( result != nullptr )
 							return result;
-					} while( ++base_type_index < _base_types_count );
+					} while( ++base_type_index < m_base_types_count );
 				}
 			#endif
 
-			object = curr_type->_single_base_type._updown_caster.pointer_to_base_type( object );
-			curr_type = curr_type->_single_base_type._base_type;
+			object = curr_type->m_single_base_type._updown_caster.pointer_to_base_type( object );
+			curr_type = curr_type->m_single_base_type._base_type;
 
 		} while( curr_type );
 
@@ -211,20 +211,20 @@ namespace reflective
 				return object;
 
 			#if REFLECTIVE_ALLOW_MULTIPLE_INHERITANCE
-				if( _base_types_count > 1 )
+				if( m_base_types_count > 1 )
 				{
 					unsigned base_type_index = 1;
 					do {
-						const Type * base_type = _multiple_base_types[base_type_index]._base_type;
+						const Type * base_type = m_multiple_base_types[base_type_index]._base_type;
 						const void * result = base_type->try_cast_pointer_to( dest_type, object );
 						if( result != nullptr )
 							return result;
-					} while( ++base_type_index < _base_types_count );
+					} while( ++base_type_index < m_base_types_count );
 				}
 			#endif
 
-			curr_type = curr_type->_single_base_type._base_type;
-			object = curr_type->_single_base_type._updown_caster.pointer_to_base_type( object );
+			curr_type = curr_type->m_single_base_type._base_type;
+			object = curr_type->m_single_base_type._updown_caster.pointer_to_base_type( object );
 
 		} while( curr_type );
 
@@ -367,7 +367,7 @@ namespace reflective
 	// Type::create_instance
 	void * Type::create_instance() const
 	{
-		void * object = reflective_externals::mem_alloc( _alignment, _size );
+		void * object = reflective_externals::mem_alloc( m_alignment, m_size );
 		construct( object );
 		return object;
 	}

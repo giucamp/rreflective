@@ -91,7 +91,7 @@ namespace reflective
 	// Symbol::resolve_type
 	const Type & Symbol::resolve_type( const Type & base_type, const void * object )
 	{
-		REFLECTIVE_ASSERT( base_type >= get_type<Symbol>() );
+		REFLECTIVE_ASSERT( base_type.can_cast_to( get_type<Symbol>() ) );
 		REFLECTIVE_UNUSED( base_type );
 
 		static bool types_set = false;

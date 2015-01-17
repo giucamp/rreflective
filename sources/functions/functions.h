@@ -58,7 +58,7 @@ namespace reflective
 		inline bool is_instance_of( const ARG_TYPE & object, const reflective::Type & test_type )
 	{
 		const reflective::Type & arg_type = type_of( object );
-		return test_type <= arg_type;
+		return arg_type.can_cast_to( test_type );
 	}
 
 	// is_strict_instance_of<TEST_TYPE>( object )

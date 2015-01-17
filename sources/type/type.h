@@ -199,7 +199,7 @@ namespace reflective
 				of the type (see life_functions() ). */
 
 		void move( void * dest_start, void * source_start ) const
-			{ move( dest_start, mem::address_add( dest_start, _size  ), source_start ); }
+			{ move( dest_start, mem::address_add( dest_start, m_size  ), source_start ); }
 
 		// life_functions		
 		const LifeFunctions & life_functions() const;
@@ -252,11 +252,7 @@ namespace reflective
 		bool can_cast_to( const Type & dest_type ) const;
 		bool is_related_to( const Type & dest_type ) const;
 		bool has_base_type_with_name( SymbolName name ) const;
-
-		// comparison - A <= B if and only if B is A or can be implicitly casted to A
-		bool operator <= ( const Type & op ) const			{ return op.can_cast_to( *this ); }
-		bool operator >= ( const Type & op ) const			{ return can_cast_to( op ); }
-
+		
 		// base types
 		unsigned base_types_count() const;
 		const Type * first_base_type() const;
@@ -373,7 +369,7 @@ namespace reflective
 	private: // internal services
 		void _set_capabilities( Capabilities capability, bool value );
 
-		struct _BaseTypeSlot
+		struct BaseTypeSlot
 		{
 			const Type * _base_type;
 			UpDownCaster<> _updown_caster;
@@ -385,19 +381,19 @@ namespace reflective
 
 		#if REFLECTIVE_TRACK_TYPE_HIERARCHY
 
-			// _DerivedChainItem
-			class _DerivedChainItem
+			// DerivedChainItem
+			class DerivedChainItem
 			{
 			public:
-				_DerivedChainItem();
+				DerivedChainItem();
 				void add_child( const Type & child );
 				const Type * next() const;
 				const Type * first_derived_class() const;				
 
 			private: // data members
-				const Type * _next_derived_brother;
-				const Type * _first_derived;
-				const Type * _last_derived;
+				const Type * m_next_derived_brother;
+				const Type * m_first_derived;
+				const Type * m_last_derived;
 			};
 
 		#endif
@@ -405,17 +401,17 @@ namespace reflective
 	private: // data members
 
 		// size - alignment
-		size_t _size;
-		size_t _alignment;		
+		size_t m_size;
+		size_t m_alignment;		
 
 		// base types
-		_BaseTypeSlot _single_base_type;
+		BaseTypeSlot m_single_base_type;
 		#if REFLECTIVE_ALLOW_MULTIPLE_INHERITANCE
-			_BaseTypeSlot * _multiple_base_types;
-			unsigned _base_types_count;
+			BaseTypeSlot * m_multiple_base_types;
+			unsigned m_base_types_count;
 		#endif
 		#if REFLECTIVE_IS_DEBUG
-			bool _dbg_base_types_set;			
+			bool m_dbg_base_types_set;			
 		#endif
 
 		// service functions
@@ -432,10 +428,10 @@ namespace reflective
 
 		#if REFLECTIVE_TRACK_TYPE_HIERARCHY
 
-			static _DerivedChainItem & _derived_chain_root()
-				{ static _DerivedChainItem res; return res; }
+			static DerivedChainItem & _derived_chain_root()
+				{ static DerivedChainItem res; return res; }
 
-			mutable _DerivedChainItem _derived_child_member;
+			mutable DerivedChainItem _derived_child_member;
 				
 		#endif
 	};
