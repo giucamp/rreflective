@@ -32,84 +32,59 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace reflective
 {
 	// new_property( name, &Class::getter, [attributes] )
-	template <class ROOT_OBJECT, class OBJECT, class TYPE>
+	template <class OBJECT, class TYPE>
 		inline Property * new_property( SymbolName name, 
 			TYPE (OBJECT::*getter)() const,	ClassMember::Attributes attributes )
 	{
-		ROOT_OBJECT * just_a_type_check = static_cast<OBJECT*>( nullptr );
-		REFLECTIVE_UNUSED( just_a_type_check );
-
-		typedef TYPE (ROOT_OBJECT::*BaseGetter)() const;
-		BaseGetter base_getter = static_cast<BaseGetter>( getter );
-
 		void * allocation = reflective_externals::mem_lifo_alloc( 
-				alignment_of( MethodProperty<ROOT_OBJECT, TYPE> ), 
-				sizeof( MethodProperty<ROOT_OBJECT, TYPE> ),
+				alignment_of( MethodProperty<OBJECT, TYPE> ), 
+				sizeof( MethodProperty<OBJECT, TYPE> ),
 				&default_destroyer<ClassMember> );
 
 		safe_get_type<TYPE>(); // this make sure that the type is initialized		
 
-		MethodProperty<ROOT_OBJECT, TYPE> * result = new( allocation ) 
-			MethodProperty<ROOT_OBJECT, TYPE>( 
-				name, base_getter, 0, attributes );
+		MethodProperty<OBJECT, TYPE> * result = new( allocation ) 
+			MethodProperty<OBJECT, TYPE>( name, getter, 0, attributes );
 
 		return result;
 	}
 
 	// new_property( name, &Class::getter, &Class::setter, [attributes] )
-	template <class ROOT_OBJECT, class OBJECT, class TYPE>
+	template <class OBJECT, class TYPE>
 		Property * new_property( SymbolName name, 			
 			TYPE (OBJECT::*getter)() const,
 			void (OBJECT::*setter)( TYPE value ), 
 			ClassMember::Attributes attributes )
 	{
-		ROOT_OBJECT * just_a_type_check = static_cast<OBJECT*>( nullptr );
-		REFLECTIVE_UNUSED( just_a_type_check );
-
-		typedef TYPE (ROOT_OBJECT::*BaseGetter)() const;
-		typedef void (ROOT_OBJECT::*BaseSetter)( TYPE );
-		BaseGetter base_getter = static_cast<BaseGetter>( getter );
-		BaseSetter base_setter = static_cast<BaseSetter>( setter );
-
 		void * allocation = reflective_externals::mem_lifo_alloc( 
-				alignment_of( MethodProperty<ROOT_OBJECT, TYPE> ), 
-				sizeof( MethodProperty<ROOT_OBJECT, TYPE> ),
+				alignment_of( MethodProperty<OBJECT, TYPE> ), 
+				sizeof( MethodProperty<OBJECT, TYPE> ),
 				&default_destroyer<ClassMember> );
 
 		safe_get_type<TYPE>(); // this make sure that the type is initialized
 
-		MethodProperty<ROOT_OBJECT, TYPE> * result = new( allocation ) 
-			MethodProperty<ROOT_OBJECT, TYPE>( 
-				name, base_getter, base_setter, attributes );
+		MethodProperty<OBJECT, TYPE> * result = new( allocation ) 
+			MethodProperty<OBJECT, TYPE>( name, getter, setter, attributes );
 
 		return result;
 	}
 
 	// new_property( name, &Class::getter, &Class::setter, [attributes] )
-	template <class ROOT_OBJECT, class OBJECT, class TYPE>
+	template <class OBJECT, class TYPE>
 		Property * new_property( SymbolName name, 			
 			TYPE (OBJECT::*getter)() const,
 			void (OBJECT::*setter)( const TYPE & value ), 
 			ClassMember::Attributes attributes )
 	{
-		ROOT_OBJECT * just_a_type_check = static_cast<OBJECT*>( nullptr );
-		REFLECTIVE_UNUSED( just_a_type_check );
-
-		typedef TYPE (ROOT_OBJECT::*BaseGetter)() const;
-		typedef void (ROOT_OBJECT::*BaseSetter)( const TYPE & );
-		BaseGetter base_getter = static_cast<BaseGetter>( getter );
-		BaseSetter base_setter = static_cast<BaseSetter>( setter );
-
 		void * allocation = reflective_externals::mem_lifo_alloc( 
-				alignment_of( MethodPropertyRefSetter<ROOT_OBJECT, TYPE> ), 
-				sizeof( MethodPropertyRefSetter<ROOT_OBJECT, TYPE> ),
+				alignment_of( MethodPropertyRefSetter<OBJECT, TYPE> ), 
+				sizeof( MethodPropertyRefSetter<OBJECT, TYPE> ),
 				&default_destroyer<ClassMember> );
 
 		safe_get_type<TYPE>(); // this make sure that the type is initialized
 
-		MethodPropertyRefSetter<ROOT_OBJECT, TYPE> * result = new( allocation ) 
-			MethodPropertyRefSetter<ROOT_OBJECT, TYPE>( 
-				name, base_getter, base_setter, attributes );
+		MethodPropertyRefSetter<OBJECT, TYPE> * result = new( allocation ) 
+			MethodPropertyRefSetter<OBJECT, TYPE>( name, getter, setter, attributes );
 
 		return result;
 	}

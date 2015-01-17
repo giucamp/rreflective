@@ -32,7 +32,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace reflective
 {
 	// new_property( name, &Class::data, [attributes] )
-	template <class ROOT_OBJECT, class OBJECT, class TYPE>
+	template <class OBJECT, class TYPE>
 		Property * new_property( 
 			SymbolName name, TYPE (OBJECT::*data), 
 			ClassMember::Attributes attributes = ClassMember::NO_ATTRIBUTES );

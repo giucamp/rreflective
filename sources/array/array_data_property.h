@@ -31,9 +31,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-
 	// new_property( name, &Class::data, [attributes] )
-	template <class ROOT_OBJECT, class OBJECT, class TYPE, size_t SIZE>
+	template <class OBJECT, class TYPE, size_t SIZE>
 		Property * new_property( 
 			SymbolName name, TYPE (OBJECT::*data)[ SIZE ], 
 			ClassMember::Attributes attributes = ClassMember::NO_ATTRIBUTES );

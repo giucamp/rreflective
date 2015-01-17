@@ -152,10 +152,10 @@ namespace reflective_externals
 		class_object->set_life_functions( LifeFunctions::from_type<ThisClass>( eConstructorCopyAssignmentDestructor ) );
 
 		// properties
-		/*const Property * properties[] = 
+		const Property * properties[] = 
 		{
-			new_property<ThisClass>( "size", &ThisClass::size ), // in ms std, size if a member of _Tree, the base class of map.
-		};*/
+			new_property( "size", &ThisClass::size ), // in ms std, size if a member of _Tree, the base class of map.
+		};
 
 		// actions
 		const Action * actions[] = 
@@ -164,7 +164,7 @@ namespace reflective_externals
 		};
 
 		// assign members
-		//class_object->assign_properties( properties );
+		class_object->assign_properties( properties );
 		class_object->edit_actions().assign( actions );
 
 		// assign collection handler

@@ -374,7 +374,7 @@ namespace reflective
 			const Type * _base_type;
 			UpDownCaster<> _updown_caster;
 		};
-
+		
 		// _default_equality_comparer
 		template <class TYPE> 
 			static bool _default_equality_comparer( const void * first_operand, const void * second_operand );

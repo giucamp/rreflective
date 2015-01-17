@@ -32,20 +32,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace reflective
 {
 	// new_property( name, &Class::data, [attributes] )
-	template <class ROOT_OBJECT, class OBJECT, class TYPE>
+	template <class OBJECT, class TYPE>
 		Property * new_property( SymbolName name, 
 			TYPE (OBJECT::*data), 
 			ClassMember::Attributes attributes )
 	{
-		ROOT_OBJECT * just_a_type_check = (OBJECT*)nullptr;
-		REFLECTIVE_UNUSED( just_a_type_check );
+		typedef DataProperty<OBJECT, TYPE> PropertyType;
 
-		typedef TYPE (ROOT_OBJECT::*BasePointer );
-		BasePointer base_data = static_cast<BasePointer>( data );
-
-		typedef DataProperty<ROOT_OBJECT, TYPE> PropertyType;
-
-		DataProperty<ROOT_OBJECT, TYPE> * result = REFLECTIVE_LIFO_NEW( PropertyType, name, base_data, attributes );
+		DataProperty<OBJECT, TYPE> * result = REFLECTIVE_LIFO_NEW( PropertyType, name, data, attributes );
 
 		return result;
 	}

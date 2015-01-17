@@ -32,21 +32,21 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace reflective
 {
 	// new_property( name, &Class::getter, &Class::setter, [attributes] )
-	template <class ROOT_OBJECT, class OBJECT, class TYPE>
+	template <class OBJECT, class TYPE>
 		Property * new_property( SymbolName name, 
 			TYPE (OBJECT::*getter)() const,
 			void (OBJECT::*setter)( TYPE value ), 
 			ClassMember::Attributes attributes = ClassMember::NO_ATTRIBUTES );
 
 	// new_property( name, &Class::getter, &Class::setter, [attributes] )
-	template <class ROOT_OBJECT, class OBJECT, class TYPE>
+	template <class OBJECT, class TYPE>
 		Property * new_property( SymbolName name, 
 			TYPE (OBJECT::*getter)() const,
 			void (OBJECT::*setter)( const TYPE & value ), 
 			ClassMember::Attributes attributes = ClassMember::NO_ATTRIBUTES );
 
 	// new_property( name, &Class::getter, [attributes] )
-	template <class ROOT_OBJECT, class OBJECT, class TYPE>
+	template <class OBJECT, class TYPE>
 		Property * new_property( SymbolName name, 
 			TYPE (OBJECT::*getter)() const,			
 			ClassMember::Attributes attributes = ClassMember::READONLY | ClassMember::TRANSIENT );
