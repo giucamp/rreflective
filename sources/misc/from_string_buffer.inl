@@ -34,41 +34,41 @@ namespace reflective
 
 	// FromStringBuffer::constructor
 	inline FromStringBuffer::FromStringBuffer( const char * chars, size_t length )
-		: _buffer( chars ), _length( length )
+		: m_curr_char( chars ), m_remaining_length( length )
 	{
 	}
 
 	// FromStringBuffer::copy constructor
 	inline FromStringBuffer::FromStringBuffer( const FromStringBuffer & source )
-		: _buffer( source._buffer ), _length( source._length )
+		: m_curr_char( source.m_curr_char ), m_remaining_length( source.m_remaining_length )
 	{
 	}
 
 	// FromStringBuffer::assignment
 	inline FromStringBuffer & FromStringBuffer::operator = ( const FromStringBuffer & source )
 	{
-		_buffer = source._buffer;
-		_length = source._length;
+		m_curr_char = source.m_curr_char;
+		m_remaining_length = source.m_remaining_length;
 		return *this;
 	}
 
 	// FromStringBuffer::set
 	inline void FromStringBuffer::set( const char * chars, size_t length )
 	{
-		_buffer = chars;
-		_length = length;
+		m_curr_char = chars;
+		m_remaining_length = length;
 	}
 
 	// FromStringBuffer::chars
 	inline const char * FromStringBuffer::chars() const
 	{
-		return _buffer;
+		return m_curr_char;
 	}
 
 	// FromStringBuffer::remaining_length
 	inline size_t FromStringBuffer::remaining_length() const
 	{
-		return _length;
+		return m_remaining_length;
 	}
 
 	// FromStringBuffer::accept

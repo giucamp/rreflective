@@ -78,8 +78,8 @@ namespace reflective
 		bool accept_whitespaces();
 	
 	private: // data members
-		const char * _buffer;
-		size_t _length;
+		const char * m_curr_char;
+		size_t m_remaining_length;
 	};
 
 	// AcceptOptions operator |

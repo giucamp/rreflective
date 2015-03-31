@@ -35,13 +35,13 @@ namespace reflective
 	// FromStringBuffer::consume_char
 	char FromStringBuffer::consume_char()
 	{
-		if( _length == 0 )
+		if( m_remaining_length == 0 )
 			return 0;
 
-		const char character = *_buffer;
+		const char character = *m_curr_char;
 
-		_length--;
-		_buffer++;
+		m_remaining_length--;
+		m_curr_char++;
 
 		return character;
 	}
@@ -49,45 +49,44 @@ namespace reflective
 	// FromStringBuffer::accept
 	bool FromStringBuffer::accept( char character, AcceptOptions options )
 	{
-		const char * buffer = _buffer;
-		const char * const end_of_buffer = _buffer + _length;
+		const char * curr_char = m_curr_char;
+		const char * const end_of_chars = m_curr_char + m_remaining_length;
 
 		// skip spaces
 		if( options & eIgnoreLeadingSpaces )
 		{
-			while( buffer < end_of_buffer && isspace( *buffer ) )
+			while( curr_char < end_of_chars && isspace( *curr_char ) )
 			{
-				buffer++;
+				curr_char++;
 			}
 		}
 
 		// try to accept the string
 		bool result = false;
-		const size_t remaining_length = end_of_buffer - buffer;
+		const size_t remaining_length = end_of_chars - curr_char;
 		if( remaining_length >= 1 )
 		{
 			if( options & eIgnoreCase )
 			{
 				// case insensitive
-				result = tolower( *_buffer ) == tolower( character );
+				result = tolower( *m_curr_char ) == tolower( character );
 			}
 			else
 			{
 				// case sensitive
-				result = *_buffer == character;
+				result = *m_curr_char == character;
 			}
 		}
 
-		// advance in the buffer
-		if( result  )
+		// advance in the curr_char
+		if( result )
 		{
-			buffer++;
+			curr_char++;
 
-			REFLECTIVE_ASSERT( buffer <= _buffer );
-			REFLECTIVE_ASSERT( end_of_buffer <= buffer );
+			REFLECTIVE_ASSERT( curr_char <= end_of_chars );
 
-			_length = end_of_buffer - buffer;
-			_buffer = buffer;
+			m_remaining_length = end_of_chars - curr_char;
+			m_curr_char = curr_char;
 		}
 
 		return result;
@@ -96,45 +95,44 @@ namespace reflective
 	// FromStringBuffer::accept
 	bool FromStringBuffer::accept( const char * string, size_t string_length, AcceptOptions options )
 	{
-		const char * buffer = _buffer;
-		const char * const end_of_buffer = _buffer + _length;
+		const char * curr_char = m_curr_char;
+		const char * const end_of_chars = m_curr_char + m_remaining_length;
 
 		// skip spaces
 		if( options & eIgnoreLeadingSpaces )
 		{
-			while( buffer < end_of_buffer && isspace( *buffer ) )
+			while( curr_char < end_of_chars && isspace( *curr_char ) )
 			{
-				buffer++;
+				curr_char++;
 			}
 		}
 
 		// try to accept the string
 		bool result = false;
-		const size_t remaining_length = end_of_buffer - buffer;
+		const size_t remaining_length = end_of_chars - curr_char;
 		if( remaining_length <= string_length )
 		{
 			if( options & eIgnoreCase )
 			{
 				// case insensitive
-				result = _strnicmp( _buffer, string, string_length ) == 0;
+				result = _strnicmp( m_curr_char, string, string_length ) == 0;
 			}
 			else
 			{
 				// case sensitive
-				result = strncmp( _buffer, string, string_length ) == 0;
+				result = strncmp( m_curr_char, string, string_length ) == 0;
 			}
 		}
 
-		// advance in the buffer
-		if( result  )
+		// advance in the curr_char
+		if( result )
 		{
-			buffer += string_length;
+			curr_char += string_length;
 
-			REFLECTIVE_ASSERT( buffer <= _buffer );
-			REFLECTIVE_ASSERT( end_of_buffer <= buffer );
+			REFLECTIVE_ASSERT( curr_char <= end_of_chars );
 
-			_length = end_of_buffer - buffer;
-			_buffer = buffer;
+			m_remaining_length = end_of_chars - curr_char;
+			m_curr_char = curr_char;
 		}
 
 		return result;
@@ -143,27 +141,27 @@ namespace reflective
 	// FromStringBuffer::accept_indexed
 	int FromStringBuffer::accept_indexed( const char * const * string_table, size_t table_length, AcceptOptions options )
 	{
-		const char * buffer = _buffer;
-		const char * const end_of_buffer = _buffer + _length;
+		const char * curr_char = m_curr_char;
+		const char * const end_of_chars = m_curr_char + m_remaining_length;
 
 		// skip spaces
 		if( options & eIgnoreLeadingSpaces )
 		{
-			while( buffer < end_of_buffer && isspace( *buffer ) )
+			while( curr_char < end_of_chars && isspace( *curr_char ) )
 			{
-				buffer++;
+				curr_char++;
 			}
 		}
 
 		// try to accept the string
 		int result = -1;
-		const size_t remaining_length = end_of_buffer - buffer;
+		const size_t remaining_length = end_of_chars - curr_char;
 		if( options & eIgnoreCase )
 		{
 			// case insensitive
 			for( size_t index = 0; index < table_length; index++ )
 			{
-				if( !_strnicmp( _buffer, string_table[index], remaining_length ) )
+				if( !_strnicmp( m_curr_char, string_table[index], remaining_length ) )
 				{
 					result = static_cast<int>( index );
 					break;
@@ -175,7 +173,7 @@ namespace reflective
 			// case sensitive
 			for( size_t index = 0; index < table_length; index++ )
 			{
-				if( !strncmp( _buffer, string_table[index], remaining_length ) )
+				if( !strncmp( m_curr_char, string_table[index], remaining_length ) )
 				{
 					result = static_cast<int>( index );
 					break;
@@ -183,16 +181,15 @@ namespace reflective
 			}
 		}
 
-		// advance in the buffer
+		// advance in the curr_char
 		if( result >= 0 )
 		{
-			buffer += strlen( string_table[result ] );
+			curr_char += strlen( string_table[result ] );
 
-			REFLECTIVE_ASSERT( buffer <= _buffer );
-			REFLECTIVE_ASSERT( end_of_buffer <= buffer );
+			REFLECTIVE_ASSERT( curr_char <= end_of_chars );
 
-			_length = end_of_buffer - buffer;
-			_buffer = buffer;
+			m_remaining_length = end_of_chars - curr_char;
+			m_curr_char = curr_char;
 		}
 
 		return result;
@@ -203,40 +200,39 @@ namespace reflective
 	{
 		REFLECTIVE_ASSERT( out_result != nullptr );
 
-		const char * buffer = _buffer;
-		size_t remaining_length = _length;
+		const char * curr_char = m_curr_char;
+		size_t remaining_length = m_remaining_length;
 
 		// skip spaces
 		if( options & eIgnoreLeadingSpaces )
 		{
-			while( remaining_length > 0 && isspace( *buffer ) )
+			while( remaining_length > 0 && isspace( *curr_char ) )
 			{
-				buffer++;
+				curr_char++;
 				remaining_length--;
 			}
 		}
 
-		const char * const start_of_word = buffer;
+		const char * const start_of_word = curr_char;
 		if( remaining_length == 0 )
 			return false; // end of text
 
-		if( isalpha( *buffer ) == 0 )
+		if( isalpha( *curr_char ) == 0 )
 			return false; // non alphabetic heading char
 
 		// consume alpha-num characters
 		do {			
-			buffer++;
+			curr_char++;
 			remaining_length--;
-		} while( remaining_length != 0 && isalnum( *buffer ) );
+		} while( remaining_length != 0 && isalnum( *curr_char ) );
 		
 		// write result
-		const size_t word_length = buffer - start_of_word;
+		const size_t word_length = curr_char - start_of_word;
 		*out_result = StaticConstString( start_of_word, word_length );
 
-		// advance in the buffer
-		REFLECTIVE_ASSERT( buffer <= _buffer );
-		_length = remaining_length;
-		_buffer = buffer;
+		// advance in the curr_char
+		m_remaining_length = remaining_length;
+		m_curr_char = curr_char;
 
 		return true;
 	}
@@ -244,20 +240,20 @@ namespace reflective
 	// FromStringBuffer::accept_whitespaces
 	bool FromStringBuffer::accept_whitespaces()
 	{
-		const char * buffer = _buffer;
-		size_t remaining_length = _length;
+		const char * curr_char = m_curr_char;
+		size_t remaining_length = m_remaining_length;
 
 		bool result = false;
 
-		while( remaining_length > 0 && isspace( *buffer ) )
+		while( remaining_length > 0 && isspace( *curr_char ) )
 		{
-			buffer++;
+			curr_char++;
 			remaining_length--;
 			result = true;
 		}
 
-		_length = remaining_length;
-		_buffer = buffer;
+		m_remaining_length = remaining_length;
+		m_curr_char = curr_char;
 
 		return result;
 	}
@@ -265,10 +261,10 @@ namespace reflective
 	// FromStringBuffer::accept_from_end
 	bool FromStringBuffer::accept_from_end( const char * i_chars, size_t i_length, AcceptOptions i_options )
 	{
-		size_t length = _length;
+		size_t length = m_remaining_length;
 		if( i_options & eIgnoreLeadingSpaces )
 		{
-			while( length > 0 && isspace( _buffer[ length - 1 ] ) )
+			while( length > 0 && isspace( m_curr_char[ length - 1 ] ) )
 			{
 				length--;
 			}
@@ -282,12 +278,12 @@ namespace reflective
 			if( i_options & eIgnoreCase )
 			{
 				// case insensitive
-				result = tolower( _buffer[length - 1] ) == tolower( i_chars[length_to_check - 1] );
+				result = tolower( m_curr_char[length - 1] ) == tolower( i_chars[length_to_check - 1] );
 			}
 			else
 			{
 				// case sensitive
-				result = _buffer[length - 1] == i_chars[length_to_check - 1];
+				result = m_curr_char[length - 1] == i_chars[length_to_check - 1];
 			}
 			if( !result )
 				break;
@@ -298,7 +294,7 @@ namespace reflective
 
 		if( i_options & eIgnoreLeadingSpaces )
 		{
-			while( length > 0 && isspace( _buffer[ length - 1 ] ) )
+			while( length > 0 && isspace( m_curr_char[ length - 1 ] ) )
 			{
 				length--;
 			}
@@ -306,7 +302,7 @@ namespace reflective
 
 		if( result )
 		{
-			_length = length;
+			m_remaining_length = length;
 		}
 
 		return result;
