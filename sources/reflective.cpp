@@ -60,8 +60,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "collections\watch_chain.cpp"
 #include "misc\event.cpp"
 #include "functions\functions.cpp"
-#include "array\array_type.cpp"
-
 
 #undef _IMPLEMENTING_REFLECTIVE
 

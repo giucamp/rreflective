@@ -25,9 +25,6 @@
     <Filter Include="mem">
       <UniqueIdentifier>{ee39d11f-db0d-4c7e-9ba0-6e879700fe94}</UniqueIdentifier>
     </Filter>
-    <Filter Include="array">
-      <UniqueIdentifier>{5a1feb57-5326-4c8a-857f-865f0c1d79c8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="std_reflection">
       <UniqueIdentifier>{b24f78d7-b983-4406-8e70-22ee94850f9e}</UniqueIdentifier>
     </Filter>
@@ -167,12 +164,6 @@
     </ClInclude>
     <ClInclude Include="..\sources\reflective.h" />
     <ClInclude Include="..\sources\reflectve_externals.h" />
-    <ClInclude Include="..\sources\array\array_data_property.h">
-      <Filter>array</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sources\array\array_type.h">
-      <Filter>array</Filter>
-    </ClInclude>
     <ClInclude Include="..\sources\reflective_common.h" />
     <ClInclude Include="..\sources\misc\string_output_stream.h">
       <Filter>misc</Filter>
@@ -329,12 +320,6 @@
     <None Include="..\sources\mem\memory.inl">
       <Filter>mem</Filter>
     </None>
-    <None Include="..\sources\array\array_data_property.inl">
-      <Filter>array</Filter>
-    </None>
-    <None Include="..\sources\array\array_type.inl">
-      <Filter>array</Filter>
-    </None>
     <None Include="..\sources\class\method_action_8.inl">
       <Filter>class</Filter>
     </None>
@@ -452,9 +437,6 @@
       <Filter>mem</Filter>
     </ClCompile>
     <ClCompile Include="..\sources\reflective.cpp" />
-    <ClCompile Include="..\sources\array\array_type.cpp">
-      <Filter>array</Filter>
-    </ClCompile>
     <ClCompile Include="..\sources\misc\string_output_stream.cpp">
       <Filter>misc</Filter>
     </ClCompile>

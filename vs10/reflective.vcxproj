@@ -178,8 +178,6 @@
     </BuildLog>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\sources\array\array_data_property.h" />
-    <ClInclude Include="..\sources\array\array_type.h" />
     <ClInclude Include="..\sources\class\action.h" />
     <ClInclude Include="..\sources\class\class.h" />
     <ClInclude Include="..\sources\class\class_member.h" />
@@ -234,8 +232,6 @@
     <ClInclude Include="..\sources\reflectve_externals.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\sources\array\array_data_property.inl" />
-    <None Include="..\sources\array\array_type.inl" />
     <None Include="..\sources\class\action.inl" />
     <None Include="..\sources\class\class.inl" />
     <None Include="..\sources\class\class_member.inl" />
@@ -293,12 +289,6 @@
     <None Include="..\sources\mem\memory.inl" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\sources\array\array_type.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\sources\class\action.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
