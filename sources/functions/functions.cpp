@@ -383,7 +383,7 @@ namespace reflective
 
 				if( property_type.check_capabilities( Type::eHasToString ) )
 				{
-					LifoBuffer value_buffer( property_type.alignment(),
+					AutoLifo value_buffer( property_type.alignment(),
 						property_type.size() );
 					
 					if( identifier_property->get_value( curr_object, value_buffer.get() ) )
@@ -437,23 +437,23 @@ namespace reflective
 
 
 
-					/**** LifoBuffer ****/
+					/**** AutoLifo ****/
 
-	// LifoBuffer::constructor
-	LifoBuffer::LifoBuffer( size_t initial_alignment, size_t initial_size )
+	// AutoLifo::constructor
+	AutoLifo::AutoLifo( size_t initial_alignment, size_t initial_size )
 		: _alignment( initial_alignment ), _length( initial_size )
 	{
 		_buffer = reflective_externals::mem_lifo_alloc( initial_alignment, initial_size );
 	}
 
-	// LifoBuffer::destructor
-	LifoBuffer::~LifoBuffer()
+	// AutoLifo::destructor
+	AutoLifo::~AutoLifo()
 	{
 		reflective_externals::mem_lifo_free( _buffer );
 	}
 
-	// LifoBuffer::get
-	void * LifoBuffer::get( size_t needed_alignment, size_t needed_size )
+	// AutoLifo::get
+	void * AutoLifo::get( size_t needed_alignment, size_t needed_size )
 	{
 		if( _alignment < needed_alignment || needed_size < _length )
 		{

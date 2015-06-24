@@ -226,22 +226,22 @@ namespace reflective
 		return get_inhertied_properties_count( class_obj );
 	}
 
-					/**** LifoBuffer ****/
+					/**** AutoLifo ****/
 
-	// LifoBuffer::curr_alignment
-	inline size_t LifoBuffer::curr_alignment() const
+	// AutoLifo::curr_alignment
+	inline size_t AutoLifo::curr_alignment() const
 	{
 		return _alignment;
 	}
 
-	// LifoBuffer::curr_length
-	inline size_t LifoBuffer::curr_length() const
+	// AutoLifo::curr_length
+	inline size_t AutoLifo::curr_length() const
 	{
 		return _length;
 	}
 
-	// LifoBuffer::get
-	inline void * LifoBuffer::get()
+	// AutoLifo::get
+	inline void * AutoLifo::get()
 	{
 		return _buffer;
 	}

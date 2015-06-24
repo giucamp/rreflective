@@ -179,12 +179,12 @@ namespace reflective
 		SymbolName name, const Class * * out_owning_class );
 
 
-	// LifoBuffer
-	class LifoBuffer
+	// AutoLifo
+	class AutoLifo
 	{
 	public:
 
-		LifoBuffer( size_t initial_alignment, size_t initial_size );
+		AutoLifo( size_t initial_alignment, size_t initial_size );
 
 		size_t curr_alignment() const;
 
@@ -194,11 +194,11 @@ namespace reflective
 
 		void * get( size_t needed_alignment, size_t needed_size );
 
-		~LifoBuffer();
+		~AutoLifo();
 
 	private:
-		LifoBuffer( const LifoBuffer & ); // unimplemented
-		LifoBuffer & operator = ( const LifoBuffer & );  // unimplemented
+		AutoLifo( const AutoLifo & ); // unimplemented
+		AutoLifo & operator = ( const AutoLifo & );  // unimplemented
 
 	private: // data members
 		void * _buffer;
