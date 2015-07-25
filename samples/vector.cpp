@@ -107,10 +107,10 @@ int vector_main()
 	// write the template formal parameters
 	char chars[ 1024 ];
 	StringOutputStream char_buffer( chars, 1024 );
-	for( Iterator< const Parameter > parameter_iterator( parameters );
+	for( Iterator parameter_iterator( ObjectPointerWrapper::from_pointer( &parameters ) );
 		parameter_iterator; parameter_iterator++ )
 	{
-		to_string( char_buffer, *parameter_iterator );
+		//to_string( char_buffer, parameter_iterator );
 		char_buffer.append( '\n' );
 	}
 
