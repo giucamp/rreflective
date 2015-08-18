@@ -1,0 +1,450 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="class">
+      <UniqueIdentifier>{8eba7836-5ab5-431c-ac50-7612589cf9a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="collections">
+      <UniqueIdentifier>{bd284f54-0973-4bdf-8d26-734f1ee71270}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="functions">
+      <UniqueIdentifier>{b827c1ef-0972-4762-bb47-6e5ac2d3ff1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="misc">
+      <UniqueIdentifier>{fb203b2b-64a0-4d88-9d31-86a15378e528}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="symbol">
+      <UniqueIdentifier>{84c5e43c-e0f2-44b0-8114-ee36b43e337f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="type">
+      <UniqueIdentifier>{9d6c56de-cedd-4bdc-8bf7-ff1d4fc86398}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="up_down_caster">
+      <UniqueIdentifier>{6d26ec98-7593-4230-af48-a0f54c72e081}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mem">
+      <UniqueIdentifier>{ee39d11f-db0d-4c7e-9ba0-6e879700fe94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="std_reflection">
+      <UniqueIdentifier>{b24f78d7-b983-4406-8e70-22ee94850f9e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\sources\class\action.h">
+      <Filter>class</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\class\class.h">
+      <Filter>class</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\class\class_member.h">
+      <Filter>class</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\class\class_template.h">
+      <Filter>class</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\class\data_property.h">
+      <Filter>class</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\class\event_descriptor.h">
+      <Filter>class</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\class\method_action.h">
+      <Filter>class</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\class\method_property.h">
+      <Filter>class</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\class\parameter.h">
+      <Filter>class</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\class\parameter_list_stringizer.h">
+      <Filter>class</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\class\property.h">
+      <Filter>class</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\class\template_argument.h">
+      <Filter>class</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\class\type_inspector.h">
+      <Filter>class</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\collections\abstract_iterator.h">
+      <Filter>collections</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\collections\collection_handler.h">
+      <Filter>collections</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\collections\watch.h">
+      <Filter>collections</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\collections\watch_chain.h">
+      <Filter>collections</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\functions\functions.h">
+      <Filter>functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\misc\enum.h">
+      <Filter>misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\misc\event.h">
+      <Filter>misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\misc\from_string_buffer.h">
+      <Filter>misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\misc\handler.h">
+      <Filter>misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\misc\name_id.h">
+      <Filter>misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\misc\primitive_type.h">
+      <Filter>misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\misc\static_const_string.h">
+      <Filter>misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\misc\unreferencer.h">
+      <Filter>misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\symbol\symbol.h">
+      <Filter>symbol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\symbol\symbol_list.h">
+      <Filter>symbol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\symbol\symbol_list_collection.h">
+      <Filter>symbol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\type\default_life_functions.h">
+      <Filter>type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\type\life_functions.h">
+      <Filter>type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\type\namespace.h">
+      <Filter>type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\type\qualified_type.h">
+      <Filter>type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\type\strnig_functors.h">
+      <Filter>type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\type\type.h">
+      <Filter>type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\type\type_qualification.h">
+      <Filter>type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\type\type_traits.h">
+      <Filter>type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\up_down_caster\up_down_caster.h">
+      <Filter>up_down_caster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\up_down_caster\up_down_caster_acc.h">
+      <Filter>up_down_caster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\up_down_caster\up_down_caster_acc_diagnostic.h">
+      <Filter>up_down_caster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\up_down_caster\up_down_caster_fc.h">
+      <Filter>up_down_caster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\up_down_caster\up_down_caster_offsettng.h">
+      <Filter>up_down_caster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\up_down_caster\up_down_caster_offsettng_diagnostic.h">
+      <Filter>up_down_caster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\mem\memory.h">
+      <Filter>mem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\reflective.h" />
+    <ClInclude Include="..\sources\reflectve_externals.h" />
+    <ClInclude Include="..\sources\reflective_common.h" />
+    <ClInclude Include="..\sources\misc\string_output_stream.h">
+      <Filter>misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\misc\dynamic_string_stream.h">
+      <Filter>misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\std_reflection\std_reflection.h">
+      <Filter>std_reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\misc\object_pointer_wrapper.h">
+      <Filter>misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\collections\iterator.h">
+      <Filter>collections</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\sources\class\action.inl">
+      <Filter>class</Filter>
+    </None>
+    <None Include="..\sources\class\class.inl">
+      <Filter>class</Filter>
+    </None>
+    <None Include="..\sources\class\class_member.inl">
+      <Filter>class</Filter>
+    </None>
+    <None Include="..\sources\class\class_template.inl">
+      <Filter>class</Filter>
+    </None>
+    <None Include="..\sources\class\data_property.inl">
+      <Filter>class</Filter>
+    </None>
+    <None Include="..\sources\class\event_descriptor.inl">
+      <Filter>class</Filter>
+    </None>
+    <None Include="..\sources\class\method_action_0.inl">
+      <Filter>class</Filter>
+    </None>
+    <None Include="..\sources\class\method_action_1.inl">
+      <Filter>class</Filter>
+    </None>
+    <None Include="..\sources\class\method_action_2.inl">
+      <Filter>class</Filter>
+    </None>
+    <None Include="..\sources\class\method_action_3.inl">
+      <Filter>class</Filter>
+    </None>
+    <None Include="..\sources\class\method_action_4.inl">
+      <Filter>class</Filter>
+    </None>
+    <None Include="..\sources\class\method_action_5.inl">
+      <Filter>class</Filter>
+    </None>
+    <None Include="..\sources\class\method_action_6.inl">
+      <Filter>class</Filter>
+    </None>
+    <None Include="..\sources\class\method_property.inl">
+      <Filter>class</Filter>
+    </None>
+    <None Include="..\sources\class\parameter.inl">
+      <Filter>class</Filter>
+    </None>
+    <None Include="..\sources\class\property.inl">
+      <Filter>class</Filter>
+    </None>
+    <None Include="..\sources\class\template_argument.inl">
+      <Filter>class</Filter>
+    </None>
+    <None Include="..\sources\class\type_inspector.inl">
+      <Filter>class</Filter>
+    </None>
+    <None Include="..\sources\collections\abstract_iterator.inl">
+      <Filter>collections</Filter>
+    </None>
+    <None Include="..\sources\collections\watch.inl">
+      <Filter>collections</Filter>
+    </None>
+    <None Include="..\sources\collections\watch_chain.inl">
+      <Filter>collections</Filter>
+    </None>
+    <None Include="..\sources\functions\functions.inl">
+      <Filter>functions</Filter>
+    </None>
+    <None Include="..\sources\misc\enum.inl">
+      <Filter>misc</Filter>
+    </None>
+    <None Include="..\sources\misc\event.inl">
+      <Filter>misc</Filter>
+    </None>
+    <None Include="..\sources\misc\from_string_buffer.inl">
+      <Filter>misc</Filter>
+    </None>
+    <None Include="..\sources\misc\handler.inl">
+      <Filter>misc</Filter>
+    </None>
+    <None Include="..\sources\misc\primitive_type.inl">
+      <Filter>misc</Filter>
+    </None>
+    <None Include="..\sources\misc\static_const_string.inl">
+      <Filter>misc</Filter>
+    </None>
+    <None Include="..\sources\symbol\symbol.inl">
+      <Filter>symbol</Filter>
+    </None>
+    <None Include="..\sources\symbol\symbol_list.inl">
+      <Filter>symbol</Filter>
+    </None>
+    <None Include="..\sources\symbol\symbol_list_collection.inl">
+      <Filter>symbol</Filter>
+    </None>
+    <None Include="..\sources\type\default_life_functions.inl">
+      <Filter>type</Filter>
+    </None>
+    <None Include="..\sources\type\life_functions.inl">
+      <Filter>type</Filter>
+    </None>
+    <None Include="..\sources\type\namespace.inl">
+      <Filter>type</Filter>
+    </None>
+    <None Include="..\sources\type\qualified_type.inl">
+      <Filter>type</Filter>
+    </None>
+    <None Include="..\sources\type\strnig_functors.inl">
+      <Filter>type</Filter>
+    </None>
+    <None Include="..\sources\type\type.inl">
+      <Filter>type</Filter>
+    </None>
+    <None Include="..\sources\type\type_qualification.inl">
+      <Filter>type</Filter>
+    </None>
+    <None Include="..\sources\type\type_traits.inl">
+      <Filter>type</Filter>
+    </None>
+    <None Include="..\sources\up_down_caster\up_down_caster.inl">
+      <Filter>up_down_caster</Filter>
+    </None>
+    <None Include="..\sources\up_down_caster\up_down_caster_acc.inl">
+      <Filter>up_down_caster</Filter>
+    </None>
+    <None Include="..\sources\up_down_caster\up_down_caster_acc_diagnostic.inl">
+      <Filter>up_down_caster</Filter>
+    </None>
+    <None Include="..\sources\up_down_caster\up_down_caster_fc.inl">
+      <Filter>up_down_caster</Filter>
+    </None>
+    <None Include="..\sources\up_down_caster\up_down_caster_offsettng.inl">
+      <Filter>up_down_caster</Filter>
+    </None>
+    <None Include="..\sources\up_down_caster\up_down_caster_offsettng_diagnostic.inl">
+      <Filter>up_down_caster</Filter>
+    </None>
+    <None Include="..\sources\mem\memory.inl">
+      <Filter>mem</Filter>
+    </None>
+    <None Include="..\sources\class\method_action_8.inl">
+      <Filter>class</Filter>
+    </None>
+    <None Include="..\sources\class\method_action_7.inl">
+      <Filter>class</Filter>
+    </None>
+    <None Include="..\sources\misc\string_output_stream.inl">
+      <Filter>misc</Filter>
+    </None>
+    <None Include="..\sources\misc\dynamic_string_stream.inl">
+      <Filter>misc</Filter>
+    </None>
+    <None Include="..\sources\std_reflection\std_map_reflection.inl">
+      <Filter>std_reflection</Filter>
+    </None>
+    <None Include="..\sources\std_reflection\std_reflection.inl">
+      <Filter>std_reflection</Filter>
+    </None>
+    <None Include="..\sources\misc\name_id_void.inl">
+      <Filter>misc</Filter>
+    </None>
+    <None Include="..\sources\misc\name_id.inl">
+      <Filter>misc</Filter>
+    </None>
+    <None Include="..\sources\std_reflection\std_vector_reflection.inl">
+      <Filter>std_reflection</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\sources\class\action.cpp">
+      <Filter>class</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\class\class.cpp">
+      <Filter>class</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\class\class_member.cpp">
+      <Filter>class</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\class\class_template.cpp">
+      <Filter>class</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\class\event_descriptor.cpp">
+      <Filter>class</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\class\parameter.cpp">
+      <Filter>class</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\class\parameter_list_stringizer.cpp">
+      <Filter>class</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\class\property.cpp">
+      <Filter>class</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\class\template_argument.cpp">
+      <Filter>class</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\class\type_inspector.cpp">
+      <Filter>class</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\collections\watch.cpp">
+      <Filter>collections</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\collections\watch_chain.cpp">
+      <Filter>collections</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\functions\functions.cpp">
+      <Filter>functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\misc\enum.cpp">
+      <Filter>misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\misc\event.cpp">
+      <Filter>misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\misc\from_string_buffer.cpp">
+      <Filter>misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\misc\name_id.cpp">
+      <Filter>misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\misc\primitive_type.cpp">
+      <Filter>misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\misc\static_const_string.cpp">
+      <Filter>misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\symbol\symbol.cpp">
+      <Filter>symbol</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\type\life_functions.cpp">
+      <Filter>type</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\type\namespace.cpp">
+      <Filter>type</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\type\namespace_reflection.cpp">
+      <Filter>type</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\type\qualified_type.cpp">
+      <Filter>type</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\type\strnig_functors.cpp">
+      <Filter>type</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\type\type.cpp">
+      <Filter>type</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\type\type_qualification.cpp">
+      <Filter>type</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\up_down_caster\up_down_caster_test.cpp">
+      <Filter>up_down_caster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\mem\memory.cpp">
+      <Filter>mem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\reflective.cpp" />
+    <ClCompile Include="..\sources\misc\string_output_stream.cpp">
+      <Filter>misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\misc\dynamic_string_stream.cpp">
+      <Filter>misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\collections\iterator.cpp">
+      <Filter>collections</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

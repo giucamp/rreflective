@@ -93,16 +93,16 @@ namespace reflective
 
 namespace reflective_externals
 {
-	#ifdef _MSC_VER
-		#define _PRIMITIVE_STRING_FUNCTORS_SPRINTF(FORMAT_SPEC) const int result = sprintf_s( str, 256, FORMAT_SPEC, var )
-		#define _PRIMITIVE_STRING_FUNCTORS_SCANF(FORMAT_SPEC)	const int result = sscanf_s( source_buffer.chars(), FORMAT_SPEC, object, &read_size )
-	#else
-		#define _PRIMITIVE_STRING_FUNCTORS_SPRINTF(FORMAT_SPEC) const int result = sprintf( str, FORMAT_SPEC, var )
-		#define _PRIMITIVE_STRING_FUNCTORS_SCANF(FORMAT_SPEC)	const int result = sscanf( source_buffer.chars(), FORMAT_SPEC, object, &read_size )
-	#endif
+#ifdef _MSC_VER
+#define _PRIMITIVE_STRING_FUNCTORS_SPRINTF(FORMAT_SPEC) const int result = sprintf_s( str, 256, FORMAT_SPEC, var )
+#define _PRIMITIVE_STRING_FUNCTORS_SCANF(FORMAT_SPEC)	const int result = sscanf_s( source_buffer.chars(), FORMAT_SPEC, typed_object, &read_size )
+#else
+#define _PRIMITIVE_STRING_FUNCTORS_SPRINTF(FORMAT_SPEC) const int result = sprintf( str, FORMAT_SPEC, var )
+#define _PRIMITIVE_STRING_FUNCTORS_SCANF(FORMAT_SPEC)	const int result = sscanf( source_buffer.chars(), FORMAT_SPEC, typed_object, &read_size )
+#endif
 
 	// _PRIMITIVE_STRING_FUNCTORS
-	#define _PRIMITIVE_STRING_FUNCTORS( TYPE, FORMAT_SPEC )	\
+#define _PRIMITIVE_STRING_FUNCTORS( TYPE, PR_FORMAT_SPEC, SCN_FORMAT_SPEC )	\
 		template <> \
 			inline void primitive_to_string<TYPE>( reflective::StringOutputStream & dest_buffer,  \
 				const reflective::Type & front_type, const void * object ) \
@@ -110,7 +110,7 @@ namespace reflective_externals
 				REFLECTIVE_UNUSED( front_type ); \
 				const TYPE & var = *(const TYPE*)( object ); \
 				char str[ 256 ]; \
-				_PRIMITIVE_STRING_FUNCTORS_SPRINTF(FORMAT_SPEC); \
+				_PRIMITIVE_STRING_FUNCTORS_SPRINTF(PR_FORMAT_SPEC); \
 				REFLECTIVE_UNUSED( result ); \
 				dest_buffer.append( str ); \
 			} \
@@ -118,27 +118,28 @@ namespace reflective_externals
 			inline bool primitive_assign_from_string<TYPE>( reflective::FromStringBuffer & source_buffer, \
 				const reflective::Type & front_type, void * object, StringOutputStream & error_buffer ) \
 		{ \
+			TYPE * typed_object = static_cast<TYPE*>(object); \
 			REFLECTIVE_UNUSED( front_type ); size_t read_size = 0; \
-			_PRIMITIVE_STRING_FUNCTORS_SCANF(FORMAT_SPEC "%n"); \
+			_PRIMITIVE_STRING_FUNCTORS_SCANF(SCN_FORMAT_SPEC "%n"); \
 			if( result != 1 ) { error_buffer.append_literal( "not a number" ); return false; } \
 			if( read_size < source_buffer.remaining_length() ) { error_buffer.append_literal( "spurious number" ); return false; } \
 			return true; \
 		} \
 
 
-	_PRIMITIVE_STRING_FUNCTORS( float, "%f" );
-	_PRIMITIVE_STRING_FUNCTORS( double, "%lf" );
-	_PRIMITIVE_STRING_FUNCTORS( long double, "%Lf" );
-	_PRIMITIVE_STRING_FUNCTORS( int, "%d" );
-	_PRIMITIVE_STRING_FUNCTORS( long, "%d" );
-	_PRIMITIVE_STRING_FUNCTORS( unsigned long, "%d" );
-	_PRIMITIVE_STRING_FUNCTORS( uint8_t, "%d" );
-	_PRIMITIVE_STRING_FUNCTORS( uint16_t, "%d" );
-	_PRIMITIVE_STRING_FUNCTORS( uint32_t, "%d" );
-	_PRIMITIVE_STRING_FUNCTORS( uint64_t, "%lld" );
-	_PRIMITIVE_STRING_FUNCTORS( void*, "0x%p" );
-	_PRIMITIVE_STRING_FUNCTORS( char, "%d" );
-	_PRIMITIVE_STRING_FUNCTORS( wchar_t, "%d" );
+	_PRIMITIVE_STRING_FUNCTORS( float, "%f", "%f" );
+	_PRIMITIVE_STRING_FUNCTORS( double, "%lf", "%lf" );
+	_PRIMITIVE_STRING_FUNCTORS( long double, "%Lf", "%Lf" );
+	_PRIMITIVE_STRING_FUNCTORS( int, "%d", "%d" );
+	_PRIMITIVE_STRING_FUNCTORS( long, "%d", "%d" );
+	_PRIMITIVE_STRING_FUNCTORS( unsigned long, "%d", "%d" );
+	_PRIMITIVE_STRING_FUNCTORS( uint8_t, "%"PRId8, "%"SCNd8 );
+	_PRIMITIVE_STRING_FUNCTORS( uint16_t, "%"PRId16, "%"SCNd16);
+	_PRIMITIVE_STRING_FUNCTORS( uint32_t, "%"PRId32, "%"SCNd32);
+	_PRIMITIVE_STRING_FUNCTORS( uint64_t, "%"PRId64, "%"SCNd64);
+	_PRIMITIVE_STRING_FUNCTORS( void*, "0x%p", "0x%p" );
+	_PRIMITIVE_STRING_FUNCTORS( char, "%d", "%d" );
+	_PRIMITIVE_STRING_FUNCTORS( wchar_t, "%d", "%d" );
 
 } // namespace reflective_externals
 

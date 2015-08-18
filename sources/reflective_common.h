@@ -44,6 +44,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <type_traits> 
 #include <limits>
 #include <string>
+#include <inttypes.h>
 
 #ifndef REFLECTIVE_IS_DEBUG
 	#error REFLECTIVE_IS_DEBUG must be defined
