@@ -143,3 +143,6 @@ namespace reflective_externals
 
 } // namespace reflective_externals
 
+#undef _PRIMITIVE_STRING_FUNCTORS
+
+
