@@ -12,6 +12,13 @@ namespace reflective
 		}
 	};
 
+	enum class SymbolType
+	{
+		primitive_type_symbol,
+		class_symbol,
+		enum_symbol
+	};
+
 	class Symbol
 	{
 	public:

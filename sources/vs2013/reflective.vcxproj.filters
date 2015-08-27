@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="core">
-      <UniqueIdentifier>{db18c095-47d7-490e-aaae-e3a22225a7aa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="type">
-      <UniqueIdentifier>{fbb2c830-fbe2-4ae6-9504-2a8fa165c772}</UniqueIdentifier>
-    </Filter>
     <Filter Include="class">
       <UniqueIdentifier>{8a7f1ee3-36fc-4f1c-abd6-33f6c8b95f11}</UniqueIdentifier>
     </Filter>
     <Filter Include="class\property">
       <UniqueIdentifier>{22b0283f-ce43-4767-b216-38d8540bd127}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core">
+      <UniqueIdentifier>{db18c095-47d7-490e-aaae-e3a22225a7aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="type">
+      <UniqueIdentifier>{fbb2c830-fbe2-4ae6-9504-2a8fa165c772}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -57,6 +57,7 @@
     <ClInclude Include="..\sources\class\ClassMember.h">
       <Filter>class</Filter>
     </ClInclude>
+    <ClInclude Include="..\sources\GetType.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\sources\type\QualifiedTypeRef.cpp">
@@ -89,5 +90,6 @@
     <None Include="..\sources\type\Type.inl">
       <Filter>type</Filter>
     </None>
+    <None Include="..\sources\GetType.inl" />
   </ItemGroup>
 </Project>

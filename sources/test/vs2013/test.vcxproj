@@ -67,6 +67,7 @@
     <ClCompile Include="..\main.cpp" />
     <ClCompile Include="..\name_test.cpp" />
     <ClCompile Include="..\special_functions_test.cpp" />
+    <ClCompile Include="..\type_test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\vs2013\reflective.vcxproj">

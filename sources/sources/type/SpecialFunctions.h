@@ -1,4 +1,5 @@
 
+#pragma once
 #include "..\reflective_common.h"
 
 namespace reflective
