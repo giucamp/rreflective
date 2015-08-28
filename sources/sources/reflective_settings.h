@@ -14,6 +14,10 @@ namespace reflective
 	using SymbolName = Identifier< StringHasher<uint32_t>, PtrString >;
 }
 
+#define REFLECTIVE_ASSERT_ENABLED 1
+
+#define REFLECTIVE_ASSERT(i_value, i_error_message)		assert(i_value);
+
 #define constexpr
 
 
