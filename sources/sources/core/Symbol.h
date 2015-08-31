@@ -29,8 +29,14 @@ namespace reflective
 		Symbol(SymbolName && i_name)
 			: m_name(std::move(i_name)) { }
 
-		const SymbolName & name() const			
-			{ return m_name; }
+		Symbol(const Symbol &) = delete;
+
+		Symbol & operator = (const Symbol &) = delete;
+
+		const SymbolName & name() const
+		{
+			return m_name;
+		}
 
 	private:
 		const SymbolName m_name;
