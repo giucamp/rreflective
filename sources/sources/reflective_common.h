@@ -9,10 +9,13 @@
 #include <unordered_map>
 #include <assert.h>
 
-#include "reflective_common.h"
+#include "reflective_settings.h"
 
 namespace reflective
 {
+	template <typename TYPE>
+		using vector = std::vector< TYPE, Allocator<TYPE> > ;
+
 				// address functions
 
 	inline bool is_power_of_2(size_t i_number)
@@ -22,7 +25,7 @@ namespace reflective
 	
 	inline bool is_address_aligned(const void * i_address, size_t i_alignment)
 	{
-		assert( is_power_of_2(i_alignment) );
+		REFLECTIVE_ASSERT( is_power_of_2(i_alignment), "the alignment is not a power of 2" );
 		return (reinterpret_cast<uintptr_t>(i_address) & (i_alignment - 1)) == 0;
 	}
 
@@ -37,6 +40,6 @@ namespace reflective
 	{
 		return i_objects_start <= i_objects_end &&
 			is_address_aligned(i_objects_start) && is_address_aligned(i_objects_end) &&
-			(reinterpret_cast<uintptr_t>(i_objects_end)-reinterpret_cast<uintptr_t>(i_objects_start)) % sizeof(TYPE) == 0;
+			(reinterpret_cast<uintptr_t>(i_objects_end) - reinterpret_cast<uintptr_t>(i_objects_start)) % sizeof(TYPE) == 0;
 	}
 }

@@ -1,6 +1,9 @@
 
 #pragma once
-#include "../reflective_settings.h"
+#include "../reflective_common.h"
+#include "PtrString.h"
+#include "Identifier.h"
+#include "StringHash.h"
 
 namespace reflective
 {
@@ -23,10 +26,7 @@ namespace reflective
 	{
 	public:
 
-		Symbol(const SymbolName & i_name)
-			: m_name(i_name) { }
-
-		Symbol(SymbolName && i_name)
+		Symbol(SymbolName i_name)
 			: m_name(std::move(i_name)) { }
 
 		const SymbolName & name() const			

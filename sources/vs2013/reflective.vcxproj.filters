@@ -58,6 +58,12 @@
       <Filter>class</Filter>
     </ClInclude>
     <ClInclude Include="..\sources\GetType.h" />
+    <ClInclude Include="..\sources\core\Streams.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\class\property\DataMemberProperty.h">
+      <Filter>class\property</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\sources\type\QualifiedTypeRef.cpp">
@@ -82,6 +88,9 @@
       <Filter>class</Filter>
     </ClCompile>
     <ClCompile Include="..\sources\Namespace.cpp" />
+    <ClCompile Include="..\sources\core\Streams.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\sources\type\SpecialFunctions.inl">

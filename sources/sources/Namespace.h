@@ -9,25 +9,21 @@ namespace reflective
 	{
 	public:
 
-		Namespace(const SymbolName & i_name)
-			: Symbol(i_name){}
-
-		Namespace(SymbolName && i_name)
+		Namespace(SymbolName i_name)
 			: Symbol(std::move(i_name)) { }
 
-		void add_child_type(std::unique_ptr<Type> && i_source)
+		void add_type(const Type & i_type)
 		{
-			m_types.insert(std::make_pair(i_source->name(), std::move(i_source)));
+			m_types.push_back(&i_type);
 		}
 
-		void add_child_namespace(std::unique_ptr<Namespace> && i_source)
+		void add_type(const Namespace & i_namespace)
 		{
-			m_namespaces.insert(std::make_pair(i_source->name(), std::move(i_source)));
+			m_namespace.push_back(&i_namespace);
 		}
 
 	private:
-
-		std::unordered_map<SymbolName, std::unique_ptr<Type>, SymbolNameHasher> m_types;
-		std::unordered_map<SymbolName, std::unique_ptr<Namespace>, SymbolNameHasher> m_namespaces;
+		vector< const Type * > m_types;
+		vector< const Namespace * > m_namespace;
 	};
 }

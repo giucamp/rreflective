@@ -24,7 +24,7 @@ namespace reflective
 			{
 				TYPE * const start = static_cast<TYPE*>(i_objects_start);
 				TYPE * const end = static_cast<TYPE*>(i_objects_end);
-				assert(is_valid_range(start, end));
+				REFLECTIVE_ASSERT(is_valid_range(start, end), "The object range is invalid");
 				for (TYPE * curr = start; curr < end; curr++)
 				{
 					new (curr) TYPE();
@@ -56,7 +56,7 @@ namespace reflective
 				TYPE * const dest_end = static_cast<TYPE*>(i_objects_end);
 				const TYPE * const source_start = static_cast<const TYPE*>(i_source_start);
 
-				assert(is_valid_range(dest_start, dest_end));
+				REFLECTIVE_ASSERT(is_valid_range(dest_start, dest_end), "The object range is invalid");
 				const TYPE * source = source_start;
 				for (TYPE * dest = dest_start; dest < dest_end; dest++, source++)
 				{
@@ -90,7 +90,7 @@ namespace reflective
 				TYPE * const dest_end = static_cast<TYPE*>(i_objects_end);
 				TYPE * const source_start = static_cast<TYPE*>(i_source_start);
 
-				assert(is_valid_range(dest_start, dest_end));
+				REFLECTIVE_ASSERT(is_valid_range(dest_start, dest_end), "The object range is invalid");
 				TYPE * source = source_start;
 				for (TYPE * dest = dest_start; dest < dest_end; dest++, source++)
 				{
@@ -121,7 +121,7 @@ namespace reflective
 			{
 				TYPE * const start = static_cast<TYPE*>(i_objects_start);
 				TYPE * const end = static_cast<TYPE*>(i_objects_end);
-				assert(is_valid_range(start, end));
+				REFLECTIVE_ASSERT(is_valid_range(start, end), "The object range is invalid");
 				for (TYPE * curr = start; curr < end; curr++)
 				{
 					curr->~TYPE();

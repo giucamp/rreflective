@@ -23,14 +23,12 @@ namespace reflective
 			TextOutStream & operator << (const char(&literal_tring)[ARRAY_SIZE])			{ write(i_text, ARRAY_SIZE - 1);  return *this; }
 
 	private:
-		#ifdef _DEBUG
-			char * m_dbg_buffer; /**< pointer to the beginning of the buffer (which can be nullptr). The stream does not need
-										this, so it is provided only in debug.*/
-		#endif
 		char * m_next_char_to_write;
 		char * m_end_of_buffer;
 		size_t m_needed_length; /**< chars written to the stream, interdependently from the actual buffer length */
+		#ifdef _DEBUG
+			char * m_dbg_buffer; /**< pointer to the beginning of the buffer (which can be nullptr). The stream does not need
+									 this, so it is provided only in debug.*/
+		#endif
 	};
 }
-
-#include "Streams.inl"

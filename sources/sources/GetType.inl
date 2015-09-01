@@ -12,7 +12,7 @@ namespace reflective
 		template <typename TYPE>
 			SymbolName get_type_name()
 		{
-			return "MyType";
+			return typeid(TYPE).name();
 		}
 
 		template <typename TYPE, SymbolType SYMBOL_TYPE > 
@@ -68,14 +68,6 @@ namespace reflective
 					s_type = type;
 				}
 				return *type;
-			}
-
-			/** Returns the reflective::Type object */
-			static const Type & fast_get()
-			{
-				assert(s_type != nullptr); /** The type has not yet been set. Probably you are calling get_type<TYPE>()
-										   during the initialization of global variables. */
-				return *s_type;
 			}
 		};
 

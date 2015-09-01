@@ -16,6 +16,12 @@ namespace reflective
 
 		static const uint32_t s_empty_hash = 5381;
 
+		ResultType operator() (const char * i_string) const
+		{
+			PtrString a(i_string);
+			return this->operator()(PtrString(i_string));
+		}
+
 		template <typename STRING>
 			ResultType operator() (const STRING & i_string) const
 		{
@@ -24,17 +30,11 @@ namespace reflective
 				this algorithm (now favored by bernstein) uses xor: hash(i) = hash(i - 1) * 33 ^ str[i]; the magic of number
 				33 (why it works better than many other constants, prime or not) has never been adequately explained." */
 			ResultType result = s_empty_hash;
-			for (auto c : i_string)
+			for (const auto c : i_string)
 			{
 				result = (result << 5) + (result + c);
 			}
 			return result;
-		}
-
-		template <typename STRING>
-			ResultType const_expr_hash(const STRING & i_string) const
-		{
-			return operator()();
 		}
 	};
 }

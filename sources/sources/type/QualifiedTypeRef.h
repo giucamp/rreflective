@@ -2,6 +2,7 @@
 #pragma once
 #include "Type.h"
 #include "StaticQualification.h"
+#include "..\GetType.h"
 
 namespace reflective
 {
@@ -16,6 +17,8 @@ namespace reflective
 		QualifiedTypeRef(const QualifiedTypeRef & i_source) = default;
 
 		QualifiedTypeRef & operator = (const QualifiedTypeRef & i_source) = delete;
+
+		const Type & front_type() const									{ return m_indirection_levels > 0 ? get_type<void*>() : m_underlying_type; }
 			
 		const Type & underlying_type() const							{ return m_underlying_type; }
 
@@ -32,6 +35,9 @@ namespace reflective
 		bool operator == (const QualifiedTypeRef & i_source) const;
 
 		bool operator != (const QualifiedTypeRef & i_source) const		{ return !operator == (i_source); }
+
+		template <typename OUT_STREAM>
+			void to_string(OUT_STREAM & i_dest);
 
 	private:
 		const Type & m_underlying_type;

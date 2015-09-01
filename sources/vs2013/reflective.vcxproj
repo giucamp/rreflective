@@ -66,9 +66,11 @@
   <ItemGroup>
     <ClInclude Include="..\sources\class\Class.h" />
     <ClInclude Include="..\sources\class\ClassMember.h" />
+    <ClInclude Include="..\sources\class\property\DataMemberProperty.h" />
     <ClInclude Include="..\sources\class\property\Property.h" />
     <ClInclude Include="..\sources\core\PtrString.h" />
     <ClInclude Include="..\sources\core\Identifier.h" />
+    <ClInclude Include="..\sources\core\Streams.h" />
     <ClInclude Include="..\sources\core\StringHash.h" />
     <ClInclude Include="..\sources\core\Symbol.h" />
     <ClInclude Include="..\sources\core\SymbolList.h" />
@@ -86,6 +88,7 @@
     <ClCompile Include="..\sources\class\Class.cpp" />
     <ClCompile Include="..\sources\class\ClassMember.cpp" />
     <ClCompile Include="..\sources\class\property\Property.cpp" />
+    <ClCompile Include="..\sources\core\Streams.cpp" />
     <ClCompile Include="..\sources\Namespace.cpp" />
     <ClCompile Include="..\sources\type\Qualification.cpp" />
     <ClCompile Include="..\sources\type\QualifiedTypeRef.cpp" />

@@ -15,9 +15,6 @@ namespace reflective
 		PtrString()
 			: m_chars(nullptr) {}
 
-		PtrString(nullptr_t)
-			: m_chars(nullptr) {}
-
 		PtrString(const char * i_chars)
 			: m_chars(i_chars) { }
 
