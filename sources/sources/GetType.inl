@@ -80,4 +80,15 @@ namespace reflective
 	{
 		return details::TypeContainer<TYPE>::get();
 	}
+
+	inline const Namespace & root_namespace()
+	{
+		return edit_root_namespace();
+	}
+
+	inline Namespace & edit_root_namespace()
+	{
+		static Namespace root(nullptr, "");
+		return root;
+	}
 }
