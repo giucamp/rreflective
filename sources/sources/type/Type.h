@@ -5,6 +5,9 @@
 
 namespace reflective
 {
+	class Namespace;
+
+
 	class Type : public Symbol
 	{
 	public:

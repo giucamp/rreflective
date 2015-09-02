@@ -24,7 +24,9 @@ namespace reflective
 		{
 			static inline const Type * create()
 			{
-				return new Type(get_type_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value, get_special_functions<TYPE>());
+				Type * new_type new Type(get_type_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value, get_special_functions<TYPE>());
+				setup_type<TYPE>(*new_type);
+				return new_type;
 			}
 		};
 
