@@ -25,6 +25,11 @@ namespace reflective
 		SpecialFunctions m_special_functions;
 		const uint32_t m_size : 24;
 		const uint32_t m_alignment : 8;
+
+		// namasace data
+		const Namespace * m_parent_namespace;
+		Type * m_next_type_in_namespace;
+		friend class Namespace;
 	};
 }
 
