@@ -1,6 +1,4 @@
 
-#include "SpecialFunctions.h"
-
 namespace reflective
 {
 	SpecialFunctions::SpecialFunctions(ScalarTor i_scalar_default_constructor, CopyConstructor i_scalar_copy_constructor,

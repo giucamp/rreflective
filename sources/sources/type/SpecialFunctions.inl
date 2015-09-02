@@ -1,6 +1,4 @@
 
-#include "..\reflective_common.h"
-
 namespace reflective
 {
 	namespace detail

@@ -32,6 +32,3 @@ namespace reflective
 	template <typename TYPE>
 		SpecialFunctions get_special_functions();
 }
-
-#include "SpecialFunctions.inl"
-

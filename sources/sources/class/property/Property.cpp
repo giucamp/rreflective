@@ -1,7 +1,4 @@
 
-#include "Property.h"
-
-
 namespace reflective
 {
 	bool Property::get_value(const void * i_owner_object, void * i_dest, TextOutStream * i_error_stream) const

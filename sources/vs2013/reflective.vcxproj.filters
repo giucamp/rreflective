@@ -64,6 +64,7 @@
     <ClInclude Include="..\sources\class\property\DataMemberProperty.h">
       <Filter>class\property</Filter>
     </ClInclude>
+    <ClInclude Include="..\sources\reflective.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\sources\type\QualifiedTypeRef.cpp">
@@ -91,6 +92,7 @@
     <ClCompile Include="..\sources\core\Streams.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="..\sources\reflective.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\sources\type\SpecialFunctions.inl">

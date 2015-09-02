@@ -10,7 +10,7 @@ namespace reflective
 	namespace details
 	{
 		template <typename TYPE>
-			SymbolName get_type_name()
+			SymbolName get_type_full_name()
 		{
 			return typeid(TYPE).name();
 		}
@@ -24,7 +24,7 @@ namespace reflective
 		{
 			static inline const Type * create()
 			{
-				Type * new_type new Type(get_type_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value, get_special_functions<TYPE>());
+				Type * new_type new Type(get_type_full_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value, get_special_functions<TYPE>());
 				setup_type<TYPE>(*new_type);
 				return new_type;
 			}
@@ -36,7 +36,7 @@ namespace reflective
 		{
 			static inline const Class * create()
 			{
-				Class * class_obj = new Class(get_type_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value, get_special_functions<TYPE>());
+				Class * class_obj = new Class(get_type_full_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value, get_special_functions<TYPE>());
 				setup_type<TYPE>(*class_obj);
 				return class_obj;
 			}
@@ -90,7 +90,7 @@ namespace reflective
 
 	inline Namespace & edit_root_namespace()
 	{
-		static Namespace root(nullptr, "");
+		static Namespace root("");
 		return root;
 	}
 }
