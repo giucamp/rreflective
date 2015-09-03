@@ -1,8 +1,34 @@
+/***********************************************************************************
+
+Copyright 2011-2012 Giuseppe Campana - giu.campana@gmail.com
+All rights reserved
+
+Redistribution and use in source and binary forms, with or without modification, are
+permitted provided that the following conditions are met:
+
+   1. Redistributions of source code must retain the above copyright notice, this list of
+      conditions and the following disclaimer.
+
+   2. Redistributions in binary form must reproduce the above copyright notice, this list
+      of conditions and the following disclaimer in the documentation and/or other materials
+      provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY GIUSEPPE CAMPANA ''AS IS'' AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL GIUSEPPE CAMPANA OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+***********************************************************************************/
 
 #pragma once
-#include "Type.h"
-#include "StaticQualification.h"
-#include "..\GetType.h"
+#ifndef INCLUDING_REFLECTIVE
+	#error "cant't include this header directly, include reflective.h instead"
+#endif
 
 namespace reflective
 {
@@ -18,7 +44,7 @@ namespace reflective
 
 		QualifiedTypeRef & operator = (const QualifiedTypeRef & i_source) = delete;
 
-		const Type & front_type() const									{ return m_indirection_levels > 0 ? get_type<void*>() : m_underlying_type; }
+		const Type & front_type() const;
 			
 		const Type & underlying_type() const							{ return m_underlying_type; }
 
@@ -47,13 +73,5 @@ namespace reflective
 	};
 
 	template <typename TYPE>
-		QualifiedTypeRef get_qualified_type()
-	{
-		static_assert(StaticQualification<TYPE>::s_indirection_levels < s_max_indirection_levels);
-
-		return QualifiedTypeRef(get_type<TYPE>(), 
-			StaticQualification<TYPE>::s_indirection_levels,
-			StaticQualification<TYPE>::s_constness_word,
-			StaticQualification<TYPE>::s_volatileness_word );			
-	}
+		QualifiedTypeRef get_qualified_type();
 }

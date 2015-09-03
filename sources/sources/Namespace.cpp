@@ -1,7 +1,4 @@
 
-
-#include "namespace.h"
-
 namespace reflective
 {
 	Namespace::Namespace(SymbolName i_name)

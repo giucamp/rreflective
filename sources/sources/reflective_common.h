@@ -37,28 +37,59 @@ namespace reflective
 
 				// address functions
 
+	/** Returns true whether the given unsigned integer number is a power of 2 (1, 2, 4, 8, ...)
+		@param i_number must be > 0, otherwise the behavior is undefined */
 	inline bool is_power_of_2(size_t i_number)
 	{
+		REFLECTIVE_ASSERT(i_number > 0);
 		return (i_number & (i_number - 1)) == 0;
 	}
-	
+
+	/** Returns true whether the given address has the specified alignment
+		@param i_address address to be checked
+		@i_alignment must be > 0 and a power of 2 */
 	inline bool is_address_aligned(const void * i_address, size_t i_alignment)
 	{
-		REFLECTIVE_ASSERT( is_power_of_2(i_alignment), "the alignment is not a power of 2" );
+		REFLECTIVE_ASSERT(i_alignment > 0 && is_power_of_2(i_alignment), "the alignment is not a power of 2 or is zero");
 		return (reinterpret_cast<uintptr_t>(i_address) & (i_alignment - 1)) == 0;
 	}
 
+	/** Returns true whether the given address has the alignment for the type it points to
+		@param i_address address to be checked */
 	template <typename TYPE>
 		inline bool is_address_aligned(const TYPE * i_address)
 	{
 		return is_address_aligned(i_address, std::alignment_of<TYPE>::value);
 	}
 
+	/** Returns true whether the given pair of pointers enclose a valid array of objects of the type. This function is intended to validate
+			an input array.
+		@param i_objects_start inclusive lower bound of the array
+		@param i_objects_end exclusive upper bound of the array
+		@return true if and only if all the following conditions are true:
+			- i_objects_start <= i_objects_end
+			- the difference (in bytes) between i_objects_end and i_objects_start is a multiple of the size of TYPE
+			- both i_objects_start and i_objects_end respects the alignment for TYPE. */
 	template <typename TYPE>
 		inline bool is_valid_range(const TYPE * i_objects_start, const TYPE * i_objects_end)
 	{
-		return i_objects_start <= i_objects_end &&
-			is_address_aligned(i_objects_start) && is_address_aligned(i_objects_end) &&
-			(reinterpret_cast<uintptr_t>(i_objects_end) - reinterpret_cast<uintptr_t>(i_objects_start)) % sizeof(TYPE) == 0;
+		if (i_objects_start > i_objects_end)
+		{
+			return false;
+		}
+		if( !is_address_aligned(i_objects_start) )
+		{
+			return false;
+		}
+		if( !is_address_aligned(i_objects_end) )
+		{
+			return false;
+		}
+		const uintptr_t diff = reinterpret_cast<uintptr_t>(i_objects_end)-reinterpret_cast<uintptr_t>(i_objects_start);
+		if (diff % sizeof(TYPE) != 0)
+		{
+			return false;
+		}
+		return true;
 	}
 }

@@ -32,15 +32,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	template < typename HASHER, typename STRING >
-		class Identifier;
-
-	template < typename UINT>
-		class StringHasher;
-
-	class PtrString;
-
-	using SymbolName = Identifier< StringHasher<uint32_t>, PtrString >;
+	using SymbolName = Identifier < StringHasher<uint32_t>, PtrString >;
 
 	template <typename TYPE>
 		using Allocator = std::allocator<TYPE>;
