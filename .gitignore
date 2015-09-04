@@ -5,9 +5,12 @@
 *.dll
 *.pdb
 *.user
+*.log
+*.suo
 *.tlog
 *.idb
 *.sdf
+*.ilk
 *.lib
 *.opensd
-*.opensd
+*.opensdf

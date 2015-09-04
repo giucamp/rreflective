@@ -66,13 +66,15 @@ namespace reflective
 
 		}
 
+		struct Make {};
+
 		/** forwarding constructor */
-		/*template<typename FIRST_PARAMETER, typename... OTHER_PARAMETERS>
-			Identifier(FIRST_PARAMETER && i_first_parameter, OTHER_PARAMETERS &&... i_other_parameters)
-				: m_string(i_first_parameter, i_other_parameters...)
+		template<typename... PARAMETERS>
+			Identifier(Make i_make, PARAMETERS &&... i_parameters)
+				: m_string(i_parameters...)
 		{
-			m_hash = Hasher()(std::forward<FIRST_PARAMETER>(i_first_parameter), std::forward<OTHER_PARAMETERS>(i_other_parameters)...);
-		}*/
+			m_hash = Hasher()(std::forward<PARAMETERS>(i_parameters)...);
+		}
 
 		template<typename FIRST_PARAMETER>
 			Identifier(const FIRST_PARAMETER & i_first_parameter)
@@ -178,10 +180,12 @@ namespace reflective
 
 		}
 
+		struct Make {};
+
 		/** forwarding constructor */
-		template<typename FIRST_PARAMETER, typename... OTHER_PARAMETERS>
-			Identifier(FIRST_PARAMETER && i_first_parameter, OTHER_PARAMETERS &&... i_other_parameters)
-				: m_hash(Hasher()(std::forward<FIRST_PARAMETER>(i_first_parameter), std::forward<OTHER_PARAMETERS>(i_other_parameters)...))
+		template<typename... PARAMETERS>
+			Identifier(Make i_make, PARAMETERS &&... i_parameters)
+				: m_hash(Hasher()(std::forward<PARAMETERS>(i_parameters)...))
 		{
 			
 		}

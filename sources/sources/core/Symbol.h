@@ -15,6 +15,12 @@ namespace reflective
 		}
 	};
 
+	template<typename... PARAMETERS>
+		inline SymbolName make_symbol_name(PARAMETERS &&... i_parameters)
+	{
+		return SymbolName(SymbolName::Make(), std::forward<PARAMETERS>(i_parameters)...);
+	}	
+
 	enum class SymbolType
 	{
 		primitive_type_symbol,
