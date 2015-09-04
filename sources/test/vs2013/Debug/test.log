@@ -1,8 +1,0 @@
-﻿  type_test.cpp
-  name_test.cpp
-c:\users\giuseppe.campana\documents\github\rreflective\sources\sources\core\stringhash.h(21): error C2079: 'a' uses undefined class 'reflective::PtrString'
-c:\users\giuseppe.campana\documents\github\rreflective\sources\sources\core\stringhash.h(21): error C2440: 'initializing' : cannot convert from 'const char *' to 'int'
-          There is no context in which this conversion is possible
-c:\users\giuseppe.campana\documents\github\rreflective\sources\sources\core\stringhash.h(22): error C2440: '<function-style-cast>' : cannot convert from 'const char *' to 'reflective::PtrString'
-          Source or target has incomplete type
-  Generating Code...
