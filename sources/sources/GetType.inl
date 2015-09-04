@@ -90,8 +90,7 @@ namespace reflective
 
 	inline Namespace & edit_root_namespace()
 	{
-		SymbolName s;
-		static Namespace root(s);
+		static Namespace root(SymbolName{});
 		return root;
 	}
 }

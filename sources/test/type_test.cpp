@@ -4,13 +4,16 @@
 #include <cstdlib>
 #include "..\sources\reflective.h"
 
-namespace
+namespace MyNamespace
 {
-	class A
+	namespace OtherNamespace
 	{
-	public:
-		int m_intVar = 0;
-	};
+		class A
+		{
+		public:
+			int m_intVar = 0;
+		};
+	}
 }
 
 
@@ -19,7 +22,7 @@ void Type_test()
 	using namespace reflective;
 	using namespace std;
 
-	const Type & A_type = get_type<A>();
+	const Type & A_type = get_type<MyNamespace::OtherNamespace::A>();
 
 	//system("PAUSE");
 }

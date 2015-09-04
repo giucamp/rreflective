@@ -1,9 +1,7 @@
 
-#include "Streams.h"
-
 namespace reflective
 {
-	TextOutStream::TextOutStream()
+	TextOutBuffer::TextOutBuffer()
 	{
 		m_next_char_to_write = nullptr;
 		m_end_of_buffer = nullptr;
@@ -13,7 +11,7 @@ namespace reflective
 		#endif
 	}
 
-	TextOutStream::TextOutStream(char * i_buffer, size_t i_buffer_size)
+	TextOutBuffer::TextOutBuffer(char * i_buffer, size_t i_buffer_size)
 	{
 		m_next_char_to_write = i_buffer;
 		if (i_buffer_size > 0)
@@ -28,7 +26,20 @@ namespace reflective
 		#endif
 	}
 
-	void TextOutStream::write(const char * i_string, const size_t i_string_length)
+	void TextOutBuffer::write(char i_char)
+	{
+		m_needed_length++;
+
+		char * new_pos = m_next_char_to_write + 1;
+		if (new_pos < m_end_of_buffer)
+		{
+			*m_next_char_to_write = i_char;
+			*new_pos = 0;
+			m_next_char_to_write = new_pos;
+		}
+	}
+
+	void TextOutBuffer::write(const char * i_string, const size_t i_string_length)
 	{
 		m_needed_length += i_string_length;
 

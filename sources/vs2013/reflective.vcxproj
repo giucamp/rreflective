@@ -121,7 +121,8 @@
     <ClInclude Include="..\sources\class\property\Property.h" />
     <ClInclude Include="..\sources\core\PtrString.h" />
     <ClInclude Include="..\sources\core\Identifier.h" />
-    <ClInclude Include="..\sources\core\Streams.h" />
+    <ClInclude Include="..\sources\core\TextInBuffer.h" />
+    <ClInclude Include="..\sources\core\TextOutBuffer.h" />
     <ClInclude Include="..\sources\core\StringHash.h" />
     <ClInclude Include="..\sources\core\Symbol.h" />
     <ClInclude Include="..\sources\core\SymbolList.h" />
@@ -160,7 +161,13 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\sources\core\Streams.cpp">
+    <ClCompile Include="..\sources\core\TextInBuffer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\core\TextOutBuffer.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

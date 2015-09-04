@@ -32,32 +32,42 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	class Property : public ClassMember
+	class TextInBuffer
 	{
 	public:
 
-		Property(SymbolName i_name, QualifiedTypeRef i_type, ClassMember::Flags i_flags )
-			: ClassMember(std::move(i_name), i_flags), m_type(i_type) { }
+		TextInBuffer(const char * i_buffer, size_t i_length);
 
-		const QualifiedTypeRef & type() const	{ return m_type; }
+		template <size_t ARRAY_SIZE>
+			TextInBuffer(char (&i_string)[ARRAY_SIZE])
+				: TextInBuffer(i_string, ARRAY_SIZE)
+					{ }
 
-		bool get_value(const void * i_owner_object, void * i_dest, TextOutBuffer * i_error_stream) const;
+		TextInBuffer(const char * i_null_terminated_string)
+			: TextInBuffer(i_null_terminated_string, strlen(i_null_terminated_string))
+				{ }
 
-		bool set_value(const void * i_owner_object, const void * i_source, TextOutBuffer * i_error_stream) const;
 
-		const void * get_value_inplace(const void * i_owner_object, TextOutBuffer * i_error_stream) const;
+			// accept
 
-		void * get_editable_value_inplace(void * i_owner_object, TextOutBuffer * i_error_stream) const;
+		bool accept(char i_character);
 
-	protected:
+		bool accept(const char * i_null_terminated_string);
 
-		virtual void * get_value_inplace_impl(void * i_owner_object, TextOutBuffer * i_error_stream) const = 0;
+		bool accept(const char * i_string, size_t i_string_length);
 
-		virtual bool get_value_impl(const void * i_owner_object, void * i_dest, TextOutBuffer * i_error_stream) const = 0;
+		template <size_t ARRAY_SIZE>
+			bool accept(char(&i_string)[ARRAY_SIZE])
+		{
+			return accept(i_string, i_string_length - 1);
+		}
 
-		virtual bool set_value_impl(const void * i_owner_object, const void * i_source, TextOutBuffer * i_error_stream) const = 0;
-		
 	private:
-		const QualifiedTypeRef m_type;
+		const char * m_next_char_to_read;
+		const char * m_end_of_buffer;
+		#ifdef _DEBUG
+			const char * m_dbg_buffer; /**< pointer to the beginning of the buffer (which can be nullptr). The stream does not need
+									this, so it is provided only in debug.*/
+		#endif
 	};
 }

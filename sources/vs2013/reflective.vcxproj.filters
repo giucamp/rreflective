@@ -58,13 +58,16 @@
       <Filter>class</Filter>
     </ClInclude>
     <ClInclude Include="..\sources\GetType.h" />
-    <ClInclude Include="..\sources\core\Streams.h">
-      <Filter>core</Filter>
-    </ClInclude>
     <ClInclude Include="..\sources\class\property\DataMemberProperty.h">
       <Filter>class\property</Filter>
     </ClInclude>
     <ClInclude Include="..\sources\reflective.h" />
+    <ClInclude Include="..\sources\core\TextOutBuffer.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\core\TextInBuffer.h">
+      <Filter>core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\sources\type\QualifiedTypeRef.cpp">
@@ -89,10 +92,13 @@
       <Filter>class</Filter>
     </ClCompile>
     <ClCompile Include="..\sources\Namespace.cpp" />
-    <ClCompile Include="..\sources\core\Streams.cpp">
+    <ClCompile Include="..\sources\reflective.cpp" />
+    <ClCompile Include="..\sources\core\TextOutBuffer.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="..\sources\reflective.cpp" />
+    <ClCompile Include="..\sources\core\TextInBuffer.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\sources\type\SpecialFunctions.inl">
