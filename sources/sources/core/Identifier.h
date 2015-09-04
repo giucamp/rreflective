@@ -74,12 +74,12 @@ namespace reflective
 			m_hash = Hasher()(std::forward<FIRST_PARAMETER>(i_first_parameter), std::forward<OTHER_PARAMETERS>(i_other_parameters)...);
 		}*/
 
-		/*template<typename FIRST_PARAMETER>
-			Identifier(FIRST_PARAMETER && i_first_parameter)
-		: m_string(i_first_parameter)
+		template<typename FIRST_PARAMETER>
+			Identifier(const FIRST_PARAMETER & i_first_parameter)
+				: m_string(i_first_parameter)
 		{
-		m_hash = Hasher()(std::forward<FIRST_PARAMETER>(i_first_parameter));
-		}*/
+			m_hash = Hasher()(i_first_parameter);
+		}
 
 
 					// assignments

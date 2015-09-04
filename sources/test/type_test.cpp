@@ -2,7 +2,7 @@
 #include <string>
 #include <iostream>
 #include <cstdlib>
-#include "..\sources\GetType.h"
+#include "..\sources\reflective.h"
 
 namespace
 {

@@ -2,9 +2,7 @@
 #include <string>
 #include <iostream>
 #include <cstdlib>
-#include "..\sources\core\Identifier.h"
-#include "..\sources\core\PtrString.h"
-#include "..\sources\core\symbol.h"
+#include "..\sources\reflective.h"
 
 void Name_test()
 {

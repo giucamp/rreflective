@@ -2,7 +2,7 @@
 #include <string>
 #include <iostream>
 #include <cstdlib>
-#include "..\sources\type\SpecialFunctions.h"
+#include "..\sources\reflective.h"
 
 class A
 {

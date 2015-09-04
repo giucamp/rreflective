@@ -1,4 +1,4 @@
-/***********************************************************************************
+ /***********************************************************************************
 
 Copyright 2011-2012 Giuseppe Campana - giu.campana@gmail.com
 All rights reserved
@@ -77,14 +77,17 @@ namespace reflective
 #include "type\SpecialFunctions.h"
 #include "type\Type.h"
 #include "class\ClassMember.h"
+#include "type\QualifiedTypeRef.h"
 #include "class\property\Property.h"
 #include "class\Class.h"
-#include "type\GetType.h"
+#include "GetType.h"
+#include "Namespace.h"
 #include "type\StaticQualification.h"
-#include "type\QualifiedTypeRef.h"
 
 // inlines
 #include "type\SpecialFunctions.inl"
+#include "type\Type.inl"
 #include "type\QualifiedTypeRef.inl"
+#include "GetType.inl"
 
 #undef INCLUDING_REFLECTIVE

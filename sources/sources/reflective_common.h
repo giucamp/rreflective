@@ -41,7 +41,7 @@ namespace reflective
 		@param i_number must be > 0, otherwise the behavior is undefined */
 	inline bool is_power_of_2(size_t i_number)
 	{
-		REFLECTIVE_ASSERT(i_number > 0);
+		REFLECTIVE_ASSERT(i_number > 0, "invalid argument");
 		return (i_number & (i_number - 1)) == 0;
 	}
 

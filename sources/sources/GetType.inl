@@ -24,7 +24,7 @@ namespace reflective
 		{
 			static inline const Type * create()
 			{
-				Type * new_type new Type(get_type_full_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value, get_special_functions<TYPE>());
+				Type * new_type = new Type(get_type_full_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value, get_special_functions<TYPE>());
 				setup_type<TYPE>(*new_type);
 				return new_type;
 			}
@@ -90,7 +90,8 @@ namespace reflective
 
 	inline Namespace & edit_root_namespace()
 	{
-		static Namespace root("");
+		SymbolName s;
+		static Namespace root(s);
 		return root;
 	}
 }

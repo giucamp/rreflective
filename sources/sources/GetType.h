@@ -42,5 +42,3 @@ namespace reflective
 	template <typename TYPE>
 		const Class * get_class();
 }
-
-#include "GetType.inl"
