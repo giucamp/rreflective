@@ -15,9 +15,13 @@ namespace reflective
 	{
 		m_next_char_to_write = i_buffer;
 		if (i_buffer_size > 0)
+		{
 			m_end_of_buffer = i_buffer + (i_buffer_size - 1);
+		}
 		else
+		{
 			m_end_of_buffer = i_buffer;
+		}
 
 		m_needed_length = 0;
 
@@ -31,7 +35,7 @@ namespace reflective
 		m_needed_length++;
 
 		char * new_pos = m_next_char_to_write + 1;
-		if (new_pos < m_end_of_buffer)
+		if (new_pos <= m_end_of_buffer)
 		{
 			*m_next_char_to_write = i_char;
 			*new_pos = 0;
@@ -44,7 +48,7 @@ namespace reflective
 		m_needed_length += i_string_length;
 
 		char * new_pos = m_next_char_to_write + i_string_length;
-		if (new_pos < m_end_of_buffer)
+		if (new_pos <= m_end_of_buffer)
 		{
 			memcpy(m_next_char_to_write, i_string, i_string_length * sizeof(char));
 			*new_pos = 0;

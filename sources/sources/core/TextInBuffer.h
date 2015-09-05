@@ -63,7 +63,7 @@ namespace reflective
 		}
 
 	private:
-		const char * m_next_char_to_read;
+		const char * m_next_char;
 		const char * m_end_of_buffer;
 		#ifdef _DEBUG
 			const char * m_dbg_buffer; /**< pointer to the beginning of the buffer (which can be nullptr). The stream does not need

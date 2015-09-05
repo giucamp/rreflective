@@ -50,8 +50,10 @@ namespace reflective
 		
 		void write(const char * i_string, const size_t i_string_length);
 
-		void write(const char * i_null_terminated_string)			{ write(i_text, strlen(i_text)); }
+		void write(const char * i_null_terminated_string)			{ write(i_null_terminated_string, strlen(i_null_terminated_string)); }
 		
+		size_t  needed_length() const								{ return m_needed_length; }
+
 		TextOutBuffer & operator << (const char * i_text)			{ write(i_text, strlen(i_text));  return *this; }
 
 		template <size_t ARRAY_SIZE>
