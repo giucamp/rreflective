@@ -68,6 +68,9 @@
     <ClInclude Include="..\sources\core\TextInBuffer.h">
       <Filter>core</Filter>
     </ClInclude>
+    <ClInclude Include="..\sources\type\type_traits.h">
+      <Filter>type</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\sources\type\QualifiedTypeRef.cpp">

@@ -70,6 +70,7 @@ namespace reflective
 #include "core\Identifier.h"
 #include "core\PtrString.h"
 #include "core\StringHash.h"
+#include "type\type_traits.h"
 #include "core\TextInBuffer.h"
 #include "core\TextOutBuffer.h"
 #include "core\Symbol.h"

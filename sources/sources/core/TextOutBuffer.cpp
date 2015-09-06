@@ -32,7 +32,7 @@ namespace reflective
 		#endif
 	}
 
-	void TextOutBuffer::write(char i_char)
+	void TextOutBuffer::write_char(char i_char)
 	{
 		m_written_chars++;
 
@@ -43,7 +43,7 @@ namespace reflective
 		}
 	}
 
-	void TextOutBuffer::write(const char * i_string, const size_t i_string_length)
+	void TextOutBuffer::write_nstr(const char * i_string, const size_t i_string_length)
 	{
 		REFLECTIVE_ASSERT(memchr(i_string, 0, i_string_length) == nullptr, "The input string contains a null character");
 		

@@ -32,34 +32,56 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	/** This class implements an output text stream. The buffer to be written is provided by the user of the class.  */
+	/** This class implements an output text stream. The buffer to be written is provided by the user of the class.  
+		
+	*/
 	class TextOutBuffer
 	{
 	public:
+		
 
+				// construction \ destruction
+		
+		/** Constructs a TextOutBuffer without assigning a buffer, that may be used to compute the size */
 		TextOutBuffer();
 
-		TextOutBuffer(char * i_buffer, size_t i_buffer_size);
+		TextOutBuffer(char * i_dests_buffer, size_t i_buffer_size);
 		
-		template <size_t BUFFER_SIZE>
-			TextOutBuffer(char(&i_buffer)[BUFFER_SIZE])
+		template < size_t BUFFER_SIZE >
+			TextOutBuffer( char (&i_dests_buffer)[BUFFER_SIZE] )
 				: TextOutBuffer(i_buffer, BUFFER_SIZE)
 					{ }
 
 		~TextOutBuffer()	{ flush(); }
 
+
+
+
 		/** Writes a character to the buffer */
-		void write(char i_char);
+		void write_char(char i_char);
 		
 		/** Writes a string on the buffer. The string is not required to be null-terminated, but 
 				i_string[i_string_length] can be a null char. */
-		void write(const char * i_string, const size_t i_string_length);
+		void write_nstr(const char * i_string, const size_t i_string_length);
 
-		void write(const char * i_null_terminated_string)			{ write(i_null_terminated_string, strlen(i_null_terminated_string)); }
+		void write_cstr(const char * i_null_terminated_string)			{ write_nstr(i_null_terminated_string, strlen(i_null_terminated_string)); }
 		
 		template <size_t ARRAY_SIZE>
-			void write(const char(&i_array)[ARRAY_SIZE])			{ write(i_array, ARRAY_SIZE - 1); }
+			void write_carray(const char(&i_array)[ARRAY_SIZE])			{ write_nstr(i_array, ARRAY_SIZE - 1); }
 
+			// 
+
+		template <typename TYPE>
+			void write_any(const TYPE  & i_object)
+		{
+			AnyToString<TYPE, has_to_string<TYPE>::value>::to_string(*this, i_object);
+		}
+
+		/*template <typename TYPE, typename = std::enable_if_t<!has_to_string<TYPE>::value>>
+			void write_any(const TYPE & i_object)
+		{
+			to_string(*this, i_object);
+		}*/
 
 		/*TextOutBuffer & operator << (char i_char)							{ write(i_char); return *this; }
 
@@ -74,8 +96,16 @@ namespace reflective
 
 		bool is_full() const										{ return m_end_of_buffer == m_next_char; }
 
-		bool is_truncated() const									{ return m_written_chars + 1 > m_buffer_size; }
-		
+		bool is_truncated() const									{ return m_written_chars + 1 > m_buffer_size; }		
+
+	private:
+
+		template <typename TYPE, bool HAS_TOSTRING_METHOD> struct AnyToString;
+		template <typename TYPE> struct AnyToString<TYPE,true>
+			{ static void to_string(TextOutBuffer & i_dest, const TYPE & i_object) { i_object.to_string(i_dest); } };
+
+		template <typename TYPE> struct AnyToString<TYPE, false>
+			{ static void to_string(TextOutBuffer & i_dest, const TYPE & i_object) { to_string(i_dest, i_object); } };
 
 	private:
 		char * m_next_char;

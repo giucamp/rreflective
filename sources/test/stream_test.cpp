@@ -1,6 +1,23 @@
 
 #include "test_common.h"
 
+class StreamTestClassNoToString
+{
+public:
+
+};
+
+class StreamTestClass
+{
+public:
+
+	void to_string(reflective::TextOutBuffer & i_dest) const
+	{
+
+	}
+};
+
+
 void Stream_test_oneshot()
 {
 	using namespace reflective;
@@ -22,14 +39,17 @@ void Stream_test_oneshot()
 	out_stream = TextOutBuffer(buffer, buff_size);
 	for(size_t i = 0; i + 1 < buff_size; i++)
 	{
-		out_stream.write('A' + (i % 20) );
+		out_stream.write_char('A' + (i % 20) );
 		out_stream.flush();
 		REFLECTIVE_ASSERT(!out_stream.is_truncated(), "test failed");
 		REFLECTIVE_ASSERT(strlen(buffer) == i + 1, "test failed");
 	}
 
-	out_stream.write('Z');
+	out_stream.write_char('Z');
 	REFLECTIVE_ASSERT(out_stream.is_truncated(), "test failed");
+
+	StreamTestClass t;
+	out_stream.write_any(t);
 }
 
 void Stream_test_rnd()
@@ -57,19 +77,19 @@ void Stream_test_rnd()
 
 	// actions and checks
 	vector<function<void()>> actions = {
-		[&] { check_string += 'a'; out_stream.write('a'); null_out_stream.write('a'); },
-		[&] { check_string += 'b'; out_stream.write('b'); null_out_stream.write('b'); },
-		[&] { check_string += "c"; out_stream.write("c"); null_out_stream.write("c"); },
+		[&] { check_string += 'a'; out_stream.write_char('a'); null_out_stream.write_char('a'); },
+		[&] { check_string += 'b'; out_stream.write_char('b'); null_out_stream.write_char('b'); },
+		[&] { check_string += "c"; out_stream.write_carray("c"); null_out_stream.write_carray("c"); },
 		
-		[&] { check_string += "aaabbbb"; out_stream.write("aaabbbb"); null_out_stream.write("aaabbbb"); },
+		[&] { check_string += "aaabbbb"; out_stream.write_carray("aaabbbb"); null_out_stream.write_carray("aaabbbb"); },
 
-		[&] { check_string += "str"; out_stream.write("str"); null_out_stream.write("str"); },
-		[&] { check_string += "str22"; out_stream.write("str22"); null_out_stream.write("str22"); },
-		[&] { check_string += "str333"; out_stream.write("str333"); null_out_stream.write("str333"); },
+		[&] { check_string += "str"; out_stream.write_carray("str"); null_out_stream.write_carray("str"); },
+		[&] { check_string += "str22"; out_stream.write_carray("str22"); null_out_stream.write_carray("str22"); },
+		[&] { check_string += "str333"; out_stream.write_carray("str333"); null_out_stream.write_carray("str333"); },
 
-		[&] { check_string += strings[0]; out_stream.write(strings[0].c_str()); null_out_stream.write(strings[0].c_str()); },
-		[&] { check_string += strings[1]; out_stream.write(strings[1].c_str()); null_out_stream.write(strings[1].c_str()); },
-		[&] { check_string += strings[2]; out_stream.write(strings[2].c_str()); null_out_stream.write(strings[2].c_str()); },
+		[&] { check_string += strings[0]; out_stream.write_cstr(strings[0].c_str()); null_out_stream.write_cstr(strings[0].c_str()); },
+		[&] { check_string += strings[1]; out_stream.write_cstr(strings[1].c_str()); null_out_stream.write_cstr(strings[1].c_str()); },
+		[&] { check_string += strings[2]; out_stream.write_cstr(strings[2].c_str()); null_out_stream.write_cstr(strings[2].c_str()); },
 	};
 	vector<function<bool()>> checks = {
 		
