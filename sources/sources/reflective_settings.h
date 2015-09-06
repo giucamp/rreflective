@@ -40,4 +40,4 @@ namespace reflective
 
 #define REFLECTIVE_ASSERT_ENABLED 1
 
-#define REFLECTIVE_ASSERT(i_value, i_error_message)		assert(i_value);
+#define REFLECTIVE_ASSERT(i_value, i_error_message)		if(!(i_value)) {__debugbreak();}

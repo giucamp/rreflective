@@ -4,6 +4,8 @@
 #include <iostream>
 #include <cstdlib>
 #include <random>
+#include <functional>
+#include <algorithm>
 #include "..\sources\reflective.h"
 
 class Rand
@@ -16,7 +18,12 @@ public:
 
 	uint32_t generate_uint32(uint32_t i_exclusive_upper)
 	{
-		return std::uniform_int_distribution<int>(0, i_exclusive_upper - 1)(m_random);
+		return std::uniform_int_distribution<uint32_t>(0, i_exclusive_upper - 1)(m_random);
+	}
+
+	uint32_t generate_uint32(uint32_t i_inclusive_lower, uint32_t i_exclusive_upper)
+	{
+		return std::uniform_int_distribution<uint32_t>(i_inclusive_lower, i_exclusive_upper - 1)(m_random);
 	}
 
 	char generate_char()
@@ -30,7 +37,9 @@ public:
 		std::string result;
 		result.reserve(len);
 		for (uint32_t i = 0; i < len; i++)
+		{
 			result += generate_char();
+		}
 		return result;
 	}
 

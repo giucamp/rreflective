@@ -1,5 +1,6 @@
 
 #include "reflective.h"
+#include <algorithm>
 
 #include "core\TextInBuffer.cpp"
 #include "core\TextOutBuffer.cpp"

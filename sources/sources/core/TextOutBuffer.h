@@ -52,17 +52,22 @@ namespace reflective
 
 		void write(const char * i_null_terminated_string)			{ write(i_null_terminated_string, strlen(i_null_terminated_string)); }
 		
-		size_t  needed_length() const								{ return m_needed_length; }
+		size_t  needed_buffer_length() const						{ return m_written_chars + 1; }
 
 		TextOutBuffer & operator << (const char * i_text)			{ write(i_text, strlen(i_text));  return *this; }
 
 		template <size_t ARRAY_SIZE>
 			TextOutBuffer & operator << (const char(&literal_tring)[ARRAY_SIZE])			{ write(i_text, ARRAY_SIZE - 1);  return *this; }
 
+		bool is_full() const										{ return m_end_of_buffer == m_next_char;  }
+
+		bool is_truncated() const									{ return m_written_chars + 1 > m_buffer_size; }
+
 	private:
-		char * m_next_char_to_write;
+		char * m_next_char;
 		char * m_end_of_buffer; /**< first char out of the buffer*/
-		size_t m_needed_length; /**< chars written to the stream, interdependently from the actual buffer length */
+		size_t m_written_chars; /**< chars written to the stream, interdependently from the actual buffer length */
+		size_t m_buffer_size;
 		#ifdef _DEBUG
 			char * m_dbg_buffer; /**< pointer to the beginning of the buffer (which can be nullptr). The stream does not need
 									 this, so it is provided only in debug.*/
