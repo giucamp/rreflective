@@ -1,7 +1,38 @@
 
 #include "test_common.h"
 
-void test()
+void Stream_test_oneshot()
+{
+	using namespace reflective;
+	using namespace std;
+	using std::vector;
+
+	static Rand rand;
+
+	const char check_char = 7;
+
+	// create buffer[buff_size], out_stream and in_stream
+	const uint32_t buffer_capacity = 64;
+	char buffer[buffer_capacity];
+	memset(buffer, check_char, sizeof(buffer));
+	size_t buff_size = rand.generate_uint32(buffer_capacity);
+	TextOutBuffer out_stream(buffer, buff_size);
+	TextInBuffer in_stream(buffer);
+	
+	out_stream = TextOutBuffer(buffer, buff_size);
+	for(size_t i = 0; i + 1 < buff_size; i++)
+	{
+		out_stream.write('A' + (i % 20) );
+		out_stream.flush();
+		REFLECTIVE_ASSERT(!out_stream.is_truncated(), "test failed");
+		REFLECTIVE_ASSERT(strlen(buffer) == i + 1, "test failed");
+	}
+
+	out_stream.write('Z');
+	REFLECTIVE_ASSERT(out_stream.is_truncated(), "test failed");
+}
+
+void Stream_test_rnd()
 {
 	using namespace reflective;
 	using namespace std;
@@ -67,20 +98,49 @@ void test()
 	vector<size_t> action_indices(400);
 	std::generate(action_indices.begin(), action_indices.end(), [&] { return rand.generate_uint32(actions.size()); });
 	
-	for (auto action_index : action_indices)
+	check_string.clear();
+	for (auto it = action_indices.begin(); it != action_indices.end(); it++ )
 	{
-		actions[action_index]();
+		actions[*it]();
 
 		REFLECTIVE_ASSERT(out_stream.is_full() == check_string.length() + 1 >= buff_size, "test failed");
 
 		REFLECTIVE_ASSERT(out_stream.is_truncated() == check_string.length() + 1 > buff_size, "test failed");
 
-		bool res = out_stream.is_full() || checks[action_index]();
+		bool res = out_stream.is_full() || checks[*it]();
 		REFLECTIVE_ASSERT(res, "test failed");
 
 		REFLECTIVE_ASSERT(out_stream.needed_buffer_length() == null_out_stream.needed_buffer_length(), "test failed");
 
 		REFLECTIVE_ASSERT(null_out_stream.is_truncated(), "test failed");
+
+		if (out_stream.is_truncated())
+		{
+			size_t index = it - action_indices.begin();
+			while(index < action_indices.size())
+				action_indices.erase(action_indices.begin() + index);
+			break;
+		}
+
+		if (rand.generate_uint32(3) == 0)
+		{
+			out_stream.flush();
+			REFLECTIVE_ASSERT(strlen(buffer) == std::min(buff_size > 0 ? buff_size - 1 : 0, check_string.length() ), "test failed");
+		}
+	}
+
+	in_stream = TextInBuffer(buffer);
+	check_string.clear();
+	for (auto action_index : action_indices)
+	{
+		bool res = in_stream.accept("__");
+		REFLECTIVE_ASSERT(!res, "test failed");
+
+		res = in_stream.accept('_');
+		REFLECTIVE_ASSERT(!res, "test failed");
+
+		res = checks[action_index]();
+		REFLECTIVE_ASSERT(res, "test failed");
 	}
 
 	// check the buffer between size and capacity
@@ -94,75 +154,10 @@ void test()
 
 void Stream_test()
 {
-	for (;;)
-		test();
+	Stream_test_oneshot();
 
-	using namespace reflective;
-	using namespace std;
-
-	char buffer[17];
-	TextOutBuffer out_stream(buffer);
-
-	out_stream.write("HELLO");
-	out_stream.write("HELLO");
-	out_stream.write("HELLO");
-	out_stream.write("HELLO");
-	while (out_stream.needed_buffer_length() < 50)
+	for (int i = 0; i < 10000; i++)
 	{
-		out_stream.write('c');
-	}	
-
-	cout << buffer << endl;
-
-	{
-		TextInBuffer in_stream(buffer);
-		while (in_stream.accept("HELLL"))
-		{
-			cout << "----" << endl;
-		}
-		while (in_stream.accept("HELLO"))
-		{
-			cout << "*" << endl;
-		}
-		while (in_stream.accept("HELLL"))
-		{
-			cout << "----" << endl;
-		}
-		while (in_stream.accept('c'))
-		{
-			cout << "." << endl;
-		}
-		while (in_stream.accept("HELLL"))
-		{
-			cout << "----" << endl;
-		}
+		Stream_test_rnd();
 	}
-
-	{
-		const char * s = "HELLO";
-		const char * n = "HELLL";
-		TextInBuffer in_stream(buffer);
-		while (in_stream.accept(n))
-		{
-			cout << "----" << endl;
-		}
-		while (in_stream.accept(s))
-		{
-			cout << "*" << endl;
-		}
-		while (in_stream.accept(n))
-		{
-			cout << "----" << endl;
-		}
-		while (in_stream.accept('c'))
-		{
-			cout << "." << endl;
-		}
-		while (in_stream.accept(n))
-		{
-			cout << "----" << endl;
-		}
-	}
-
-	system("PAUSE");
 }

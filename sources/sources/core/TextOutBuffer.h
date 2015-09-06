@@ -44,24 +44,38 @@ namespace reflective
 		template <size_t BUFFER_SIZE>
 			TextOutBuffer(char(&i_buffer)[BUFFER_SIZE])
 				: TextOutBuffer(i_buffer, BUFFER_SIZE)
-			{ }
+					{ }
 
+		~TextOutBuffer()	{ flush(); }
+
+		/** Writes a character to the buffer */
 		void write(char i_char);
 		
+		/** Writes a string on the buffer. The string is not required to be null-terminated, but 
+				i_string[i_string_length] can be a null char. */
 		void write(const char * i_string, const size_t i_string_length);
 
 		void write(const char * i_null_terminated_string)			{ write(i_null_terminated_string, strlen(i_null_terminated_string)); }
 		
-		size_t  needed_buffer_length() const						{ return m_written_chars + 1; }
+		template <size_t ARRAY_SIZE>
+			void write(const char(&i_array)[ARRAY_SIZE])			{ write(i_array, ARRAY_SIZE - 1); }
 
-		TextOutBuffer & operator << (const char * i_text)			{ write(i_text, strlen(i_text));  return *this; }
+
+		/*TextOutBuffer & operator << (char i_char)							{ write(i_char); return *this; }
+
+		TextOutBuffer & operator << (const char * i_null_terminated_string) { write(i_null_terminated_string); return *this; }
 
 		template <size_t ARRAY_SIZE>
-			TextOutBuffer & operator << (const char(&literal_tring)[ARRAY_SIZE])			{ write(i_text, ARRAY_SIZE - 1);  return *this; }
+			TextOutBuffer & operator << (const char(&i_array)[ARRAY_SIZE])	{ write(i_array); }*/
 
-		bool is_full() const										{ return m_end_of_buffer == m_next_char;  }
+		void flush();
+
+		size_t needed_buffer_length() const							{ return m_written_chars + 1; }
+
+		bool is_full() const										{ return m_end_of_buffer == m_next_char; }
 
 		bool is_truncated() const									{ return m_written_chars + 1 > m_buffer_size; }
+		
 
 	private:
 		char * m_next_char;

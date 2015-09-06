@@ -36,30 +36,33 @@ namespace reflective
 	{
 		m_written_chars++;
 
-		char * new_pos = m_next_char + 1;
-		if (new_pos <= m_end_of_buffer)
+		if (m_next_char < m_end_of_buffer)
 		{
 			*m_next_char = i_char;
-			*new_pos = 0;
-			m_next_char = new_pos;
+			m_next_char++;
 		}
 	}
 
 	void TextOutBuffer::write(const char * i_string, const size_t i_string_length)
 	{
+		REFLECTIVE_ASSERT(memchr(i_string, 0, i_string_length) == nullptr, "The input string contains a null character");
+		
 		m_written_chars += i_string_length;
 
 		const size_t remaining_length = m_end_of_buffer - m_next_char;
 		const size_t length_to_write = std::min(remaining_length, i_string_length);
 		
 		memcpy(m_next_char, i_string, length_to_write * sizeof(char));
-		char * new_pos = m_next_char + length_to_write;
-		if( m_buffer_size > 0 )
+		m_next_char = m_next_char + length_to_write;
+	}
+
+	void TextOutBuffer::flush()
+	{
+		if (m_buffer_size > 0)
 		{
 			// if the buffer is big at least on char, then the last character is reserved for the terminating null 
-			*new_pos = 0;
-		}		
-		m_next_char = new_pos;
+			*m_next_char = 0;
+		}
 	}
 }
 

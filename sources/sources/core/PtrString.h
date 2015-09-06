@@ -34,9 +34,8 @@ namespace reflective
 {
 	class PtrString
 	{
-
 	private:
-		const char * const m_chars;
+		const char * m_chars;
 
 	public:
 

@@ -17,6 +17,8 @@ namespace reflective
 		SpecialFunctions(ScalarTor i_scalar_default_constructor, CopyConstructor i_scalar_copy_constructor,
 			MoveConstructor const i_scalar_move_constructor, ScalarTor const i_scalar_destructor);
 
+		SpecialFunctions & operator = (const SpecialFunctions &) = delete;
+
 		ScalarTor const scalar_default_constructor() const			{ return m_scalar_default_constructor; }
 		CopyConstructor const scalar_copy_constructor() const		{ return m_scalar_copy_constructor; }
 		MoveConstructor const scalar_move_constructor() const		{ return m_scalar_move_constructor; }

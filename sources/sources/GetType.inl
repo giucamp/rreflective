@@ -2,7 +2,7 @@
 namespace reflective
 {
 	template <typename TYPE>
-		void setup_type(Type & i_type)
+		void setup_type(Type & /*i_type*/)
 	{
 
 	}

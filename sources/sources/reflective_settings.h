@@ -38,6 +38,8 @@ namespace reflective
 		using Allocator = std::allocator<TYPE>;
 }
 
+#define REFLECTIVE_DEBUG 1
+
 #define REFLECTIVE_ASSERT_ENABLED 1
 
 #define REFLECTIVE_ASSERT(i_value, i_error_message)		if(!(i_value)) {__debugbreak();}
