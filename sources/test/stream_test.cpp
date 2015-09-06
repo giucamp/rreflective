@@ -50,6 +50,8 @@ void Stream_test_oneshot()
 
 	StreamTestClass t;
 	out_stream.write_any(t);
+
+	out_stream << "fdv";
 }
 
 void Stream_test_rnd()

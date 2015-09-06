@@ -69,26 +69,31 @@ namespace reflective
 		template <size_t ARRAY_SIZE>
 			void write_carray(const char(&i_array)[ARRAY_SIZE])			{ write_nstr(i_array, ARRAY_SIZE - 1); }
 
-			// 
-
 		template <typename TYPE>
 			void write_any(const TYPE  & i_object)
 		{
 			AnyToString<TYPE, has_to_string<TYPE>::value>::to_string(*this, i_object);
 		}
 
-		/*template <typename TYPE, typename = std::enable_if_t<!has_to_string<TYPE>::value>>
-			void write_any(const TYPE & i_object)
-		{
-			to_string(*this, i_object);
-		}*/
 
-		/*TextOutBuffer & operator << (char i_char)							{ write(i_char); return *this; }
 
-		TextOutBuffer & operator << (const char * i_null_terminated_string) { write(i_null_terminated_string); return *this; }
+		TextOutBuffer & operator << (char i_char) { write_char(i_char); return *this; }
+
+		TextOutBuffer & operator << (const char * i_null_terminated_string) { write_cstr(i_null_terminated_string); return *this; }
 
 		template <size_t ARRAY_SIZE>
-			TextOutBuffer & operator << (const char(&i_array)[ARRAY_SIZE])	{ write(i_array); }*/
+			TextOutBuffer & operator << (const char(&i_array)[ARRAY_SIZE]) { write_carray(i_array); return *this; }
+
+		template <typename TYPE>
+			TextOutBuffer & operator << (const TYPE && i_object)
+		{
+			write_any(i_object); return *this;
+		}
+
+
+
+
+
 
 		void flush();
 
@@ -105,7 +110,7 @@ namespace reflective
 			{ static void to_string(TextOutBuffer & i_dest, const TYPE & i_object) { i_object.to_string(i_dest); } };
 
 		template <typename TYPE> struct AnyToString<TYPE, false>
-			{ static void to_string(TextOutBuffer & i_dest, const TYPE & i_object) { to_string(i_dest, i_object); } };
+			{ static void to_string(TextOutBuffer & i_dest, const TYPE & i_object) { ::reflective::to_string(i_dest, i_object); } };
 
 	private:
 		char * m_next_char;
