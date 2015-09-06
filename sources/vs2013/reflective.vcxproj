@@ -145,6 +145,7 @@
     <ClInclude Include="..\sources\core\StringHash.h" />
     <ClInclude Include="..\sources\core\Symbol.h" />
     <ClInclude Include="..\sources\core\SymbolList.h" />
+    <ClInclude Include="..\sources\core\traits.h" />
     <ClInclude Include="..\sources\GetType.h" />
     <ClInclude Include="..\sources\Namespace.h" />
     <ClInclude Include="..\sources\reflective.h" />
@@ -160,7 +161,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="..\sources\type\type_traits.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\sources\class\Class.cpp">

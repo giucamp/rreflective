@@ -79,20 +79,16 @@ namespace reflective
 
 		TextOutBuffer & operator << (char i_char) { write_char(i_char); return *this; }
 
-		TextOutBuffer & operator << (const char * i_null_terminated_string) { write_cstr(i_null_terminated_string); return *this; }
+		//TextOutBuffer & operator << (const char * i_null_terminated_string) { write_cstr(i_null_terminated_string); return *this; }
 
 		template <size_t ARRAY_SIZE>
 			TextOutBuffer & operator << (const char(&i_array)[ARRAY_SIZE]) { write_carray(i_array); return *this; }
 
 		template <typename TYPE>
-			TextOutBuffer & operator << (const TYPE && i_object)
+			TextOutBuffer & operator << (const TYPE & i_object)
 		{
 			write_any(i_object); return *this;
 		}
-
-
-
-
 
 
 		void flush();

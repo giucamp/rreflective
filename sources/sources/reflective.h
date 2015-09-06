@@ -66,13 +66,12 @@ namespace reflective
 #include "reflective_common.h"
 
 // headers
-
+#include "core\traits.h"
+#include "core\TextInBuffer.h"
+#include "core\TextOutBuffer.h"
 #include "core\Identifier.h"
 #include "core\PtrString.h"
 #include "core\StringHash.h"
-#include "type\type_traits.h"
-#include "core\TextInBuffer.h"
-#include "core\TextOutBuffer.h"
 #include "core\Symbol.h"
 #include "core\SymbolList.h"
 

@@ -68,8 +68,8 @@
     <ClInclude Include="..\sources\core\TextInBuffer.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="..\sources\type\type_traits.h">
-      <Filter>type</Filter>
+    <ClInclude Include="..\sources\core\traits.h">
+      <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

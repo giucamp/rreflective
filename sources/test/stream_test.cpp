@@ -48,10 +48,20 @@ void Stream_test_oneshot()
 	out_stream.write_char('Z');
 	REFLECTIVE_ASSERT(out_stream.is_truncated(), "test failed");
 
-	StreamTestClass t;
-	out_stream.write_any(t);
+	{
+		StreamTestClass t;
+		out_stream.write_any(t);
 
-	out_stream << "fdv";
+		int g[2];
+
+		const char a[] = "abc";
+		out_stream << 'a';
+		out_stream << "fdv";
+		out_stream << a;
+		//out_stream << 5;
+		out_stream << t;
+		//out_stream << g[2] + 3;
+	}
 }
 
 void Stream_test_rnd()
