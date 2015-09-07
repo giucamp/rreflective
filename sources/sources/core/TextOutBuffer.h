@@ -95,9 +95,15 @@ namespace reflective
 
 		size_t needed_buffer_length() const							{ return m_written_chars + 1; }
 
+		size_t remaining_buffer_length() const						{ return m_end_of_buffer - m_next_char; }
+
 		bool is_full() const										{ return m_end_of_buffer == m_next_char; }
 
 		bool is_truncated() const									{ return m_written_chars + 1 > m_buffer_size; }		
+
+		char * next_char() const							{ return m_next_char; }
+
+		void manual_advance( size_t i_written_length );
 
 	private:
 

@@ -77,6 +77,7 @@ namespace reflective
 
 #include "type\SpecialFunctions.h"
 #include "type\Type.h"
+#include "type\primitive_types.h"
 #include "class\ClassMember.h"
 #include "type\QualifiedTypeRef.h"
 #include "class\property\Property.h"

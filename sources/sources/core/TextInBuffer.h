@@ -62,6 +62,14 @@ namespace reflective
 			return accept(i_string, i_string_length - 1);
 		}
 
+			//
+
+		const char * nect_char() const				{ return m_next_char; }
+
+		size_t remaining_buffer_length() const		{ return m_end_of_buffer - m_next_char; }
+
+		void manual_advance(size_t i_read_length);
+
 	private:
 		const char * m_next_char;
 		const char * m_end_of_buffer;

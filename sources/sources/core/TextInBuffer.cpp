@@ -52,5 +52,11 @@ namespace reflective
 		m_next_char = buffer;
 		return true;
 	}
+
+	void TextInBuffer::manual_advance(size_t i_read_length)
+	{
+		REFLECTIVE_ASSERT(i_read_length <= remaining_buffer_length(), "OVERFOWING THE BUFFER!!!");
+		m_next_char += i_read_length;
+	}
 }
 

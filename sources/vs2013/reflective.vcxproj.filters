@@ -35,9 +35,6 @@
     <ClInclude Include="..\sources\core\Symbol.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="..\sources\type\Qualification.h">
-      <Filter>type</Filter>
-    </ClInclude>
     <ClInclude Include="..\sources\core\SymbolList.h">
       <Filter>core</Filter>
     </ClInclude>
@@ -71,15 +68,15 @@
     <ClInclude Include="..\sources\core\traits.h">
       <Filter>core</Filter>
     </ClInclude>
+    <ClInclude Include="..\sources\type\primitive_types.h">
+      <Filter>type</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\sources\type\QualifiedTypeRef.cpp">
       <Filter>type</Filter>
     </ClCompile>
     <ClCompile Include="..\sources\type\Type.cpp">
-      <Filter>type</Filter>
-    </ClCompile>
-    <ClCompile Include="..\sources\type\Qualification.cpp">
       <Filter>type</Filter>
     </ClCompile>
     <ClCompile Include="..\sources\type\SpecialFunctions.cpp">
@@ -101,6 +98,9 @@
     </ClCompile>
     <ClCompile Include="..\sources\core\TextInBuffer.cpp">
       <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\type\primitive_types.cpp">
+      <Filter>type</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

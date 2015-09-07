@@ -53,7 +53,14 @@ namespace reflective
 		const size_t length_to_write = std::min(remaining_length, i_string_length);
 		
 		memcpy(m_next_char, i_string, length_to_write * sizeof(char));
-		m_next_char = m_next_char + length_to_write;
+		m_next_char += length_to_write;
+	}
+
+	void TextOutBuffer::manual_advance(size_t i_written_length)
+	{
+		REFLECTIVE_ASSERT(i_written_length <= remaining_buffer_length(), "OVERFOWING THE BUFFER!!!" );
+		m_written_chars += i_written_length;
+		m_next_char += i_written_length;
 	}
 
 	void TextOutBuffer::flush()

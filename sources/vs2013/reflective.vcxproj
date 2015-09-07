@@ -151,7 +151,7 @@
     <ClInclude Include="..\sources\reflective.h" />
     <ClInclude Include="..\sources\reflective_common.h" />
     <ClInclude Include="..\sources\reflective_settings.h" />
-    <ClInclude Include="..\sources\type\Qualification.h" />
+    <ClInclude Include="..\sources\type\primitive_types.h" />
     <ClInclude Include="..\sources\type\QualifiedTypeRef.h" />
     <ClInclude Include="..\sources\type\SpecialFunctions.h" />
     <ClInclude Include="..\sources\type\StaticQualification.h" />
@@ -200,7 +200,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\sources\reflective.cpp" />
-    <ClCompile Include="..\sources\type\Qualification.cpp">
+    <ClCompile Include="..\sources\type\primitive_types.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
