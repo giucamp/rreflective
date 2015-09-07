@@ -1,22 +1,99 @@
 
 #include "test_common.h"
 
-class StreamTestClassNoToString
+class StreamTest
 {
 public:
 
-};
-
-class StreamTestClass
-{
-public:
-
-	void to_string(reflective::TextOutBuffer & i_dest) const
+	class Test
 	{
+	public:
 
+		virtual ~Test() {}
+
+		virtual void append_string(Rand & i_rand, reflective::TextOutBuffer & i_dest) = 0;		
+
+		virtual void check_string(reflective::TextInBuffer & i_source) = 0;
+
+		template <typename ANY>
+		static void accept(reflective::TextInBuffer & i_source, ANY && i_any)
+		{
+			const bool result = i_source.accept(i_any);
+			REFLECTIVE_ASSERT(result, "Test failed");
+		}
+
+	};
+
+	template <typename INT_TYPE>
+		class IntTest : public Test
+	{
+	private:
+		INT_TYPE m_value;
+
+	public:
+		void append_string(Rand & i_rand, reflective::TextOutBuffer & i_dest) override
+		{
+			bool is_signed = std::numeric_limits<INT_TYPE>::is_signed;
+			if (is_signed)
+				m_value = static_cast<INT_TYPE>( i_rand.generate_sll() );
+			else
+				m_value = static_cast<INT_TYPE>(i_rand.generate_ull());
+
+			i_dest << "i:";
+			i_dest << m_value;
+			i_dest << ":e";
+		}
+
+		void check_string(reflective::TextInBuffer & i_source) override
+		{
+			/*accept( i_source, "i:");
+			accept( i_source, m_value);
+			accept( i_source, ":e");*/
+		}
+	};
+
+	StreamTest()
+	{
+		m_tests.emplace_back(std::make_unique<IntTest<int8_t>>());
+		m_tests.emplace_back(std::make_unique<IntTest<int16_t>>());
+		m_tests.emplace_back(std::make_unique<IntTest<int32_t>>());
+		m_tests.emplace_back(std::make_unique<IntTest<int64_t>>());
+		m_tests.emplace_back(std::make_unique<IntTest<uint8_t>>());
+		m_tests.emplace_back(std::make_unique<IntTest<uint16_t>>());
+		m_tests.emplace_back(std::make_unique<IntTest<uint32_t>>());
+		m_tests.emplace_back(std::make_unique<IntTest<uint64_t>>());
 	}
-};
 
+	void tick(Rand & i_rand)
+	{
+		using namespace reflective;
+		using namespace std;
+		using std::vector;
+
+		const char check_char = 7;
+
+		const uint32_t buffer_capacity = 64;
+		char buffer[buffer_capacity];
+		memset(buffer, check_char, sizeof(buffer));
+		size_t buff_size = i_rand.generate_uint32(buffer_capacity);
+				
+		TextOutBuffer out_stream(buffer, buff_size);
+		shuffle(m_tests.begin(), m_tests.end(), i_rand.get_generator());
+		for (const auto & test : m_tests)
+		{
+			test->append_string(i_rand, out_stream);
+		}
+
+		TextInBuffer in_stream(buffer);
+		for (const auto & test : m_tests)
+		{
+			test->check_string(in_stream);
+		}
+	}
+
+private:
+	std::vector< std::unique_ptr<Test> > m_tests;
+};
 
 void Stream_test_oneshot()
 {
@@ -47,21 +124,6 @@ void Stream_test_oneshot()
 
 	out_stream.write_char('Z');
 	REFLECTIVE_ASSERT(out_stream.is_truncated(), "test failed");
-
-	{
-		StreamTestClass t;
-		out_stream.write_any(t);
-
-		int g[2];
-
-		const char a[] = "abc";
-		out_stream << 'a';
-		out_stream << "fdv";
-		out_stream << a;
-		//out_stream << 5;
-		out_stream << t;
-		//out_stream << g[2] + 3;
-	}
 }
 
 void Stream_test_rnd()
@@ -186,6 +248,13 @@ void Stream_test_rnd()
 
 void Stream_test()
 {
+	static Rand rand;
+	StreamTest test;
+	for (int i = 0; i < 10000; i++)
+	{
+		test.tick(rand);
+	}
+
 	Stream_test_oneshot();
 
 	for (int i = 0; i < 10000; i++)

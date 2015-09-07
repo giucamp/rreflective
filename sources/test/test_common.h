@@ -16,6 +16,16 @@ public:
 	{
 	}
 
+	unsigned long long generate_ull()
+	{
+		return std::uniform_int_distribution<unsigned long long>()(m_random);
+	}
+
+	signed long long generate_sll()
+	{
+		return std::uniform_int_distribution<signed long long>()(m_random);
+	}
+
 	uint32_t generate_uint32(uint32_t i_exclusive_upper)
 	{
 		return std::uniform_int_distribution<uint32_t>(0, i_exclusive_upper - 1)(m_random);
@@ -42,6 +52,8 @@ public:
 		}
 		return result;
 	}
+
+	std::mt19937 get_generator() { return m_random; }
 
 private:
 	std::mt19937 m_random;
