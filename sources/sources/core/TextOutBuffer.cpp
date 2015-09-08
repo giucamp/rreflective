@@ -56,11 +56,11 @@ namespace reflective
 		m_next_char += length_to_write;
 	}
 
-	void TextOutBuffer::manual_advance(size_t i_written_length)
+	void TextOutBuffer::manual_advance(size_t i_required_length, size_t i_actual_written_length)
 	{
-		REFLECTIVE_ASSERT(i_written_length <= remaining_buffer_length(), "OVERFOWING THE BUFFER!!!" );
-		m_written_chars += i_written_length;
-		m_next_char += i_written_length;
+		REFLECTIVE_ASSERT(i_actual_written_length <= remaining_buffer_length(), "OVERFOWING THE BUFFER!!!" );
+		m_written_chars += i_required_length;
+		m_next_char += i_actual_written_length;
 	}
 
 	void TextOutBuffer::flush()

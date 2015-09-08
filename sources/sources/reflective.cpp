@@ -1,8 +1,8 @@
 
 #include "reflective.h"
 #include <algorithm>
-#include <stdio.h>
 #include <inttypes.h>
+#include <limits>
 
 #include "core\TextInBuffer.cpp"
 #include "core\TextOutBuffer.cpp"

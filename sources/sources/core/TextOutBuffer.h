@@ -103,7 +103,7 @@ namespace reflective
 
 		char * next_char() const							{ return m_next_char; }
 
-		void manual_advance( size_t i_written_length );
+		void manual_advance( size_t i_required_length, size_t i_actual_written_length );
 
 	private:
 
