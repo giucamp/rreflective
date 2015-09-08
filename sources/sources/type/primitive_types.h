@@ -42,13 +42,13 @@ namespace reflective
 	void to_string(TextOutBuffer & i_dest, uint32_t i_value);
 	void to_string(TextOutBuffer & i_dest, uint64_t i_value);
 
-	bool assign_from_string(TextInBuffer & i_source, int8_t & o_dest, TextOutBuffer & i_error );
-	bool assign_from_string(TextInBuffer & i_source, int16_t & o_dest, TextOutBuffer & i_error);
-	bool assign_from_string(TextInBuffer & i_source, int32_t & o_dest, TextOutBuffer & i_error);
-	bool assign_from_string(TextInBuffer & i_source, int64_t & o_dest, TextOutBuffer & i_error);
+	bool assign_from_string(TextInBuffer & i_source, TextOutBuffer & i_error_dest, int8_t & o_dest);
+	bool assign_from_string(TextInBuffer & i_source, TextOutBuffer & i_error_dest, int16_t & o_dest);
+	bool assign_from_string(TextInBuffer & i_source, TextOutBuffer & i_error_dest, int32_t & o_dest);
+	bool assign_from_string(TextInBuffer & i_source, TextOutBuffer & i_error_dest, int64_t & o_dest);
 
-	bool assign_from_string(TextInBuffer & i_source, uint8_t & o_dest, TextOutBuffer & i_error);
-	bool assign_from_string(TextInBuffer & i_source, uint16_t & o_dest, TextOutBuffer & i_error);
-	bool assign_from_string(TextInBuffer & i_source, uint32_t & o_dest, TextOutBuffer & i_error);
-	bool assign_from_string(TextInBuffer & i_source, uint64_t & o_dest, TextOutBuffer & i_error);
+	bool assign_from_string(TextInBuffer & i_source, TextOutBuffer & i_error_dest, uint8_t & o_dest);
+	bool assign_from_string(TextInBuffer & i_source, TextOutBuffer & i_error_dest, uint16_t & o_dest);
+	bool assign_from_string(TextInBuffer & i_source, TextOutBuffer & i_error_dest, uint32_t & o_dest);
+	bool assign_from_string(TextInBuffer & i_source, TextOutBuffer & i_error_dest, uint64_t & o_dest);
 }

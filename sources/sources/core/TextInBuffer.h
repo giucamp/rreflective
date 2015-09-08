@@ -49,7 +49,7 @@ namespace reflective
 
 
 			// accept
-
+		
 		bool accept(char i_character);
 
 		bool accept(const char * i_null_terminated_string);
@@ -62,9 +62,13 @@ namespace reflective
 			return accept(i_string, i_string_length - 1);
 		}
 
+		bool accept_whitespaces();
+
 			//
 
-		const char * nect_char() const				{ return m_next_char; }
+		const char * next_char() const				{ return m_next_char; }
+
+		const char * end_of_buffer() const			{ return m_end_of_buffer; }
 
 		size_t remaining_buffer_length() const		{ return m_end_of_buffer - m_next_char; }
 

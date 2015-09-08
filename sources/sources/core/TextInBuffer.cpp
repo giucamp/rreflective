@@ -53,6 +53,17 @@ namespace reflective
 		return true;
 	}
 
+	bool TextInBuffer::accept_whitespaces()
+	{
+		bool result = false;
+		while (m_next_char < m_end_of_buffer && isspace(*m_next_char))
+		{
+			m_next_char++;
+			result = true;
+		}
+		return result;
+	}
+
 	void TextInBuffer::manual_advance(size_t i_read_length)
 	{
 		REFLECTIVE_ASSERT(i_read_length <= remaining_buffer_length(), "OVERFOWING THE BUFFER!!!");
