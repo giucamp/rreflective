@@ -46,9 +46,12 @@ public:
 
 		void check_string(reflective::TextInBuffer & i_source) override
 		{
-			/*accept( i_source, "i:");
-			accept( i_source, m_value);
-			accept( i_source, ":e");*/
+			INT_TYPE val;
+			accept( i_source, "i:");
+			accept(i_source, val);
+			accept( i_source, ":e");
+
+			REFLECTIVE_ASSERT(val == m_value, "test failed");
 		}
 	};
 
@@ -131,7 +134,7 @@ void Stream_test_rnd()
 	using namespace reflective;
 	using namespace std;
 	using std::vector;
-	
+
 	static Rand rand;
 
 	const char check_char = 7;

@@ -62,6 +62,13 @@ namespace reflective
 			return accept(i_string, i_string_length - 1);
 		}
 
+		template <typename TYPE>
+			bool accept(TYPE & o_object)
+		{
+			TextOutBuffer error;
+			return AnyAccept<TYPE, has_assign_from_string<TYPE>::value>::accept(*this, error, o_object);
+		}
+
 		bool accept_whitespaces();
 
 			//
@@ -73,6 +80,25 @@ namespace reflective
 		size_t remaining_buffer_length() const		{ return m_end_of_buffer - m_next_char; }
 
 		void manual_advance(size_t i_read_length);
+
+
+	private:
+
+		template <typename TYPE, bool HAS_ASSIGN_FROM_STRING_METHOD> struct AnyAccept;
+		template <typename TYPE> struct AnyAccept < TYPE, true >
+		{
+			static bool accept(TextInBuffer & i_source, TextOutBuffer & i_error_dest, TYPE & o_object) 
+			{
+				return o_object.assign_from_string(i_source, i_error_dest);
+			}
+		};
+		template <typename TYPE> struct AnyAccept < TYPE, false >
+		{
+			static bool accept(TextInBuffer & i_source, TextOutBuffer & i_error_dest, TYPE & o_object)
+			{
+				return assign_from_string(i_source, i_error_dest, o_object);
+			}
+		};
 
 	private:
 		const char * m_next_char;

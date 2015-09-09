@@ -127,7 +127,7 @@ namespace reflective
 			{
 				while (curr_digit < end_of_buffer)
 				{
-					if (*curr_digit >= '0' && *curr_digit >= '9')
+					if (*curr_digit >= '0' && *curr_digit <= '9')
 					{
 						result *= 10;
 						result += *curr_digit - '0';
@@ -140,11 +140,13 @@ namespace reflective
 				}
 			}
 
-			bool some_digits = curr_digit > i_source.next_char();
-			if (!some_digits)
+			const size_t accepted_digits = curr_digit - i_source.next_char();
+			if (accepted_digits == 0)
 			{
 				i_error_buffer << "missing digits";
 			}
+
+			i_source.manual_advance(accepted_digits);
 
 			if (negative)
 			{
@@ -152,7 +154,7 @@ namespace reflective
 			}
 
 			o_value = result;
-			return some_digits;
+			return accepted_digits > 0;
 		}
 
 		// uint_from_string - converts a string to an unsigned
@@ -198,7 +200,7 @@ namespace reflective
 			{
 				while (curr_digit < end_of_buffer)
 				{
-					if (*curr_digit >= '0' && *curr_digit >= '9')
+					if (*curr_digit >= '0' && *curr_digit <= '9')
 					{
 						result *= 10;
 						result += *curr_digit - '0';
@@ -211,14 +213,16 @@ namespace reflective
 				}
 			}
 
-			bool some_digits = curr_digit > i_source.next_char();
-			if (!some_digits)
+			const size_t accepted_digits = curr_digit - i_source.next_char();
+			if (accepted_digits == 0)
 			{
 				i_error_buffer << "missing digits";
 			}
 
+			i_source.manual_advance(accepted_digits);
+
 			o_value = result;
-			return some_digits;
+			return accepted_digits > 0;
 		}
 	}
 

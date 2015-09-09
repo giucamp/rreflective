@@ -70,7 +70,7 @@ namespace reflective
 			void write_carray(const char(&i_array)[ARRAY_SIZE])			{ write_nstr(i_array, ARRAY_SIZE - 1); }
 
 		template <typename TYPE>
-			void write_any(const TYPE  & i_object)
+			void write_any(const TYPE & i_object)
 		{
 			AnyToString<TYPE, has_to_string<TYPE>::value>::to_string(*this, i_object);
 		}
