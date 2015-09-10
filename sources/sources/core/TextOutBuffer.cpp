@@ -40,6 +40,8 @@ namespace reflective
 		{
 			*m_next_char = i_char;
 			m_next_char++;
+
+			flush();
 		}
 	}
 
@@ -54,6 +56,8 @@ namespace reflective
 		
 		memcpy(m_next_char, i_string, length_to_write * sizeof(char));
 		m_next_char += length_to_write;
+
+		flush();
 	}
 
 	void TextOutBuffer::manual_advance(size_t i_required_length, size_t i_actual_written_length)
@@ -61,6 +65,8 @@ namespace reflective
 		REFLECTIVE_ASSERT(i_actual_written_length <= remaining_buffer_length(), "OVERFOWING THE BUFFER!!!" );
 		m_written_chars += i_required_length;
 		m_next_char += i_actual_written_length;
+
+		flush();
 	}
 
 	void TextOutBuffer::flush()

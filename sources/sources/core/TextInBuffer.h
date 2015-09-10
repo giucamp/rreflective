@@ -63,10 +63,9 @@ namespace reflective
 		}
 
 		template <typename TYPE>
-			bool accept(TYPE & o_object)
-		{
-			TextOutBuffer error;
-			return AnyAccept<TYPE, has_assign_from_string<TYPE>::value>::accept(*this, error, o_object);
+			bool read(TYPE & o_object, TextOutBuffer error)
+		{			
+			return AnyRead<TYPE, has_assign_from_string<TYPE>::value>::read(*this, error, o_object);
 		}
 
 		bool accept_whitespaces();
@@ -84,17 +83,17 @@ namespace reflective
 
 	private:
 
-		template <typename TYPE, bool HAS_ASSIGN_FROM_STRING_METHOD> struct AnyAccept;
-		template <typename TYPE> struct AnyAccept < TYPE, true >
+		template <typename TYPE, bool HAS_ASSIGN_FROM_STRING_METHOD> struct AnyRead;
+		template <typename TYPE> struct AnyRead < TYPE, true >
 		{
-			static bool accept(TextInBuffer & i_source, TextOutBuffer & i_error_dest, TYPE & o_object) 
+			static bool read(TextInBuffer & i_source, TextOutBuffer & i_error_dest, TYPE & o_object) 
 			{
 				return o_object.assign_from_string(i_source, i_error_dest);
 			}
 		};
-		template <typename TYPE> struct AnyAccept < TYPE, false >
+		template <typename TYPE> struct AnyRead < TYPE, false >
 		{
-			static bool accept(TextInBuffer & i_source, TextOutBuffer & i_error_dest, TYPE & o_object)
+			static bool read(TextInBuffer & i_source, TextOutBuffer & i_error_dest, TYPE & o_object)
 			{
 				return assign_from_string(i_source, i_error_dest, o_object);
 			}

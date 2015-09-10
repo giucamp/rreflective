@@ -4,7 +4,7 @@ namespace reflective
 	namespace details
 	{
 		// sint_to_string - converts a signed int to a string
-		template <unsigned RADIX, typename INT_TYPE>
+		template <signed RADIX, typename INT_TYPE>
 			inline void sint_to_string(TextOutBuffer & i_dest, INT_TYPE i_value)
 		{
 			static_assert(std::numeric_limits<INT_TYPE>::is_signed, "sint_to_string is for signed ints");
@@ -14,21 +14,41 @@ namespace reflective
 			const int buffer_size = std::numeric_limits<INT_TYPE>::digits10 + 1;
 			char buffer[buffer_size];
 			int used_buffer = 0;
-			INT_TYPE remaining_value = is_negative ? -i_value : i_value;
-			do {
+			INT_TYPE remaining_value = i_value;
+			/* note: if the number is negative, we can't just negate the sign and use the same algorithm,
+				because the unary minus operator is lossy: for example, negating -128 as int8 produces an overflow, as 
+				128 can't be represented as int8 */
+			if (is_negative)
+			{
+				do {
 
-				const char digit = static_cast<char>(remaining_value % RADIX);
-				remaining_value /= RADIX;
+					const char digit = static_cast<char>(remaining_value % RADIX);
+					remaining_value /= RADIX;
 
-				buffer[used_buffer] = '0' + digit;
-				used_buffer++;
+					buffer[used_buffer] = '0' - digit;
+					used_buffer++;
 
-				REFLECTIVE_ASSERT(used_buffer < buffer_size || remaining_value == 0, "buffer too small?");
-								
-			} while (remaining_value > 0 && used_buffer < buffer_size);
+					REFLECTIVE_ASSERT(used_buffer < buffer_size || remaining_value == 0, "buffer too small?");
+
+				} while (remaining_value != 0 && used_buffer < buffer_size);
+			}
+			else
+			{
+				do {
+
+					const char digit = static_cast<char>(remaining_value % RADIX);
+					remaining_value /= RADIX;
+
+					buffer[used_buffer] = '0' + digit;
+					used_buffer++;
+
+					REFLECTIVE_ASSERT(used_buffer < buffer_size || remaining_value == 0, "buffer too small?");
+
+				} while (remaining_value != 0 && used_buffer < buffer_size);
+			}
 
 			// using a temporary variable to avoid the warning "conditional expression is constant"
-			unsigned radix = RADIX;
+			signed radix = RADIX;
 			if (radix == 16)
 			{
 				i_dest << "0x";

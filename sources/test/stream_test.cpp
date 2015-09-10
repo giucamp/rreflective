@@ -11,7 +11,7 @@ public:
 
 		virtual ~Test() {}
 
-		virtual void append_string(Rand & i_rand, reflective::TextOutBuffer & i_dest) = 0;		
+		virtual bool append_string(Rand & i_rand, reflective::TextOutBuffer & i_dest) = 0;		
 
 		virtual void check_string(reflective::TextInBuffer & i_source) = 0;
 
@@ -19,6 +19,14 @@ public:
 		static void accept(reflective::TextInBuffer & i_source, ANY && i_any)
 		{
 			const bool result = i_source.accept(i_any);
+			REFLECTIVE_ASSERT(result, "Test failed");
+		}
+
+		template <typename ANY>
+		static void read(reflective::TextInBuffer & i_source, ANY && i_any)
+		{
+			reflective::TextOutBuffer err;
+			const bool result = i_source.read(i_any, err);
 			REFLECTIVE_ASSERT(result, "Test failed");
 		}
 
@@ -31,8 +39,10 @@ public:
 		INT_TYPE m_value;
 
 	public:
-		void append_string(Rand & i_rand, reflective::TextOutBuffer & i_dest) override
+		bool append_string(Rand & i_rand, reflective::TextOutBuffer & i_dest) override
 		{
+			reflective::TextOutBuffer initial = i_dest;
+
 			bool is_signed = std::numeric_limits<INT_TYPE>::is_signed;
 			if (is_signed)
 				m_value = static_cast<INT_TYPE>( i_rand.generate_sll() );
@@ -42,16 +52,25 @@ public:
 			i_dest << "i:";
 			i_dest << m_value;
 			i_dest << ":e";
+
+			if (i_dest.is_truncated())
+			{
+				i_dest = initial;
+				return false;
+			}
+			else
+			{
+				return true;
+			}
 		}
 
 		void check_string(reflective::TextInBuffer & i_source) override
 		{
 			INT_TYPE val;
 			accept( i_source, "i:");
-			accept(i_source, val);
-			accept( i_source, ":e");
-
+			read(i_source, val);
 			REFLECTIVE_ASSERT(val == m_value, "test failed");
+			accept( i_source, ":e");			
 		}
 	};
 
@@ -75,22 +94,26 @@ public:
 
 		const char check_char = 7;
 
-		const uint32_t buffer_capacity = 64;
+		const uint32_t buffer_capacity = 256;
 		char buffer[buffer_capacity];
 		memset(buffer, check_char, sizeof(buffer));
 		size_t buff_size = i_rand.generate_uint32(buffer_capacity);
-				
-		TextOutBuffer out_stream(buffer, buff_size);
+
 		shuffle(m_tests.begin(), m_tests.end(), i_rand.get_generator());
-		for (const auto & test : m_tests)
+				
+		TextOutBuffer out_stream(buffer, buff_size);		
+
+		size_t write_test_index = 0;
+		for (; write_test_index < m_tests.size(); write_test_index++ )
 		{
-			test->append_string(i_rand, out_stream);
+			if (!m_tests[write_test_index]->append_string(i_rand, out_stream))
+				break;
 		}
 
 		TextInBuffer in_stream(buffer);
-		for (const auto & test : m_tests)
+		for (size_t read_test_index = 0; read_test_index < write_test_index; read_test_index++)
 		{
-			test->check_string(in_stream);
+			m_tests[read_test_index]->check_string(in_stream);
 		}
 	}
 
@@ -120,7 +143,6 @@ void Stream_test_oneshot()
 	for(size_t i = 0; i + 1 < buff_size; i++)
 	{
 		out_stream.write_char('A' + (i % 20) );
-		out_stream.flush();
 		REFLECTIVE_ASSERT(!out_stream.is_truncated(), "test failed");
 		REFLECTIVE_ASSERT(strlen(buffer) == i + 1, "test failed");
 	}
@@ -221,7 +243,6 @@ void Stream_test_rnd()
 
 		if (rand.generate_uint32(3) == 0)
 		{
-			out_stream.flush();
 			REFLECTIVE_ASSERT(strlen(buffer) == std::min(buff_size > 0 ? buff_size - 1 : 0, check_string.length() ), "test failed");
 		}
 	}
@@ -251,9 +272,16 @@ void Stream_test_rnd()
 
 void Stream_test()
 {
+	{
+		int8_t myInt = -128;
+		char dest[64];
+		reflective::to_string(reflective::TextOutBuffer(dest), myInt);
+		std::cout << dest;
+	}
+
 	static Rand rand;
 	StreamTest test;
-	for (int i = 0; i < 10000; i++)
+	for (int i = 0; i < 1000000; i++)
 	{
 		test.tick(rand);
 	}

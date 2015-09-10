@@ -49,14 +49,9 @@ namespace reflective
 		
 		template < size_t BUFFER_SIZE >
 			TextOutBuffer( char (&i_dests_buffer)[BUFFER_SIZE] )
-				: TextOutBuffer(i_buffer, BUFFER_SIZE)
+				: TextOutBuffer(i_dests_buffer, BUFFER_SIZE)
 					{ }
-
-		~TextOutBuffer()	{ flush(); }
-
-
-
-
+			
 		/** Writes a character to the buffer */
 		void write_char(char i_char);
 		
@@ -88,10 +83,7 @@ namespace reflective
 			TextOutBuffer & operator << (const TYPE & i_object)
 		{
 			write_any(i_object); return *this;
-		}
-
-
-		void flush();
+		}			
 
 		size_t needed_buffer_length() const							{ return m_written_chars + 1; }
 
@@ -106,6 +98,8 @@ namespace reflective
 		void manual_advance( size_t i_required_length, size_t i_actual_written_length );
 
 	private:
+
+		void flush();
 
 		template <typename TYPE, bool HAS_TOSTRING_METHOD> struct AnyToString;
 		template <typename TYPE> struct AnyToString<TYPE,true>
