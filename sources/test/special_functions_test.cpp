@@ -25,8 +25,6 @@ void SpecialFunctions_test()
 	using namespace reflective;
 	using namespace std;
 
-	bool ss = std::is_destructible<A>::value;
-
 	SpecialFunctions functions = get_special_functions<A>();
 
 	A a;

@@ -41,21 +41,21 @@ namespace reflective
 
 		const QualifiedTypeRef & type() const	{ return m_type; }
 
-		bool get_value(const void * i_owner_object, void * i_dest, TextOutBuffer * i_error_stream) const;
+		bool get_value(const void * i_owner_object, void * i_dest, OutStringBuffer * i_error_stream) const;
 
-		bool set_value(const void * i_owner_object, const void * i_source, TextOutBuffer * i_error_stream) const;
+		bool set_value(const void * i_owner_object, const void * i_source, OutStringBuffer * i_error_stream) const;
 
-		const void * get_value_inplace(const void * i_owner_object, TextOutBuffer * i_error_stream) const;
+		const void * get_value_inplace(const void * i_owner_object, OutStringBuffer * i_error_stream) const;
 
-		void * get_editable_value_inplace(void * i_owner_object, TextOutBuffer * i_error_stream) const;
+		void * get_editable_value_inplace(void * i_owner_object, OutStringBuffer * i_error_stream) const;
 
 	protected:
 
-		virtual void * get_value_inplace_impl(void * i_owner_object, TextOutBuffer * i_error_stream) const = 0;
+		virtual void * get_value_inplace_impl(void * i_owner_object, OutStringBuffer * i_error_stream) const = 0;
 
-		virtual bool get_value_impl(const void * i_owner_object, void * i_dest, TextOutBuffer * i_error_stream) const = 0;
+		virtual bool get_value_impl(const void * i_owner_object, void * i_dest, OutStringBuffer * i_error_stream) const = 0;
 
-		virtual bool set_value_impl(const void * i_owner_object, const void * i_source, TextOutBuffer * i_error_stream) const = 0;
+		virtual bool set_value_impl(const void * i_owner_object, const void * i_source, OutStringBuffer * i_error_stream) const = 0;
 		
 	private:
 		const QualifiedTypeRef m_type;

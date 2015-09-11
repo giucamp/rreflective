@@ -59,17 +59,17 @@
       <Filter>class\property</Filter>
     </ClInclude>
     <ClInclude Include="..\sources\reflective.h" />
-    <ClInclude Include="..\sources\core\TextOutBuffer.h">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sources\core\TextInBuffer.h">
-      <Filter>core</Filter>
-    </ClInclude>
     <ClInclude Include="..\sources\core\traits.h">
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="..\sources\type\primitive_types.h">
       <Filter>type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\core\OutStringBuffer.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\core\InStringBuffer.h">
+      <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -93,14 +93,14 @@
     </ClCompile>
     <ClCompile Include="..\sources\Namespace.cpp" />
     <ClCompile Include="..\sources\reflective.cpp" />
-    <ClCompile Include="..\sources\core\TextOutBuffer.cpp">
-      <Filter>core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\sources\core\TextInBuffer.cpp">
-      <Filter>core</Filter>
-    </ClCompile>
     <ClCompile Include="..\sources\type\primitive_types.cpp">
       <Filter>type</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\core\OutStringBuffer.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\core\InStringBuffer.cpp">
+      <Filter>core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -11,21 +11,21 @@ public:
 
 		virtual ~Test() {}
 
-		virtual bool append_string(Rand & i_rand, reflective::TextOutBuffer & i_dest) = 0;		
+		virtual bool append_string(Rand & i_rand, reflective::OutStringBuffer & i_dest) = 0;		
 
-		virtual void check_string(reflective::TextInBuffer & i_source) = 0;
+		virtual void check_string(reflective::InStringBuffer & i_source) = 0;
 
 		template <typename ANY>
-		static void accept(reflective::TextInBuffer & i_source, ANY && i_any)
+		static void accept(reflective::InStringBuffer & i_source, ANY && i_any)
 		{
 			const bool result = i_source.accept(i_any);
 			REFLECTIVE_ASSERT(result, "Test failed");
 		}
 
 		template <typename ANY>
-		static void read(reflective::TextInBuffer & i_source, ANY && i_any)
+		static void read(reflective::InStringBuffer & i_source, ANY && i_any)
 		{
-			reflective::TextOutBuffer err;
+			reflective::OutStringBuffer err;
 			const bool result = i_source.read(i_any, err);
 			REFLECTIVE_ASSERT(result, "Test failed");
 		}
@@ -39,9 +39,9 @@ public:
 		INT_TYPE m_value;
 
 	public:
-		bool append_string(Rand & i_rand, reflective::TextOutBuffer & i_dest) override
+		bool append_string(Rand & i_rand, reflective::OutStringBuffer & i_dest) override
 		{
-			reflective::TextOutBuffer initial = i_dest;
+			reflective::OutStringBuffer initial = i_dest;
 
 			bool is_signed = std::numeric_limits<INT_TYPE>::is_signed;
 			if (is_signed)
@@ -64,7 +64,7 @@ public:
 			}
 		}
 
-		void check_string(reflective::TextInBuffer & i_source) override
+		void check_string(reflective::InStringBuffer & i_source) override
 		{
 			INT_TYPE val;
 			accept( i_source, "i:");
@@ -101,7 +101,7 @@ public:
 
 		shuffle(m_tests.begin(), m_tests.end(), i_rand.get_generator());
 				
-		TextOutBuffer out_stream(buffer, buff_size);		
+		OutStringBuffer out_stream(buffer, buff_size);		
 
 		size_t write_test_index = 0;
 		for (; write_test_index < m_tests.size(); write_test_index++ )
@@ -110,7 +110,7 @@ public:
 				break;
 		}
 
-		TextInBuffer in_stream(buffer);
+		InStringBuffer in_stream(buffer);
 		for (size_t read_test_index = 0; read_test_index < write_test_index; read_test_index++)
 		{
 			m_tests[read_test_index]->check_string(in_stream);
@@ -136,10 +136,10 @@ void Stream_test_oneshot()
 	char buffer[buffer_capacity];
 	memset(buffer, check_char, sizeof(buffer));
 	size_t buff_size = rand.generate_uint32(buffer_capacity);
-	TextOutBuffer out_stream(buffer, buff_size);
-	TextInBuffer in_stream(buffer);
+	OutStringBuffer out_stream(buffer, buff_size);
+	InStringBuffer in_stream(buffer);
 	
-	out_stream = TextOutBuffer(buffer, buff_size);
+	out_stream = OutStringBuffer(buffer, buff_size);
 	for(size_t i = 0; i + 1 < buff_size; i++)
 	{
 		out_stream.write_char('A' + (i % 20) );
@@ -166,9 +166,9 @@ void Stream_test_rnd()
 	char buffer[buffer_capacity];
 	memset(buffer, check_char, sizeof(buffer));
 	size_t buff_size = rand.generate_uint32(buffer_capacity);
-	TextOutBuffer out_stream(buffer, buff_size);
-	TextOutBuffer null_out_stream;
-	TextInBuffer in_stream(buffer);
+	OutStringBuffer out_stream(buffer, buff_size);
+	OutStringBuffer null_out_stream;
+	InStringBuffer in_stream(buffer);
 	string check_string;
 
 	// some random strings
@@ -247,7 +247,7 @@ void Stream_test_rnd()
 		}
 	}
 
-	in_stream = TextInBuffer(buffer);
+	in_stream = InStringBuffer(buffer);
 	check_string.clear();
 	for (auto action_index : action_indices)
 	{
@@ -275,7 +275,8 @@ void Stream_test()
 	{
 		int8_t myInt = -128;
 		char dest[64];
-		reflective::to_string(reflective::TextOutBuffer(dest), myInt);
+		reflective::OutStringBuffer out(dest);
+		reflective::to_string(out, myInt);
 		std::cout << dest;
 	}
 

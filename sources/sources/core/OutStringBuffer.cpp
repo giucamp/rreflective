@@ -1,7 +1,7 @@
 
 namespace reflective
 {
-	TextOutBuffer::TextOutBuffer()
+	OutStringBuffer::OutStringBuffer()
 	{
 		m_next_char = nullptr;
 		m_end_of_buffer = nullptr;
@@ -12,7 +12,7 @@ namespace reflective
 		#endif
 	}
 
-	TextOutBuffer::TextOutBuffer(char * i_buffer, size_t i_buffer_size)
+	OutStringBuffer::OutStringBuffer(char * i_buffer, size_t i_buffer_size)
 	{
 		m_next_char = i_buffer;
 		m_buffer_size = i_buffer_size;
@@ -32,7 +32,7 @@ namespace reflective
 		#endif
 	}
 
-	void TextOutBuffer::write_char(char i_char)
+	void OutStringBuffer::write_char(char i_char)
 	{
 		m_written_chars++;
 
@@ -45,7 +45,7 @@ namespace reflective
 		}
 	}
 
-	void TextOutBuffer::write_nstr(const char * i_string, const size_t i_string_length)
+	void OutStringBuffer::write_nstr(const char * i_string, const size_t i_string_length)
 	{
 		REFLECTIVE_ASSERT(memchr(i_string, 0, i_string_length) == nullptr, "The input string contains a null character");
 		
@@ -60,7 +60,7 @@ namespace reflective
 		flush();
 	}
 
-	void TextOutBuffer::manual_advance(size_t i_required_length, size_t i_actual_written_length)
+	void OutStringBuffer::manual_advance(size_t i_required_length, size_t i_actual_written_length)
 	{
 		REFLECTIVE_ASSERT(i_actual_written_length <= remaining_buffer_length(), "OVERFOWING THE BUFFER!!!" );
 		m_written_chars += i_required_length;
@@ -69,7 +69,7 @@ namespace reflective
 		flush();
 	}
 
-	void TextOutBuffer::flush()
+	void OutStringBuffer::flush()
 	{
 		if (m_buffer_size > 0)
 		{

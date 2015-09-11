@@ -32,19 +32,19 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	class TextInBuffer
+	class InStringBuffer
 	{
 	public:
 
-		TextInBuffer(const char * i_buffer, size_t i_length);
+		InStringBuffer(const char * i_buffer, size_t i_length);
 
 		template <size_t ARRAY_SIZE>
-			TextInBuffer(char (&i_string)[ARRAY_SIZE])
-				: TextInBuffer(i_string, ARRAY_SIZE)
+			InStringBuffer(char (&i_string)[ARRAY_SIZE])
+				: InStringBuffer(i_string, ARRAY_SIZE)
 					{ }
 
-		TextInBuffer(const char * i_null_terminated_string)
-			: TextInBuffer(i_null_terminated_string, strlen(i_null_terminated_string))
+		InStringBuffer(const char * i_null_terminated_string)
+			: InStringBuffer(i_null_terminated_string, strlen(i_null_terminated_string))
 				{ }
 
 
@@ -62,13 +62,13 @@ namespace reflective
 			return accept(i_string, i_string_length - 1);
 		}
 
-		template <typename TYPE>
-			bool read(TYPE & o_object, TextOutBuffer error)
-		{			
-			return AnyRead<TYPE, has_assign_from_string<TYPE>::value>::read(*this, error, o_object);
-		}
-
 		bool accept_whitespaces();
+
+		template <typename TYPE>
+			bool read(TYPE & o_object, OutStringBuffer error)
+		{
+			return ReadAny<TYPE, has_assign_from_string<TYPE>::value>::read(*this, error, o_object);
+		}
 
 			//
 
@@ -83,17 +83,17 @@ namespace reflective
 
 	private:
 
-		template <typename TYPE, bool HAS_ASSIGN_FROM_STRING_METHOD> struct AnyRead;
-		template <typename TYPE> struct AnyRead < TYPE, true >
+		template <typename TYPE, bool HAS_ASSIGN_FROM_STRING_METHOD> struct ReadAny;
+		template <typename TYPE> struct ReadAny < TYPE, true >
 		{
-			static bool read(TextInBuffer & i_source, TextOutBuffer & i_error_dest, TYPE & o_object) 
+			static bool read(InStringBuffer & i_source, OutStringBuffer & i_error_dest, TYPE & o_object) 
 			{
 				return o_object.assign_from_string(i_source, i_error_dest);
 			}
 		};
-		template <typename TYPE> struct AnyRead < TYPE, false >
+		template <typename TYPE> struct ReadAny < TYPE, false >
 		{
-			static bool read(TextInBuffer & i_source, TextOutBuffer & i_error_dest, TYPE & o_object)
+			static bool read(InStringBuffer & i_source, OutStringBuffer & i_error_dest, TYPE & o_object)
 			{
 				return assign_from_string(i_source, i_error_dest, o_object);
 			}

@@ -22,7 +22,7 @@ void Type_test()
 	using namespace reflective;
 	using namespace std;
 
-	const Type & A_type = get_type<MyNamespace::OtherNamespace::A>();
+	//const Type & A_type = get_type<MyNamespace::OtherNamespace::A>();
 
 	//system("PAUSE");
 }

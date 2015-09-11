@@ -1,7 +1,7 @@
 
 namespace reflective
 {
-	bool Property::get_value(const void * i_owner_object, void * i_dest, TextOutBuffer * i_error_stream) const
+	bool Property::get_value(const void * i_owner_object, void * i_dest, OutStringBuffer * i_error_stream) const
 	{
 		if (!has_flags(Flags::writeonly_member))
 		{
@@ -15,17 +15,17 @@ namespace reflective
 		return false;	
 	}
 
-	bool Property::set_value(const void * i_owner_object, const void * i_source, TextOutBuffer * i_error_stream) const
+	bool Property::set_value(const void * i_owner_object, const void * i_source, OutStringBuffer * i_error_stream) const
 	{
 		return set_value_impl(i_owner_object, i_source, i_error_stream);
 	}
 
-	const void * Property::get_value_inplace(const void * i_owner_object, TextOutBuffer * i_error_stream) const
+	const void * Property::get_value_inplace(const void * i_owner_object, OutStringBuffer * i_error_stream) const
 	{
 		return get_value_inplace_impl(const_cast<void*>(i_owner_object), i_error_stream);
 	}
 
-	void * Property::get_editable_value_inplace(void * i_owner_object, TextOutBuffer * i_error_stream) const
+	void * Property::get_editable_value_inplace(void * i_owner_object, OutStringBuffer * i_error_stream) const
 	{
 		return get_value_inplace_impl(i_owner_object, i_error_stream);
 	}

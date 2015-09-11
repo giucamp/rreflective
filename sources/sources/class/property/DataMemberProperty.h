@@ -17,11 +17,11 @@ namespace reflective
 
 	protected:
 
-		virtual void * get_value_inplace_impl(void * i_owner_object, TextOutBuffer * i_error_stream) const = 0;
+		virtual void * get_value_inplace_impl(void * i_owner_object, OutStringBuffer * i_error_stream) const = 0;
 
-		virtual bool get_value_impl(const void * i_owner_object, void * i_dest, TextOutBuffer * i_error_stream) const = 0;
+		virtual bool get_value_impl(const void * i_owner_object, void * i_dest, OutStringBuffer * i_error_stream) const = 0;
 
-		virtual bool set_value_impl(const void * i_owner_object, const void * i_source, TextOutBuffer * i_error_stream) const = 0;
+		virtual bool set_value_impl(const void * i_owner_object, const void * i_source, OutStringBuffer * i_error_stream) const = 0;
 		
 	private:
 		const QualifiedTypeRef m_type;

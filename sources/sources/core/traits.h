@@ -4,13 +4,13 @@
 
 namespace reflective
 {
-	class TextOutBuffer;
-	class TextInBuffer;
+	class OutStringBuffer;
+	class InStringBuffer;
 
 	// http://stackoverflow.com/questions/18570285/using-sfinae-to-detect-a-member-function
 
 	/** Checks at compile time if a type has member function with this name and signature:
-			void to_string(TextOutBuffer & i_dest) const;
+			void to_string(OutStringBuffer & i_dest) const;
 		Usage: const bool has = has_to_string<MyClass>::value; */
 	template <typename TYPE> class has_to_string
 	{
@@ -20,7 +20,7 @@ namespace reflective
 
 		template <typename U, U> struct really_has;
 
-		template<typename C> static Yes& Test(really_has <void (C::*)(TextOutBuffer & i_dest) const, &C::to_string>*);
+		template<typename C> static Yes& Test(really_has <void (C::*)(OutStringBuffer & i_dest) const, &C::to_string>*);
 		template<typename> static No& Test(...);
 
 	public:
@@ -28,7 +28,7 @@ namespace reflective
 	};
 
 	/** Checks at compile time if a type has member function with this name and signature:
-			bool assign_from_string(TextInBuffer & i_source, TextOutBuffer & i_error_dest);
+			bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest);
 		Usage: const bool has = has_assign_from_string<MyClass>::value; */
 	template <typename TYPE> class has_assign_from_string
 	{
@@ -38,7 +38,7 @@ namespace reflective
 
 		template <typename U, U> struct really_has;
 
-		template<typename C> static Yes& Test(really_has <bool (C::*)(TextInBuffer & i_source, TextOutBuffer & i_error_dest), &C::assign_from_string>*);
+		template<typename C> static Yes& Test(really_has <bool (C::*)(InStringBuffer & i_source, OutStringBuffer & i_error_dest), &C::assign_from_string>*);
 		template<typename> static No& Test(...);
 
 	public:

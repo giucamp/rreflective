@@ -35,21 +35,23 @@ namespace reflective
 	/** This class implements an output text stream. The buffer to be written is provided by the user of the class.  
 		
 	*/
-	class TextOutBuffer
+	class OutStringBuffer
 	{
 	public:
 		
 
 				// construction \ destruction
 		
-		/** Constructs a TextOutBuffer without assigning a buffer, that may be used to compute the size */
-		TextOutBuffer();
+		/** Constructs a null OutStringBuffer, that is a OutStringBuffer with no buffer assigned.
 
-		TextOutBuffer(char * i_dests_buffer, size_t i_buffer_size);
+*/
+		OutStringBuffer();
+
+		OutStringBuffer(char * i_dests_buffer, size_t i_buffer_size);
 		
 		template < size_t BUFFER_SIZE >
-			TextOutBuffer( char (&i_dests_buffer)[BUFFER_SIZE] )
-				: TextOutBuffer(i_dests_buffer, BUFFER_SIZE)
+			OutStringBuffer( char (&i_dests_buffer)[BUFFER_SIZE] )
+				: OutStringBuffer(i_dests_buffer, BUFFER_SIZE)
 					{ }
 			
 		/** Writes a character to the buffer */
@@ -72,15 +74,15 @@ namespace reflective
 
 
 
-		TextOutBuffer & operator << (char i_char) { write_char(i_char); return *this; }
+		OutStringBuffer & operator << (char i_char) { write_char(i_char); return *this; }
 
-		//TextOutBuffer & operator << (const char * i_null_terminated_string) { write_cstr(i_null_terminated_string); return *this; }
+		//OutStringBuffer & operator << (const char * i_null_terminated_string) { write_cstr(i_null_terminated_string); return *this; }
 
 		template <size_t ARRAY_SIZE>
-			TextOutBuffer & operator << (const char(&i_array)[ARRAY_SIZE]) { write_carray(i_array); return *this; }
+			OutStringBuffer & operator << (const char(&i_array)[ARRAY_SIZE]) { write_carray(i_array); return *this; }
 
 		template <typename TYPE>
-			TextOutBuffer & operator << (const TYPE & i_object)
+			OutStringBuffer & operator << (const TYPE & i_object)
 		{
 			write_any(i_object); return *this;
 		}			
@@ -103,10 +105,10 @@ namespace reflective
 
 		template <typename TYPE, bool HAS_TOSTRING_METHOD> struct AnyToString;
 		template <typename TYPE> struct AnyToString<TYPE,true>
-			{ static void to_string(TextOutBuffer & i_dest, const TYPE & i_object) { i_object.to_string(i_dest); } };
+			{ static void to_string(OutStringBuffer & i_dest, const TYPE & i_object) { i_object.to_string(i_dest); } };
 
 		template <typename TYPE> struct AnyToString<TYPE, false>
-			{ static void to_string(TextOutBuffer & i_dest, const TYPE & i_object) { ::reflective::to_string(i_dest, i_object); } };
+			{ static void to_string(OutStringBuffer & i_dest, const TYPE & i_object) { ::reflective::to_string(i_dest, i_object); } };
 
 	private:
 		char * m_next_char;

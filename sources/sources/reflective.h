@@ -67,8 +67,8 @@ namespace reflective
 
 // headers
 #include "core\traits.h"
-#include "core\TextInBuffer.h"
-#include "core\TextOutBuffer.h"
+#include "core\InStringBuffer.h"
+#include "core\OutStringBuffer.h"
 #include "core\Identifier.h"
 #include "core\PtrString.h"
 #include "core\StringHash.h"

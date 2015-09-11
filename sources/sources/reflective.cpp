@@ -6,8 +6,8 @@
 
 #include "reflective.h"
 
-#include "core\TextInBuffer.cpp"
-#include "core\TextOutBuffer.cpp"
+#include "core\InStringBuffer.cpp"
+#include "core\OutStringBuffer.cpp"
 #include "type\SpecialFunctions.cpp"
 #include "type\primitive_types.cpp"
 #include "type\Type.cpp"

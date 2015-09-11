@@ -5,7 +5,7 @@ namespace reflective
 	{
 		// sint_to_string - converts a signed int to a string
 		template <signed RADIX, typename INT_TYPE>
-			inline void sint_to_string(TextOutBuffer & i_dest, INT_TYPE i_value)
+			inline void sint_to_string(OutStringBuffer & i_dest, INT_TYPE i_value)
 		{
 			static_assert(std::numeric_limits<INT_TYPE>::is_signed, "sint_to_string is for signed ints");
 
@@ -67,7 +67,7 @@ namespace reflective
 
 		// uint_to_string - converts an unsigned int to a string
 		template <unsigned RADIX, typename INT_TYPE>
-			inline void uint_to_string(TextOutBuffer & i_dest, INT_TYPE i_value)
+			inline void uint_to_string(OutStringBuffer & i_dest, INT_TYPE i_value)
 		{
 			static_assert(!std::numeric_limits<INT_TYPE>::is_signed, "uint_to_string is for unsigned ints");
 
@@ -102,7 +102,7 @@ namespace reflective
 
 		// sint_from_string - converts a string to an unsigned
 		template <typename INT_TYPE>
-			inline bool sint_from_string(TextInBuffer & i_source, TextOutBuffer & i_error_buffer, INT_TYPE & o_value)
+			inline bool sint_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_buffer, INT_TYPE & o_value)
 		{
 			static_assert(std::numeric_limits<INT_TYPE>::is_signed, "sint_from_string is for signed ints");
 
@@ -179,7 +179,7 @@ namespace reflective
 
 		// uint_from_string - converts a string to an unsigned
 		template <typename INT_TYPE>
-			inline bool uint_from_string(TextInBuffer & i_source, TextOutBuffer & i_error_buffer, INT_TYPE & o_value)
+			inline bool uint_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_buffer, INT_TYPE & o_value)
 		{
 			static_assert(!std::numeric_limits<INT_TYPE>::is_signed, "uint_from_string is for unsigned ints");
 
@@ -248,26 +248,26 @@ namespace reflective
 
 				// signed integers to_string
 
-	// to_string(TextOutBuffer, int8_t)
-	void to_string(TextOutBuffer & i_dest, int8_t i_value)
+	// to_string(OutStringBuffer, int8_t)
+	void to_string(OutStringBuffer & i_dest, int8_t i_value)
 	{
 		details::sint_to_string<10>(i_dest, i_value);
 	}
 
-	// to_string(TextOutBuffer, int16_t)
-	void to_string(TextOutBuffer & i_dest, int16_t i_value)
+	// to_string(OutStringBuffer, int16_t)
+	void to_string(OutStringBuffer & i_dest, int16_t i_value)
 	{
 		details::sint_to_string<10>(i_dest, i_value);
 	}
 
-	// to_string(TextOutBuffer, int32_t)
-	void to_string(TextOutBuffer & i_dest, int32_t i_value)
+	// to_string(OutStringBuffer, int32_t)
+	void to_string(OutStringBuffer & i_dest, int32_t i_value)
 	{
 		details::sint_to_string<10>(i_dest, i_value);
 	}
 
-	// to_string(TextOutBuffer, int64_t)
-	void to_string(TextOutBuffer & i_dest, int64_t i_value)
+	// to_string(OutStringBuffer, int64_t)
+	void to_string(OutStringBuffer & i_dest, int64_t i_value)
 	{
 		details::sint_to_string<10>(i_dest, i_value);
 	}
@@ -275,48 +275,48 @@ namespace reflective
 
 			// unsigned integers to_string
 	
-	// to_string(TextOutBuffer, uint8_t)
-	void to_string(TextOutBuffer & i_dest, uint8_t i_value)
+	// to_string(OutStringBuffer, uint8_t)
+	void to_string(OutStringBuffer & i_dest, uint8_t i_value)
 	{
 		details::uint_to_string<10>(i_dest, i_value);
 	}
 
-	// to_string(TextOutBuffer, uint16_t)
-	void to_string(TextOutBuffer & i_dest, uint16_t i_value)
+	// to_string(OutStringBuffer, uint16_t)
+	void to_string(OutStringBuffer & i_dest, uint16_t i_value)
 	{
 		details::uint_to_string<10>(i_dest, i_value);
 	}
 
-	// to_string(TextOutBuffer, uint32_t)
-	void to_string(TextOutBuffer & i_dest, uint32_t i_value)
+	// to_string(OutStringBuffer, uint32_t)
+	void to_string(OutStringBuffer & i_dest, uint32_t i_value)
 	{
 		details::uint_to_string<10>(i_dest, i_value);
 	}
 
-	// to_string(TextOutBuffer, uint64_t)
-	void to_string(TextOutBuffer & i_dest, uint64_t i_value)
+	// to_string(OutStringBuffer, uint64_t)
+	void to_string(OutStringBuffer & i_dest, uint64_t i_value)
 	{
 		details::uint_to_string<10>(i_dest, i_value);
 	}
 
 		// signed integers assign_from_string
 
-	bool assign_from_string(TextInBuffer & i_source, TextOutBuffer & i_error_dest, int8_t & o_dest)
+	bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest, int8_t & o_dest)
 	{
 		return details::sint_from_string(i_source, i_error_dest, o_dest);
 	}
 
-	bool assign_from_string(TextInBuffer & i_source, TextOutBuffer & i_error_dest, int16_t & o_dest)
+	bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest, int16_t & o_dest)
 	{
 		return details::sint_from_string(i_source, i_error_dest, o_dest);
 	}
 
-	bool assign_from_string(TextInBuffer & i_source, TextOutBuffer & i_error_dest, int32_t & o_dest)
+	bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest, int32_t & o_dest)
 	{
 		return details::sint_from_string(i_source, i_error_dest, o_dest);
 	}
 
-	bool assign_from_string(TextInBuffer & i_source, TextOutBuffer & i_error_dest, int64_t & o_dest)
+	bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest, int64_t & o_dest)
 	{
 		return details::sint_from_string(i_source, i_error_dest, o_dest);
 	}
@@ -324,22 +324,22 @@ namespace reflective
 
 			// unsigned integers assign_from_string
 
-	bool assign_from_string(TextInBuffer & i_source, TextOutBuffer & i_error_dest, uint8_t & o_dest)
+	bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest, uint8_t & o_dest)
 	{
 		return details::uint_from_string(i_source, i_error_dest, o_dest);
 	}
 
-	bool assign_from_string(TextInBuffer & i_source, TextOutBuffer & i_error_dest, uint16_t & o_dest)
+	bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest, uint16_t & o_dest)
 	{
 		return details::uint_from_string(i_source, i_error_dest, o_dest);
 	}
 
-	bool assign_from_string(TextInBuffer & i_source, TextOutBuffer & i_error_dest, uint32_t & o_dest)
+	bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest, uint32_t & o_dest)
 	{
 		return details::uint_from_string(i_source, i_error_dest, o_dest);
 	}
 
-	bool assign_from_string(TextInBuffer & i_source, TextOutBuffer & i_error_dest, uint64_t & o_dest)
+	bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest, uint64_t & o_dest)
 	{
 		return details::uint_from_string(i_source, i_error_dest, o_dest);
 	}
