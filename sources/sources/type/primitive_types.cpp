@@ -21,11 +21,14 @@ namespace reflective
 			if (is_negative)
 			{
 				do {
+										
+					/* note: we do not use the modulo operator %, because it has implementation-defined
+						behavior with non-positive operands. */
+					INT_TYPE new_remaining_value = remaining_value / RADIX;
+					const char digit = static_cast<char>(new_remaining_value * RADIX - remaining_value);
+					remaining_value = new_remaining_value;
 
-					const char digit = static_cast<char>(remaining_value % RADIX);
-					remaining_value /= RADIX;
-
-					buffer[used_buffer] = '0' - digit;
+					buffer[used_buffer] = '0' + digit;
 					used_buffer++;
 
 					REFLECTIVE_ASSERT(used_buffer < buffer_size || remaining_value == 0, "buffer too small?");
@@ -297,6 +300,29 @@ namespace reflective
 	void to_string(OutStringBuffer & i_dest, uint64_t i_value)
 	{
 		details::uint_to_string<10>(i_dest, i_value);
+	}
+
+		// floating point to_string
+
+	void to_string(OutStringBuffer & i_dest, float i_value)
+	{
+		char tmp_buffer[128];
+		sprintf_s(tmp_buffer, "%f", i_value);
+		i_dest.write_cstr(tmp_buffer);
+	}
+
+	void to_string(OutStringBuffer & i_dest, double i_value)
+	{
+		char tmp_buffer[128];
+		sprintf_s(tmp_buffer, "%f", i_value);
+		i_dest.write_cstr(tmp_buffer);
+	}
+
+	void to_string(OutStringBuffer & i_dest, long double i_value)
+	{
+		char tmp_buffer[128];
+		sprintf_s(tmp_buffer, "%f", i_value);
+		i_dest.write_cstr(tmp_buffer);
 	}
 
 		// signed integers assign_from_string

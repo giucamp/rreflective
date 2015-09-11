@@ -151,6 +151,8 @@
     <ClInclude Include="..\sources\reflective.h" />
     <ClInclude Include="..\sources\reflective_common.h" />
     <ClInclude Include="..\sources\reflective_settings.h" />
+    <ClInclude Include="..\sources\type\enum.h" />
+    <ClInclude Include="..\sources\type\enum_member.h" />
     <ClInclude Include="..\sources\type\primitive_types.h" />
     <ClInclude Include="..\sources\type\QualifiedTypeRef.h" />
     <ClInclude Include="..\sources\type\SpecialFunctions.h" />
@@ -227,6 +229,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\sources\GetType.inl" />
+    <None Include="..\sources\type\enum.inl" />
     <None Include="..\sources\type\SpecialFunctions.inl" />
     <None Include="..\sources\type\Type.inl" />
   </ItemGroup>

@@ -45,7 +45,7 @@ namespace reflective
 	class Symbol; // basic reflective object, with a name (of type SymbolName) - defined in core\Symbol.h
 		class Type; // provides informations and services related to a type - defined in type\Type.h
 			class Class; // a class or struct, with properties, actions and events
-			class Enum; // provides informations and services related to an enumeration type
+			template <typename UNDERLYING_TYPE> class Enum; // provides informations and services related to an enumeration type
 		class ClassMember; // provides informations about a member of a class (such visibility)
 			class Property; // generalization of a typed data member (maybe a getter-setter pair)
 				template <typename OWNER_CLASS, typename PROPERTY_TYPE> class DataMemberProperty; // a data member
@@ -78,6 +78,8 @@ namespace reflective
 #include "type\SpecialFunctions.h"
 #include "type\Type.h"
 #include "type\primitive_types.h"
+#include "type\enum_member.h"
+#include "type\enum.h"
 #include "class\ClassMember.h"
 #include "type\QualifiedTypeRef.h"
 #include "class\property\Property.h"
@@ -89,6 +91,7 @@ namespace reflective
 // inlines
 #include "type\SpecialFunctions.inl"
 #include "type\Type.inl"
+#include "type\enum.inl"
 #include "type\QualifiedTypeRef.inl"
 #include "GetType.inl"
 

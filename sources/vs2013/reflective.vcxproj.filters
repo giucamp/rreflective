@@ -71,6 +71,12 @@
     <ClInclude Include="..\sources\core\InStringBuffer.h">
       <Filter>core</Filter>
     </ClInclude>
+    <ClInclude Include="..\sources\type\enum.h">
+      <Filter>type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\type\enum_member.h">
+      <Filter>type</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\sources\type\QualifiedTypeRef.cpp">
@@ -111,5 +117,8 @@
       <Filter>type</Filter>
     </None>
     <None Include="..\sources\GetType.inl" />
+    <None Include="..\sources\type\enum.inl">
+      <Filter>type</Filter>
+    </None>
   </ItemGroup>
 </Project>

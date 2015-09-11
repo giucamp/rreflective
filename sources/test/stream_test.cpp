@@ -5,11 +5,11 @@ class StreamTest
 {
 public:
 
-	class Test
+	class SingleTest
 	{
 	public:
 
-		virtual ~Test() {}
+		virtual ~SingleTest() {}
 
 		virtual bool append_string(Rand & i_rand, reflective::OutStringBuffer & i_dest) = 0;		
 
@@ -19,7 +19,7 @@ public:
 		static void accept(reflective::InStringBuffer & i_source, ANY && i_any)
 		{
 			const bool result = i_source.accept(i_any);
-			REFLECTIVE_ASSERT(result, "Test failed");
+			REFLECTIVE_ASSERT(result, "SingleTest failed");
 		}
 
 		template <typename ANY>
@@ -27,13 +27,13 @@ public:
 		{
 			reflective::OutStringBuffer err;
 			const bool result = i_source.read(i_any, err);
-			REFLECTIVE_ASSERT(result, "Test failed");
+			REFLECTIVE_ASSERT(result, "SingleTest failed");
 		}
 
 	};
 
 	template <typename INT_TYPE>
-		class IntTest : public Test
+		class IntTest : public SingleTest
 	{
 	private:
 		INT_TYPE m_value;
@@ -118,7 +118,7 @@ public:
 	}
 
 private:
-	std::vector< std::unique_ptr<Test> > m_tests;
+	std::vector< std::unique_ptr<SingleTest> > m_tests;
 };
 
 void Stream_test_oneshot()
