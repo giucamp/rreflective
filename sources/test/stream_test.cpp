@@ -15,10 +15,22 @@ public:
 
 		virtual void check_string(reflective::InStringBuffer & i_source) = 0;
 
-		template <typename ANY>
-		static void accept(reflective::InStringBuffer & i_source, ANY && i_any)
+		static void accept_char(reflective::InStringBuffer & i_source, char i_char)
 		{
-			const bool result = i_source.accept(i_any);
+			const bool result = i_source.accept_char(i_char);
+			REFLECTIVE_ASSERT(result, "SingleTest failed");
+		}
+
+		static void accept_cstr(reflective::InStringBuffer & i_source, const char * i_str)
+		{
+			const bool result = i_source.accept_cstr(i_str);
+			REFLECTIVE_ASSERT(result, "SingleTest failed");
+		}
+
+		template <size_t ARRAY_SIZE>
+		static void accept_literal(reflective::InStringBuffer & i_source, const char(&i_string)[ARRAY_SIZE])
+		{
+			const bool result = i_source.accept_literal(i_string);
 			REFLECTIVE_ASSERT(result, "SingleTest failed");
 		}
 
@@ -67,10 +79,10 @@ public:
 		void check_string(reflective::InStringBuffer & i_source) override
 		{
 			INT_TYPE val;
-			accept( i_source, "i:");
+			accept_literal( i_source, "i:");
 			read(i_source, val);
 			REFLECTIVE_ASSERT(val == m_value, "test failed");
-			accept( i_source, ":e");			
+			accept_literal( i_source, ":e");			
 		}
 	};
 
@@ -178,13 +190,13 @@ void Stream_test_rnd()
 	vector<function<void()>> actions = {
 		[&] { check_string += 'a'; out_stream.write_char('a'); null_out_stream.write_char('a'); },
 		[&] { check_string += 'b'; out_stream.write_char('b'); null_out_stream.write_char('b'); },
-		[&] { check_string += "c"; out_stream.write_carray("c"); null_out_stream.write_carray("c"); },
+		[&] { check_string += "c"; out_stream.write_literal("c"); null_out_stream.write_literal("c"); },
 		
-		[&] { check_string += "aaabbbb"; out_stream.write_carray("aaabbbb"); null_out_stream.write_carray("aaabbbb"); },
+		[&] { check_string += "aaabbbb"; out_stream.write_literal("aaabbbb"); null_out_stream.write_literal("aaabbbb"); },
 
-		[&] { check_string += "str"; out_stream.write_carray("str"); null_out_stream.write_carray("str"); },
-		[&] { check_string += "str22"; out_stream.write_carray("str22"); null_out_stream.write_carray("str22"); },
-		[&] { check_string += "str333"; out_stream.write_carray("str333"); null_out_stream.write_carray("str333"); },
+		[&] { check_string += "str"; out_stream.write_literal("str"); null_out_stream.write_literal("str"); },
+		[&] { check_string += "str22"; out_stream.write_literal("str22"); null_out_stream.write_literal("str22"); },
+		[&] { check_string += "str333"; out_stream.write_literal("str333"); null_out_stream.write_literal("str333"); },
 
 		[&] { check_string += strings[0]; out_stream.write_cstr(strings[0].c_str()); null_out_stream.write_cstr(strings[0].c_str()); },
 		[&] { check_string += strings[1]; out_stream.write_cstr(strings[1].c_str()); null_out_stream.write_cstr(strings[1].c_str()); },
@@ -192,25 +204,25 @@ void Stream_test_rnd()
 	};
 	vector<function<bool()>> checks = {
 		
-		[&] { return in_stream.accept('a'); },
-		[&] { return in_stream.accept("b"); },
-		[&] { return in_stream.accept('c'); },
+		[&] { return in_stream.accept_char('a'); },
+		[&] { return in_stream.accept_literal("b"); },
+		[&] { return in_stream.accept_char('c'); },
 
 		[&] { bool r = true;
-				r = r && in_stream.accept('a'); 
-				r = r && in_stream.accept('a');
-				r = r && in_stream.accept("ab");
-				r = r && in_stream.accept('b');
-				r = r && in_stream.accept("bb");
+				r = r && in_stream.accept_char('a'); 
+				r = r && in_stream.accept_char('a');
+				r = r && in_stream.accept_literal("ab");
+				r = r && in_stream.accept_char('b');
+				r = r && in_stream.accept_literal("bb");
 				return r; },
 
-		[&] { return in_stream.accept("str"); },
-		[&] { return in_stream.accept("str22"); },
-		[&] { return in_stream.accept("str333"); },
+		[&] { return in_stream.accept_literal("str"); },
+		[&] { return in_stream.accept_literal("str22"); },
+		[&] { return in_stream.accept_literal("str333"); },
 
-		[&] { return in_stream.accept(strings[0].c_str()); },
-		[&] { return in_stream.accept(strings[1].c_str()); },
-		[&] { return in_stream.accept(strings[2].c_str()); },
+		[&] { return in_stream.accept_cstr(strings[0].c_str()); },
+		[&] { return in_stream.accept_cstr(strings[1].c_str()); },
+		[&] { return in_stream.accept_cstr(strings[2].c_str()); },
 	};
 
 
@@ -251,10 +263,10 @@ void Stream_test_rnd()
 	check_string.clear();
 	for (auto action_index : action_indices)
 	{
-		bool res = in_stream.accept("__");
+		bool res = in_stream.accept_literal("__");
 		REFLECTIVE_ASSERT(!res, "test failed");
 
-		res = in_stream.accept('_');
+		res = in_stream.accept_char('_');
 		REFLECTIVE_ASSERT(!res, "test failed");
 
 		res = checks[action_index]();
@@ -278,6 +290,9 @@ void Stream_test()
 		reflective::OutStringBuffer out(dest);
 		reflective::to_string(out, myInt);
 		std::cout << dest;
+
+		reflective::InStringBuffer buff(dest);
+		buff.accept_literal("ss");
 	}
 
 	static Rand rand;

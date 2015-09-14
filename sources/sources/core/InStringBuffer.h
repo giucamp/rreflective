@@ -50,54 +50,38 @@ namespace reflective
 		
 			// accept
 		
-		bool accept(char i_character);
+		bool accept_char(char i_character);
+
+		bool accept_cstr(const char * i_string, size_t i_string_length);
 		
-		bool accept(const char * i_null_terminated_string);
-
-		bool accept(const char * i_string, size_t i_string_length);
+		bool accept_cstr(const char * i_null_terminated_string)
+		{
+			return accept_cstr(i_null_terminated_string, strlen(i_null_terminated_string));
+		}		
 
 		template <size_t ARRAY_SIZE>
-			bool accept(char(&i_string)[ARRAY_SIZE])
+			bool accept_literal(const char(&i_string)[ARRAY_SIZE])
 		{
-			return accept(i_string, i_string_length - 1);
+			REFLECTIVE_ASSERT(i_string[ARRAY_SIZE - 1] == 0, "the array must contain a null terminated string");
+			return accept_cstr(i_string, ARRAY_SIZE - 1);
 		}
-
 			
-		bool accept_case_ins(char i_character);
+		bool accept_char_case_ins(char i_character);
 
-		bool accept_case_ins(const char * i_null_terminated_string);
+		bool accept_cstr_case_ins(const char * i_null_terminated_string);
 
-		bool accept_case_ins(const char * i_string, size_t i_string_length);
+		bool accept_cstr_case_ins(const char * i_string, size_t i_string_length);
 
 		template <size_t ARRAY_SIZE>
-			bool accept_case_ins(char(&i_string)[ARRAY_SIZE])
+			bool accept_literal_case_ins(const char(&i_string)[ARRAY_SIZE])
 		{
-			return accept_case_ins(i_string, i_string_length - 1);
+			REFLECTIVE_ASSERT(i_string[ARRAY_SIZE - 1] == 0, "the array must contain a null terminated string");
+			return accept_cstr_case_ins(i_string, ARRAY_SIZE - 1);
 		}
-
 
 		bool accept_range(char i_first, char i_last);
 
 		bool accept_whitespaces();
-
-		template <typename CONTAINER>
-			int accept_any_of(const CONTAINER & i_container)
-		{
-			int result = 0;
-			for (const auto & el : i_container)
-			{
-				if (accept(el))
-				{
-					return result;
-				}
-				result++
-			}
-			else
-			{
-				return -1;
-			}
-		}
-
 
 
 				// read
@@ -117,7 +101,6 @@ namespace reflective
 		size_t remaining_buffer_length() const		{ return m_end_of_buffer - m_next_char; }
 
 		void manual_advance(size_t i_read_length);
-
 
 	private:
 

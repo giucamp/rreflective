@@ -64,7 +64,7 @@ namespace reflective
 		void write_cstr(const char * i_null_terminated_string)			{ write_nstr(i_null_terminated_string, strlen(i_null_terminated_string)); }
 		
 		template <size_t ARRAY_SIZE>
-			void write_carray(const char(&i_array)[ARRAY_SIZE])			{ write_nstr(i_array, ARRAY_SIZE - 1); }
+			void write_literal(const char(&i_array)[ARRAY_SIZE])		{ write_nstr(i_array, ARRAY_SIZE - 1); }
 
 		template <typename TYPE>
 			void write_any(const TYPE & i_object)
@@ -79,7 +79,7 @@ namespace reflective
 		//OutStringBuffer & operator << (const char * i_null_terminated_string) { write_cstr(i_null_terminated_string); return *this; }
 
 		template <size_t ARRAY_SIZE>
-			OutStringBuffer & operator << (const char(&i_array)[ARRAY_SIZE]) { write_carray(i_array); return *this; }
+			OutStringBuffer & operator << (const char(&i_array)[ARRAY_SIZE]) { write_literal(i_array); return *this; }
 
 		template <typename TYPE>
 			OutStringBuffer & operator << (const TYPE & i_object)
@@ -95,7 +95,7 @@ namespace reflective
 
 		bool is_truncated() const									{ return m_written_chars + 1 > m_buffer_size; }		
 
-		char * next_char() const							{ return m_next_char; }
+		char * next_char() const									{ return m_next_char; }
 
 		void manual_advance( size_t i_required_length, size_t i_actual_written_length );
 

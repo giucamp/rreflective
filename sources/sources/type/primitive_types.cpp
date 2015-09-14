@@ -111,11 +111,11 @@ namespace reflective
 
 			i_source.accept_whitespaces();
 
-			const bool negative = i_source.accept("-");
+			const bool negative = i_source.accept_char('-');
 
 			i_source.accept_whitespaces();
 
-			const bool hex = i_source.accept("0x") || i_source.accept("0X");
+			const bool hex = i_source.accept_literal("0x") || i_source.accept_literal("0X");
 			
 			const char * curr_digit = i_source.next_char();
 			const char * const end_of_buffer = i_source.end_of_buffer();
@@ -188,7 +188,7 @@ namespace reflective
 
 			i_source.accept_whitespaces();			
 
-			const bool hex = i_source.accept("0x") || i_source.accept("0X");
+			const bool hex = i_source.accept_literal_case_ins("0x");
 			
 			const char * curr_digit = i_source.next_char();
 			const char * const end_of_buffer = i_source.end_of_buffer();
@@ -372,12 +372,8 @@ namespace reflective
 
 		// floating point
 
-	bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest, float & o_dest)
-	{
-		char buff[256];
-		
-	}
-
+	bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest, float & o_dest);
+	
 	bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest, double & o_dest);
 	bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest, long double & o_dest);
 }
