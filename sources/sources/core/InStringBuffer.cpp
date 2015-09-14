@@ -53,6 +53,43 @@ namespace reflective
 		return true;
 	}
 
+	bool InStringBuffer::accept_case_ins(char i_character)
+	{
+		if (m_next_char < m_end_of_buffer)
+		{
+			if ( tolower(*m_next_char) == tolower(i_character) )
+			{
+				m_next_char++;
+				return true;
+			}
+		}
+		return false;
+	}
+
+	bool InStringBuffer::accept_case_ins(const char * i_null_terminated_string)
+	{
+
+	}
+
+	bool InStringBuffer::accept_case_ins(const char * i_string, size_t i_string_length)
+	{
+
+	}
+
+	bool InStringBuffer::accept_range(char i_first, char i_last)
+	{
+		if (m_next_char < m_end_of_buffer)
+		{
+			if (*m_next_char >= i_first && *m_next_char <= i_last)
+			{
+				m_next_char++;
+				return true;
+			}
+		}
+		return false;
+	}
+
+
 	bool InStringBuffer::accept_whitespaces()
 	{
 		bool result = false;

@@ -55,4 +55,8 @@ namespace reflective
 	bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest, uint16_t & o_dest);
 	bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest, uint32_t & o_dest);
 	bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest, uint64_t & o_dest);
+
+	bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest, float & o_dest);
+	bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest, double & o_dest);
+	bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest, long double & o_dest);
 }

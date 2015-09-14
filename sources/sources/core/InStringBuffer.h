@@ -47,11 +47,11 @@ namespace reflective
 			: InStringBuffer(i_null_terminated_string, strlen(i_null_terminated_string))
 				{ }
 
-
+		
 			// accept
 		
 		bool accept(char i_character);
-
+		
 		bool accept(const char * i_null_terminated_string);
 
 		bool accept(const char * i_string, size_t i_string_length);
@@ -62,7 +62,45 @@ namespace reflective
 			return accept(i_string, i_string_length - 1);
 		}
 
+			
+		bool accept_case_ins(char i_character);
+
+		bool accept_case_ins(const char * i_null_terminated_string);
+
+		bool accept_case_ins(const char * i_string, size_t i_string_length);
+
+		template <size_t ARRAY_SIZE>
+			bool accept_case_ins(char(&i_string)[ARRAY_SIZE])
+		{
+			return accept_case_ins(i_string, i_string_length - 1);
+		}
+
+
+		bool accept_range(char i_first, char i_last);
+
 		bool accept_whitespaces();
+
+		template <typename CONTAINER>
+			int accept_any_of(const CONTAINER & i_container)
+		{
+			int result = 0;
+			for (const auto & el : i_container)
+			{
+				if (accept(el))
+				{
+					return result;
+				}
+				result++
+			}
+			else
+			{
+				return -1;
+			}
+		}
+
+
+
+				// read
 
 		template <typename TYPE>
 			bool read(TYPE & o_object, OutStringBuffer error)

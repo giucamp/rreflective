@@ -314,14 +314,14 @@ namespace reflective
 	void to_string(OutStringBuffer & i_dest, double i_value)
 	{
 		char tmp_buffer[128];
-		sprintf_s(tmp_buffer, "%f", i_value);
+		sprintf_s(tmp_buffer, "%lf", i_value);
 		i_dest.write_cstr(tmp_buffer);
 	}
 
 	void to_string(OutStringBuffer & i_dest, long double i_value)
 	{
 		char tmp_buffer[128];
-		sprintf_s(tmp_buffer, "%f", i_value);
+		sprintf_s(tmp_buffer, "%Lf", i_value);
 		i_dest.write_cstr(tmp_buffer);
 	}
 
@@ -369,4 +369,15 @@ namespace reflective
 	{
 		return details::uint_from_string(i_source, i_error_dest, o_dest);
 	}
+
+		// floating point
+
+	bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest, float & o_dest)
+	{
+		char buff[256];
+		
+	}
+
+	bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest, double & o_dest);
+	bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest, long double & o_dest);
 }
