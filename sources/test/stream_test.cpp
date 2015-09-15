@@ -282,12 +282,55 @@ void Stream_test_rnd()
 	cout << buffer << endl;
 }
 
+namespace reflective
+{
+	void to_string(OutStringBuffer & i_dest, const std::string & i_str)
+	{
+		i_dest.write_cstr(i_str.c_str());
+	}
+}
+
 void Stream_test()
 {
+	{
+		// example of OutStringBuffer
+		using namespace reflective;
+		using namespace std;
+		char dest[128];
+		OutStringBuffer out(dest);
+		out << "This is an int: " << 40 + 2;
+		out << " and this is a string: " << string("str");
+		std::cout << dest;
+	}
+
+		{
+			// example of OutStringBuffer
+			using namespace reflective;
+			using namespace std;
+
+			vector<char> buffer(10);
+			
+			OutStringBuffer out(buffer.data(), buffer.size());
+			out << "This string is too long, and this is a number " << 40 + 2;
+
+			if (out.is_truncated())
+			{
+				buffer.resize(out.needed_buffer_length());
+				out = OutStringBuffer(buffer.data(), buffer.size());
+				out << "This string is too long, and this is a number " << 40 + 2;
+
+				REFLECTIVE_ASSERT(!out.is_truncated(), "");
+				REFLECTIVE_ASSERT(out.is_full(), "");				
+			}
+
+			std::cout << string(buffer.data(), buffer.size() - 1);
+		}
+
 	{
 		int8_t myInt = -128;
 		char dest[64];
 		reflective::OutStringBuffer out(dest);
+		out << 40 + 2;
 		reflective::to_string(out, myInt);
 		std::cout << dest;
 

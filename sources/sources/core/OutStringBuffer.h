@@ -32,7 +32,50 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	/** This class implements an output text stream. The buffer to be written is provided by the user of the class.  
+	/** This class implements an output text stream to an user-provided char buffer. OutStringBuffer does not participate to 
+		the ownership of the buffer. The buffer must be valid when any non-const function is called on OutStringBuffer.
+		The destination buffer can be specified to the constructor of OutStringBuffer, by specifying a char* pointing to
+		the beginning of the buffer and a size_t with the total length, or by specifying a fixed-size char array:
+		\code{.cpp}
+		using namespace reflective;
+		using namespace std;
+
+		char dest[128];
+		OutStringBuffer out(dest);
+		out << "This is an int: " << 40 + 2;
+		out << " and this is a string: " << string("str");
+
+		std::cout << dest;
+		\endcode		
+		If a buffer is provided, OutStringBuffer store a null-terminating character at the end of the string. In no cases 
+		OutStringBuffer will write outsize the destination buffer. If the buffer is not big enough to store all the text that
+		is written, the text is truncated (the user may check this with the member function is_truncated). In this case the user may
+		decide to allocate the required space, and rewrite the buffer from scratch.
+
+		\code{.cpp}
+		using namespace reflective;
+		using namespace std;
+
+		vector<char> buffer(10);
+
+		OutStringBuffer out(buffer.data(), buffer.size());
+		out << "This string is too long, and this is a number " << 40 + 2;
+
+		if (out.is_truncated())
+		{
+		buffer.resize(out.needed_buffer_length());
+		out = OutStringBuffer(buffer.data(), buffer.size());
+		out << "This string is too long, and this is a number " << 40 + 2;
+
+		REFLECTIVE_ASSERT(!out.is_truncated(), "");
+		REFLECTIVE_ASSERT(out.is_full(), "");
+		}
+
+		std::cout << string(buffer.data(), buffer.size() - 1);
+		\endcode
+
+		The destination buffer can be set only while constructing an OutStringBuffer
+		
 		
 	*/
 	class OutStringBuffer
@@ -42,16 +85,17 @@ namespace reflective
 
 				// construction \ destruction
 		
-		/** Constructs a null OutStringBuffer, that is a OutStringBuffer with no buffer assigned.
-
-*/
+		/** Constructs an OutStringBuffer with no destination buffer assigned. All the write methods
+		 can be legitimately called, but OutStringBuffer will not write any buffer. Anyway the user can
+		 use needed_buffer_length() to abtain the number of chars that would have be written so far. */
 		OutStringBuffer();
 
-		OutStringBuffer(char * i_dests_buffer, size_t i_buffer_size);
+		/** Constructs an OutStringBuffer specifying a destination buffer. */
+		OutStringBuffer(char * i_dest_buffer, size_t i_buffer_size);
 		
 		template < size_t BUFFER_SIZE >
-			OutStringBuffer( char (&i_dests_buffer)[BUFFER_SIZE] )
-				: OutStringBuffer(i_dests_buffer, BUFFER_SIZE)
+			OutStringBuffer( char (&i_dest_buffer)[BUFFER_SIZE] )
+				: OutStringBuffer(i_dest_buffer, BUFFER_SIZE)
 					{ }
 			
 		/** Writes a character to the buffer */
@@ -73,7 +117,6 @@ namespace reflective
 		}
 
 
-
 		OutStringBuffer & operator << (char i_char) { write_char(i_char); return *this; }
 
 		//OutStringBuffer & operator << (const char * i_null_terminated_string) { write_cstr(i_null_terminated_string); return *this; }
@@ -86,6 +129,14 @@ namespace reflective
 		{
 			write_any(i_object); return *this;
 		}			
+
+		template <typename TYPE>
+			OutStringBuffer & operator << (TYPE && i_object)
+		{
+			write_any(std::forward<TYPE>(i_object)); return *this;
+		}
+
+		size_t needed_char_count() const							{ return m_written_chars; }
 
 		size_t needed_buffer_length() const							{ return m_written_chars + 1; }
 

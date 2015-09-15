@@ -32,8 +32,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
+/*
 	template <typename TYPE>
-		using vector = std::vector< TYPE, Allocator<TYPE> > ;
+		using vector = std::vector< TYPE, Allocator<TYPE> > ;*/
 
 				// address functions
 

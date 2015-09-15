@@ -19,6 +19,7 @@ namespace reflective
 		if (i_buffer_size > 0)
 		{
 			m_end_of_buffer = i_buffer + (i_buffer_size - 1);
+			*m_next_char = 0;
 		}
 		else
 		{
