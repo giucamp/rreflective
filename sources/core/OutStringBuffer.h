@@ -32,10 +32,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	/** This class implements an output text stream to an user-provided char buffer. OutStringBuffer does not participate to 
-		the ownership of the buffer. The buffer must be valid when any non-const function is called on OutStringBuffer.
-		The destination buffer can be specified to the constructor of OutStringBuffer, by specifying a char* pointing to
-		the beginning of the buffer and a size_t with the total length, or by specifying a fixed-size char array:
+	/** This class implements an output text stream to write formatted text to an user-provided character buffer.
+
+		OutStringBuffer does not participate to the ownership of the buffer. The buffer must be valid when any non-const
+		function is called on OutStringBuffer. The destination buffer can be specified to the constructor of OutStringBuffer, 
+		by specifying a char* pointing to the beginning of the buffer and a size_t with the total length, or by specifying a 
+		fixed-size char array:
 		\code{.cpp}
 		using namespace reflective;
 		using namespace std;
@@ -63,19 +65,13 @@ namespace reflective
 
 		if (out.is_truncated())
 		{
-		buffer.resize(out.needed_buffer_length());
-		out = OutStringBuffer(buffer.data(), buffer.size());
-		out << "This string is too long, and this is a number " << 40 + 2;
-
-		REFLECTIVE_ASSERT(!out.is_truncated(), "");
-		REFLECTIVE_ASSERT(out.is_full(), "");
+			buffer.resize(out.needed_buffer_length());
+			out = OutStringBuffer(buffer.data(), buffer.size());
+			out << "This string is too long, and this is a number " << 40 + 2;
 		}
 
 		std::cout << string(buffer.data(), buffer.size() - 1);
 		\endcode
-
-		The destination buffer can be set only while constructing an OutStringBuffer
-		
 		
 	*/
 	class OutStringBuffer
