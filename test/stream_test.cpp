@@ -37,8 +37,7 @@ public:
 		template <typename ANY>
 		static void read(reflective::InStringBuffer & i_source, ANY && i_any)
 		{
-			reflective::OutStringBuffer err;
-			const bool result = i_source.read(i_any, err);
+			const bool result = i_source.read(i_any);
 			REFLECTIVE_ASSERT(result, "SingleTest failed");
 		}
 
@@ -109,7 +108,7 @@ public:
 		const uint32_t buffer_capacity = 256;
 		char buffer[buffer_capacity];
 		memset(buffer, check_char, sizeof(buffer));
-		size_t buff_size = i_rand.generate_uint32(buffer_capacity);
+		size_t buff_size = i_rand.generate_uint32(1, buffer_capacity);
 
 		shuffle(m_tests.begin(), m_tests.end(), i_rand.get_generator());
 				
@@ -176,10 +175,11 @@ void Stream_test_rnd()
 	// create buffer[buff_size], out_stream and in_stream
 	const uint32_t buffer_capacity = 64;
 	char buffer[buffer_capacity];
+	char small_buff[1];
 	memset(buffer, check_char, sizeof(buffer));
 	size_t buff_size = rand.generate_uint32(buffer_capacity);
 	OutStringBuffer out_stream(buffer, buff_size);
-	OutStringBuffer null_out_stream;
+	OutStringBuffer small_stream(small_buff);
 	InStringBuffer in_stream(buffer);
 	string check_string;
 
@@ -188,19 +188,19 @@ void Stream_test_rnd()
 
 	// actions and checks
 	vector<function<void()>> actions = {
-		[&] { check_string += 'a'; out_stream.write_char('a'); null_out_stream.write_char('a'); },
-		[&] { check_string += 'b'; out_stream.write_char('b'); null_out_stream.write_char('b'); },
-		[&] { check_string += "c"; out_stream.write_literal("c"); null_out_stream.write_literal("c"); },
+		[&] { check_string += 'a'; out_stream.write_char('a'); small_stream.write_char('a'); },
+		[&] { check_string += 'b'; out_stream.write_char('b'); small_stream.write_char('b'); },
+		[&] { check_string += "c"; out_stream.write_literal("c"); small_stream.write_literal("c"); },
 		
-		[&] { check_string += "aaabbbb"; out_stream.write_literal("aaabbbb"); null_out_stream.write_literal("aaabbbb"); },
+		[&] { check_string += "aaabbbb"; out_stream.write_literal("aaabbbb"); small_stream.write_literal("aaabbbb"); },
 
-		[&] { check_string += "str"; out_stream.write_literal("str"); null_out_stream.write_literal("str"); },
-		[&] { check_string += "str22"; out_stream.write_literal("str22"); null_out_stream.write_literal("str22"); },
-		[&] { check_string += "str333"; out_stream.write_literal("str333"); null_out_stream.write_literal("str333"); },
+		[&] { check_string += "str"; out_stream.write_literal("str"); small_stream.write_literal("str"); },
+		[&] { check_string += "str22"; out_stream.write_literal("str22"); small_stream.write_literal("str22"); },
+		[&] { check_string += "str333"; out_stream.write_literal("str333"); small_stream.write_literal("str333"); },
 
-		[&] { check_string += strings[0]; out_stream.write_cstr(strings[0].c_str()); null_out_stream.write_cstr(strings[0].c_str()); },
-		[&] { check_string += strings[1]; out_stream.write_cstr(strings[1].c_str()); null_out_stream.write_cstr(strings[1].c_str()); },
-		[&] { check_string += strings[2]; out_stream.write_cstr(strings[2].c_str()); null_out_stream.write_cstr(strings[2].c_str()); },
+		[&] { check_string += strings[0]; out_stream.write_cstr(strings[0].c_str()); small_stream.write_cstr(strings[0].c_str()); },
+		[&] { check_string += strings[1]; out_stream.write_cstr(strings[1].c_str()); small_stream.write_cstr(strings[1].c_str()); },
+		[&] { check_string += strings[2]; out_stream.write_cstr(strings[2].c_str()); small_stream.write_cstr(strings[2].c_str()); },
 	};
 	vector<function<bool()>> checks = {
 		
@@ -227,7 +227,7 @@ void Stream_test_rnd()
 
 
 	vector<size_t> action_indices(400);
-	std::generate(action_indices.begin(), action_indices.end(), [&] { return rand.generate_uint32(actions.size()); });
+	std::generate(action_indices.begin(), action_indices.end(), [&] { return rand.generate_uint32( static_cast<uint32_t>(actions.size())); });
 	
 	check_string.clear();
 	for (auto it = action_indices.begin(); it != action_indices.end(); it++ )
@@ -241,9 +241,9 @@ void Stream_test_rnd()
 		bool res = out_stream.is_full() || checks[*it]();
 		REFLECTIVE_ASSERT(res, "test failed");
 
-		REFLECTIVE_ASSERT(out_stream.needed_buffer_length() == null_out_stream.needed_buffer_length(), "test failed");
+		REFLECTIVE_ASSERT(out_stream.needed_buffer_length() == small_stream.needed_buffer_length(), "test failed");
 
-		REFLECTIVE_ASSERT(null_out_stream.is_truncated(), "test failed");
+		REFLECTIVE_ASSERT(small_stream.is_truncated(), "test failed");
 
 		if (out_stream.is_truncated())
 		{

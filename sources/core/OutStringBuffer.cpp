@@ -1,32 +1,14 @@
 
 namespace reflective
 {
-	OutStringBuffer::OutStringBuffer()
-	{
-		m_next_char = nullptr;
-		m_end_of_buffer = nullptr;
-		m_written_chars = 0;
-		m_buffer_size = 0;
-		#ifdef _DEBUG
-			m_dbg_buffer = nullptr;
-		#endif
-	}
-
 	OutStringBuffer::OutStringBuffer(char * i_buffer, size_t i_buffer_size)
 	{
-		REFLECTIVE_ASSERT( (i_buffer_size == 0) == (i_buffer == nullptr), "The size of the buffer can be zero if and only if the pointer is null");
+		REFLECTIVE_ASSERT( i_buffer_size > 0, "The size of the buffer must be > 0");
 
 		m_next_char = i_buffer;
 		m_buffer_size = i_buffer_size;
-		if (i_buffer_size > 0)
-		{
-			m_end_of_buffer = i_buffer + (i_buffer_size - 1);
-			*m_next_char = 0;
-		}
-		else
-		{
-			m_end_of_buffer = i_buffer;
-		}
+		m_end_of_buffer = i_buffer + (i_buffer_size - 1);
+		*m_next_char = 0;
 		 
 		m_written_chars = 0;
 
@@ -43,8 +25,7 @@ namespace reflective
 		{
 			*m_next_char = i_char;
 			m_next_char++;
-
-			append_null_char();
+			*m_next_char = 0;
 		}
 	}
 
@@ -60,7 +41,7 @@ namespace reflective
 		memcpy(m_next_char, i_string, length_to_write * sizeof(char));
 		m_next_char += length_to_write;
 
-		append_null_char();
+		*m_next_char = 0;
 	}
 
 	void OutStringBuffer::manual_advance(size_t i_required_length, size_t i_actual_written_length)
@@ -68,17 +49,7 @@ namespace reflective
 		REFLECTIVE_ASSERT(i_actual_written_length <= remaining_buffer_length(), "OVERFOWING THE BUFFER!!!" );
 		m_written_chars += i_required_length;
 		m_next_char += i_actual_written_length;
-
-		append_null_char();
-	}
-
-	void OutStringBuffer::append_null_char()
-	{
-		if (m_buffer_size > 0)
-		{
-			// if the buffer is big at least on char, then the last character is reserved for the terminating null 
-			*m_next_char = 0;
-		}
+		*m_next_char = 0;
 	}
 }
 

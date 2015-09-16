@@ -68,7 +68,10 @@ namespace reflective
 			
 		bool accept_char_case_ins(char i_character);
 
-		bool accept_cstr_case_ins(const char * i_null_terminated_string);
+		bool accept_cstr_case_ins(const char * i_null_terminated_string)
+		{
+			return accept_cstr_case_ins(i_null_terminated_string, strlen(i_null_terminated_string));
+		}
 
 		bool accept_cstr_case_ins(const char * i_string, size_t i_string_length);
 
@@ -87,9 +90,17 @@ namespace reflective
 				// read
 
 		template <typename TYPE>
-			bool read(TYPE & o_object, OutStringBuffer error)
+			bool read(TYPE & o_object, OutStringBuffer i_error)
 		{
-			return ReadAny<TYPE, has_assign_from_string<TYPE>::value>::read(*this, error, o_object);
+			return ReadAny<TYPE, has_assign_from_string<TYPE>::value>::read(*this, i_error, o_object);
+		}
+
+		template <typename TYPE>
+			bool read(TYPE & o_object)
+		{
+			char small_buffer[sizeof(int)];
+			OutStringBuffer small_error_buffer(small_buffer);
+			return ReadAny<TYPE, has_assign_from_string<TYPE>::value>::read(*this, small_error_buffer, o_object);
 		}
 
 			//

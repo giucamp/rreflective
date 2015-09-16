@@ -80,12 +80,6 @@ namespace reflective
 
 				// construction \ destruction
 		
-		/** Constructs an OutStringBuffer with no destination buffer assigned. All the write methods
-		 can be legitimately called, but OutStringBuffer will not write any buffer. Anyway the user can
-		 use needed_buffer_length (or needed_char_count) to abtain the number of chars that would have
-		 be written so far. */
-		OutStringBuffer();
-
 		/** Constructs an OutStringBuffer given a destination buffer. The size of the buffer can be 
 			zero if and only if the pointer is null.
 		@param i_dest_buffer pointer to the beginnning of the destination buffer
@@ -152,8 +146,6 @@ namespace reflective
 		void manual_advance( size_t i_required_length, size_t i_actual_written_length );
 
 	private:
-
-		void append_null_char();
 
 		template <typename TYPE, bool HAS_TOSTRING_METHOD> struct AnyToString;
 		template <typename TYPE> struct AnyToString<TYPE,true>
