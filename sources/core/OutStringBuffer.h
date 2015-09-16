@@ -35,8 +35,8 @@ namespace reflective
 	/** This class implements an output text stream to write formatted text to an user-provided character buffer.
 
 		OutStringBuffer does not participate to the ownership of the buffer. The buffer must be valid when any non-const
-		function is called on OutStringBuffer. The destination buffer can be specified to the constructor of OutStringBuffer, 
-		by specifying a char* pointing to the beginning of the buffer and a size_t with the total length, or by specifying a 
+		function is called on OutStringBuffer. The destination buffer must be specified to the constructor by passing
+		a char* pointing to the beginning of the buffer and a size_t with the total length, or by specifying a 
 		fixed-size char array:
 		\code{.cpp}
 		using namespace reflective;
@@ -49,11 +49,10 @@ namespace reflective
 
 		std::cout << dest;
 		\endcode		
-		If a buffer is provided, OutStringBuffer store a null-terminating character at the end of the string. In no cases 
-		OutStringBuffer will write outsize the destination buffer. If the buffer is not big enough to store all the text that
-		is written, the text is truncated (the user may check this with the member function is_truncated). In this case the user may
-		decide to allocate the required space, and rewrite the buffer from scratch.
-
+		If a buffer is provided, OutStringBuffer store a null-terminating character at the end of the string after construction 
+		and after any write. In no cases OutStringBuffer will write outsize the destination buffer. If the buffer is not big enough 
+		to store all the text that is written, the content is truncated. The user may check this with the member function is_truncated(). 
+		In this case the user may decide to allocate the required space, and rewrite the buffer from scratch:
 		\code{.cpp}
 		using namespace reflective;
 		using namespace std;
@@ -83,18 +82,24 @@ namespace reflective
 		
 		/** Constructs an OutStringBuffer with no destination buffer assigned. All the write methods
 		 can be legitimately called, but OutStringBuffer will not write any buffer. Anyway the user can
-		 use needed_buffer_length() to abtain the number of chars that would have be written so far. */
+		 use needed_buffer_length (or needed_char_count) to abtain the number of chars that would have
+		 be written so far. */
 		OutStringBuffer();
 
-		/** Constructs an OutStringBuffer specifying a destination buffer. */
+		/** Constructs an OutStringBuffer given a destination buffer. The size of the buffer can be 
+			zero if and only if the pointer is null.
+		@param i_dest_buffer pointer to the beginnning of the destination buffer
+		@param i_buffer_size size of the destination buffer */
 		OutStringBuffer(char * i_dest_buffer, size_t i_buffer_size);
-		
+
+
+		/** Constructs an OutStringBuffer given a character array. */
 		template < size_t BUFFER_SIZE >
 			OutStringBuffer( char (&i_dest_buffer)[BUFFER_SIZE] )
 				: OutStringBuffer(i_dest_buffer, BUFFER_SIZE)
-					{ }
+					{  }
 			
-		/** Writes a character to the buffer */
+		/** Writes a character to the buffer. */
 		void write_char(char i_char);
 		
 		/** Writes a string on the buffer. The string is not required to be null-terminated, but 
@@ -148,7 +153,7 @@ namespace reflective
 
 	private:
 
-		void flush();
+		void append_null_char();
 
 		template <typename TYPE, bool HAS_TOSTRING_METHOD> struct AnyToString;
 		template <typename TYPE> struct AnyToString<TYPE,true>

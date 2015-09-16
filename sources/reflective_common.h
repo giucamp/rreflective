@@ -32,10 +32,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-/*
-	template <typename TYPE>
-		using vector = std::vector< TYPE, Allocator<TYPE> > ;*/
-
 				// address functions
 
 	/** Returns true whether the given unsigned integer number is a power of 2 (1, 2, 4, 8, ...)

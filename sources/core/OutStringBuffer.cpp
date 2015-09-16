@@ -14,6 +14,8 @@ namespace reflective
 
 	OutStringBuffer::OutStringBuffer(char * i_buffer, size_t i_buffer_size)
 	{
+		REFLECTIVE_ASSERT( (i_buffer_size == 0) == (i_buffer == nullptr), "The size of the buffer can be zero if and only if the pointer is null");
+
 		m_next_char = i_buffer;
 		m_buffer_size = i_buffer_size;
 		if (i_buffer_size > 0)
@@ -42,7 +44,7 @@ namespace reflective
 			*m_next_char = i_char;
 			m_next_char++;
 
-			flush();
+			append_null_char();
 		}
 	}
 
@@ -58,7 +60,7 @@ namespace reflective
 		memcpy(m_next_char, i_string, length_to_write * sizeof(char));
 		m_next_char += length_to_write;
 
-		flush();
+		append_null_char();
 	}
 
 	void OutStringBuffer::manual_advance(size_t i_required_length, size_t i_actual_written_length)
@@ -67,10 +69,10 @@ namespace reflective
 		m_written_chars += i_required_length;
 		m_next_char += i_actual_written_length;
 
-		flush();
+		append_null_char();
 	}
 
-	void OutStringBuffer::flush()
+	void OutStringBuffer::append_null_char()
 	{
 		if (m_buffer_size > 0)
 		{
