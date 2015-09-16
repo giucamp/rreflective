@@ -232,6 +232,12 @@ void Stream_test_rnd()
 	check_string.clear();
 	for (auto it = action_indices.begin(); it != action_indices.end(); it++ )
 	{
+		InStringBuffer in_stream_copy = in_stream;
+		OutStringBuffer out_stream_copy = out_stream;
+
+		in_stream = in_stream_copy;
+		out_stream = out_stream_copy;
+
 		actions[*it]();
 
 		REFLECTIVE_ASSERT(out_stream.is_full() == check_string.length() + 1 >= buff_size, "test failed");
@@ -300,7 +306,7 @@ void Stream_test()
 		OutStringBuffer out(dest);
 		out << "This is an int: " << 40 + 2;
 		out << " and this is a string: " << string("str");
-		std::cout << dest;
+		std::cout << dest << endl;
 	}
 
 		{
@@ -323,7 +329,7 @@ void Stream_test()
 				REFLECTIVE_ASSERT(out.is_full(), "");				
 			}
 
-			std::cout << string(buffer.data(), buffer.size() - 1);
+			std::cout << string(buffer.data(), buffer.size() - 1) << endl;
 		}
 
 	{
@@ -347,8 +353,8 @@ void Stream_test()
 
 	Stream_test_oneshot();
 
-	for (int i = 0; i < 10000; i++)
+	/*for (int i = 0; i < 10000; i++)
 	{
 		Stream_test_rnd();
-	}
+	}*/
 }

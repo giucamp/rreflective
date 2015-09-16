@@ -47,7 +47,7 @@ namespace reflective
 		out << "This is an int: " << 40 + 2;
 		out << " and this is a string: " << string("str");
 
-		std::cout << dest;
+		std::cout << dest << endl;
 		\endcode		
 		If a buffer is provided, OutStringBuffer store a null-terminating character at the end of the string after construction 
 		and after any write. In no cases OutStringBuffer will write outsize the destination buffer. If the buffer is not big enough 
@@ -69,7 +69,7 @@ namespace reflective
 			out << "This string is too long, and this is a number " << 40 + 2;
 		}
 
-		std::cout << string(buffer.data(), buffer.size() - 1);
+		std::cout << string(buffer.data(), buffer.size() - 1) << endl;
 		\endcode
 		
 	*/
@@ -82,8 +82,8 @@ namespace reflective
 		
 		/** Constructs an OutStringBuffer given a destination buffer. The size of the buffer can be 
 			zero if and only if the pointer is null.
-		@param i_dest_buffer pointer to the beginnning of the destination buffer
-		@param i_buffer_size size of the destination buffer */
+			@param i_dest_buffer pointer to the beginning of the destination buffer
+			@param i_buffer_size size of the destination buffer */
 		OutStringBuffer(char * i_dest_buffer, size_t i_buffer_size);
 
 
@@ -93,17 +93,29 @@ namespace reflective
 				: OutStringBuffer(i_dest_buffer, BUFFER_SIZE)
 					{  }
 			
-		/** Writes a character to the buffer. */
+		/** Writes a character to the buffer 
+			@param i_char character to write. Can't be the null character. */
 		void write_char(char i_char);
 		
-		/** Writes a string on the buffer. The string is not required to be null-terminated, but 
-				i_string[i_string_length] can be a null char. */
+		/** Writes a C null-terminated string */
+		void write_cstr(const char * i_null_terminated_string)			{ write_nstr(i_null_terminated_string, strlen(i_null_terminated_string)); }
+
+		/** Writes a C string, possibly not null-terminated. 
+			@param i_string pointer to the first character of the string. All the characters 
+				up to i_string_length must be non-null. The character i_string[i_string_length] is
+				not read (so it may be a null char or not, or an invalid address).
+			@param i_string_length. May be zero. */
 		void write_nstr(const char * i_string, const size_t i_string_length);
 
-		void write_cstr(const char * i_null_terminated_string)			{ write_nstr(i_null_terminated_string, strlen(i_null_terminated_string)); }
-		
+		/** Writes an array of characters, presumably a string literal (like "a string").
+			@param i_array array of const chars. All the characters of this array, except the last,
+				must not be the null char. The last character must be the null-char. */
 		template <size_t ARRAY_SIZE>
-			void write_literal(const char(&i_array)[ARRAY_SIZE])		{ write_nstr(i_array, ARRAY_SIZE - 1); }
+			void write_literal(const char(&i_array)[ARRAY_SIZE])
+		{
+			REFLECTIVE_ASSERT(i_array[ARRAY_SIZE - 1] == 0, "the array must contain a null terminated string");
+			write_nstr(i_array, ARRAY_SIZE - 1); 
+		}
 
 		template <typename TYPE>
 			void write_any(const TYPE & i_object)
@@ -111,10 +123,7 @@ namespace reflective
 			AnyToString<TYPE, has_to_string<TYPE>::value>::to_string(*this, i_object);
 		}
 
-
 		OutStringBuffer & operator << (char i_char) { write_char(i_char); return *this; }
-
-		//OutStringBuffer & operator << (const char * i_null_terminated_string) { write_cstr(i_null_terminated_string); return *this; }
 
 		template <size_t ARRAY_SIZE>
 			OutStringBuffer & operator << (const char(&i_array)[ARRAY_SIZE]) { write_literal(i_array); return *this; }
@@ -131,9 +140,12 @@ namespace reflective
 			write_any(std::forward<TYPE>(i_object)); return *this;
 		}
 
+		/** Retrieves the number of characters that would have been written so far, independently of the size of the 
+			buffer (and therefore of the truncation). */
 		size_t needed_char_count() const							{ return m_written_chars; }
 
-		size_t needed_buffer_length() const							{ return m_written_chars + 1; }
+		/** Retrieves how big a buffer should be to contain all the chars written so far without incurring in truncation. */
+		size_t needed_buffer_length() const							{ return (m_written_chars + 1) * sizeof(char); }
 
 		size_t remaining_buffer_length() const						{ return m_end_of_buffer - m_next_char; }
 

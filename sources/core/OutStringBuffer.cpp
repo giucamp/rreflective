@@ -19,6 +19,7 @@ namespace reflective
 
 	void OutStringBuffer::write_char(char i_char)
 	{
+		REFLECTIVE_ASSERT(i_char != 0, "Can't write the null character");
 		m_written_chars++;
 
 		if (m_next_char < m_end_of_buffer)

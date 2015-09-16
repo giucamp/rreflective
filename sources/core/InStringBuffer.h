@@ -38,11 +38,6 @@ namespace reflective
 
 		InStringBuffer(const char * i_buffer, size_t i_length);
 
-		template <size_t ARRAY_SIZE>
-			InStringBuffer(char (&i_string)[ARRAY_SIZE])
-				: InStringBuffer(i_string, ARRAY_SIZE)
-					{ }
-
 		InStringBuffer(const char * i_null_terminated_string)
 			: InStringBuffer(i_null_terminated_string, strlen(i_null_terminated_string))
 				{ }
@@ -60,10 +55,10 @@ namespace reflective
 		}		
 
 		template <size_t ARRAY_SIZE>
-			bool accept_literal(const char(&i_string)[ARRAY_SIZE])
+		bool accept_literal(const char(&i_array)[ARRAY_SIZE])
 		{
-			REFLECTIVE_ASSERT(i_string[ARRAY_SIZE - 1] == 0, "the array must contain a null terminated string");
-			return accept_cstr(i_string, ARRAY_SIZE - 1);
+			REFLECTIVE_ASSERT(i_array[ARRAY_SIZE - 1] == 0, "the array must contain a null terminated string");
+			return accept_cstr(i_array, ARRAY_SIZE - 1);
 		}
 			
 		bool accept_char_case_ins(char i_character);
@@ -76,10 +71,10 @@ namespace reflective
 		bool accept_cstr_case_ins(const char * i_string, size_t i_string_length);
 
 		template <size_t ARRAY_SIZE>
-			bool accept_literal_case_ins(const char(&i_string)[ARRAY_SIZE])
+			bool accept_literal_case_ins(const char(&i_array)[ARRAY_SIZE])
 		{
-			REFLECTIVE_ASSERT(i_string[ARRAY_SIZE - 1] == 0, "the array must contain a null terminated string");
-			return accept_cstr_case_ins(i_string, ARRAY_SIZE - 1);
+			REFLECTIVE_ASSERT(i_array[ARRAY_SIZE - 1] == 0, "the array must contain a null terminated string");
+			return accept_cstr_case_ins(i_array, ARRAY_SIZE - 1);
 		}
 
 		bool accept_range(char i_first, char i_last);
