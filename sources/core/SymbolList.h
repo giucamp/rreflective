@@ -40,37 +40,25 @@ namespace reflective
 	{
 	public:
 
-		SymbolList()
-			: m_count(0)
-		{
-		}
+		//SymbolList(SymbolList && i_from) = default;
 
-		SymbolList(const SymbolList &) = delete;
+		//SymbolList & operator = (SymbolList && i_from) = default;
 
-		SymbolList(SymbolList && i_from)
-			: m_symbols(std::move(i_from.m_symbols)), m_count(0)
-		{
-			i_from.m_count = 0;
-		}
+		//SymbolList(const SymbolList &) = delete;
 
-		SymbolList & operator = (SymbolList && i_from)
-		{
-			m_symbols = std::move(i_from.m_symbols);
-			m_count = i_from.m_count;
-			i_from.m_count = 0;
-			return *this;
-		}
+		//SymbolList & operator = (const SymbolList & i_from) = delete;
 
-		SymbolList(std::initializer_list<std::unique_ptr<const SYMBOL>> i_symbols)
-			: m_symbols(std::move(i_symbols)), m_count( i_symbols.size() )
+		SymbolList() {}
+
+		SymbolList(std::initializer_list< std::unique_ptr<const SYMBOL> > i_symbols)
+			: m_symbols(std::move(i_symbols))
 		{
 		}		
 
 		~SymbolList() = default;
 
 	private:
-		std::unique_ptr< std::unique_ptr<const SYMBOL>[] > m_symbols;
-		size_t m_count;
+		std::vector< std::unique_ptr<const SYMBOL> > m_symbols;
 	};
 }
 

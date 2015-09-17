@@ -6,9 +6,9 @@ void Stream_test();
 
 int main()
 {
-	Stream_test();
-
 	Type_test();
+
+	Stream_test();	
 
 	Name_test();
 

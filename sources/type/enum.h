@@ -48,8 +48,12 @@ namespace reflective
 		using Member = EnumMember<UNDERLYING_TYPE>;
 
 		Enum(SymbolName i_name, const SpecialFunctions & i_special_functions);
-
+		
 		const SymbolList<Member> & members() const			{ return m_members; }
+
+		const QualifiedTypeRef & underlying_type() const	{ return get_qualified_type<UNDERLYING_TYPE>(); }
+
+		void set_members(SymbolList<Member> && i_members)	{ m_members = std::move(i_members); }
 
 	private:
 		SymbolList<Member> m_members;

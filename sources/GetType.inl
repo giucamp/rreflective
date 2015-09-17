@@ -1,8 +1,7 @@
 
 namespace reflective
 {
-	template <typename TYPE>
-		void setup_type(Type & /*i_type*/)
+	inline void setup_type(Type & /*i_type*/, void * )
 	{
 
 	}
@@ -25,7 +24,7 @@ namespace reflective
 			static inline const Type * create()
 			{
 				Type * new_type = new Type(get_type_full_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value, get_special_functions<TYPE>());
-				setup_type<TYPE>(*new_type);
+				setup_type( *new_type, static_cast<TYPE*>(nullptr) );
 				return new_type;
 			}
 		};
@@ -37,8 +36,20 @@ namespace reflective
 			static inline const Class * create()
 			{
 				Class * class_obj = new Class(get_type_full_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value, get_special_functions<TYPE>());
-				setup_type<TYPE>(*class_obj);
+				setup_type( *class_obj, static_cast<TYPE*>(nullptr) );
 				return class_obj;
+			}
+		};
+
+		// DefaultTypeFactory< TYPE, SymbolType::enum_symbol >
+		template <typename TYPE>
+		struct DefaultTypeFactory< TYPE, SymbolType::enum_symbol >
+		{
+			static inline const Enum< std::underlying_type<TYPE> > * create()
+			{
+				Enum< std::underlying_type<TYPE> > * enum_obj = new Enum< std::underlying_type<TYPE> >(get_type_full_name<TYPE>(), get_special_functions<TYPE>());
+				setup_type( *enum_obj, static_cast<TYPE*>(nullptr) );
+				return enum_obj;
 			}
 		};
 	}

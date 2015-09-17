@@ -38,6 +38,7 @@ namespace reflective
 
 		enum class Flags
 		{
+			none = 0,
 			private_member = 1 << 0,
 			protected_member = 1 << 1,
 			writeonly_member = 1 << 2,

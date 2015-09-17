@@ -49,7 +49,7 @@ namespace reflective
 
 		void * get_editable_value_inplace(void * i_owner_object, OutStringBuffer * i_error_stream) const;
 
-	protected:
+	private:
 
 		virtual void * get_value_inplace_impl(void * i_owner_object, OutStringBuffer * i_error_stream) const = 0;
 

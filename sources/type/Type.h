@@ -44,6 +44,8 @@ namespace reflective
 
 		Type(SymbolName i_name, size_t i_size, size_t i_alignment, const SpecialFunctions & i_special_functions);
 
+		virtual ~Type() {}
+
 		size_t size() const							{ return m_size; }
 
 		size_t alignment() const					{ return m_alignment; }
@@ -53,7 +55,7 @@ namespace reflective
 		const uint32_t m_size : 24;
 		const uint32_t m_alignment : 8;
 
-		// namasace data
+		// namaspace data
 		const Namespace * m_parent_namespace;
 		Type * m_next_type_in_namespace;
 		friend class Namespace;
