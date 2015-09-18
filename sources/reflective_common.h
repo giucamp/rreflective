@@ -89,4 +89,10 @@ namespace reflective
 		}
 		return true;
 	}
+
+	template <typename TYPE>
+		inline void dbg_object_validate( const TYPE & /*i_object*/ )
+	{
+
+	}
 }

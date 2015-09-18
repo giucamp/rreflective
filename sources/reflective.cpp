@@ -11,3 +11,7 @@
 #include "type\SpecialFunctions.cpp"
 #include "type\primitive_types.cpp"
 #include "type\Type.cpp"
+#include "type\QualifiedTypeRef.cpp"
+
+
+#include "class\property\Property.cpp"

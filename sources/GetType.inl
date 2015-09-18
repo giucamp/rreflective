@@ -14,12 +14,12 @@ namespace reflective
 			return typeid(TYPE).name();
 		}
 
-		template <typename TYPE, SymbolType SYMBOL_TYPE > 
+		template <typename TYPE, SymbolTypeId SYMBOL_TYPE > 
 			struct DefaultTypeFactory;
 
-		// DefaultTypeFactory< TYPE, SymbolType::primitive_type_symbol >
+		// DefaultTypeFactory< TYPE, SymbolTypeId::primitive_type_symbol >
 		template <typename TYPE> 
-			struct DefaultTypeFactory< TYPE, SymbolType::primitive_type_symbol >
+			struct DefaultTypeFactory< TYPE, SymbolTypeId::primitive_type_symbol >
 		{
 			static inline const Type * create()
 			{
@@ -29,9 +29,9 @@ namespace reflective
 			}
 		};
 
-		// DefaultTypeFactory< TYPE, SymbolType::class_symbol >
+		// DefaultTypeFactory< TYPE, SymbolTypeId::class_symbol >
 		template <typename TYPE>
-			struct DefaultTypeFactory< TYPE, SymbolType::class_symbol >
+			struct DefaultTypeFactory< TYPE, SymbolTypeId::class_symbol >
 		{
 			static inline const Class * create()
 			{
@@ -41,9 +41,9 @@ namespace reflective
 			}
 		};
 
-		// DefaultTypeFactory< TYPE, SymbolType::enum_symbol >
+		// DefaultTypeFactory< TYPE, SymbolTypeId::enum_symbol >
 		template <typename TYPE>
-		struct DefaultTypeFactory< TYPE, SymbolType::enum_symbol >
+		struct DefaultTypeFactory< TYPE, SymbolTypeId::enum_symbol >
 		{
 			static inline const Enum< std::underlying_type<TYPE> > * create()
 			{
@@ -58,8 +58,8 @@ namespace reflective
 		const Type * create_type()
 	{
 		return details::DefaultTypeFactory<TYPE,
-			std::is_class<TYPE>::value ? SymbolType::class_symbol :
-			(std::is_enum<TYPE>::value ? SymbolType::enum_symbol : SymbolType::primitive_type_symbol) >::create();
+			std::is_class<TYPE>::value ? SymbolTypeId::class_symbol :
+			(std::is_enum<TYPE>::value ? SymbolTypeId::enum_symbol : SymbolTypeId::primitive_type_symbol) >::create();
 	}
 
 	namespace details

@@ -12,7 +12,8 @@ namespace reflective
 	template <typename TYPE>
 		inline QualifiedTypeRef get_qualified_type()
 	{
-		static_assert(StaticQualification<TYPE>::s_indirection_levels < s_max_indirection_levels);
+		static_assert(StaticQualification<TYPE>::s_indirection_levels < QualifiedTypeRef::s_max_indirection_levels,
+			"Maximum indirection level exceeded");
 
 		return QualifiedTypeRef(get_type<TYPE>(), 
 			StaticQualification<TYPE>::s_indirection_levels,

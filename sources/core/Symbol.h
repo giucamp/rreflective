@@ -21,7 +21,7 @@ namespace reflective
 		return SymbolName(SymbolName::Make(), std::forward<PARAMETERS>(i_parameters)...);
 	}	
 
-	enum class SymbolType
+	enum class SymbolTypeId
 	{
 		primitive_type_symbol,
 		class_symbol,

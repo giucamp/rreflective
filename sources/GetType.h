@@ -36,6 +36,41 @@ namespace reflective
 
 	Namespace & edit_root_namespace();
 
+	namespace detail
+	{
+		template <typename TYPE> struct _GetSymbolTypeId
+		{
+			static_assert(std::is_class<TYPE>::value || std::is_enum<TYPE>::value ||
+				std::is_fundamental<TYPE>::value, "Type not supported" );
+
+			static const SymbolTypeId s_type_id = std::is_class<TYPE>::value ? reflective::Class :
+				(std::is_enum<TYPE>::value ? SymbolTypeId::enum_symbol : SymbolTypeId::primitive_type_symbol );
+		};
+
+		template <typename TYPE, SymbolTypeId TYPE_ID> struct _SymbolTraits;
+
+		template <typename TYPE> 
+			struct _SymbolTraits< TYPE, SymbolTypeId::primitive_type_symbol>
+		{
+			using ReflectedType = reflective::Type;
+		};
+
+		template <typename TYPE> 
+			struct _SymbolTraits< TYPE, SymbolTypeId::class_symbol>
+		{
+			using ReflectedType = reflective::Class;
+		};
+
+		template <typename TYPE> 
+			struct _SymbolTraits< TYPE, SymbolTypeId::enum_symbol >
+		{
+			using ReflectedType = reflective::Enum<std::underlying_type<TYPE>>;
+		};		
+	}
+
+	template <typename TYPE>
+		using reflecting_type = typename detail::_SymbolTraits<TYPE, detail::_GetSymbolTypeId<TYPE>::s_type_id>::ReflectedType;
+
 	template <typename TYPE>
 		const Type & get_type();
 

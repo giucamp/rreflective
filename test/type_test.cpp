@@ -11,7 +11,8 @@ namespace MyNamespace
 		class MyClass
 		{
 		public:
-			int m_intVar = 0;
+			int m_int_var = 0;
+			float m_float_var = 0.f;
 		};
 
 		enum MyEnum
@@ -29,7 +30,10 @@ namespace reflective
 	void setup_type(Class & i_class, MyNamespace::OtherNamespace::MyClass *)
 	{
 		using ThisClass = MyNamespace::OtherNamespace::MyClass;
-		SymbolList<Property> empty = { new_property<ThisClass>("Prop", &ThisClass::m_intVar) };
+		SymbolList<Property> empty = { 
+			new_property<ThisClass>("IntVar", &ThisClass::m_int_var),
+			new_property<ThisClass>("FloatVar", &ThisClass::m_float_var),
+		};
 		i_class.set_properites(std::move(empty));
 	}
 }
@@ -41,6 +45,7 @@ void Type_test()
 	using namespace std;
 
 	const Type & class_type = get_type<MyNamespace::OtherNamespace::MyClass>();
+	
 	{
 		const Type & enum_type = get_type<MyNamespace::OtherNamespace::MyEnum>();
 		
