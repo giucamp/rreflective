@@ -60,6 +60,11 @@ namespace reflective
 		class StringHasher;
 
 	class PtrString;	
+	
+	enum class UpDownCasterImplementation
+	{
+		Functions
+	};
 }
 
 #include "reflective_settings.h"
@@ -75,6 +80,7 @@ namespace reflective
 #include "core\Symbol.h"
 #include "core\SymbolList.h"
 
+#include "type\updown_caster.h"
 #include "type\QualifiedTypeRef.h"
 #include "type\SpecialFunctions.h"
 #include "type\Type.h"

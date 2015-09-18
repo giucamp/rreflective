@@ -32,8 +32,17 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	class Namespace;
+	struct BaseType
+	{
+	public:
 
+		BaseType()
+
+
+	private:
+		const Type * m_base_type;
+		UpDownCaster<> m_updown_caster;		
+	};
 
 	class Type : public Symbol
 	{
@@ -55,7 +64,7 @@ namespace reflective
 		const uint32_t m_size : 24;
 		const uint32_t m_alignment : 8;
 
-		// namaspace data
+		// namespace data
 		const Namespace * m_parent_namespace;
 		Type * m_next_type_in_namespace;
 		friend class Namespace;

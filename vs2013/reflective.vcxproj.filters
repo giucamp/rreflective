@@ -29,9 +29,6 @@
     <ClInclude Include="..\sources\type\StaticQualification.h">
       <Filter>type</Filter>
     </ClInclude>
-    <ClInclude Include="..\sources\type\Type.h">
-      <Filter>type</Filter>
-    </ClInclude>
     <ClInclude Include="..\sources\core\Symbol.h">
       <Filter>core</Filter>
     </ClInclude>
@@ -77,12 +74,15 @@
     <ClInclude Include="..\sources\type\enum_member.h">
       <Filter>type</Filter>
     </ClInclude>
+    <ClInclude Include="..\sources\type\updown_caster.h">
+      <Filter>type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\type\type.h">
+      <Filter>type</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\sources\type\QualifiedTypeRef.cpp">
-      <Filter>type</Filter>
-    </ClCompile>
-    <ClCompile Include="..\sources\type\Type.cpp">
       <Filter>type</Filter>
     </ClCompile>
     <ClCompile Include="..\sources\type\SpecialFunctions.cpp">
@@ -108,16 +108,19 @@
     <ClCompile Include="..\sources\core\InStringBuffer.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="..\sources\type\type.cpp">
+      <Filter>type</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\sources\type\SpecialFunctions.inl">
       <Filter>type</Filter>
     </None>
-    <None Include="..\sources\type\Type.inl">
-      <Filter>type</Filter>
-    </None>
     <None Include="..\sources\GetType.inl" />
     <None Include="..\sources\type\enum.inl">
+      <Filter>type</Filter>
+    </None>
+    <None Include="..\sources\type\type.inl">
       <Filter>type</Filter>
     </None>
   </ItemGroup>

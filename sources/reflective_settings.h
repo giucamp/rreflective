@@ -36,6 +36,8 @@ namespace reflective
 
 	template <typename TYPE>
 		using Allocator = std::allocator<TYPE>;
+
+	static const UpDownCasterImplementation s_upDownCasterImplementation = UpDownCasterImplementation::Functions;
 }
 
 #define REFLECTIVE_DEBUG 1
