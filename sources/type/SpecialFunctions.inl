@@ -1,7 +1,7 @@
 
 namespace reflective
 {
-	namespace detail
+	namespace details
 	{
 					// ScalarDefaultConstructor
 
@@ -135,10 +135,10 @@ namespace reflective
 		inline SpecialFunctions get_special_functions()
 	{
 		return SpecialFunctions(
-			detail::ScalarDefaultConstructor<TYPE, std::is_default_constructible<TYPE>::value >::get(),
-			detail::ScalarCopyConstructor<TYPE, std::is_copy_constructible<TYPE>::value >::get(),
-			detail::ScalarMoveConstructor<TYPE, std::is_move_constructible<TYPE>::value >::get(),
-			detail::ScalarDestructor<TYPE, std::is_destructible<TYPE>::value >::get() );
+			details::ScalarDefaultConstructor<TYPE, std::is_default_constructible<TYPE>::value >::get(),
+			details::ScalarCopyConstructor<TYPE, std::is_copy_constructible<TYPE>::value >::get(),
+			details::ScalarMoveConstructor<TYPE, std::is_move_constructible<TYPE>::value >::get(),
+			details::ScalarDestructor<TYPE, std::is_destructible<TYPE>::value >::get() );
 	}
 }
 

@@ -36,14 +36,14 @@ namespace reflective
 
 	Namespace & edit_root_namespace();
 
-	namespace detail
+	namespace details
 	{
 		template <typename TYPE> struct _GetSymbolTypeId
 		{
 			static_assert(std::is_class<TYPE>::value || std::is_enum<TYPE>::value ||
-				std::is_fundamental<TYPE>::value, "Type not supported" );
+				std::is_fundamental<TYPE>::value || std::is_pointer<TYPE>::value, "Type not supported" );
 
-			static const SymbolTypeId s_type_id = std::is_class<TYPE>::value ? reflective::Class :
+			static const SymbolTypeId s_type_id = std::is_class<TYPE>::value ? SymbolTypeId::class_symbol :
 				(std::is_enum<TYPE>::value ? SymbolTypeId::enum_symbol : SymbolTypeId::primitive_type_symbol );
 		};
 
@@ -53,27 +53,45 @@ namespace reflective
 			struct _SymbolTraits< TYPE, SymbolTypeId::primitive_type_symbol>
 		{
 			using ReflectedType = reflective::Type;
+
+			static inline const Type * create()
+			{
+				Type * new_type = new Type(get_type_full_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value, get_special_functions<TYPE>());
+				setup_type(*new_type, static_cast<TYPE*>(nullptr));
+				return new_type;
+			}
 		};
 
 		template <typename TYPE> 
 			struct _SymbolTraits< TYPE, SymbolTypeId::class_symbol>
 		{
 			using ReflectedType = reflective::Class;
+
+			static inline const Class * create()
+			{
+				Class * class_obj = new Class(get_type_full_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value, get_special_functions<TYPE>());
+				setup_type(*class_obj, static_cast<TYPE*>(nullptr));
+				return class_obj;
+			}
 		};
 
 		template <typename TYPE> 
 			struct _SymbolTraits< TYPE, SymbolTypeId::enum_symbol >
 		{
 			using ReflectedType = reflective::Enum<std::underlying_type<TYPE>>;
+
+			static inline const Enum< std::underlying_type<TYPE> > * create()
+			{
+				Enum< std::underlying_type<TYPE> > * enum_obj = new Enum< std::underlying_type<TYPE> >(get_type_full_name<TYPE>(), get_special_functions<TYPE>());
+				setup_type(*enum_obj, static_cast<TYPE*>(nullptr));
+				return enum_obj;
+			}
 		};		
 	}
 
 	template <typename TYPE>
-		using reflecting_type = typename detail::_SymbolTraits<TYPE, detail::_GetSymbolTypeId<TYPE>::s_type_id>::ReflectedType;
+		using reflecting_type = typename details::_SymbolTraits<TYPE, details::_GetSymbolTypeId<TYPE>::s_type_id>::ReflectedType;
 
 	template <typename TYPE>
-		const Type & get_type();
-
-	template <typename TYPE>
-		const Class * get_class();
+		const reflecting_type<TYPE> & get_type();
 }

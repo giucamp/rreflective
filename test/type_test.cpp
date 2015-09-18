@@ -27,7 +27,7 @@ namespace MyNamespace
 
 namespace reflective
 {
-	void setup_type(Class & i_class, MyNamespace::OtherNamespace::MyClass *)
+	void setup_type(reflecting_type<MyNamespace::OtherNamespace::MyClass> & i_class, MyNamespace::OtherNamespace::MyClass *)
 	{
 		using ThisClass = MyNamespace::OtherNamespace::MyClass;
 		SymbolList<Property> empty = { 
@@ -44,14 +44,8 @@ void Type_test()
 	using namespace reflective;
 	using namespace std;
 
-	const Type & class_type = get_type<MyNamespace::OtherNamespace::MyClass>();
+	const auto & class_type = get_type<MyNamespace::OtherNamespace::MyClass>();
+	const auto & enum_type = get_type<MyNamespace::OtherNamespace::MyEnum>();
 	
-	{
-		const Type & enum_type = get_type<MyNamespace::OtherNamespace::MyEnum>();
-		
-	}
-
-
-
 	system("PAUSE");
 }
