@@ -16,27 +16,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\sources\reflective_common.h" />
-    <ClInclude Include="..\sources\core\PtrString.h">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sources\core\StringHash.h">
-      <Filter>core</Filter>
-    </ClInclude>
     <ClInclude Include="..\sources\reflective_settings.h" />
     <ClInclude Include="..\sources\type\QualifiedTypeRef.h">
       <Filter>type</Filter>
     </ClInclude>
     <ClInclude Include="..\sources\type\StaticQualification.h">
       <Filter>type</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sources\core\Symbol.h">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sources\core\SymbolList.h">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sources\core\Identifier.h">
-      <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="..\sources\type\SpecialFunctions.h">
       <Filter>type</Filter>
@@ -62,12 +47,6 @@
     <ClInclude Include="..\sources\type\primitive_types.h">
       <Filter>type</Filter>
     </ClInclude>
-    <ClInclude Include="..\sources\core\OutStringBuffer.h">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sources\core\InStringBuffer.h">
-      <Filter>core</Filter>
-    </ClInclude>
     <ClInclude Include="..\sources\type\enum.h">
       <Filter>type</Filter>
     </ClInclude>
@@ -79,6 +58,30 @@
     </ClInclude>
     <ClInclude Include="..\sources\type\type.h">
       <Filter>type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\core\identifier.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\core\in_string_buffer.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\core\out_string_buffer.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\core\symbol_list.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\core\ptr_string.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\core\string_hash.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\core\symbol.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\core\bulk_list.h">
+      <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -102,14 +105,14 @@
     <ClCompile Include="..\sources\type\primitive_types.cpp">
       <Filter>type</Filter>
     </ClCompile>
-    <ClCompile Include="..\sources\core\OutStringBuffer.cpp">
-      <Filter>core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\sources\core\InStringBuffer.cpp">
-      <Filter>core</Filter>
-    </ClCompile>
     <ClCompile Include="..\sources\type\type.cpp">
       <Filter>type</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\core\in_string_buffer.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\core\out_string_buffer.cpp">
+      <Filter>core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

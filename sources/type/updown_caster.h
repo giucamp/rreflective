@@ -43,7 +43,7 @@ namespace reflective
 		template <typename BASE, typename DERIVED>
 			static UpDownCaster from_types()
 		{
-			return UpDownCaster(&cast_to_base<BASE, DERIVED>, &cast_to_base<BASE, DERIVED>);
+			return UpDownCaster(&cast_to_base<BASE, DERIVED>, &cast_to_derived<BASE, DERIVED>);
 		}
 
 		void * derived_to_base(void * i_derived_ptr) const

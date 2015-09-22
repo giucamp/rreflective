@@ -138,13 +138,14 @@
     <ClInclude Include="..\sources\class\ClassMember.h" />
     <ClInclude Include="..\sources\class\property\DataMemberProperty.h" />
     <ClInclude Include="..\sources\class\property\Property.h" />
-    <ClInclude Include="..\sources\core\PtrString.h" />
-    <ClInclude Include="..\sources\core\Identifier.h" />
-    <ClInclude Include="..\sources\core\InStringBuffer.h" />
-    <ClInclude Include="..\sources\core\OutStringBuffer.h" />
-    <ClInclude Include="..\sources\core\StringHash.h" />
-    <ClInclude Include="..\sources\core\Symbol.h" />
-    <ClInclude Include="..\sources\core\SymbolList.h" />
+    <ClInclude Include="..\sources\core\bulk_list.h" />
+    <ClInclude Include="..\sources\core\ptr_string.h" />
+    <ClInclude Include="..\sources\core\identifier.h" />
+    <ClInclude Include="..\sources\core\in_string_buffer.h" />
+    <ClInclude Include="..\sources\core\out_string_buffer.h" />
+    <ClInclude Include="..\sources\core\string_hash.h" />
+    <ClInclude Include="..\sources\core\symbol.h" />
+    <ClInclude Include="..\sources\core\symbol_list.h" />
     <ClInclude Include="..\sources\core\traits.h" />
     <ClInclude Include="..\sources\GetType.h" />
     <ClInclude Include="..\sources\Namespace.h" />
@@ -184,13 +185,13 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\sources\core\InStringBuffer.cpp">
+    <ClCompile Include="..\sources\core\in_string_buffer.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\sources\core\OutStringBuffer.cpp">
+    <ClCompile Include="..\sources\core\out_string_buffer.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

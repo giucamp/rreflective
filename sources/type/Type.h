@@ -35,9 +35,9 @@ namespace reflective
 	struct BaseType
 	{
 	public:
-
-		BaseType()
-
+		
+		BaseType(const Type * i_base_type, const UpDownCaster<> & i_updown_caster)
+			: m_base_type(i_base_type), m_updown_caster(i_updown_caster) { }
 
 	private:
 		const Type * m_base_type;

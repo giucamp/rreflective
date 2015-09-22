@@ -70,16 +70,17 @@ namespace reflective
 #include "reflective_settings.h"
 #include "reflective_common.h"
 
-// headers
+// core headers
 #include "core\traits.h"
-#include "core\InStringBuffer.h"
-#include "core\OutStringBuffer.h"
-#include "core\Identifier.h"
-#include "core\PtrString.h"
-#include "core\StringHash.h"
-#include "core\Symbol.h"
-#include "core\SymbolList.h"
+#include "core\in_string_buffer.h"
+#include "core\out_string_buffer.h"
+#include "core\identifier.h"
+#include "core\ptr_string.h"
+#include "core\string_hash.h"
+#include "core\symbol.h"
+#include "core\symbol_list.h"
 
+// type headers
 #include "type\updown_caster.h"
 #include "type\QualifiedTypeRef.h"
 #include "type\SpecialFunctions.h"

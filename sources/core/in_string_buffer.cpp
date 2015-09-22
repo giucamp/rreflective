@@ -1,4 +1,3 @@
-#include "InStringBuffer.h"
 
 namespace reflective
 {
