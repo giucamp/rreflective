@@ -8,10 +8,19 @@
 
 namespace reflective
 {
+	template <typename OTHER_TYPE, typename... CONSTR_PARAMS>
+	static OTHER_TYPE * linear_alloc(void * & io_address, CONSTR_PARAMS && ...i_params)
+	{
+		OTHER_TYPE * result = new OTHER_TYPE(std::forward<CONSTR_PARAMS>(i_params)...);
+		io_address = result + 1;
+		return result;
+	}
+
 	template <typename TYPE>
 		class BulkListKnot
 	{
-
+	public:
+		BulkListKnot * m_next;
 	};
 
 	template <typename TYPE, typename KNOT = BulkListKnot<TYPE> >
@@ -24,38 +33,75 @@ namespace reflective
 		{
 			const size_t size = Size<TYPES...>::s_size;
 			void * alloc = malloc(size);
-			BulkList res;
-			res.m_bulk = alloc;
-			Size<TYPES...>::construct(alloc, std::forward<TYPES>(i_tuple)...);
-			return res;
+			void * bulk = alloc;
+			Size<TYPES...>::construct(alloc, nullptr, std::forward<TYPES>(i_tuple)...);
+			return BulkList(bulk);
+		}
+
+		BulkList() : m_bulk(nullptr) {}
+
+		BulkList(const BulkList &) = delete;
+
+		BulkList & operator = (const BulkList &) = delete;
+
+		BulkList(BulkList && i_from)
+			: m_bulk(i_from.m_bulk)
+		{
+			i_from.m_bulk = nullptr;
+		}
+
+		BulkList & operator = (BulkList && i_from)
+		{
+			m_bulk = i_from.m_bulk;
+			i_from.m_bulk = nullptr;
+		}
+
+		~BulkList()
+		{
+			free(m_bulk);
 		}
 
 	private:
 		
+		BulkList(void * i_bulk)
+		{
+			m_bulk = i_bulk;
+		}
+		
 		template <typename FIRST_TYPE, typename... OTHER_TYPES>
 			struct Size
 		{
-			static const size_t s_size = sizeof(FIRST_TYPE) + Size<OTHER_TYPES...>::s_size;
+			static const size_t s_size = sizeof(KNOT) + sizeof(FIRST_TYPE) + Size<OTHER_TYPES...>::s_size;
 
-			inline static void * construct(void * i_address, FIRST_TYPE && i_source, OTHER_TYPES && ... i_s1)
+			inline static void construct(void * & io_address, KNOT * i_prev_knot, FIRST_TYPE && i_source, OTHER_TYPES && ... i_s1)
 			{
-				new (i_address) FIRST_TYPE(std::forward<FIRST_TYPE>(i_source));
+				KNOT * knot = linear_alloc<KNOT>(io_address);
+				if (i_prev_knot != nullptr)
+				{
+					i_prev_knot->m_next = knot;
+				}				
 
-				void * new_address = reinterpret_cast<void * >(reinterpret_cast<uintptr_t>(i_address) + sizeof(FIRST_TYPE));
-
-				return Size<OTHER_TYPES...>::construct(new_address, std::forward<OTHER_TYPES>(i_s1)...);
+				linear_alloc<FIRST_TYPE>(io_address, std::forward<FIRST_TYPE>(i_source));
+								
+				Size<OTHER_TYPES...>::construct(io_address, knot, std::forward<OTHER_TYPES>(i_s1)...);
 			}
 		};
 
 		template <typename FIRST_TYPE>
 			struct Size<FIRST_TYPE>
 		{
-			static const size_t s_size = sizeof(FIRST_TYPE);
+			static const size_t s_size = sizeof(FIRST_TYPE) + sizeof(KNOT);
 			
-			inline static void * construct(void * i_address, FIRST_TYPE && i_source)
+			inline static void construct(void * & io_address, KNOT * i_prev_knot, FIRST_TYPE && i_source)
 			{
-				new (i_address) FIRST_TYPE(std::forward<FIRST_TYPE>(i_source));
-				return reinterpret_cast<void * >( reinterpret_cast<uintptr_t>(i_address) + sizeof(FIRST_TYPE));
+				KNOT * knot = linear_alloc<KNOT>(io_address);
+				if (i_prev_knot != nullptr)
+				{
+					i_prev_knot->m_next = knot;
+				}
+				knot->m_next = nullptr;
+
+				linear_alloc<FIRST_TYPE>(io_address, std::forward<FIRST_TYPE>(i_source));
 			}
 		};
 
@@ -129,6 +175,8 @@ void bulk_list__test()
 {
 	using namespace reflective;
 	using namespace Test1;
+
+	//BulkList<P>::make(make_p(1));
 
 	BulkList<P>::make(make_p("s"), make_p(4), make_p(4.3), make_p("s"));
 }
