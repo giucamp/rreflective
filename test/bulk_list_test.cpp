@@ -37,20 +37,13 @@ namespace reflective
 		{
 			static const size_t s_size = sizeof(FIRST_TYPE) + Size<OTHER_TYPES...>::s_size;
 
-			inline static void construct(void * & io_address)
+			inline static void * construct(void * i_address, FIRST_TYPE && i_source, OTHER_TYPES && ... i_s1)
 			{
-				new (io_address) FIRST_TYPE();
-				io_address = reinterpret_cast<void * >(reinterpret_cast<uintptr_t>(io_address) + sizeof(FIRST_TYPE));
+				new (i_address) FIRST_TYPE(std::forward<FIRST_TYPE>(i_source));
 
-				Size<OTHER_TYPES...>::construct(io_address);
-			}
+				void * new_address = reinterpret_cast<void * >(reinterpret_cast<uintptr_t>(i_address) + sizeof(FIRST_TYPE));
 
-			inline static void construct(void * & io_address, FIRST_TYPE && i_source, OTHER_TYPES && ... i_s1)
-			{
-				new (io_address) FIRST_TYPE(std::forward<FIRST_TYPE>(i_source));
-				io_address = reinterpret_cast<void * >(reinterpret_cast<uintptr_t>(io_address) + sizeof(FIRST_TYPE));
-
-				Size<OTHER_TYPES...>::construct(io_address, std::forward<OTHER_TYPES>(i_s1)...);
+				return Size<OTHER_TYPES...>::construct(new_address, std::forward<OTHER_TYPES>(i_s1)...);
 			}
 		};
 
@@ -58,17 +51,11 @@ namespace reflective
 			struct Size<FIRST_TYPE>
 		{
 			static const size_t s_size = sizeof(FIRST_TYPE);
-
-			inline static void construct(void * & io_address)
+			
+			inline static void * construct(void * i_address, FIRST_TYPE && i_source)
 			{
-				new (io_address) FIRST_TYPE();
-				io_address = reinterpret_cast<void * >(reinterpret_cast<uintptr_t>(io_address) + sizeof(FIRST_TYPE));
-			}
-
-			inline static void construct(void * & io_address, FIRST_TYPE && i_source)
-			{
-				new (io_address) FIRST_TYPE(std::forward<FIRST_TYPE>(i_source));
-				io_address = reinterpret_cast<void * >( reinterpret_cast<uintptr_t>( io_address ) + sizeof(FIRST_TYPE));
+				new (i_address) FIRST_TYPE(std::forward<FIRST_TYPE>(i_source));
+				return reinterpret_cast<void * >( reinterpret_cast<uintptr_t>(i_address) + sizeof(FIRST_TYPE));
 			}
 		};
 
