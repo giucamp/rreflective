@@ -34,7 +34,7 @@ namespace reflective
 {
 	/** Lightweight object holding a pointer to a type, a number of indirection levels, and the constness 
 		and volatileness for each indirection level. 
-		The number of indirection levels is the nuber of '*' or '&' appearing in the C++ declaration of
+		The number of indirection levels is the nuber of '*' or '&' or '&&' appearing in the C++ declaration of
 		the type. A non-pointer types has zero indirection levels, while a pointer to a pointer has 2 indirection levels.
 		The leftmost type is first type appearing in the C++ declartion of the type, that is the type remaining after 
 		stripping away all the cv-quaification, pointer and reference parts from the type.
@@ -42,11 +42,12 @@ namespace reflective
 		leftmost type. For pointer types is always equal to the result of get_type<void*>().
 		The easest way fo get a QualifiedTypeRef is using the function get_qualified_type<TYPE>().
 
-		type						primary type			leftmost type				indirection levels			constness word				volatileness word	
-		float						float					float						0							0							0
-		volatile float				float					float						0							0							1
-		const float &				void *					float						1							3							0
-		float *const*volatile**		void *					float						4							8							4
+		type						|primary type	|leftmost type	|indirection levels		|constness word		|volatileness word	
+		----------------------------|:-------------:|:-------------:|:---------------------:|:-----------------:|:------------------:
+		float						|float			|float			|0						|0					|0
+		volatile float				|float			|float			|0						|0					|1
+		const float &				|void *			|float			|1						|3					|0
+		float *const*volatile**		|void *			|float			|4						|8					|4
 		
 		*/
 	class QualifiedTypeRef
