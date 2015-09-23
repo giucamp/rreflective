@@ -41,7 +41,8 @@ namespace reflective
 		template <typename TYPE> struct _GetSymbolTypeId
 		{
 			static_assert(std::is_class<TYPE>::value || std::is_enum<TYPE>::value ||
-				std::is_fundamental<TYPE>::value || std::is_pointer<TYPE>::value, "Type not supported" );
+				std::is_fundamental<TYPE>::value || std::is_pointer<TYPE>::value || std::is_reference<TYPE>::value ||
+				std::is_rvalue_reference<TYPE>::value, "Type not supported" );
 
 			static const SymbolTypeId s_type_id = std::is_class<TYPE>::value ? SymbolTypeId::class_symbol :
 				(std::is_enum<TYPE>::value ? SymbolTypeId::enum_symbol : SymbolTypeId::primitive_type_symbol );
@@ -90,7 +91,7 @@ namespace reflective
 	}
 
 	template <typename TYPE>
-		using reflecting_type = typename details::_SymbolTraits<TYPE, details::_GetSymbolTypeId<TYPE>::s_type_id>::ReflectedType;
+		using reflecting_type = typename details::_SymbolTraits<std::decay<TYPE>, details::_GetSymbolTypeId<std::decay<TYPE>>::s_type_id>::ReflectedType;
 
 	template <typename TYPE>
 		const reflecting_type<TYPE> & get_type();

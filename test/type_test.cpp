@@ -43,9 +43,23 @@ void Type_test()
 {
 	using namespace reflective;
 	using namespace std;
+	
+	const auto & t1 = get_qualified_type<float>();
+	const auto & t2 = get_qualified_type<const float &>();
+	const auto & t3 = get_qualified_type<float *const*volatile**>();
+	const auto & t4 = get_qualified_type<float const*const*volatile**&>();
+	const auto & t5 = get_qualified_type<volatile float>();
+
+	const auto & tf1 = get_qualified_type<MyNamespace::OtherNamespace::MyClass>();
+	const auto & tf2 = get_qualified_type<const MyNamespace::OtherNamespace::MyClass &>();
+	const auto & tf3 = get_qualified_type<MyNamespace::OtherNamespace::MyClass *const*volatile**>();
+	const auto & tf4 = get_qualified_type<MyNamespace::OtherNamespace::MyClass const*const*volatile**&>();
+	const auto & tf5 = get_qualified_type<volatile MyNamespace::OtherNamespace::MyClass>();
 
 	const auto & class_type = get_type<MyNamespace::OtherNamespace::MyClass>();
 	const auto & enum_type = get_type<MyNamespace::OtherNamespace::MyEnum>();
-	
+
+
+
 	system("PAUSE");
 }

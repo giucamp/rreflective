@@ -32,12 +32,19 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
+	/** Abstract class rapresenting a property of a class. A property is a generaliaztion of a data member,
+		and maybe a pair of getter-setter, or just a getter (for a readonly property) or just a even setter
+		(for a writeonly property).
+		Since this library is about reflection, this class does not store the value of the property, but it 
+		describes the signature of a property (like a declaration would do), and exposes methods to get or set 
+		the value given an instance of the owning class.
+		When giving the property an instance of the owning class (with a void*), the user must be sure that 
+		the pointer acually points to an object of the owning class, and not to a base o derived class. Since
+		with reflection the type binding is done at runtime, there is not a general way to validate the void
+		pointers passed to the property. Messing with the object will result in an undefined behaviour.  */
 	class Property : public ClassMember
 	{
 	public:
-
-		Property(SymbolName i_name, QualifiedTypeRef i_type, ClassMember::Flags i_flags )
-			: ClassMember(std::move(i_name), i_flags), m_type(i_type) { }
 
 		const QualifiedTypeRef & type() const	{ return m_type; }
 
@@ -49,6 +56,17 @@ namespace reflective
 
 		void * get_editable_value_inplace(void * i_owner_object) const;
 
+	protected:
+
+		/** Constructs a property. The overloaded function reflective::new_property offsers
+			a more convenient way to construct a property.
+			@param i_name name of the property, which must be unique in the class and in all the base classes. This
+				parameter initializes an immutable member of the indirect base class Symbol.
+			@param i_type qualified type of the property. This parameter initializes an immutable member.
+			@param i_flags access control and other flags. See ClassMember::Flags. This
+				parameter initializes an immutable member of the base class ClassMember.*/
+		Property(SymbolName i_name, QualifiedTypeRef i_type, ClassMember::Flags i_flags )
+			: ClassMember(std::move(i_name), i_flags), m_type(i_type) { }
 	private:
 
 		virtual void * get_value_inplace_impl(void * i_owner_object) const = 0;

@@ -32,27 +32,45 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
+	/** Lightweight object holding a pointer to a type, a number of indirection levels, and the constness 
+		and volatileness for each indirection level. 
+		The number of indirection levels is the nuber of '*' or '&' appearing in the C++ declaration of
+		the type. A non-pointer types has zero indirection levels, while a pointer to a pointer has 2 indirection levels.
+		The leftmost type is first type appearing in the C++ declartion of the type, that is the type remaining after 
+		stripping away all the cv-quaification, pointer and reference parts from the type.
+		The primary type is the actual type of the first indirection level. For non-pointer types it is the same of the
+		leftmost type. For pointer types is always equal to the result of get_type<void*>().
+		The easest way fo get a QualifiedTypeRef is using the function get_qualified_type<TYPE>().
+
+		type						primary type			leftmost type				indirection levels			constness word				volatileness word	
+		float						float					float						0							0							0
+		volatile float				float					float						0							0							1
+		const float &				void *					float						1							3							0
+		float *const*volatile**		void *					float						4							8							4
+		
+		*/
 	class QualifiedTypeRef
 	{
 	public:
 
-		static const uint32_t s_max_indirection_levels = (1 << 4) - 1;
+		static const uint32_t s_max_indirection_levels = 14;
 		
-		QualifiedTypeRef(const Type & i_underlying_type, uint32_t i_indirection_levels = 0, uint32_t i_constness_word = 0, uint32_t i_volatilenessness_word = 0);
+		QualifiedTypeRef(const Type * i_leftmost_type, uint32_t i_indirection_levels = 0, uint32_t i_constness_word = 0, uint32_t i_volatileness_word = 0);
 
 		QualifiedTypeRef(const QualifiedTypeRef & i_source) = default;
 
-		QualifiedTypeRef & operator = (const QualifiedTypeRef & i_source) = delete;
+		QualifiedTypeRef & operator = (const QualifiedTypeRef & i_source) = default;
 
-		const Type & front_type() const;
+		/** Retrieves the primary type. */
+		const Type * primary_type() const;
 			
-		const Type & underlying_type() const							{ return m_underlying_type; }
+		const Type * leftmost_type() const								{ return m_leftmost_type; }
 
 		uint32_t indirection_levels() const								{ return m_indirection_levels; }
 		
 		uint32_t constness_word() const									{ return m_constness_word; }
 
-		uint32_t volatilenessness_word() const							{ return m_volatilenessness_word; }
+		uint32_t volatileness_word() const								{ return m_volatileness_word; }
 
 		bool is_const(uint32_t i_indirection_level) const				{ return (m_constness_word & (1 << i_indirection_level)) != 0; }
 
@@ -66,10 +84,10 @@ namespace reflective
 			void to_string(OUT_STREAM & i_dest);
 
 	private:
-		const Type & m_underlying_type;
-		const uint32_t m_indirection_levels : 4;
-		const uint32_t m_constness_word : 14;
-		const uint32_t m_volatilenessness_word : 14;
+		const Type * m_leftmost_type;
+		uint32_t m_indirection_levels : 4;
+		uint32_t m_constness_word : 14;
+		uint32_t m_volatileness_word : 14;
 	};
 
 	template <typename TYPE>

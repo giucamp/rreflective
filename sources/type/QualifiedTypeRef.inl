@@ -1,12 +1,14 @@
 
 namespace reflective
 {
-	inline const Type & QualifiedTypeRef::front_type() const
+	inline const Type * QualifiedTypeRef::primary_type() const
 	{ 
 		if (m_indirection_levels == 0)
-			return m_underlying_type;
+			return m_leftmost_type;
+		else if (m_leftmost_type != nullptr)
+			return &get_type<void*>();
 		else
-			return get_type<void*>();
+			return nullptr;
 	}
 
 	template <typename TYPE>
@@ -15,7 +17,7 @@ namespace reflective
 		static_assert(StaticQualification<TYPE>::s_indirection_levels < QualifiedTypeRef::s_max_indirection_levels,
 			"Maximum indirection level exceeded");
 
-		return QualifiedTypeRef(get_type<TYPE>(), 
+		return QualifiedTypeRef( &get_type<TYPE>(), 
 			StaticQualification<TYPE>::s_indirection_levels,
 			StaticQualification<TYPE>::s_constness_word,
 			StaticQualification<TYPE>::s_volatileness_word );			

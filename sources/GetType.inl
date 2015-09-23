@@ -41,7 +41,7 @@ namespace reflective
 				return *type;
 			}
 		};
-
+		
 		template <typename TYPE>
 			const reflecting_type<TYPE> * TypeContainer<TYPE>::s_type = create_type<TYPE>();
 	}
@@ -49,7 +49,7 @@ namespace reflective
 	template <typename TYPE>
 		inline const reflecting_type<TYPE> & get_type()
 	{
-		return details::TypeContainer<TYPE>::get();
+		return details::TypeContainer< std::decay<TYPE> >::get();
 	}
 
 	inline const Namespace & root_namespace()
