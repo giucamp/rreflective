@@ -46,7 +46,7 @@ namespace reflective
 	{
 	public:
 
-		const QualifiedTypeRef & type() const	{ return m_type; }
+		const QualifiedTypePtr & type() const	{ return m_type; }
 
 		bool get_value(const void * i_owner_object, void * i_dest) const;
 
@@ -58,14 +58,14 @@ namespace reflective
 
 	protected:
 
-		/** Constructs a property. The overloaded function reflective::new_property offsers
+		/** Constructs a property. The overloaded function reflective::make_property offsers
 			a more convenient way to construct a property.
 			@param i_name name of the property, which must be unique in the class and in all the base classes. This
 				parameter initializes an immutable member of the indirect base class Symbol.
 			@param i_type qualified type of the property. This parameter initializes an immutable member.
 			@param i_flags access control and other flags. See ClassMember::Flags. This
 				parameter initializes an immutable member of the base class ClassMember.*/
-		Property(SymbolName i_name, QualifiedTypeRef i_type, ClassMember::Flags i_flags )
+		Property(SymbolName i_name, QualifiedTypePtr i_type, ClassMember::Flags i_flags )
 			: ClassMember(std::move(i_name), i_flags), m_type(i_type) { }
 	private:
 
@@ -76,6 +76,6 @@ namespace reflective
 		virtual bool set_value_impl(void * i_owner_object, const void * i_source) const = 0;
 		
 	private:
-		const QualifiedTypeRef m_type;
+		const QualifiedTypePtr m_type;
 	};
 }

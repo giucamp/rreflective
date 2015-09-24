@@ -35,7 +35,7 @@ namespace reflective
 	/** This class implements an output text stream to write formatted text to an user-provided character buffer.
 
 		OutStringBuffer does not participate to the ownership of the buffer. The buffer must be valid when any non-const
-		function is called on OutStringBuffer. The destination buffer must be specified to the constructor by passing
+		method is called on OutStringBuffer. The destination buffer must be specified to the constructor by passing
 		a char* pointing to the beginning of the buffer and a size_t with the total length, or by specifying a 
 		fixed-size char array:
 		\code{.cpp}
@@ -125,6 +125,8 @@ namespace reflective
 
 		OutStringBuffer & operator << (char i_char) { write_char(i_char); return *this; }
 
+		OutStringBuffer & operator << (const char * i_null_terminated_string) { write_cstr(i_null_terminated_string); return *this; }
+
 		template <size_t ARRAY_SIZE>
 			OutStringBuffer & operator << (const char(&i_array)[ARRAY_SIZE]) { write_literal(i_array); return *this; }
 
@@ -176,6 +178,34 @@ namespace reflective
 									 this, so it is provided only in debug.*/
 		#endif
 	};
+
+
+	template <typename TYPE>
+		inline std::string to_std_string(TYPE && i_object)
+	{
+		const size_t fixed_size_buffer_size = 512;
+		char fixed_size_buffer[fixed_size_buffer_size];
+		
+		char * buff = fixed_size_buffer;
+		size_t buffer_size = fixed_size_buffer_size;
+		
+		std::unique_ptr<char[]> dynamic_buffer;
+		for (;;)
+		{
+			OutStringBuffer out(buff, buffer_size);
+			out << i_object;
+			if (!out.is_truncated())
+			{
+				return std::string(buff, out.needed_char_count());
+			}
+
+			REFLECTIVE_ASSERT(dynamic_buffer.get() == nullptr, "an internal error has occurred in to_std_string, which indicates a bug in the code");
+
+			buffer_size = out.needed_buffer_length();
+			dynamic_buffer = std::make_unique<char[]>(buffer_size);
+			buff = dynamic_buffer.get();
+		}
+	}
 
 } // namespace reflective
 

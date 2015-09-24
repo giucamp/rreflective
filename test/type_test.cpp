@@ -31,8 +31,8 @@ namespace reflective
 	{
 		using ThisClass = MyNamespace::OtherNamespace::MyClass;
 		SymbolList<Property> empty = { 
-			new_property<ThisClass>("IntVar", &ThisClass::m_int_var),
-			new_property<ThisClass>("FloatVar", &ThisClass::m_float_var),
+			make_property<ThisClass>("IntVar", &ThisClass::m_int_var),
+			make_property<ThisClass>("FloatVar", &ThisClass::m_float_var),
 		};
 		i_class.set_properites(std::move(empty));
 	}
@@ -44,6 +44,8 @@ void Type_test()
 	using namespace reflective;
 	using namespace std;
 	
+	auto b = reflective::has_to_string< reflective::QualifiedTypePtr>::value;
+
 	const auto & t1 = get_qualified_type<float>();
 	const auto & t2 = get_qualified_type<const float &>();
 	const auto & t3 = get_qualified_type<float *const*volatile**>();
@@ -55,6 +57,13 @@ void Type_test()
 	const auto & tf3 = get_qualified_type<MyNamespace::OtherNamespace::MyClass *const*volatile**>();
 	const auto & tf4 = get_qualified_type<MyNamespace::OtherNamespace::MyClass const*const*volatile**&>();
 	const auto & tf5 = get_qualified_type<volatile MyNamespace::OtherNamespace::MyClass>();
+
+	cout << to_std_string(t1) << endl;
+	cout << to_std_string(t2) << endl;
+	cout << to_std_string(t3) << endl;
+	cout << to_std_string(t4) << endl;
+	cout << to_std_string(t5) << endl;
+
 
 	const auto & class_type = get_type<MyNamespace::OtherNamespace::MyClass>();
 	const auto & enum_type = get_type<MyNamespace::OtherNamespace::MyEnum>();

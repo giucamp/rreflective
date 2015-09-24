@@ -12,7 +12,7 @@
 #include "type\SpecialFunctions.cpp"
 #include "type\primitive_types.cpp"
 #include "type\Type.cpp"
-#include "type\QualifiedTypeRef.cpp"
+#include "type\qualified_type_ptr.cpp"
 
 
 #include "class\property\Property.cpp"

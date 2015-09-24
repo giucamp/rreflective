@@ -17,9 +17,6 @@
   <ItemGroup>
     <ClInclude Include="..\sources\reflective_common.h" />
     <ClInclude Include="..\sources\reflective_settings.h" />
-    <ClInclude Include="..\sources\type\QualifiedTypeRef.h">
-      <Filter>type</Filter>
-    </ClInclude>
     <ClInclude Include="..\sources\type\StaticQualification.h">
       <Filter>type</Filter>
     </ClInclude>
@@ -83,11 +80,11 @@
     <ClInclude Include="..\sources\core\bulk_list.h">
       <Filter>core</Filter>
     </ClInclude>
+    <ClInclude Include="..\sources\type\qualified_type_ptr.h">
+      <Filter>type</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\sources\type\QualifiedTypeRef.cpp">
-      <Filter>type</Filter>
-    </ClCompile>
     <ClCompile Include="..\sources\type\SpecialFunctions.cpp">
       <Filter>type</Filter>
     </ClCompile>
@@ -114,6 +111,9 @@
     <ClCompile Include="..\sources\core\out_string_buffer.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="..\sources\type\qualified_type_ptr.cpp">
+      <Filter>type</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\sources\type\SpecialFunctions.inl">
@@ -124,6 +124,9 @@
       <Filter>type</Filter>
     </None>
     <None Include="..\sources\type\type.inl">
+      <Filter>type</Filter>
+    </None>
+    <None Include="..\sources\type\qualified_type_ptr.inl">
       <Filter>type</Filter>
     </None>
   </ItemGroup>

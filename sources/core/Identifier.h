@@ -141,6 +141,12 @@ namespace reflective
 		{
 			return m_hash >= i_source.m_hash;
 		}
+
+		template <typename OUT_STREAM>
+			void to_string(OUT_STREAM & i_dest) const
+		{
+			i_dest << m_string;
+		}
 		
 	private: // data members
 		HashType m_hash;
@@ -241,7 +247,13 @@ namespace reflective
 		{
 			return m_hash >= i_source.m_hash;
 		}
-		
+
+		template <typename OUT_STREAM>
+			void to_string(OUT_STREAM & i_dest) const
+		{
+			i_dest << '%' << m_hash;
+		}
+
 	private: // data members
 		HashType m_hash;
 	};

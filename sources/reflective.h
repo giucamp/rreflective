@@ -82,9 +82,9 @@ namespace reflective
 
 // type headers
 #include "type\updown_caster.h"
-#include "type\QualifiedTypeRef.h"
+#include "type\qualified_type_ptr.h"
 #include "type\SpecialFunctions.h"
-#include "type\Type.h"
+#include "type\type.h"
 #include "type\primitive_types.h"
 #include "type\enum_member.h"
 #include "type\enum.h"
@@ -97,10 +97,10 @@ namespace reflective
 #include "type\StaticQualification.h"
 
 // inlines
+#include "type\qualified_type_ptr.inl"
 #include "type\SpecialFunctions.inl"
-#include "type\Type.inl"
+#include "type\type.inl"
 #include "type\enum.inl"
-#include "type\QualifiedTypeRef.inl"
 #include "GetType.inl"
 
 #undef INCLUDING_REFLECTIVE

@@ -51,7 +51,7 @@ namespace reflective
 		
 		const SymbolList<Member> & members() const			{ return m_members; }
 
-		const QualifiedTypeRef & underlying_type() const	{ return get_qualified_type<UNDERLYING_TYPE>(); }
+		const QualifiedTypePtr & underlying_type() const	{ return get_qualified_type<UNDERLYING_TYPE>(); }
 
 		void set_members(SymbolList<Member> && i_members)	{ m_members = std::move(i_members); }
 

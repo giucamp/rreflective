@@ -155,7 +155,7 @@
     <ClInclude Include="..\sources\type\enum.h" />
     <ClInclude Include="..\sources\type\enum_member.h" />
     <ClInclude Include="..\sources\type\primitive_types.h" />
-    <ClInclude Include="..\sources\type\QualifiedTypeRef.h" />
+    <ClInclude Include="..\sources\type\qualified_type_ptr.h" />
     <ClInclude Include="..\sources\type\SpecialFunctions.h" />
     <ClInclude Include="..\sources\type\StaticQualification.h" />
     <ClInclude Include="..\sources\type\type.h">
@@ -210,7 +210,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\sources\type\QualifiedTypeRef.cpp">
+    <ClCompile Include="..\sources\type\qualified_type_ptr.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -232,6 +232,7 @@
   <ItemGroup>
     <None Include="..\sources\GetType.inl" />
     <None Include="..\sources\type\enum.inl" />
+    <None Include="..\sources\type\qualified_type_ptr.inl" />
     <None Include="..\sources\type\SpecialFunctions.inl" />
     <None Include="..\sources\type\type.inl" />
   </ItemGroup>
