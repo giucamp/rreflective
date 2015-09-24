@@ -49,7 +49,7 @@ namespace reflective
 	template <typename TYPE>
 		inline const reflecting_type<TYPE> & get_type()
 	{
-		return details::TypeContainer< std::decay<TYPE> >::get();
+		return details::TypeContainer< std::decay<TYPE>::type >::get();
 	}
 
 	inline const Namespace & root_namespace()

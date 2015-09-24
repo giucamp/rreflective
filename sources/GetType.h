@@ -91,7 +91,7 @@ namespace reflective
 	}
 
 	template <typename TYPE>
-		using reflecting_type = typename details::_SymbolTraits<std::decay<TYPE>, details::_GetSymbolTypeId<std::decay<TYPE>>::s_type_id>::ReflectedType;
+		using reflecting_type = typename details::_SymbolTraits< typename std::decay<TYPE>::type, details::_GetSymbolTypeId< typename std::decay<TYPE>::type >::s_type_id>::ReflectedType;
 
 	template <typename TYPE>
 		const reflecting_type<TYPE> & get_type();
