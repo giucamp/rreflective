@@ -147,13 +147,14 @@
     <ClInclude Include="..\sources\core\symbol.h" />
     <ClInclude Include="..\sources\core\symbol_list.h" />
     <ClInclude Include="..\sources\core\traits.h" />
-    <ClInclude Include="..\sources\GetType.h" />
     <ClInclude Include="..\sources\Namespace.h" />
     <ClInclude Include="..\sources\reflective.h" />
     <ClInclude Include="..\sources\reflective_common.h" />
     <ClInclude Include="..\sources\reflective_settings.h" />
     <ClInclude Include="..\sources\type\enum.h" />
     <ClInclude Include="..\sources\type\enum_member.h" />
+    <ClInclude Include="..\sources\type\get_type.h" />
+    <ClInclude Include="..\sources\type\obj_ptr.h" />
     <ClInclude Include="..\sources\type\primitive_types.h" />
     <ClInclude Include="..\sources\type\qualified_type_ptr.h" />
     <ClInclude Include="..\sources\type\SpecialFunctions.h" />
@@ -204,6 +205,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\sources\reflective.cpp" />
+    <ClCompile Include="..\sources\type\obj_ptr.cpp" />
     <ClCompile Include="..\sources\type\primitive_types.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -230,8 +232,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\sources\GetType.inl" />
     <None Include="..\sources\type\enum.inl" />
+    <None Include="..\sources\type\get_type.inl" />
     <None Include="..\sources\type\qualified_type_ptr.inl" />
     <None Include="..\sources\type\SpecialFunctions.inl" />
     <None Include="..\sources\type\type.inl" />

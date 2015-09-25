@@ -32,18 +32,19 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	using SymbolName = Identifier< StringHasher<uint32_t>, PtrString >;
+	class ObjPtr
+	{
+	public:
 
-	template <typename TYPE>
-		using Allocator = std::allocator<TYPE>;
+		ObjPtr(void * i_objcts, QualifiedTypePtr i_qualified_type)
+			: m_objcts(i_objcts), m_qualified_type(i_qualified_type)
+		{
+		}
 
-	static const UpDownCasterImplementation s_upDownCasterImplementation = UpDownCasterImplementation::Functions;
 
-	static const bool multiple = true;
+
+	private:		
+		void * m_objcts;
+		QualifiedTypePtr m_qualified_type;
+	};
 }
-	
-#define REFLECTIVE_DEBUG 1
-
-#define REFLECTIVE_ASSERT_ENABLED 1
-
-#define REFLECTIVE_ASSERT(i_value, i_error_message)		if(!(i_value)) {__debugbreak();}

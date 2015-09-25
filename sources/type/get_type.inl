@@ -16,24 +16,24 @@ namespace reflective
 	}
 
 	template <typename TYPE>
-		const reflecting_type<TYPE> * create_type()
+		const ReflectingType<TYPE> * create_type()
 	{
-		return details::_SymbolTraits<TYPE, details::_GetSymbolTypeId<TYPE>::s_type_id >::create();
+		return details::SymbolTraits<TYPE, details::GetSymbolTypeId<TYPE>::s_type_id >::create();
 	}
-
+		
 	namespace details
 	{
 		template <typename TYPE> class TypeContainer
 		{
 		private:
-			static const reflecting_type<TYPE> * s_type;
+			static const ReflectingType<TYPE> * s_type;
 		public:
 
 			/** Returns the reflective::Type object */
-			static const reflecting_type<TYPE> & get()
+			static const ReflectingType<TYPE> & get()
 			{
-				const reflecting_type<TYPE> * type = s_type;
-				if (s_type == nullptr)
+				const ReflectingType<TYPE> * type = s_type;
+				if (type == nullptr)
 				{
 					type = create_type<TYPE>();
 					s_type = type;
@@ -43,13 +43,13 @@ namespace reflective
 		};
 		
 		template <typename TYPE>
-			const reflecting_type<TYPE> * TypeContainer<TYPE>::s_type = create_type<TYPE>();
+			const ReflectingType<TYPE> * TypeContainer<TYPE>::s_type = create_type<TYPE>();
 	}
 
 	template <typename TYPE>
-		inline const reflecting_type<TYPE> & get_type()
+		inline const ReflectingType<TYPE> & get_type()
 	{
-		return details::TypeContainer< std::decay<TYPE>::type >::get();
+		return details::TypeContainer< details::CleanType<TYPE> >::get();
 	}
 
 	inline const Namespace & root_namespace()

@@ -33,7 +33,6 @@
     <ClInclude Include="..\sources\class\ClassMember.h">
       <Filter>class</Filter>
     </ClInclude>
-    <ClInclude Include="..\sources\GetType.h" />
     <ClInclude Include="..\sources\class\property\DataMemberProperty.h">
       <Filter>class\property</Filter>
     </ClInclude>
@@ -83,6 +82,12 @@
     <ClInclude Include="..\sources\type\qualified_type_ptr.h">
       <Filter>type</Filter>
     </ClInclude>
+    <ClInclude Include="..\sources\type\get_type.h">
+      <Filter>type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\type\obj_ptr.h">
+      <Filter>type</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\sources\type\SpecialFunctions.cpp">
@@ -114,12 +119,14 @@
     <ClCompile Include="..\sources\type\qualified_type_ptr.cpp">
       <Filter>type</Filter>
     </ClCompile>
+    <ClCompile Include="..\sources\type\obj_ptr.cpp">
+      <Filter>type</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\sources\type\SpecialFunctions.inl">
       <Filter>type</Filter>
     </None>
-    <None Include="..\sources\GetType.inl" />
     <None Include="..\sources\type\enum.inl">
       <Filter>type</Filter>
     </None>
@@ -127,6 +134,9 @@
       <Filter>type</Filter>
     </None>
     <None Include="..\sources\type\qualified_type_ptr.inl">
+      <Filter>type</Filter>
+    </None>
+    <None Include="..\sources\type\get_type.inl">
       <Filter>type</Filter>
     </None>
   </ItemGroup>

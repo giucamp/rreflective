@@ -38,7 +38,8 @@ namespace reflective
 
 	namespace details
 	{
-		template <typename TYPE> struct _GetSymbolTypeId
+		// defines s_type_id for TYPE
+		template <typename TYPE> struct GetSymbolTypeId
 		{
 			static_assert(std::is_class<TYPE>::value || std::is_enum<TYPE>::value ||
 				std::is_fundamental<TYPE>::value || std::is_pointer<TYPE>::value || std::is_reference<TYPE>::value ||
@@ -48,14 +49,29 @@ namespace reflective
 				(std::is_enum<TYPE>::value ? SymbolTypeId::enum_symbol : SymbolTypeId::primitive_type_symbol );
 		};
 
-		template <typename TYPE, SymbolTypeId TYPE_ID> struct _SymbolTraits;
+		// defines ReflectedType (that is Class, Type, Enum, etc..) and static const ReflectedType * create()
+		template <typename TYPE, SymbolTypeId TYPE_ID> struct SymbolTraits;
 
-		template <typename TYPE> 
-			struct _SymbolTraits< TYPE, SymbolTypeId::primitive_type_symbol>
+		// SymbolTraits for primitive types
+		template <>
+			struct SymbolTraits< void*, SymbolTypeId::primitive_type_symbol>
 		{
 			using ReflectedType = reflective::Type;
 
-			static inline const Type * create()
+			static const ReflectedType * create()
+			{
+				Type * new_type = new Type("void *", sizeof(void *), std::alignment_of<void *>::value, get_special_functions<void *>());
+				return new_type;
+			}
+		};
+
+		// SymbolTraits for primitive types
+		template <typename TYPE> 
+			struct SymbolTraits< TYPE, SymbolTypeId::primitive_type_symbol>
+		{
+			using ReflectedType = reflective::Type;
+
+			static const ReflectedType * create()
 			{
 				Type * new_type = new Type(get_type_full_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value, get_special_functions<TYPE>());
 				setup_type(*new_type, static_cast<TYPE*>(nullptr));
@@ -64,11 +80,11 @@ namespace reflective
 		};
 
 		template <typename TYPE> 
-			struct _SymbolTraits< TYPE, SymbolTypeId::class_symbol>
+			struct SymbolTraits< TYPE, SymbolTypeId::class_symbol>
 		{
 			using ReflectedType = reflective::Class;
 
-			static inline const Class * create()
+			static const ReflectedType * create()
 			{
 				Class * class_obj = new Class(get_type_full_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value, get_special_functions<TYPE>());
 				setup_type(*class_obj, static_cast<TYPE*>(nullptr));
@@ -77,22 +93,27 @@ namespace reflective
 		};
 
 		template <typename TYPE> 
-			struct _SymbolTraits< TYPE, SymbolTypeId::enum_symbol >
+			struct SymbolTraits< TYPE, SymbolTypeId::enum_symbol >
 		{
 			using ReflectedType = reflective::Enum<std::underlying_type<TYPE>>;
 
-			static inline const Enum< std::underlying_type<TYPE> > * create()
+			static const ReflectedType * create()
 			{
 				Enum< std::underlying_type<TYPE> > * enum_obj = new Enum< std::underlying_type<TYPE> >(get_type_full_name<TYPE>(), get_special_functions<TYPE>());
 				setup_type(*enum_obj, static_cast<TYPE*>(nullptr));
 				return enum_obj;
 			}
-		};		
+		};
+
+		template <typename TYPE>
+			using CleanType = std::conditional_t< std::is_pointer<TYPE>::value || std::is_reference<TYPE>::value,
+				void*, std::decay_t<TYPE > >;
 	}
 
 	template <typename TYPE>
-		using reflecting_type = typename details::_SymbolTraits< typename std::decay<TYPE>::type, details::_GetSymbolTypeId< typename std::decay<TYPE>::type >::s_type_id>::ReflectedType;
+		using ReflectingType = typename details::SymbolTraits<
+			details::CleanType<TYPE>, details::GetSymbolTypeId< details::CleanType<TYPE> >::s_type_id >::ReflectedType;
 
 	template <typename TYPE>
-		const reflecting_type<TYPE> & get_type();
+		const ReflectingType<TYPE> & get_type();
 }

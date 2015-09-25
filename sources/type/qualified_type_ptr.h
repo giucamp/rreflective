@@ -62,7 +62,7 @@ namespace reflective
 			The global function get_qualified_type<TYPE>() checks this imit at compile-time (with a static_assert). */
 		static const size_t s_max_indirection_levels = std::numeric_limits<uintptr_t>::digits <=32 ? 14 : 28;
 		
-		QualifiedTypePtr(const Type * i_leftmost_type, size_t i_indirection_levels = 0, size_t i_constness_word = 0, size_t i_volatileness_word = 0);
+		QualifiedTypePtr(const Type * i_leftmost_type = nullptr, size_t i_indirection_levels = 0, size_t i_constness_word = 0, size_t i_volatileness_word = 0);
 
 		QualifiedTypePtr(const QualifiedTypePtr & i_source) = default;
 
@@ -81,15 +81,13 @@ namespace reflective
 
 		size_t volatileness_word() const								{ return m_volatileness_word; }
 
-		bool is_const(size_t i_indirection_level) const					{ return (m_constness_word & (static_cast<uintptr_t>(1) << i_indirection_level)) != 0; }
+		bool is_const(size_t i_indirection_level) const;
 
-		bool is_volatile(size_t i_indirection_level) const				{ return (m_volatileness_word & (static_cast<uintptr_t>(1) << i_indirection_level)) != 0; }
+		bool is_volatile(size_t i_indirection_level) const;
 
 		bool operator == (const QualifiedTypePtr & i_source) const;
 
 		bool operator != (const QualifiedTypePtr & i_source) const		{ return !operator == (i_source); }
-
-		void * full_indirection(void * i_object );
 
 		template <typename OUT_STREAM>
 			void to_string(OUT_STREAM & i_dest) const;

@@ -1,6 +1,18 @@
 
 namespace reflective
 {
+	template <typename TYPE>
+		inline QualifiedTypePtr get_qualified_type()
+	{
+		static_assert(StaticQualification<TYPE>::s_indirection_levels < QualifiedTypePtr::s_max_indirection_levels,
+			"Maximum indirection level exceeded");
+
+		return QualifiedTypePtr(&get_type<TYPE>(),
+			StaticQualification<TYPE>::s_indirection_levels,
+			StaticQualification<TYPE>::s_constness_word,
+			StaticQualification<TYPE>::s_volatileness_word);
+	}
+
 	inline const Type * QualifiedTypePtr::primary_type() const
 	{ 
 		if (m_indirection_levels == 0)
@@ -11,20 +23,20 @@ namespace reflective
 			return nullptr;
 	}
 
-	template <typename TYPE>
-		inline QualifiedTypePtr get_qualified_type()
+	inline bool QualifiedTypePtr::is_const(size_t i_indirection_level) const
 	{
-		static_assert(StaticQualification<TYPE>::s_indirection_levels < QualifiedTypePtr::s_max_indirection_levels,
-			"Maximum indirection level exceeded");
+		REFLECTIVE_ASSERT(i_indirection_level < indirection_levels(), "indirection level out of bounds" );
+		return (m_constness_word & (static_cast<uintptr_t>(1) << i_indirection_level)) != 0; 
+	}
 
-		return QualifiedTypePtr( &get_type<TYPE>(), 
-			StaticQualification<TYPE>::s_indirection_levels,
-			StaticQualification<TYPE>::s_constness_word,
-			StaticQualification<TYPE>::s_volatileness_word );			
+	inline bool QualifiedTypePtr::is_volatile(size_t i_indirection_level) const
+	{
+		REFLECTIVE_ASSERT(i_indirection_level < indirection_levels(), "indirection level out of bounds" );
+		return (m_volatileness_word & (static_cast<uintptr_t>(1) << i_indirection_level)) != 0;
 	}
 
 	template <typename OUT_STREAM>
-		inline void reflective::QualifiedTypePtr::to_string(OUT_STREAM & i_dest) const
+		inline void QualifiedTypePtr::to_string(OUT_STREAM & i_dest) const
 	{
 		if (!is_empty())
 		{

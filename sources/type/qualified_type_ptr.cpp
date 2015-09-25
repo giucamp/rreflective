@@ -1,3 +1,4 @@
+#include "qualified_type_ptr.h"
 
 namespace reflective
 {

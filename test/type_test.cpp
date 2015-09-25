@@ -23,11 +23,14 @@ namespace MyNamespace
 		};
 	}
 }
-
+void pt(const char*n, size_t s)
+{
+	std::cout << n << ", size: " << s << std::endl;
+}
 
 namespace reflective
 {
-	void setup_type(reflecting_type<MyNamespace::OtherNamespace::MyClass> & i_class, MyNamespace::OtherNamespace::MyClass *)
+	void setup_type(ReflectingType<MyNamespace::OtherNamespace::MyClass> & i_class, MyNamespace::OtherNamespace::MyClass *)
 	{
 		using ThisClass = MyNamespace::OtherNamespace::MyClass;
 		SymbolList<Property> empty = { 
@@ -43,7 +46,7 @@ void Type_test()
 {
 	using namespace reflective;
 	using namespace std;
-	
+
 	auto b = reflective::has_to_string< reflective::QualifiedTypePtr>::value;
 
 	const auto & t1 = get_qualified_type<float>();
