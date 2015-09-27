@@ -55,6 +55,8 @@ namespace reflective
 
 		const char * cend() const { return m_chars + std::strlen(m_chars) + 1; }
 
+		size_t size() const { return std::strlen(m_chars);  }
+
 		template <typename OUT_STREAM>
 			void to_string(OUT_STREAM & i_dest) const
 		{

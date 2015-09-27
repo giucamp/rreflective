@@ -17,9 +17,6 @@
   <ItemGroup>
     <ClInclude Include="..\sources\reflective_common.h" />
     <ClInclude Include="..\sources\reflective_settings.h" />
-    <ClInclude Include="..\sources\type\StaticQualification.h">
-      <Filter>type</Filter>
-    </ClInclude>
     <ClInclude Include="..\sources\type\SpecialFunctions.h">
       <Filter>type</Filter>
     </ClInclude>

@@ -2,6 +2,8 @@
 
 namespace reflective
 {
+
+
 	QualifiedTypePtr::QualifiedTypePtr(const Type * i_leftmost_type, size_t i_indirection_levels, size_t i_constness_word, size_t i_volatileness_word)
 		: m_leftmost_type(i_leftmost_type), m_indirection_levels(i_indirection_levels), m_constness_word(i_constness_word), m_volatileness_word(i_volatileness_word)
 	{
@@ -16,5 +18,10 @@ namespace reflective
 			m_indirection_levels == i_source.m_indirection_levels &&
 			m_constness_word == i_source.m_constness_word &&
 			m_volatileness_word == i_source.m_volatileness_word;
+	}
+
+	bool QualifiedTypePtr::assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest)
+	{
+		return false;
 	}
 }

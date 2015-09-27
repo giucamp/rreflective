@@ -58,6 +58,8 @@ namespace reflective
 		size_t size() const							{ return m_size; }
 
 		size_t alignment() const					{ return m_alignment; }
+
+		std::string full_name() const;
 		
 	private:
 		SpecialFunctions m_special_functions;

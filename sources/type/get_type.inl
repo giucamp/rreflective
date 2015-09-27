@@ -18,7 +18,10 @@ namespace reflective
 	template <typename TYPE>
 		const ReflectingType<TYPE> * create_type()
 	{
-		return details::SymbolTraits<TYPE, details::GetSymbolTypeId<TYPE>::s_type_id >::create();
+		const ReflectingType<TYPE> * result = details::SymbolTraits<TYPE, details::GetSymbolTypeId<TYPE>::s_type_id >::create();
+		const SymbolName full_name(result->full_name().c_str());
+		Registry::instance().register_type(full_name, *result);
+		return result;
 	}
 		
 	namespace details

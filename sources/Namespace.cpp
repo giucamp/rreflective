@@ -35,21 +35,18 @@ namespace reflective
 		return s_instance;
 	}
 
-	void Registry::register_type(SymbolName i_type_full_name, Type & i_type)
+	void Registry::register_type(SymbolName i_type_full_name, const Type & i_type)
 	{
-		#if REFLECTIVE_ASSERT_ENABLED
-			const auto res = 
-		#endif
-			m_type_registry.insert(std::make_pair(i_type_full_name, &i_type));
+		const auto res = m_type_registry.insert(std::make_pair(i_type_full_name, &i_type));
 		REFLECTIVE_ASSERT(res.second, "Duplicate type?");
 	}
 
-	Type * Registry::unregister_type(SymbolName i_type_full_name)
+	const Type * Registry::unregister_type(SymbolName i_type_full_name)
 	{
 		const auto res = m_type_registry.find(i_type_full_name);
 		if (res != m_type_registry.end())
 		{
-			Type * type = res->second;
+			const Type * type = res->second;
 			m_type_registry.erase(res);
 			return type;
 		}		
@@ -59,21 +56,18 @@ namespace reflective
 		}
 	}
 
-	void Registry::register_namespace(SymbolName i_namespace_full_name, Namespace & i_namespace)
+	void Registry::register_namespace(SymbolName i_namespace_full_name, const Namespace & i_namespace)
 	{
-		#if REFLECTIVE_ASSERT_ENABLED
-			const auto res = 
-		#endif
-			m_namespace_registry.insert(std::make_pair(i_namespace_full_name, &i_namespace));
+		const auto res = m_namespace_registry.insert(std::make_pair(i_namespace_full_name, &i_namespace));
 		REFLECTIVE_ASSERT(res.second, "Duplicate namespace?");
 	}
 
-	Namespace * Registry::unregister_namespace(SymbolName i_namespace_full_name)
+	const Namespace * Registry::unregister_namespace(SymbolName i_namespace_full_name)
 	{
 		const auto res = m_namespace_registry.find(i_namespace_full_name);
 		if (res != m_namespace_registry.end())
 		{
-			Namespace * namespace_obj = res->second;
+			const Namespace * namespace_obj = res->second;
 			m_namespace_registry.erase(res);
 			return namespace_obj;
 		}

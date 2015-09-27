@@ -1,9 +1,6 @@
 
 namespace reflective
 {
-	class OutStringBuffer;
-	class InStringBuffer;
-
 	// http://stackoverflow.com/questions/18570285/using-sfinae-to-detect-a-member-function
 
 	/** Checks at compile time if a type has member function with this name and signature:

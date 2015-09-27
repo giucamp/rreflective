@@ -32,18 +32,21 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
+	/** Retrives (by value) a QualifiedTypePtr associated to the template argument, that is never empty 
+		(is_empty() always return false). */
+	template <typename TYPE>
+		QualifiedTypePtr get_qualified_type();
+
 	/** Lightweight object holding a pointer to a type, a number of indirection levels, and the constness 
 		and volatileness for each indirection level. A is composed by:
-			- The **number of indirection** levels is the nuber of '*' or '&' or '&&' appearing in the C++ declaration of
+			- The **number of indirection levels**, that is is the nuber of '*' or '&' or '&&' appearing in the C++ declaration of
 			   the type. A non-pointer types has zero indirection levels, while a pointer to a pointer has 2 indirection levels.
-			- The **primary type** is the actual type of the first indirection level. For non-pointer types it is the same of the
+			- The **primary type**, that is is the actual type of the first indirection level. For non-pointer types it is the same of the
 			   leftmost type. For pointer types is always equal to the result of get_type<void*>(). If an object of has to be 
 			   constructed, copied, or assigned, the primary type is what matters.
-			- The **leftmost type** is first type appearing in the C++ declartion of the type, that is the type remaining after 
+			- The **leftmost type**, that is the first type appearing in the C++ declartion of the type, that is the type remaining after 
 			  stripping away all the cv-quaification, pointer and reference parts from the type.
 		
-		The easest way fo get a QualifiedTypePtr is using the function get_qualified_type<TYPE>().
-
 		type						|primary type	|leftmost type	|indirection levels		|constness word		|volatileness word	
 		----------------------------|:-------------:|:-------------:|:---------------------:|:-----------------:|:------------------:
 		float						|float			|float			|0						|0					|0
@@ -51,7 +54,7 @@ namespace reflective
 		const float &				|void *			|float			|1						|3					|0
 		float *const*volatile**		|void *			|float			|4						|8					|4
 		
-
+		The easest way fo get a QualifiedTypePtr is using the function get_qualified_type<TYPE>().
 
 		*/
 	class QualifiedTypePtr
@@ -61,13 +64,17 @@ namespace reflective
 		/** Maximum indirection level that this class can handle. This is 14 for if uintptr_t is 32-bit wide or smaller, 28 otherwise.
 			The global function get_qualified_type<TYPE>() checks this imit at compile-time (with a static_assert). */
 		static const size_t s_max_indirection_levels = std::numeric_limits<uintptr_t>::digits <=32 ? 14 : 28;
-		
-		QualifiedTypePtr(const Type * i_leftmost_type = nullptr, size_t i_indirection_levels = 0, size_t i_constness_word = 0, size_t i_volatileness_word = 0);
+	
+		/** Constructs an empty QualifiedTypePtr (is_empty() will return true). */
+		QualifiedTypePtr();
 
+		/** Copies from the source QualifiedTypePtr */
 		QualifiedTypePtr(const QualifiedTypePtr & i_source) = default;
 
+		/** Assigns from the source QualifiedTypePtr */
 		QualifiedTypePtr & operator = (const QualifiedTypePtr & i_source) = default;
 
+		/** Returns whether */
 		bool is_empty() const											{ return m_leftmost_type == nullptr; }
 
 		/** Retrieves the primary type. */
@@ -92,6 +99,15 @@ namespace reflective
 		template <typename OUT_STREAM>
 			void to_string(OUT_STREAM & i_dest) const;
 
+		bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest);
+
+	private:
+		
+		QualifiedTypePtr(const Type * i_leftmost_type, size_t i_indirection_levels, size_t i_constness_word, size_t i_volatileness_word);
+		
+		template <typename TYPE>
+			friend QualifiedTypePtr get_qualified_type();
+
 	private:
 		const Type * m_leftmost_type;
 		uintptr_t m_indirection_levels : (std::numeric_limits<uintptr_t>::digits - s_max_indirection_levels * 2);
@@ -99,7 +115,4 @@ namespace reflective
 		uintptr_t m_volatileness_word : s_max_indirection_levels;
 		static_assert(std::numeric_limits<uintptr_t>::radix == 2, "uintptr_t is expected to be binary");
 	};
-
-	template <typename TYPE>
-		QualifiedTypePtr get_qualified_type();
 }

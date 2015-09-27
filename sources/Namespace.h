@@ -46,6 +46,10 @@ namespace reflective
 
 		void unregister_namespace(const Namespace & i_namespace);
 	
+		Namespace * parent_namespace()					{ return m_parent_namespace; }
+
+		const Namespace * parent_namespace() const		 { return m_parent_namespace; }
+
 	private:
 		Type * m_first_child_type;
 		Namespace * m_first_child_namespace;
@@ -58,16 +62,16 @@ namespace reflective
 
 		static Registry & instance();
 
-		void register_type(SymbolName i_type_full_name, Type & i_type);
+		void register_type(SymbolName i_type_full_name, const Type & i_type);
 
-		Type * unregister_type(SymbolName i_type_full_name);
+		const Type * unregister_type(SymbolName i_type_full_name);
 
-		void register_namespace(SymbolName i_namespace_full_name, Namespace & i_namespace);
+		void register_namespace(SymbolName i_namespace_full_name, const Namespace & i_namespace);
 
-		Namespace * unregister_namespace(SymbolName i_namespace_full_name);
+		const Namespace * unregister_namespace(SymbolName i_namespace_full_name);
 
 	private:
-		std::unordered_map<SymbolName, Type *, SymbolNameHasher > m_type_registry;
-		std::unordered_map<SymbolName, Namespace *, SymbolNameHasher > m_namespace_registry;
+		std::unordered_map<SymbolName, const Type *, SymbolNameHasher > m_type_registry;
+		std::unordered_map<SymbolName, const Namespace *, SymbolNameHasher > m_namespace_registry;
 	};
 }

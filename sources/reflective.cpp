@@ -2,7 +2,9 @@
 #include <algorithm>
 #include <inttypes.h>
 #include <limits>
+#include <array>
 #include <ctype.h>
+
 
 #include "reflective.h"
 
@@ -16,3 +18,5 @@
 #include "type\obj_ptr.cpp"
 
 #include "class\property\Property.cpp"
+
+#include "namespace.cpp"

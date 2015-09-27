@@ -56,9 +56,15 @@ namespace reflective
 	template < typename HASHER, typename STRING >
 		class Identifier; // coherent string-hash pair, or just an hash if STRING is void
 
+	class ObjPtr;
+	class QualifiedTypePtr;
+	
+
 	template < typename UINT>
 		class StringHasher;
 
+	class OutStringBuffer;
+	class InStringBuffer;
 	class PtrString;	
 	
 	enum class UpDownCasterImplementation
@@ -95,7 +101,6 @@ namespace reflective
 #include "type\get_type.h"
 #include "type\obj_ptr.h"
 #include "Namespace.h"
-#include "type\StaticQualification.h"
 
 // inlines
 #include "type\qualified_type_ptr.inl"
