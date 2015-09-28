@@ -117,7 +117,7 @@ namespace reflective
 	}
 
 	inline QualifiedTypePtr::QualifiedTypePtr()
-		: m_leftmost_type(nullptr), m_indirection_levels(0), m_constness_word(0), m_volatileness_word(0)
+		: m_final_type(nullptr), m_indirection_levels(0), m_constness_word(0), m_volatileness_word(0)
 	{
 
 	}
@@ -125,8 +125,8 @@ namespace reflective
 	inline const Type * QualifiedTypePtr::primary_type() const
 	{ 
 		if (m_indirection_levels == 0)
-			return m_leftmost_type;
-		else if (m_leftmost_type != nullptr)
+			return m_final_type;
+		else if (m_final_type != nullptr)
 			return &get_type<void*>();
 		else
 			return nullptr;
@@ -149,7 +149,7 @@ namespace reflective
 	{
 		if (!is_empty())
 		{
-			i_dest << leftmost_type()->name();
+			i_dest << final_type()->name();
 
 			uintptr_t level = 0;
 			const uintptr_t ind_levels = indirection_levels();
