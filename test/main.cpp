@@ -7,13 +7,14 @@ void bulk_list__test();
 
 int main()
 {
+	Name_test();
+
 	bulk_list__test();
 
 	Type_test();
 
 	Stream_test();	
-
-	Name_test();
+		
 
 	SpecialFunctions_test();
 

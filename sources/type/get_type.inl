@@ -46,7 +46,7 @@ namespace reflective
 		};
 		
 		template <typename TYPE>
-			const ReflectingType<TYPE> * TypeContainer<TYPE>::s_type = create_type<TYPE>();
+			const ReflectingType<TYPE> * TypeContainer<TYPE>::s_type = &TypeContainer<TYPE>::get();
 	}
 
 	template <typename TYPE>

@@ -44,23 +44,40 @@ namespace reflective
 
 		static const uint32_t s_empty_hash = 5381;
 
-		ResultType operator() (const char * i_string) const
+		ResultType operator() (const char * i_null_terminated_string) const
 		{
-			return this->operator()(PtrString(i_string));
+			return this->operator()(i_null_terminated_string, strlen(i_null_terminated_string));
 		}
 
-		template <typename STRING>
-			ResultType operator() (const STRING & i_string) const
+		ResultType operator() (const char * i_string, size_t i_length) const
 		{
 			/*	djb2 - http://www.cse.yorku.ca/~oz/hash.html
-				"this algorithm (k=33) was first reported by dan bernstein many years ago in comp.lang.c. another version of
-				this algorithm (now favored by bernstein) uses xor: hash(i) = hash(i - 1) * 33 ^ str[i]; the magic of number
-				33 (why it works better than many other constants, prime or not) has never been adequately explained." */
-			ResultType result = s_empty_hash;
-			for (const auto c : i_string)
-			{
-				result = (result << 5) + (result + c);
-			}
+			"this algorithm (k=33) was first reported by dan bernstein many years ago in comp.lang.c. another version of
+			this algorithm (now favored by bernstein) uses xor: hash(i) = hash(i - 1) * 33 ^ str[i]; the magic of number
+			33 (why it works better than many other constants, prime or not) has never been adequately explained." */
+
+			/*Hash hash = 5381;
+			int c;
+			while (c = *str++)
+			hash = ((hash << 5) + hash) + c; // hash * 33 + c
+			*/
+
+			uint32_t result = s_empty_hash;
+			const char * str = i_string;
+			size_t length = i_length;
+			if (length >= 4) do {
+				result = (result << 5) + (result + str[0]);
+				result = (result << 5) + (result + str[1]);
+				result = (result << 5) + (result + str[2]);
+				result = (result << 5) + (result + str[3]);
+				str += 4;
+				length -= 4;
+			} while (length >= 4);
+
+			if (length) do {
+				result = (result << 5) + (result + *str++);
+			} while (--length);
+
 			return result;
 		}
 	};

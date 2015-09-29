@@ -49,18 +49,55 @@ namespace reflective
 
 		const char * begin() const { return m_chars; }
 
-		const char * end() const { return m_chars + std::strlen(m_chars) + 1; }
+		const char * end() const { return m_chars + std::strlen(m_chars); }
 
 		const char * cbegin() const { return m_chars; }
 
-		const char * cend() const { return m_chars + std::strlen(m_chars) + 1; }
+		const char * cend() const { return m_chars + std::strlen(m_chars); }
 
 		size_t size() const { return std::strlen(m_chars);  }
+
+		size_t length() const { return std::strlen(m_chars); }
 
 		template <typename OUT_STREAM>
 			void to_string(OUT_STREAM & i_dest) const
 		{
 			i_dest << m_chars;
 		}
+	};
+
+	class StringView
+	{
+	public:
+
+		StringView()
+			: m_chars(nullptr), m_size(0)
+				{ }
+
+		StringView(const char * i_c_string)
+			: m_chars(i_c_string), m_size( strlen(i_c_string) ) 
+				{ }
+
+		StringView(const char * i_c_string, size_t i_size)
+			: m_chars(i_c_string), m_size(i_size)
+				{ }
+
+		const char * c_str() const { return m_chars; }
+
+		const char * begin() const { return m_chars; }
+
+		const char * end() const { return m_chars + m_size; }
+
+		const char * cbegin() const { return m_chars; }
+
+		const char * cend() const { return m_chars + m_size; }
+		
+		size_t size() const { return m_size; }
+
+		size_t length() const { return m_size; }
+
+	private:
+		const char * m_chars;
+		size_t m_size;
 	};
 }

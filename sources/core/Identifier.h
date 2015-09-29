@@ -50,59 +50,28 @@ namespace reflective
 
 		}
 
-		/** copy constructor */
-		Identifier(const Identifier & i_source)
-			: m_hash(i_source.m_hash),
-			  m_string(i_source.m_string)
+		Identifier(const char * i_null_terminated_string)
+			: m_hash(Hasher()(i_null_terminated_string)), m_string(i_null_terminated_string)
 		{
 
 		}
 
-		/** move constructor */
-		Identifier(Identifier && i_from)
-			: m_hash(std::move(i_from.m_hash)),
-			  m_string(std::move(i_from.m_string))
+		Identifier(const char * i_string, size_t i_length)
+			: m_hash(Hasher()(i_string, i_length)), m_string(i_string, i_length)
 		{
 
 		}
 
-		struct Make {};
 
-		/** forwarding constructor */
-		template<typename... PARAMETERS>
-			Identifier(Make i_make, PARAMETERS &&... i_parameters)
-				: m_string(i_parameters...)
+		template < typename OTHER_STRING >
+			Identifier(const Identifier<HASHER, OTHER_STRING> & i_source )
+				: m_hash(i_source.hash()), m_string(i_source.string())
 		{
-			m_hash = Hasher()(std::forward<PARAMETERS>(i_parameters)...);
+
 		}
+		
 
-		template<typename FIRST_PARAMETER>
-			Identifier(const FIRST_PARAMETER & i_first_parameter)
-				: m_string(i_first_parameter)
-		{
-			m_hash = Hasher()(i_first_parameter);
-		}
-
-
-					// assignments
-
-		/** copy assignment */
-		Identifier & operator = (const Identifier & i_source)
-		{
-			m_hash = i_source.m_hash;
-			m_string = i_source.m_string;
-			return *this;
-		}
-
-		/** move assignment */
-		Identifier & operator = (Identifier && i_from)
-		{
-			m_hash = std::move(i_from.m_hash);
-			m_string = std::move(i_from.m_string);
-			return *this;
-		}
-
-					// getters
+				// getters
 
 		HashType hash() const
 		{
@@ -172,47 +141,25 @@ namespace reflective
 
 		}
 
-		/** copy constructor */
-		Identifier(const Identifier & i_source)
-			: m_hash(i_source.m_hash)
+		Identifier(const char * i_null_terminated_string)
+			: m_hash(Hasher()(i_string))
 		{
 
 		}
 
-		/** move constructor */
-		Identifier(Identifier && i_from)
-			: m_hash(std::move(i_from.m_hash))
+		Identifier(const char * i_null_terminated_string, size_t i_length)
+			: m_hash(Hasher()(i_string, i_length))
 		{
 
 		}
 
-		struct Make {};
-
-		/** forwarding constructor */
-		template<typename... PARAMETERS>
-			Identifier(Make i_make, PARAMETERS &&... i_parameters)
-				: m_hash(Hasher()(std::forward<PARAMETERS>(i_parameters)...))
+		template < typename OTHER_STRING >
+			Identifier(const Identifier<HASHER, OTHER_STRING> & i_source)
+				: m_hash(i_source.hash())
 		{
-			
+
 		}
-
-
-					// assignments
-
-		/** copy assignment */
-		Identifier & operator = (const Identifier & i_source)
-		{
-			m_hash = i_source.m_hash;
-			return *this;
-		}
-
-		/** move assignment */
-		Identifier & operator = (Identifier && i_from)
-		{
-			m_hash = std::move(i_from.m_hash);
-			return *this;
-		}
-
+		
 					// getters
 
 		HashType hash() const

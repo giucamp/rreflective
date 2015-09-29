@@ -68,6 +68,13 @@ void Type_test()
 	cout << to_std_string(t5) << endl;
 
 
+	cout << to_std_string(tf1) << endl;
+	cout << to_std_string(tf2) << endl;
+	cout << to_std_string(tf3) << endl;
+	cout << to_std_string(tf4) << endl;
+	cout << to_std_string(tf5) << endl;
+
+
 	const auto & class_type = get_type<MyNamespace::OtherNamespace::MyClass>();
 	const auto & enum_type = get_type<MyNamespace::OtherNamespace::MyEnum>();
 

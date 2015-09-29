@@ -134,13 +134,13 @@ namespace reflective
 
 	inline bool QualifiedTypePtr::is_const(size_t i_indirection_level) const
 	{
-		REFLECTIVE_ASSERT(i_indirection_level < indirection_levels(), "indirection level out of bounds" );
+		REFLECTIVE_ASSERT(i_indirection_level <= indirection_levels(), "indirection level out of bounds" );
 		return (m_constness_word & (static_cast<uintptr_t>(1) << i_indirection_level)) != 0; 
 	}
 
 	inline bool QualifiedTypePtr::is_volatile(size_t i_indirection_level) const
 	{
-		REFLECTIVE_ASSERT(i_indirection_level < indirection_levels(), "indirection level out of bounds" );
+		REFLECTIVE_ASSERT(i_indirection_level <= indirection_levels(), "indirection level out of bounds" );
 		return (m_volatileness_word & (static_cast<uintptr_t>(1) << i_indirection_level)) != 0;
 	}
 
