@@ -32,8 +32,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	/** Retrives (by value) a QualifiedTypePtr associated to the template argument, that is never empty 
-		(is_empty() always return false). */
+	/** Retrives (by value) a QualifiedTypePtr associated to the template argument.
+		The resut  is never empty (is_empty() always return false). */
 	template <typename TYPE>
 		QualifiedTypePtr get_qualified_type();
 
@@ -46,7 +46,8 @@ namespace reflective
 			   final type. For pointer types is always equal to the result of get_type<void*>(). If an object of has to be 
 			   constructed, copied, or assigned, the primary type is what matters.
 			- The **final type**, that is the type of the last indirection level. The final type is the type remaining after stripping away 
-			  all the cv-quaification, pointer and reference parts from the C++ declaration.
+			  all the cv-quaification, pointer and reference parts from the C++ declaration. The final type can be thought as the type of 
+			  the final object, that is the object found indirecting all the indirection levels.
 			- cv-quaification for every insirection level, that is for every i >= 0 and <= indirection_levels.
 		
 		type						|primary type	|final type		|indirection levels		|const levels		|volatile levels
@@ -57,14 +58,22 @@ namespace reflective
 		float *const*volatile**		|void *			|float			|4						|3					|2
 		
 		QualifiedTypePtr is copyable, assignable and moveable.
-		The easest way fo get a QualifiedTypePtr is using the function get_qualified_type<TYPE>(). */
-	class QualifiedTypePtr
+		Use get_qualified_type<TYPE>() to get a QualifiedTypePtr from a compile-time type.
+		Implementation note: currantly QualifiedTypePtr is big like 2 pointers. */
+	class QualifiedTypePtr final
 	{
 	public:
 
+		enum class CV
+		{
+			None = 0,
+			Const = 1 << 0,
+			Volatile = 1 << 1,
+		};
+
 					// constants
 
-		/** Maximum indirection level that this class can handle. This is 14 if uintptr_t is 32-bit wide or smaller, 28 otherwise.
+		/** Maximum indirection levels that this class can handle. This is 14 if uintptr_t is 32-bit wide or smaller, 28 otherwise.
 			The global function get_qualified_type<TYPE>() checks this imit at compile-time (with a static_assert). */
 		static const size_t s_max_indirection_levels = std::numeric_limits<uintptr_t>::digits <= 32 ? 14 : 28;
 		
@@ -78,7 +87,8 @@ namespace reflective
 			declaration. A non-pointer types has zero indirection levels, while a pointer to a pointer has 2 indirection levels.*/
 		size_t indirection_levels() const			{ return m_indirection_levels; }
 
-		/** Retrieves the primary type, that is the type at the 0-th indirection level. */
+		/** Retrieves the primary type, that is the type at the 0-th indirection level. 
+			If the type is empty (= default constructed) the primary type is nullptr. Otherwise is != nullptr. */
 		const Type * primary_type() const;
 
 		/** Retrivies the final type, that is the type at the last indirection level.
@@ -128,6 +138,10 @@ namespace reflective
 
 		bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest);
 
+		#if REFLECTIVE_ENABLE_TESTING
+			static void unit_test();
+		#endif
+
 	private:
 		
 		QualifiedTypePtr(const Type * i_final_type, size_t i_indirection_levels, size_t i_constness_word, size_t i_volatileness_word);
@@ -141,4 +155,16 @@ namespace reflective
 		uintptr_t m_constness_word : s_max_indirection_levels;
 		uintptr_t m_volatileness_word : s_max_indirection_levels;
 	};
+
+	inline QualifiedTypePtr::CV operator | (QualifiedTypePtr::CV i_first, QualifiedTypePtr::CV i_seconds)
+	{
+		using underlying_type = std::underlying_type < QualifiedTypePtr::CV >::type;
+		return static_cast<QualifiedTypePtr::CV>(static_cast<underlying_type>(i_first) | static_cast<underlying_type>(i_seconds));
+	}
+
+	inline QualifiedTypePtr::CV operator & (QualifiedTypePtr::CV i_first, QualifiedTypePtr::CV i_seconds)
+	{
+		using underlying_type = std::underlying_type < QualifiedTypePtr::CV >::type;
+		return static_cast<QualifiedTypePtr::CV>(static_cast<underlying_type>(i_first) & static_cast<underlying_type>(i_seconds));
+	}
 }

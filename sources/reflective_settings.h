@@ -40,6 +40,8 @@ namespace reflective
 	static const UpDownCasterImplementation s_upDownCasterImplementation = UpDownCasterImplementation::Functions;
 
 	static const bool multiple = true;
+
+	#define REFLECTIVE_ENABLE_TESTING		1
 }
 	
 #define REFLECTIVE_DEBUG 1
@@ -47,3 +49,4 @@ namespace reflective
 #define REFLECTIVE_ASSERT_ENABLED 1
 
 #define REFLECTIVE_ASSERT(i_value, i_error_message)		if(!(i_value)) {__debugbreak();}
+#define REFLECTIVE_TEST_ASSERT(i_value)					if(!(i_value)) {__debugbreak();}

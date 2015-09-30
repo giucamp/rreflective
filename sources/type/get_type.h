@@ -52,15 +52,15 @@ namespace reflective
 		// defines ReflectedType (that is Class, Type, Enum, etc..) and static const ReflectedType * create()
 		template <typename TYPE, SymbolTypeId TYPE_ID> struct SymbolTraits;
 
-		// SymbolTraits for primitive types
+		// SymbolTraits for void
 		template <>
-			struct SymbolTraits< void*, SymbolTypeId::primitive_type_symbol>
+			struct SymbolTraits< void, SymbolTypeId::primitive_type_symbol>
 		{
 			using ReflectedType = reflective::Type;
 
 			static const ReflectedType * create()
 			{
-				Type * new_type = new Type("void *", sizeof(void *), std::alignment_of<void *>::value, get_special_functions<void *>());
+				Type * new_type = new Type("void", 0, 1, SpecialFunctions(nullptr, nullptr, nullptr, nullptr) );
 				return new_type;
 			}
 		};
