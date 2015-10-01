@@ -50,7 +50,7 @@ namespace reflective
 	}
 
 	template <typename TYPE>
-		inline const ReflectingType<TYPE> & get_type()
+		inline const ReflectingType<TYPE> & get_naked_type()
 	{
 		return details::TypeContainer< details::CleanType<TYPE> >::get();
 	}

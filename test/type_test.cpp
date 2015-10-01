@@ -75,8 +75,8 @@ void Type_test()
 	cout << to_std_string(tf5) << endl;
 
 
-	const auto & class_type = get_type<MyNamespace::OtherNamespace::MyClass>();
-	const auto & enum_type = get_type<MyNamespace::OtherNamespace::MyEnum>();
+	const auto & class_type = get_naked_type<MyNamespace::OtherNamespace::MyClass>();
+	const auto & enum_type = get_naked_type<MyNamespace::OtherNamespace::MyEnum>();
 
 
 

@@ -153,7 +153,7 @@
     <ClInclude Include="..\sources\reflective_settings.h" />
     <ClInclude Include="..\sources\type\enum.h" />
     <ClInclude Include="..\sources\type\enum_member.h" />
-    <ClInclude Include="..\sources\type\get_type.h" />
+    <ClInclude Include="..\sources\type\get_naked_type.h" />
     <ClInclude Include="..\sources\type\obj_ptr.h" />
     <ClInclude Include="..\sources\type\primitive_types.h" />
     <ClInclude Include="..\sources\type\qualified_type_ptr.h" />
@@ -238,7 +238,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\sources\type\enum.inl" />
-    <None Include="..\sources\type\get_type.inl" />
+    <None Include="..\sources\type\get_naked_type.inl" />
     <None Include="..\sources\type\qualified_type_ptr.inl" />
     <None Include="..\sources\type\special_functions.inl" />
     <None Include="..\sources\type\type.inl" />

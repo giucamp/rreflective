@@ -99,7 +99,7 @@ namespace reflective
 #include "class\property\Property.h"
 #include "class\property\DataMemberProperty.h"
 #include "class\class.h"
-#include "type\get_type.h"
+#include "type\get_naked_type.h"
 #include "type\obj_ptr.h"
 #include "Namespace.h"
 
@@ -108,6 +108,6 @@ namespace reflective
 #include "type\special_functions.inl"
 #include "type\type.inl"
 #include "type\enum.inl"
-#include "type\get_type.inl"
+#include "type\get_naked_type.inl"
 
 #undef INCLUDING_REFLECTIVE

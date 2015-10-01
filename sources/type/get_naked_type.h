@@ -115,5 +115,5 @@ namespace reflective
 			details::CleanType<TYPE>, details::GetSymbolTypeId< details::CleanType<TYPE> >::s_type_id >::ReflectedType;
 
 	template <typename TYPE>
-		const ReflectingType<TYPE> & get_type();
+		const ReflectingType<TYPE> & get_naked_type();
 }

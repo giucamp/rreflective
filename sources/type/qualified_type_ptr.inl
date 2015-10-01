@@ -122,7 +122,7 @@ namespace reflective
 		static_assert(details::StaticQualification<TYPE>::s_indirection_levels <= QualifiedTypePtr::s_max_indirection_levels,
 			"Maximum indirection level exceeded");
 
-		return QualifiedTypePtr(&get_type<details::StaticQualification<TYPE>::UnderlyingType>(),
+		return QualifiedTypePtr(&get_naked_type<details::StaticQualification<TYPE>::UnderlyingType>(),
 			details::StaticQualification<TYPE>::s_indirection_levels,
 			details::StaticQualification<TYPE>::s_constness_word,
 			details::StaticQualification<TYPE>::s_volatileness_word);
@@ -145,7 +145,7 @@ namespace reflective
 		{
 			// the type is a pointer
 			REFLECTIVE_INTERNAL_ASSERT(m_final_type != nullptr, "QualifiedTypePtr class invariant violated");
-			return &get_type<void*>();
+			return &get_naked_type<void*>();
 		}
 	}
 
