@@ -102,6 +102,18 @@ namespace reflective
 			static const bool s_is_lvalue_reference = StaticQualification<TYPE>::s_is_lvalue_reference;
 			static const bool s_is_rvalue_reference = StaticQualification<TYPE>::s_is_rvalue_reference;
 		};
+
+		// partial specialization for const volatile types
+		template <typename TYPE> class StaticQualification<const volatile TYPE>
+		{
+		public:
+			using UnderlyingType = typename  StaticQualification<TYPE>::UnderlyingType;
+			static const size_t s_indirection_levels = StaticQualification<TYPE>::s_indirection_levels;
+			static const size_t s_constness_word = StaticQualification<TYPE>::s_constness_word | 1;
+			static const size_t s_volatileness_word = StaticQualification<TYPE>::s_volatileness_word | 1;
+			static const bool s_is_lvalue_reference = StaticQualification<TYPE>::s_is_lvalue_reference;
+			static const bool s_is_rvalue_reference = StaticQualification<TYPE>::s_is_rvalue_reference;
+		};
 	}
 
 	template <typename TYPE>
@@ -132,7 +144,7 @@ namespace reflective
 		else
 		{
 			// the type is a pointer
-			REFLECTIVE_ASSERT(m_final_type != nullptr, "QualifiedTypePtr class invariant violated");			
+			REFLECTIVE_INTERNAL_ASSERT(m_final_type != nullptr, "QualifiedTypePtr class invariant violated");
 			return &get_type<void*>();
 		}
 	}

@@ -33,9 +33,30 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace reflective
 {
 	/** Retrives (by value) a QualifiedTypePtr associated to the template argument.
-		The resut  is never empty (is_empty() always return false). */
+		The resut  is never empty (is_empty() always return false). 
+		The template argument cannot be void (get_qualified_type<void>() is declared deleted), but can be a void pointer (with any cv qualifiication). */
 	template <typename TYPE>
 		QualifiedTypePtr get_qualified_type();
+
+	/** Scoped enum that stores a combination of cv qualifiers. CV_Flags can be combined and subtracted with the overoaded bitwise operators | and &. */
+	enum class CV_Flags
+	{
+		None = 0, /**< No flags */
+		Const = 1 << 0, /**< Set for const types */
+		Volatile = 1 << 1, /**< Set for volatile types */
+	};
+
+	inline CV_Flags operator | (CV_Flags i_first, CV_Flags i_seconds)
+	{
+		using underlying_type = std::underlying_type < CV_Flags >::type;
+		return static_cast<CV_Flags>(static_cast<underlying_type>(i_first) | static_cast<underlying_type>(i_seconds));
+	}
+
+	inline CV_Flags operator & (CV_Flags i_first, CV_Flags i_seconds)
+	{
+		using underlying_type = std::underlying_type < CV_Flags >::type;
+		return static_cast<CV_Flags>(static_cast<underlying_type>(i_first) & static_cast<underlying_type>(i_seconds));
+	}
 
 	/** Lightweight value-class holding a pointer to a type, a number of indirection levels, and the cv-qualification (is it const?
 		is it volatile?) for each indirection level. A QualifiedTypePtr can tell:
@@ -55,21 +76,17 @@ namespace reflective
 		float						|float			|float			|0						|					|
 		volatile float				|float			|float			|0						|					|0
 		const float &				|void *			|float			|1						|0, 1				|
+		const void *				|void *			|void			|1						|1					|
+		void* const					|void *			|void			|1						|0					|
 		float*const*volatile**&		|void *			|float			|5						|0, 4				|3
 		
 		QualifiedTypePtr is copyable, assignable and moveable.
 		Use get_qualified_type<TYPE>() to get a QualifiedTypePtr from a compile-time type.
-		Implementation note: currantly QualifiedTypePtr is big like 2 pointers. */
+		Note: <const int *> and <int const *> are the same C++ type.
+		Implementation note: currently QualifiedTypePtr has the same size of 2 pointers. Anyway, the user should not rely on this assumption. */
 	class QualifiedTypePtr final
 	{
 	public:
-
-		enum class CV
-		{
-			None = 0,
-			Const = 1 << 0,
-			Volatile = 1 << 1,
-		};
 
 					// constants
 
@@ -111,7 +128,21 @@ namespace reflective
 
 		/** Retrieves whether the type rapresent a pointer, that is indirection_levels() > 0 */
 		bool is_pointer() const						{ return indirection_levels() > 0; }
-		
+
+
+				// derived getters
+
+		/** Retrieves a CV_Flags that specifies the cv qualification for the specified indirection level.
+			Given the type: float volatile*const volatile*const*
+				- cv_flags(0) returns CV_Flags::None
+				- cv_flags(1) returns CV_Flags::Const
+				- cv_flags(2) returns CV_Flags::Const | CV_Flags::Volatile
+				- cv_flags(3) returns CV_Flags::Volatile
+			Implementation note: cv_flags() is impemented using is_const() and is_volatile().
+			@param i_indirection_level, (must be <= indirection_levels()), indirection level for which the qualification is queried. */
+		CV_Flags cv_flags(size_t i_indirection_level) const
+			{ return (is_const(i_indirection_level) ? CV_Flags::Const : CV_Flags::None) |
+				(is_volatile(i_indirection_level) ? CV_Flags::Volatile : CV_Flags::None); }
 
 				// special functions
 	
@@ -149,22 +180,22 @@ namespace reflective
 		template <typename TYPE>
 			friend QualifiedTypePtr get_qualified_type();
 
+		#if REFLECTIVE_ENABLE_TESTING
+
+			template <size_t CV_COUNT>
+				static void unit_test_test_cvs(const QualifiedTypePtr & i_q_type, const CV_Flags(&i_cvs)[CV_COUNT]);
+
+			template <typename TYPE>
+				static void unit_test_type();
+		#endif
+
 	private: // data members (currently a QualifiedTypePtr is big as two pointers)
 		const Type * m_final_type;
 		uintptr_t m_indirection_levels : (std::numeric_limits<uintptr_t>::digits - s_max_indirection_levels * 2);
 		uintptr_t m_constness_word : s_max_indirection_levels;
 		uintptr_t m_volatileness_word : s_max_indirection_levels;
 	};
-
-	inline QualifiedTypePtr::CV operator | (QualifiedTypePtr::CV i_first, QualifiedTypePtr::CV i_seconds)
-	{
-		using underlying_type = std::underlying_type < QualifiedTypePtr::CV >::type;
-		return static_cast<QualifiedTypePtr::CV>(static_cast<underlying_type>(i_first) | static_cast<underlying_type>(i_seconds));
-	}
-
-	inline QualifiedTypePtr::CV operator & (QualifiedTypePtr::CV i_first, QualifiedTypePtr::CV i_seconds)
-	{
-		using underlying_type = std::underlying_type < QualifiedTypePtr::CV >::type;
-		return static_cast<QualifiedTypePtr::CV>(static_cast<underlying_type>(i_first) & static_cast<underlying_type>(i_seconds));
-	}
+	
+	// deletes the speciaization with void
+	template <> QualifiedTypePtr get_qualified_type<void>() = delete;
 }
