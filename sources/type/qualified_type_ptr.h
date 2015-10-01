@@ -101,7 +101,7 @@ namespace reflective
 					// getters
 
 		/** Returns the number of indirection levels of the type, that is is the nuber of '*' or '&' or '&&' appearing in the C++ 
-			declaration. A non-pointer types has zero indirection levels, while a pointer to a pointer has 2 indirection levels.*/
+			declaration. A non-pointer type has zero indirection levels, while a pointer to a pointer has 2 indirection levels.*/
 		size_t indirection_levels() const			{ return m_indirection_levels; }
 
 		/** Retrieves the primary type, that is the type at the 0-th indirection level. 
@@ -144,6 +144,7 @@ namespace reflective
 			{ return (is_const(i_indirection_level) ? CV_Flags::Const : CV_Flags::None) |
 				(is_volatile(i_indirection_level) ? CV_Flags::Volatile : CV_Flags::None); }
 
+
 				// special functions
 	
 		/** Constructs an empty QualifiedTypePtr (is_empty() will return true). The object can later be assigned. */
@@ -179,16 +180,7 @@ namespace reflective
 		
 		template <typename TYPE>
 			friend QualifiedTypePtr get_qualified_type();
-
-		#if REFLECTIVE_ENABLE_TESTING
-
-			template <size_t CV_COUNT>
-				static void unit_test_test_cvs(const QualifiedTypePtr & i_q_type, const CV_Flags(&i_cvs)[CV_COUNT]);
-
-			template <typename TYPE>
-				static void unit_test_type();
-		#endif
-
+			
 	private: // data members (currently a QualifiedTypePtr is big as two pointers)
 		const Type * m_final_type;
 		uintptr_t m_indirection_levels : (std::numeric_limits<uintptr_t>::digits - s_max_indirection_levels * 2);
