@@ -58,23 +58,32 @@ namespace reflective
 			{ const auto q_type_ptr = get_qualified_type<const float &>();
 			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_empty());
 			REFLECTIVE_TEST_ASSERT(q_type_ptr.final_type() == &get_type<float>());
-			REFLECTIVE_TEST_ASSERT(q_type_ptr.primary_type() == &get_type<float>());
+			REFLECTIVE_TEST_ASSERT(q_type_ptr.primary_type() == &get_type<void*>());
 			REFLECTIVE_TEST_ASSERT(q_type_ptr.indirection_levels() == 1);
 			REFLECTIVE_TEST_ASSERT(q_type_ptr.is_const(0));
-			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_const(1));
+			REFLECTIVE_TEST_ASSERT(q_type_ptr.is_const(1));
 			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_volatile(0));
 			REFLECTIVE_TEST_ASSERT(q_type_ptr == q_type_ptr); }
 
 			// test <float *const*volatile**>
-			/*{ const auto q_type_ptr = get_qualified_type<float *const*volatile**>();
+			{ const auto q_type_ptr = get_qualified_type<float*const*volatile**&>();
 			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_empty());
 			REFLECTIVE_TEST_ASSERT(q_type_ptr.final_type() == &get_type<float>());
-			REFLECTIVE_TEST_ASSERT(q_type_ptr.primary_type() == &get_type<float>());
-			REFLECTIVE_TEST_ASSERT(q_type_ptr.indirection_levels() == 4);
+			REFLECTIVE_TEST_ASSERT(q_type_ptr.primary_type() == &get_type<void*>());
+			REFLECTIVE_TEST_ASSERT(q_type_ptr.indirection_levels() == 5);
 			REFLECTIVE_TEST_ASSERT(q_type_ptr.is_const(0));
 			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_const(1));
+			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_const(2));
+			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_const(3));
+			REFLECTIVE_TEST_ASSERT(q_type_ptr.is_const(4));
+			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_const(5));
 			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_volatile(0));
-			REFLECTIVE_TEST_ASSERT(q_type_ptr == q_type_ptr); }*/
+			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_volatile(1));
+			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_volatile(2));
+			REFLECTIVE_TEST_ASSERT(q_type_ptr.is_volatile(3));
+			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_volatile(4));
+			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_volatile(5));
+			REFLECTIVE_TEST_ASSERT(q_type_ptr == q_type_ptr); }
 		}
 	#endif
 }

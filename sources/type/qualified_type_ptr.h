@@ -54,8 +54,8 @@ namespace reflective
 		----------------------------|:-------------:|:-------------:|:---------------------:|:-----------------:|:------------------:
 		float						|float			|float			|0						|					|
 		volatile float				|float			|float			|0						|					|0
-		const float &				|void *			|float			|1						|1					|
-		float *const*volatile**		|void *			|float			|4						|3					|2
+		const float &				|void *			|float			|1						|0, 1				|
+		float*const*volatile**&		|void *			|float			|5						|0, 4				|3
 		
 		QualifiedTypePtr is copyable, assignable and moveable.
 		Use get_qualified_type<TYPE>() to get a QualifiedTypePtr from a compile-time type.

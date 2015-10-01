@@ -17,9 +17,6 @@
   <ItemGroup>
     <ClInclude Include="..\sources\reflective_common.h" />
     <ClInclude Include="..\sources\reflective_settings.h" />
-    <ClInclude Include="..\sources\type\SpecialFunctions.h">
-      <Filter>type</Filter>
-    </ClInclude>
     <ClInclude Include="..\sources\Namespace.h" />
     <ClInclude Include="..\sources\class\property\Property.h">
       <Filter>class\property</Filter>
@@ -85,11 +82,14 @@
     <ClInclude Include="..\sources\type\obj_ptr.h">
       <Filter>type</Filter>
     </ClInclude>
+    <ClInclude Include="..\sources\type\string_functions.h">
+      <Filter>type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\type\special_functions.h">
+      <Filter>type</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\sources\type\SpecialFunctions.cpp">
-      <Filter>type</Filter>
-    </ClCompile>
     <ClCompile Include="..\sources\class\property\Property.cpp">
       <Filter>class\property</Filter>
     </ClCompile>
@@ -119,11 +119,11 @@
     <ClCompile Include="..\sources\type\obj_ptr.cpp">
       <Filter>type</Filter>
     </ClCompile>
+    <ClCompile Include="..\sources\type\special_functions.cpp">
+      <Filter>type</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\sources\type\SpecialFunctions.inl">
-      <Filter>type</Filter>
-    </None>
     <None Include="..\sources\type\enum.inl">
       <Filter>type</Filter>
     </None>
@@ -134,6 +134,9 @@
       <Filter>type</Filter>
     </None>
     <None Include="..\sources\type\get_type.inl">
+      <Filter>type</Filter>
+    </None>
+    <None Include="..\sources\type\special_functions.inl">
       <Filter>type</Filter>
     </None>
   </ItemGroup>

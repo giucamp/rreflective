@@ -132,7 +132,7 @@ namespace reflective
 	}
 
 	template <typename TYPE>
-		inline SpecialFunctions get_special_functions()
+		inline SpecialFunctions SpecialFunctions::from_type()
 	{
 		return SpecialFunctions(
 			details::ScalarDefaultConstructor<TYPE, std::is_default_constructible<TYPE>::value >::get(),

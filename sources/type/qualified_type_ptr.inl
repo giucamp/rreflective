@@ -47,7 +47,7 @@ namespace reflective
 		template <typename TYPE> class StaticQualification<TYPE&>
 		{
 		public:
-			using UnderlyingType = TYPE;
+			using UnderlyingType = typename StaticQualification<TYPE>::UnderlyingType;
 			static const size_t s_indirection_levels = StaticQualification<TYPE>::s_indirection_levels + 1;
 			static const size_t s_constness_word = 1 | (StaticQualification<TYPE>::s_constness_word << 1);
 			static const size_t s_volatileness_word = StaticQualification<TYPE>::s_volatileness_word << 1;
@@ -59,7 +59,7 @@ namespace reflective
 		template <typename TYPE> class StaticQualification<TYPE&&>
 		{
 		public:
-			using UnderlyingType = TYPE;
+			using UnderlyingType = typename StaticQualification<TYPE>::UnderlyingType;
 			static const size_t s_indirection_levels = StaticQualification<TYPE>::s_indirection_levels + 1;
 			static const size_t s_constness_word = 1 | (StaticQualification<TYPE>::s_constness_word << 1);
 			static const size_t s_volatileness_word = StaticQualification<TYPE>::s_volatileness_word << 1;
@@ -71,7 +71,7 @@ namespace reflective
 		template <typename TYPE> class StaticQualification<TYPE*>
 		{
 		public:
-			using UnderlyingType = TYPE;
+			using UnderlyingType = typename  StaticQualification<TYPE>::UnderlyingType;
 			static const size_t s_indirection_levels = StaticQualification<TYPE>::s_indirection_levels + 1;
 			static const size_t s_constness_word = StaticQualification<TYPE>::s_constness_word << 1;
 			static const size_t s_volatileness_word = StaticQualification<TYPE>::s_volatileness_word << 1;
@@ -83,7 +83,7 @@ namespace reflective
 		template <typename TYPE> class StaticQualification<const TYPE>
 		{
 		public:
-			using UnderlyingType = TYPE;
+			using UnderlyingType = typename StaticQualification<TYPE>::UnderlyingType;
 			static const size_t s_indirection_levels = StaticQualification<TYPE>::s_indirection_levels;
 			static const size_t s_constness_word = StaticQualification<TYPE>::s_constness_word | 1;
 			static const size_t s_volatileness_word = StaticQualification<TYPE>::s_volatileness_word;
@@ -95,7 +95,7 @@ namespace reflective
 		template <typename TYPE> class StaticQualification<volatile TYPE>
 		{
 		public:
-			using UnderlyingType = TYPE;
+			using UnderlyingType = typename  StaticQualification<TYPE>::UnderlyingType;
 			static const size_t s_indirection_levels = StaticQualification<TYPE>::s_indirection_levels;
 			static const size_t s_constness_word = StaticQualification<TYPE>::s_constness_word;
 			static const size_t s_volatileness_word = StaticQualification<TYPE>::s_volatileness_word | 1;
@@ -110,7 +110,7 @@ namespace reflective
 		static_assert(details::StaticQualification<TYPE>::s_indirection_levels <= QualifiedTypePtr::s_max_indirection_levels,
 			"Maximum indirection level exceeded");
 
-		return QualifiedTypePtr(&get_type<TYPE>(),
+		return QualifiedTypePtr(&get_type<details::StaticQualification<TYPE>::UnderlyingType>(),
 			details::StaticQualification<TYPE>::s_indirection_levels,
 			details::StaticQualification<TYPE>::s_constness_word,
 			details::StaticQualification<TYPE>::s_volatileness_word);
@@ -125,11 +125,16 @@ namespace reflective
 	inline const Type * QualifiedTypePtr::primary_type() const
 	{ 
 		if (m_indirection_levels == 0)
+		{
+			// the pointer is empty or it is not a pointer
 			return m_final_type;
-		else if (m_final_type != nullptr)
-			return &get_type<void*>();
+		}
 		else
-			return nullptr;
+		{
+			// the type is a pointer
+			REFLECTIVE_ASSERT(m_final_type != nullptr, "QualifiedTypePtr class invariant violated");			
+			return &get_type<void*>();
+		}
 	}
 
 	inline bool QualifiedTypePtr::is_const(size_t i_indirection_level) const

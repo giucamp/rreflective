@@ -32,47 +32,46 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	struct BaseType
-	{
-	public:
-		
-		BaseType(const Type * i_base_type, const UpDownCaster<> & i_updown_caster)
-			: m_base_type(i_base_type), m_updown_caster(i_updown_caster) { }
-
-	private:
-		const Type * m_base_type;
-		UpDownCaster<> m_updown_caster;		
-	};
-
-	class Type : public Symbol
+	class StringFunctions final
 	{
 	public:
 
-		static const size_t s_max_size = (1 << 24) - 1;
-		static const size_t s_max_alignment = (1 << 8) - 11;
+		using ToString = void(*)(const void * i_object, OutStringBuffer & i_dest);
+		using AssignFromString = bool (*)(void * i_object, InStringBuffer & i_source, OutStringBuffer & i_error_dest);
 
-		Type(SymbolName i_name, size_t i_size, size_t i_alignment, const SpecialFunctions & i_special_functions);
+		StringFunctions()
+			: m_to_string_function(nullptr), m_assign_from_string_function(nullptr)
+		{
+		}
 
-		virtual ~Type() {}
+		StringFunctions(ToString i_to_string_function, AssignFromString i_assign_from_string_function)
+			: m_to_string_function(i_to_string_function), m_assign_from_string_function(i_assign_from_string_function)
+		{
+		}
 
-		size_t size() const							{ return m_size; }
-
-		size_t alignment() const					{ return m_alignment; }
-
-		std::string full_name() const;
-		
+		template <typename TYPE>
+			static StringFunctions from_type()
+				{ return StringFunctions( &to_string_method_adater<TYPE>, &assign_from_string_method_adater<TYPE> ); }
+			
 	private:
-		SpecialFunctions m_special_functions;
-		const uint32_t m_size : 24;
-		const uint32_t m_alignment : 8;
+		
+		template <typename TYPE> void to_string_method_adater(const void * i_object, OutStringBuffer & i_dest)
+		{
+			const TYPE & obj = static_cast<const TYPE*>(i_object);
+			dbg_object_validate(obj);
+			obj.to_string(i_dest);
+		}
 
-		// misc
-		StringFunctions m_string_functions;
+		template <typename TYPE> bool assign_from_string_method_adater(void * i_object, InStringBuffer & i_source, OutStringBuffer & i_error_dest)
+		{
+			TYPE & obj = static_cast<TYPE*>(i_object);
+			dbg_object_validate(obj);
+			return obj.assign_from_string(i_source, i_error_dest);
+		}
 
-		// namespace data
-		const Namespace * m_parent_namespace;
-		Type * m_next_type_in_namespace;
-		friend class Namespace;
+	private:
+		ToString m_to_string_function;
+		AssignFromString m_assign_from_string_function;
 	};
 }
 

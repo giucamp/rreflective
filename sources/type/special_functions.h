@@ -37,16 +37,20 @@ namespace reflective
 	{
 	public:
 
+		template <typename TYPE>
+			static SpecialFunctions from_type();
+
 		using ScalarTor = void (*)(void * i_objects_start, void * i_objects_end );
 
 		using CopyConstructor = void (*)(void * i_objects_start, void * i_objects_end, const void * i_source_start );
 
 		using MoveConstructor = void(*)(void * i_objects_start, void * i_objects_end, void * i_source_start );
+		
+		SpecialFunctions()
+			: m_scalar_default_constructor(nullptr), m_scalar_copy_constructor(nullptr), m_scalar_move_constructor(nullptr), m_scalar_destructor(nullptr) {}
 
 		SpecialFunctions(ScalarTor i_scalar_default_constructor, CopyConstructor i_scalar_copy_constructor,
 			MoveConstructor const i_scalar_move_constructor, ScalarTor const i_scalar_destructor);
-
-		SpecialFunctions & operator = (const SpecialFunctions &) = delete;
 
 		ScalarTor const scalar_default_constructor() const			{ return m_scalar_default_constructor; }
 		CopyConstructor const scalar_copy_constructor() const		{ return m_scalar_copy_constructor; }
@@ -54,12 +58,9 @@ namespace reflective
 		ScalarTor const scalar_destructor() const					{ return m_scalar_destructor;  }
 
 	private:
-		ScalarTor const m_scalar_default_constructor;
-		CopyConstructor const m_scalar_copy_constructor;
-		MoveConstructor const m_scalar_move_constructor;
-		ScalarTor const m_scalar_destructor;
+		ScalarTor m_scalar_default_constructor;
+		CopyConstructor m_scalar_copy_constructor;
+		MoveConstructor m_scalar_move_constructor;
+		ScalarTor m_scalar_destructor;
 	};
-
-	template <typename TYPE>
-		SpecialFunctions get_special_functions();
 }

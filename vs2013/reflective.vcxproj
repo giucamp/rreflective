@@ -157,7 +157,8 @@
     <ClInclude Include="..\sources\type\obj_ptr.h" />
     <ClInclude Include="..\sources\type\primitive_types.h" />
     <ClInclude Include="..\sources\type\qualified_type_ptr.h" />
-    <ClInclude Include="..\sources\type\SpecialFunctions.h" />
+    <ClInclude Include="..\sources\type\special_functions.h" />
+    <ClInclude Include="..\sources\type\string_functions.h" />
     <ClInclude Include="..\sources\type\type.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -222,7 +223,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\sources\type\SpecialFunctions.cpp">
+    <ClCompile Include="..\sources\type\special_functions.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -239,7 +240,7 @@
     <None Include="..\sources\type\enum.inl" />
     <None Include="..\sources\type\get_type.inl" />
     <None Include="..\sources\type\qualified_type_ptr.inl" />
-    <None Include="..\sources\type\SpecialFunctions.inl" />
+    <None Include="..\sources\type\special_functions.inl" />
     <None Include="..\sources\type\type.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

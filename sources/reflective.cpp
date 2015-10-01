@@ -11,7 +11,7 @@
 #include "core\in_string_buffer.cpp"
 #include "core\out_string_buffer.cpp"
 
-#include "type\SpecialFunctions.cpp"
+#include "type\special_functions.cpp"
 #include "type\primitive_types.cpp"
 #include "type\Type.cpp"
 #include "type\qualified_type_ptr.cpp"

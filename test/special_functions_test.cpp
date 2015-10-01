@@ -25,7 +25,7 @@ void SpecialFunctions_test()
 	using namespace reflective;
 	using namespace std;
 
-	SpecialFunctions functions = get_special_functions<A>();
+	SpecialFunctions functions = SpecialFunctions::from_type<A>();
 
 	A a;
 	A b(std::move(a));
