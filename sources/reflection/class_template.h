@@ -32,46 +32,21 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	class Namespace : public Symbol
-	{
-	public:
-		
-		Namespace(SymbolName i_name);
-
-		void register_type(const Type & i_type);
-
-		void unregister_type(const Type & i_type);
-
-		void register_namespace(const Namespace & i_namespace);
-
-		void unregister_namespace(const Namespace & i_namespace);
-	
-		Namespace * parent_namespace()					{ return m_parent_namespace; }
-
-		const Namespace * parent_namespace() const		 { return m_parent_namespace; }
-
-	private:
-		Type * m_first_child_type;
-		Namespace * m_first_child_namespace;
-		Namespace * m_parent_namespace;
-	};
-
-	class Registry
+	class ClassTemplate : public Symbol
 	{
 	public:
 
-		static Registry & instance();
+		ClassTemplate(SymbolName i_name, std::vector<Parameter> i_parameters)
+			: Symbol(std::move(i_name)), m_parameters(std::move(i_parameters))
+		{
+		}
 
-		void register_type(SymbolName i_type_full_name, const Type & i_type);
-
-		const Type * unregister_type(SymbolName i_type_full_name);
-
-		void register_namespace(SymbolName i_namespace_full_name, const Namespace & i_namespace);
-
-		const Namespace * unregister_namespace(SymbolName i_namespace_full_name);
+		const std::vector<Parameter> & parameters() const
+		{
+			return m_parameters;
+		}
 
 	private:
-		std::unordered_map<SymbolName, const Type *, SymbolNameHasher > m_type_registry;
-		std::unordered_map<SymbolName, const Namespace *, SymbolNameHasher > m_namespace_registry;
+		std::vector<Parameter> m_parameters;
 	};
 }

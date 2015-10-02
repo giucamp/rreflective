@@ -11,12 +11,13 @@
 #include "core\in_string_buffer.cpp"
 #include "core\out_string_buffer.cpp"
 
-#include "type\special_functions.cpp"
-#include "type\primitive_types.cpp"
-#include "type\Type.cpp"
-#include "type\qualified_type_ptr.cpp"
-#include "type\obj_ptr.cpp"
+#include "reflection\special_functions.cpp"
+#include "reflection\primitive_types.cpp"
+#include "reflection\Type.cpp"
+#include "reflection\qualified_type_ptr.cpp"
+#include "reflection\obj_ptr.cpp"
 
 #include "class\property\Property.cpp"
 
-#include "namespace.cpp"
+#include "reflection\namespace.cpp"
+#include "reflection\global_registry.cpp"

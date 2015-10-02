@@ -12,7 +12,7 @@ namespace reflective
 		using MemberPtr = PROPERTY_TYPE (OWNER_CLASS::*);
 
 		DataMemberProperty(SymbolName i_name, MemberPtr i_member, ClassMember::Flags i_flags)
-			: Property(std::move(i_name), get_qualified_type<PROPERTY_TYPE>(), i_flags), m_member(i_member) { }
+			: Property(std::move(i_name), get_type<PROPERTY_TYPE>(), i_flags), m_member(i_member) { }
 
 	private:
 

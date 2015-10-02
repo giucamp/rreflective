@@ -43,7 +43,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace reflective
 {
 	class Symbol; // basic reflective object, with a name (of type SymbolName) - defined in core\Symbol.h
-		class Type; // provides informations and services related to a type - defined in type\Type.h
+		class Type; // provides informations and services related to a type - defined in reflection\Type.h
 			class Class; // a class or struct, with properties, actions and events
 			template <typename UNDERLYING_TYPE> class Enum; // provides informations and services related to an enumeration type
 		class ClassMember; // provides informations about a member of a class (such visibility)
@@ -87,27 +87,30 @@ namespace reflective
 #include "core\symbol_list.h"
 
 // type headers
-#include "type\updown_caster.h"
-#include "type\qualified_type_ptr.h"
-#include "type\special_functions.h"
-#include "type\string_functions.h"
-#include "type\type.h"
-#include "type\primitive_types.h"
-#include "type\enum_member.h"
-#include "type\enum.h"
+#include "reflection\updown_caster.h"
+#include "reflection\qualified_type_ptr.h"
+#include "reflection\special_functions.h"
+#include "reflection\string_functions.h"
+#include "reflection\type.h"
+#include "reflection\primitive_types.h"
+#include "reflection\enum_member.h"
+#include "reflection\enum.h"
 #include "class\ClassMember.h"
 #include "class\property\Property.h"
 #include "class\property\DataMemberProperty.h"
 #include "class\class.h"
-#include "type\get_naked_type.h"
-#include "type\obj_ptr.h"
-#include "Namespace.h"
+#include "reflection\get_naked_type.h"
+#include "reflection\obj_ptr.h"
+#include "reflection\parameter.h"
+#include "reflection\class_template.h"
+#include "reflection\namespace.h"
+#include "reflection\global_registry.h"
 
 // inlines
-#include "type\qualified_type_ptr.inl"
-#include "type\special_functions.inl"
-#include "type\type.inl"
-#include "type\enum.inl"
-#include "type\get_naked_type.inl"
+#include "reflection\qualified_type_ptr.inl"
+#include "reflection\special_functions.inl"
+#include "reflection\type.inl"
+#include "reflection\enum.inl"
+#include "reflection\get_naked_type.inl"
 
 #undef INCLUDING_REFLECTIVE

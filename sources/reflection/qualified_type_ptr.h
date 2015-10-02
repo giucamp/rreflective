@@ -34,9 +34,9 @@ namespace reflective
 {
 	/** Retrives (by value) a QualifiedTypePtr associated to the template argument.
 		The resut  is never empty (is_empty() always return false). 
-		The template argument cannot be void (get_qualified_type<void>() is declared deleted), but can be a void pointer (with any cv qualifiication). */
+		The template argument cannot be void (get_type<void>() is declared deleted), but can be a void pointer (with any cv qualifiication). */
 	template <typename TYPE>
-		QualifiedTypePtr get_qualified_type();
+		QualifiedTypePtr get_type();
 
 	/** Scoped enum that stores a combination of cv qualifiers. CV_Flags can be combined and subtracted with the overoaded bitwise operators | and &. */
 	enum class CV_Flags
@@ -62,7 +62,7 @@ namespace reflective
 		is it volatile?) for each indirection level. A QualifiedTypePtr can tell:
 			- The **number of indirection levels**, that is is the nuber of '*' or '&' or '&&' appearing in the C++ declaration of
 			   the type. A non-pointer types has zero indirection levels, while a pointer to a pointer has 2 indirection levels.
-			   References are considered like const pointer (that is get_qualified_type<float&>() == get_qualified_type<float*const>() ).
+			   References are considered like const pointer (that is get_type<float&>() == get_type<float*const>() ).
 			- The **primary type**, that is is the type of the first indirection level. For non-pointer types it is the same of the
 			   final type. For pointer types is always equal to the result of get_naked_type<void*>(). If an object of has to be 
 			   constructed, copied, or assigned, the primary type is what matters.
@@ -81,7 +81,7 @@ namespace reflective
 		float*const*volatile**&		|void *			|float			|5						|0, 4				|3
 		
 		QualifiedTypePtr is copyable, assignable and moveable.
-		Use get_qualified_type<TYPE>() to get a QualifiedTypePtr from a compile-time type.
+		Use get_type<TYPE>() to get a QualifiedTypePtr from a compile-time type.
 		Note: <const int *> and <int const *> are the same C++ type.
 		Implementation note: currently QualifiedTypePtr has the same size of 2 pointers. Anyway, the user should not rely on this assumption. */
 	class QualifiedTypePtr final
@@ -91,7 +91,7 @@ namespace reflective
 					// constants
 
 		/** Maximum indirection levels that this class can handle. This is 14 if uintptr_t is 32-bit wide or smaller, 28 otherwise.
-			The global function get_qualified_type<TYPE>() checks this imit at compile-time (with a static_assert). */
+			The global function get_type<TYPE>() checks this imit at compile-time (with a static_assert). */
 		static const size_t s_max_indirection_levels = std::numeric_limits<uintptr_t>::digits <= 32 ? 14 : 28;
 		
 		// uintptr_t must be binary
@@ -179,7 +179,7 @@ namespace reflective
 		QualifiedTypePtr(const Type * i_final_type, size_t i_indirection_levels, size_t i_constness_word, size_t i_volatileness_word);
 		
 		template <typename TYPE>
-			friend QualifiedTypePtr get_qualified_type();
+			friend QualifiedTypePtr get_type();
 			
 	private: // data members (currently a QualifiedTypePtr is big as two pointers)
 		const Type * m_final_type;
@@ -189,5 +189,5 @@ namespace reflective
 	};
 	
 	// deletes the speciaization with void
-	template <> QualifiedTypePtr get_qualified_type<void>() = delete;
+	template <> QualifiedTypePtr get_type<void>() = delete;
 }

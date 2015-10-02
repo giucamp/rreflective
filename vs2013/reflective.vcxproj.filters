@@ -10,14 +10,13 @@
     <Filter Include="core">
       <UniqueIdentifier>{db18c095-47d7-490e-aaae-e3a22225a7aa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="type">
+    <Filter Include="reflection">
       <UniqueIdentifier>{fbb2c830-fbe2-4ae6-9504-2a8fa165c772}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\sources\reflective_common.h" />
     <ClInclude Include="..\sources\reflective_settings.h" />
-    <ClInclude Include="..\sources\Namespace.h" />
     <ClInclude Include="..\sources\class\property\Property.h">
       <Filter>class\property</Filter>
     </ClInclude>
@@ -33,21 +32,6 @@
     <ClInclude Include="..\sources\reflective.h" />
     <ClInclude Include="..\sources\core\traits.h">
       <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sources\type\primitive_types.h">
-      <Filter>type</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sources\type\enum.h">
-      <Filter>type</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sources\type\enum_member.h">
-      <Filter>type</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sources\type\updown_caster.h">
-      <Filter>type</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sources\type\type.h">
-      <Filter>type</Filter>
     </ClInclude>
     <ClInclude Include="..\sources\core\identifier.h">
       <Filter>core</Filter>
@@ -73,20 +57,47 @@
     <ClInclude Include="..\sources\core\bulk_list.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="..\sources\type\qualified_type_ptr.h">
-      <Filter>type</Filter>
+    <ClInclude Include="..\sources\reflection\qualified_type_ptr.h">
+      <Filter>reflection</Filter>
     </ClInclude>
-    <ClInclude Include="..\sources\type\obj_ptr.h">
-      <Filter>type</Filter>
+    <ClInclude Include="..\sources\reflection\special_functions.h">
+      <Filter>reflection</Filter>
     </ClInclude>
-    <ClInclude Include="..\sources\type\string_functions.h">
-      <Filter>type</Filter>
+    <ClInclude Include="..\sources\reflection\string_functions.h">
+      <Filter>reflection</Filter>
     </ClInclude>
-    <ClInclude Include="..\sources\type\special_functions.h">
-      <Filter>type</Filter>
+    <ClInclude Include="..\sources\reflection\type.h">
+      <Filter>reflection</Filter>
     </ClInclude>
-    <ClInclude Include="..\sources\type\get_naked_type.h">
-      <Filter>type</Filter>
+    <ClInclude Include="..\sources\reflection\updown_caster.h">
+      <Filter>reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\reflection\enum.h">
+      <Filter>reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\reflection\enum_member.h">
+      <Filter>reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\reflection\get_naked_type.h">
+      <Filter>reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\reflection\namespace.h">
+      <Filter>reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\reflection\obj_ptr.h">
+      <Filter>reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\reflection\primitive_types.h">
+      <Filter>reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\reflection\class_template.h">
+      <Filter>reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\reflection\parameter.h">
+      <Filter>reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\reflection\global_registry.h">
+      <Filter>reflection</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -99,45 +110,50 @@
     <ClCompile Include="..\sources\class\ClassMember.cpp">
       <Filter>class</Filter>
     </ClCompile>
-    <ClCompile Include="..\sources\Namespace.cpp" />
     <ClCompile Include="..\sources\reflective.cpp" />
-    <ClCompile Include="..\sources\type\primitive_types.cpp">
-      <Filter>type</Filter>
-    </ClCompile>
-    <ClCompile Include="..\sources\type\type.cpp">
-      <Filter>type</Filter>
-    </ClCompile>
     <ClCompile Include="..\sources\core\in_string_buffer.cpp">
       <Filter>core</Filter>
     </ClCompile>
     <ClCompile Include="..\sources\core\out_string_buffer.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="..\sources\type\qualified_type_ptr.cpp">
-      <Filter>type</Filter>
+    <ClCompile Include="..\sources\reflection\qualified_type_ptr.cpp">
+      <Filter>reflection</Filter>
     </ClCompile>
-    <ClCompile Include="..\sources\type\obj_ptr.cpp">
-      <Filter>type</Filter>
+    <ClCompile Include="..\sources\reflection\special_functions.cpp">
+      <Filter>reflection</Filter>
     </ClCompile>
-    <ClCompile Include="..\sources\type\special_functions.cpp">
-      <Filter>type</Filter>
+    <ClCompile Include="..\sources\reflection\type.cpp">
+      <Filter>reflection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\reflection\namespace.cpp">
+      <Filter>reflection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\reflection\obj_ptr.cpp">
+      <Filter>reflection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\reflection\primitive_types.cpp">
+      <Filter>reflection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\reflection\global_registry.cpp">
+      <Filter>reflection</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\sources\type\enum.inl">
-      <Filter>type</Filter>
+    <None Include="..\sources\reflection\qualified_type_ptr.inl">
+      <Filter>reflection</Filter>
     </None>
-    <None Include="..\sources\type\type.inl">
-      <Filter>type</Filter>
+    <None Include="..\sources\reflection\special_functions.inl">
+      <Filter>reflection</Filter>
     </None>
-    <None Include="..\sources\type\qualified_type_ptr.inl">
-      <Filter>type</Filter>
+    <None Include="..\sources\reflection\type.inl">
+      <Filter>reflection</Filter>
     </None>
-    <None Include="..\sources\type\special_functions.inl">
-      <Filter>type</Filter>
+    <None Include="..\sources\reflection\enum.inl">
+      <Filter>reflection</Filter>
     </None>
-    <None Include="..\sources\type\get_naked_type.inl">
-      <Filter>type</Filter>
+    <None Include="..\sources\reflection\get_naked_type.inl">
+      <Filter>reflection</Filter>
     </None>
   </ItemGroup>
 </Project>

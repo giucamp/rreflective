@@ -39,7 +39,8 @@ namespace reflective
 
 	static const UpDownCasterImplementation s_upDownCasterImplementation = UpDownCasterImplementation::Functions;
 
-	static const bool multiple = true;
+	static const size_t s_type_registry_reserve = 512;
+	static const size_t s_class_template_registry_reserve = 32;
 
 	#define REFLECTIVE_ENABLE_TESTING		1
 }

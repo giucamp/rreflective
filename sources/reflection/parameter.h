@@ -32,47 +32,19 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	struct BaseType
-	{
-	public:
-		
-		BaseType(const Type * i_base_type, const UpDownCaster<> & i_updown_caster)
-			: m_base_type(i_base_type), m_updown_caster(i_updown_caster) { }
-
-	private:
-		const Type * m_base_type;
-		UpDownCaster<> m_updown_caster;		
-	};
-
-	class Type : public Symbol
+	class Parameter : public Symbol
 	{
 	public:
 
-		static const size_t s_max_size = (1 << 24) - 1;
-		static const size_t s_max_alignment = (1 << 8) - 11;
+		Parameter(SymbolName i_name, QualifiedTypePtr i_type)
+			: Symbol(std::move(i_name)), m_type(i_type)
+		{
 
-		Type(SymbolName i_name, size_t i_size, size_t i_alignment, const SpecialFunctions & i_special_functions);
+		}
 
-		virtual ~Type() {}
+		const QualifiedTypePtr & type() const { return m_type; }
 
-		size_t size() const							{ return m_size; }
-
-		size_t alignment() const					{ return m_alignment; }
-
-		std::string full_name() const;
-		
 	private:
-		SpecialFunctions m_special_functions;
-		const uint32_t m_size : 24;
-		const uint32_t m_alignment : 8;
-
-		// misc
-		StringFunctions m_string_functions;
-
-		// namespace data
-		const Namespace * m_parent_namespace;
-		Type * m_next_type_in_namespace;
-		friend class Namespace;
+		QualifiedTypePtr m_type;
 	};
 }
-

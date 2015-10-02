@@ -117,7 +117,7 @@ namespace reflective
 	}
 
 	template <typename TYPE>
-		inline QualifiedTypePtr get_qualified_type()
+		inline QualifiedTypePtr get_type()
 	{
 		static_assert(details::StaticQualification<TYPE>::s_indirection_levels <= QualifiedTypePtr::s_max_indirection_levels,
 			"Maximum indirection level exceeded");

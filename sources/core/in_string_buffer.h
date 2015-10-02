@@ -82,6 +82,9 @@ namespace reflective
 		bool accept_whitespaces();
 
 
+		//StringView read_string_until();
+
+
 				// read
 
 		template <typename TYPE>

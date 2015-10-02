@@ -1,6 +1,4 @@
 
-#include "Type.h"
-
 void pt(const char*, size_t);
 
 namespace reflective

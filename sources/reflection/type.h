@@ -32,49 +32,51 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	/*struct SymbolNameHasher
+	struct BaseType
 	{
-		uint32_t operator () (const SymbolName & i_source) const
-		{
-			return i_source.hash();
-		}
-	};
-
-	template<typename... PARAMETERS>
-		inline SymbolName make_symbol_name(PARAMETERS &&... i_parameters)
-	{
-		return SymbolName(SymbolName::Make(), std::forward<PARAMETERS>(i_parameters)...);
-	}*/
-
-	enum class SymbolTypeId
-	{
-		primitive_type_symbol,
-		class_symbol,
-		enum_symbol
-	};
-
-	/** A symbol is a named object. It may be a type (a class, an enum), a parameter, a property, etc.
-		Many classes of reflective derive (directky or indirecty) from Symbol. */
-	class Symbol
-	{
-	protected:
-		
-		Symbol(SymbolName i_name)
-			: m_name(std::move(i_name)) { }
-
 	public:
-
-		Symbol(const Symbol &) = delete;
-
-		Symbol & operator = (const Symbol &) = delete;
-
-		const SymbolName & name() const
-		{
-			return m_name;
-		}
+		
+		BaseType(const Type * i_base_type, const UpDownCaster<> & i_updown_caster)
+			: m_base_type(i_base_type), m_updown_caster(i_updown_caster) { }
 
 	private:
-		const SymbolName m_name;
+		const Type * m_base_type;
+		UpDownCaster<> m_updown_caster;		
+	};
+
+	class Type : public Symbol
+	{
+	public:
+
+		static const size_t s_max_size = (1 << 24) - 1;
+		static const size_t s_max_alignment = (1 << 8) - 11;
+
+		Type(SymbolName i_name, size_t i_size, size_t i_alignment, const SpecialFunctions & i_special_functions);
+
+		virtual ~Type() {}
+
+		size_t size() const							{ return m_size; }
+
+		size_t alignment() const					{ return m_alignment; }
+
+		std::string full_name() const;
+						
+		void full_name_to_string(OutStringBuffer & i_dest) const;
+		
+		static const Type * accept_full_name(InStringBuffer & i_source, OutStringBuffer & i_error_dest);
+
+	private:
+		SpecialFunctions m_special_functions;
+		const uint32_t m_size : 24;
+		const uint32_t m_alignment : 8;
+
+		// misc
+		StringFunctions m_string_functions;
+
+		// namespace data
+		const Namespace * m_parent_namespace;
+		Type * m_next_type_in_namespace;
+		friend class Namespace;
 	};
 }
 

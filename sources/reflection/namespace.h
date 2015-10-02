@@ -32,49 +32,28 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	/*struct SymbolNameHasher
+	/***/
+	class Namespace : public Symbol
 	{
-		uint32_t operator () (const SymbolName & i_source) const
-		{
-			return i_source.hash();
-		}
-	};
-
-	template<typename... PARAMETERS>
-		inline SymbolName make_symbol_name(PARAMETERS &&... i_parameters)
-	{
-		return SymbolName(SymbolName::Make(), std::forward<PARAMETERS>(i_parameters)...);
-	}*/
-
-	enum class SymbolTypeId
-	{
-		primitive_type_symbol,
-		class_symbol,
-		enum_symbol
-	};
-
-	/** A symbol is a named object. It may be a type (a class, an enum), a parameter, a property, etc.
-		Many classes of reflective derive (directky or indirecty) from Symbol. */
-	class Symbol
-	{
-	protected:
-		
-		Symbol(SymbolName i_name)
-			: m_name(std::move(i_name)) { }
-
 	public:
+		
+		Namespace(SymbolName i_name);
 
-		Symbol(const Symbol &) = delete;
+		void register_type(const Type & i_type);
 
-		Symbol & operator = (const Symbol &) = delete;
+		void unregister_type(const Type & i_type);
 
-		const SymbolName & name() const
-		{
-			return m_name;
-		}
+		void register_namespace(const Namespace & i_namespace);
+
+		void unregister_namespace(const Namespace & i_namespace);
+	
+		Namespace * parent_namespace()					{ return m_parent_namespace; }
+
+		const Namespace * parent_namespace() const		 { return m_parent_namespace; }
 
 	private:
-		const SymbolName m_name;
+		Type * m_first_child_type;
+		Namespace * m_first_child_namespace;
+		Namespace * m_parent_namespace;
 	};
 }
-

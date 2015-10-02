@@ -49,17 +49,17 @@ void Type_test()
 
 	auto b = reflective::has_to_string< reflective::QualifiedTypePtr>::value;
 
-	const auto & t1 = get_qualified_type<float>();
-	const auto & t2 = get_qualified_type<const float &>();
-	const auto & t3 = get_qualified_type<float *const*volatile**>();
-	const auto & t4 = get_qualified_type<float const*const*volatile**&>();
-	const auto & t5 = get_qualified_type<volatile float>();
+	const auto & t1 = get_type<float>();
+	const auto & t2 = get_type<const float &>();
+	const auto & t3 = get_type<float *const*volatile**>();
+	const auto & t4 = get_type<float const*const*volatile**&>();
+	const auto & t5 = get_type<volatile float>();
 
-	const auto & tf1 = get_qualified_type<MyNamespace::OtherNamespace::MyClass>();
-	const auto & tf2 = get_qualified_type<const MyNamespace::OtherNamespace::MyClass &>();
-	const auto & tf3 = get_qualified_type<MyNamespace::OtherNamespace::MyClass *const*volatile**>();
-	const auto & tf4 = get_qualified_type<MyNamespace::OtherNamespace::MyClass const*const*volatile**&>();
-	const auto & tf5 = get_qualified_type<volatile MyNamespace::OtherNamespace::MyClass>();
+	const auto & tf1 = get_type<MyNamespace::OtherNamespace::MyClass>();
+	const auto & tf2 = get_type<const MyNamespace::OtherNamespace::MyClass &>();
+	const auto & tf3 = get_type<MyNamespace::OtherNamespace::MyClass *const*volatile**>();
+	const auto & tf4 = get_type<MyNamespace::OtherNamespace::MyClass const*const*volatile**&>();
+	const auto & tf5 = get_type<volatile MyNamespace::OtherNamespace::MyClass>();
 
 	cout << to_std_string(t1) << endl;
 	cout << to_std_string(t2) << endl;
@@ -79,6 +79,8 @@ void Type_test()
 	const auto & enum_type = get_naked_type<MyNamespace::OtherNamespace::MyEnum>();
 
 
+	cout << to_std_string(tf4) << endl;
+	cout << to_std_string(tf5) << endl;
 
 	system("PAUSE");
 }

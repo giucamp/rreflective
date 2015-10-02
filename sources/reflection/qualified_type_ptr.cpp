@@ -122,10 +122,10 @@ namespace reflective
 		template <typename TYPE>
 			void QualifiedTypePtr_unit_test_type()
 		{
-			REFLECTIVE_TEST_ASSERT(get_qualified_type<TYPE&>() == get_qualified_type<TYPE*const>());
+			REFLECTIVE_TEST_ASSERT(get_type<TYPE&>() == get_type<TYPE*const>());
 
 			// test <TYPE>
-			{ const auto q_type_ptr = get_qualified_type<TYPE>();
+			{ const auto q_type_ptr = get_type<TYPE>();
 			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_empty());
 			REFLECTIVE_TEST_ASSERT(q_type_ptr.final_type() == &get_naked_type<TYPE>());
 			REFLECTIVE_TEST_ASSERT(q_type_ptr.primary_type() == &get_naked_type<TYPE>());
@@ -137,7 +137,7 @@ namespace reflective
 			QualifiedTypePtr_unit_test_cvs(q_type_ptr, cvs); }
 
 			// test <volatile TYPE>
-			{ const auto q_type_ptr = get_qualified_type<volatile TYPE>();
+			{ const auto q_type_ptr = get_type<volatile TYPE>();
 			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_empty());
 			REFLECTIVE_TEST_ASSERT(q_type_ptr.final_type() == &get_naked_type<TYPE>());
 			REFLECTIVE_TEST_ASSERT(q_type_ptr.primary_type() == &get_naked_type<TYPE>());
@@ -149,7 +149,7 @@ namespace reflective
 			QualifiedTypePtr_unit_test_cvs(q_type_ptr, cvs); }
 
 			// test <const TYPE &>
-			{ const auto q_type_ptr = get_qualified_type<const TYPE &>();
+			{ const auto q_type_ptr = get_type<const TYPE &>();
 			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_empty());
 			REFLECTIVE_TEST_ASSERT(q_type_ptr.final_type() == &get_naked_type<TYPE>());
 			REFLECTIVE_TEST_ASSERT(q_type_ptr.primary_type() == &get_naked_type<void*>());
@@ -163,7 +163,7 @@ namespace reflective
 			QualifiedTypePtr_unit_test_cvs(q_type_ptr, cvs); }
 
 			// test <TYPE *const*volatile**>
-			{ const auto q_type_ptr = get_qualified_type<TYPE*const*volatile**&>();
+			{ const auto q_type_ptr = get_type<TYPE*const*volatile**&>();
 			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_empty());
 			REFLECTIVE_TEST_ASSERT(q_type_ptr.final_type() == &get_naked_type<TYPE>());
 			REFLECTIVE_TEST_ASSERT(q_type_ptr.primary_type() == &get_naked_type<void*>());
@@ -215,10 +215,10 @@ namespace reflective
 		QualifiedTypePtr_unit_test_type<std::vector<int>>();
 
 		// this must be rejected by the compiler
-		// get_qualified_type<void>();
+		// get_type<void>();
 
 		// test <void *const*volatile**>
-		{ const auto q_type_ptr = get_qualified_type<void*const*volatile**&>();
+		{ const auto q_type_ptr = get_type<void*const*volatile**&>();
 		REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_empty());
 		REFLECTIVE_TEST_ASSERT(q_type_ptr.final_type() == &get_naked_type<void>());
 		REFLECTIVE_TEST_ASSERT(q_type_ptr.primary_type() == &get_naked_type<void*>());
@@ -238,7 +238,7 @@ namespace reflective
 		REFLECTIVE_TEST_ASSERT(q_type_ptr == q_type_ptr); }
 
 		// test <const void *>
-		{ const auto q_type_ptr = get_qualified_type<const void *>();
+		{ const auto q_type_ptr = get_type<const void *>();
 		REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_empty());
 		REFLECTIVE_TEST_ASSERT(q_type_ptr.final_type() == &get_naked_type<void>());
 		REFLECTIVE_TEST_ASSERT(q_type_ptr.primary_type() == &get_naked_type<void*>());
@@ -250,7 +250,7 @@ namespace reflective
 		REFLECTIVE_TEST_ASSERT(q_type_ptr == q_type_ptr); }
 
 		// test <void * const>
-		{ const auto q_type_ptr = get_qualified_type<void * const>();
+		{ const auto q_type_ptr = get_type<void * const>();
 		REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_empty());
 		REFLECTIVE_TEST_ASSERT(q_type_ptr.final_type() == &get_naked_type<void>());
 		REFLECTIVE_TEST_ASSERT(q_type_ptr.primary_type() == &get_naked_type<void*>());
@@ -262,7 +262,7 @@ namespace reflective
 		REFLECTIVE_TEST_ASSERT(q_type_ptr == q_type_ptr); }
 
 		// test <void *>
-		{ const auto q_type_ptr = get_qualified_type<void *>();
+		{ const auto q_type_ptr = get_type<void *>();
 		REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_empty());
 		REFLECTIVE_TEST_ASSERT(q_type_ptr.final_type() == &get_naked_type<void>());
 		REFLECTIVE_TEST_ASSERT(q_type_ptr.primary_type() == &get_naked_type<void*>());
@@ -274,12 +274,12 @@ namespace reflective
 		REFLECTIVE_TEST_ASSERT(q_type_ptr == q_type_ptr); }
 
 		// test cv qualifiers for float volatile*const volatile*const*
-		{ const auto q_type_ptr = get_qualified_type<float volatile*const volatile*const*>();
+		{ const auto q_type_ptr = get_type<float volatile*const volatile*const*>();
 		const CV_Flags cvs[] = { CV_Flags::None, CV_Flags::Const, CV_Flags::Const | CV_Flags::Volatile, CV_Flags::Volatile };
 		QualifiedTypePtr_unit_test_cvs(q_type_ptr, cvs); }
 
 		// test <const int *> and <const * int> (they are the same type)
-		REFLECTIVE_TEST_ASSERT(get_qualified_type<const int *>() == get_qualified_type<int const *>());
+		REFLECTIVE_TEST_ASSERT(get_type<const int *>() == get_type<int const *>());
 
 		/* QualifiedTypePtr is documented (as implementation note) to be big as two pointers. This static_assert is here
 			to verify the correctness of this note, but if it would ever fail on some compiler, it may safely be removed
@@ -289,7 +289,7 @@ namespace reflective
 
 
 		#define CHECK_TYPE(TYPE) \
-			REFLECTIVE_TEST_ASSERT(get_qualified_type<TYPE>() == details::qualified_type_from_string(#TYPE))
+			REFLECTIVE_TEST_ASSERT(get_type<TYPE>() == details::qualified_type_from_string(#TYPE))
 
 		CHECK_TYPE(float);
 		CHECK_TYPE(const float);
@@ -302,6 +302,20 @@ namespace reflective
 		CHECK_TYPE(const float&);
 		CHECK_TYPE(volatile float const&);
 		CHECK_TYPE(const float ***&);
+		CHECK_TYPE(volatile float *const volatile*const*&&);
+		CHECK_TYPE(float *const volatile***&);
+		CHECK_TYPE(float *volatile**&&);
+		CHECK_TYPE(float&&);
+		CHECK_TYPE(const float**);
+		CHECK_TYPE(volatile float **const);
+		CHECK_TYPE(const float ***const);
+		CHECK_TYPE(volatile const float *const volatile*const*);
+		CHECK_TYPE(float *const volatile***);
+		CHECK_TYPE(float *volatile**);
+		CHECK_TYPE(float**&&);
+		CHECK_TYPE(const float****&);
+		CHECK_TYPE(volatile float *const&);
+		CHECK_TYPE(const float *&&);
 		CHECK_TYPE(volatile float *const volatile*const*&&);
 		CHECK_TYPE(float *const volatile***&);
 		CHECK_TYPE(float *volatile**&&);
