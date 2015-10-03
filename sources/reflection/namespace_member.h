@@ -47,11 +47,11 @@ namespace reflective
 
 		}
 
+	public:
+
 		NamespaceMember(const NamespaceMember &) = delete;
 
 		NamespaceMember & operator = (const NamespaceMember &) = delete;
-
-	public:
 
 		std::string full_name() const;
 

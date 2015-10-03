@@ -66,7 +66,7 @@ namespace reflective
 	{
 	}
 
-	void Namespace::add_member(NamespaceMember & i_member)
+	inline void Namespace::register_member(NamespaceMember & i_member)
 	{
 		REFLECTIVE_ASSERT(i_member.m_parent == nullptr, "This object is already a member of a namespace");
 
@@ -75,7 +75,7 @@ namespace reflective
 		m_members.add(i_member);
 	}
 
-	void Namespace::remove_member(NamespaceMember & i_member)
+	inline void Namespace::unregister_member(NamespaceMember & i_member)
 	{
 		REFLECTIVE_ASSERT(i_member.m_parent == this, "This object is not a member of this namespace");
 		
@@ -112,7 +112,7 @@ namespace reflective
 				// add members
 				for (auto & member : members)
 				{
-					test_namespace.add_member(member);
+					test_namespace.register_member(member);
 					test_vector.push_back(&member);
 					test_equal();
 				}
@@ -124,7 +124,7 @@ namespace reflective
 					REFLECTIVE_TEST_ASSERT(it != test_vector.end());
 					test_vector.erase(it);
 
-					test_namespace.remove_member(members[index_to_remove]);
+					test_namespace.unregister_member(members[index_to_remove]);
 
 					test_equal();
 				}

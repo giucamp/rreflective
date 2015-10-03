@@ -13,7 +13,7 @@ void Name_test()
 	cout << n.string().c_str() << n.hash() << endl;
 
 	Identifier<StringHasher<uint32_t>, StringView> n2("abs");
-	cout << n2.string().c_str() << n2.hash() << endl;
+	cout << n2.string().data() << n2.hash() << endl;
 
 	Identifier<StringHasher<uint32_t>, std::string> n3("abs");
 	cout << n3.string().c_str() << n3.hash() << endl;

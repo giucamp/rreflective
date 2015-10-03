@@ -82,7 +82,7 @@ namespace reflective
 			: m_chars(i_c_string), m_size(i_size)
 				{ }
 
-		const char * c_str() const { return m_chars; }
+		const char * data() const { return m_chars; }
 
 		const char * begin() const { return m_chars; }
 

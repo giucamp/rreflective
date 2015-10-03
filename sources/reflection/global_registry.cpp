@@ -1,69 +1,78 @@
 
 namespace reflective
 {
-	inline GlobalRegistry::GlobalRegistry()
+	template <typename TYPE>
+		const TYPE * GlobalRegistry::find_member(StringView i_full_type_name)
 	{
-		m_type_registry.reserve(s_type_registry_reserve);
-		m_class_template_registry.reserve(s_class_template_registry_reserve);
+		const SymbolName name(i_full_type_name.data(), i_full_type_name.length());
+
+		const auto range = m_registry.equal_range(name);
+		for (auto it = range.first; it != range.second; it++)
+		{
+			const TYPE * const result = dynamic_cast<const TYPE*>(it->second);
+			if (result != nullptr)
+			{
+				return result;
+			}
+		}
+
+		return nullptr;
 	}
 
-	inline GlobalRegistry & GlobalRegistry::internal_instance()
+	GlobalRegistry::GlobalRegistry()
+	{
+		m_registry.reserve(s_global_registry_reserve);
+	}
+
+	GlobalRegistry & GlobalRegistry::instance()
 	{
 		static GlobalRegistry s_instance;
 		return s_instance;
 	}
 
-	void GlobalRegistry::register_type(const Type & i_type)
+	void GlobalRegistry::register_member(const NamespaceMember & i_member)
 	{
-		GlobalRegistry & instance = internal_instance();
-		const SymbolName full_name(i_type.full_name().c_str());
-		const auto res = instance.m_type_registry.insert(std::make_pair(full_name.hash(), &i_type));
-		REFLECTIVE_ASSERT(res.second, "Type already registered");
+		REFLECTIVE_ASSERT(!is_registered(i_member), "Member already registered");
+
+		const std::string full_name = i_member.full_name();
+		const SymbolName name(full_name.c_str());
+		m_registry.insert(std::make_pair(name, &i_member));
 	}
 
-	void GlobalRegistry::unregister_type(const Type & i_type)
+	void GlobalRegistry::unregister_member(const NamespaceMember & i_member)
 	{
-		const SymbolName full_name(i_type.full_name().c_str());
-		GlobalRegistry & instance = internal_instance();
-		const auto res = instance.m_type_registry.find(full_name.hash());
-		const bool found = res != instance.m_type_registry.end();
-		REFLECTIVE_ASSERT(found, "Type not registered");
-		if (found)
+		const std::string full_name = i_member.full_name();
+		const SymbolName name(full_name.c_str());
+
+		bool found = false;
+
+		const auto range = m_registry.equal_range(name);
+		for (auto it = range.first; it != range.second; it++)
 		{
-			instance.m_type_registry.erase(res);
+			if (it->second == &i_member)
+			{
+				m_registry.erase(it);
+				found = true;
+			}
 		}
+
+		REFLECTIVE_ASSERT(found, "Member not found");
 	}
 
-	/*void GlobalRegistry::register_class_template(const ClassTemplate & i_class_template)
+	bool GlobalRegistry::is_registered(const NamespaceMember & i_member) const
 	{
-		GlobalRegistry & instance = internal_instance();
-		const SymbolName full_name(i_type.full_name().c_str());
-		const auto res = instance.m_class_template_registry.insert(std::make_pair(full_name.hash(), &i_type));
-		REFLECTIVE_ASSERT(res.second, "Type already registered");
-	}
+		const std::string full_name = i_member.full_name();
+		const SymbolName name(full_name.c_str());
 
-	void GlobalRegistry::unregister_class_template(const ClassTemplate & i_class_template)
-	{
-	}*/
-
-	/*void GlobalRegistry::register_namespace(SymbolName i_namespace_full_name, const Namespace & i_namespace)
-	{
-		const auto res = m_namespace_registry.insert(std::make_pair(i_namespace_full_name, &i_namespace));
-		REFLECTIVE_ASSERT(res.second, "Duplicate namespace?");
-	}
-
-	const Namespace * GlobalRegistry::unregister_namespace(SymbolName i_namespace_full_name)
-	{
-		const auto res = m_namespace_registry.find(i_namespace_full_name);
-		if (res != m_namespace_registry.end())
+		const auto range = m_registry.equal_range(name);
+		for (auto it = range.first; it != range.second; it++)
 		{
-			const Namespace * namespace_obj = res->second;
-			m_namespace_registry.erase(res);
-			return namespace_obj;
+			if (it->second == &i_member)
+			{
+				return true;
+			}
 		}
-		else
-		{
-			return nullptr;
-		}
-	}*/
+
+		return false;
+	}
 }

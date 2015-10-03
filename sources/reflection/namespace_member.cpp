@@ -12,7 +12,7 @@ namespace reflective
 		size_t size_to_reserve = name().string().size();
 		for (const Namespace * curr = m_parent; curr != nullptr; curr = curr->parent_namespace())
 		{
-			REFLECTIVE_ASSERT(type_count < names.size(), "Type too much scoped");
+			REFLECTIVE_ASSERT(type_count < static_cast<int>(names.size()), "Type too much scoped");
 			size_to_reserve += curr->name().string().size() + 2;
 			names[type_count] = curr;
 			type_count++;

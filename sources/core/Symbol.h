@@ -32,19 +32,13 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	/*struct SymbolNameHasher
+	struct SymbolNameHasher
 	{
 		uint32_t operator () (const SymbolName & i_source) const
 		{
 			return i_source.hash();
 		}
 	};
-
-	template<typename... PARAMETERS>
-		inline SymbolName make_symbol_name(PARAMETERS &&... i_parameters)
-	{
-		return SymbolName(SymbolName::Make(), std::forward<PARAMETERS>(i_parameters)...);
-	}*/
 
 	enum class SymbolTypeId
 	{
