@@ -32,12 +32,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	class ClassTemplate : public Symbol
+	class ClassTemplate : public NamespaceMember
 	{
 	public:
 
 		ClassTemplate(SymbolName i_name, std::vector<Parameter> i_parameters)
-			: Symbol(std::move(i_name)), m_parameters(std::move(i_parameters))
+			: NamespaceMember(std::move(i_name)), m_parameters(std::move(i_parameters))
 		{
 		}
 

@@ -43,15 +43,17 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace reflective
 {
 	class Symbol; // basic reflective object, with a name (of type SymbolName) - defined in core\Symbol.h
-		class Type; // provides informations and services related to a type - defined in reflection\Type.h
-			class Class; // a class or struct, with properties, actions and events
-			template <typename UNDERLYING_TYPE> class Enum; // provides informations and services related to an enumeration type
+		class NamespaceMember;
+			class Type; // provides informations and services related to a type - defined in reflection\Type.h
+				class Class; // a class or struct, with properties, actions and events
+				template <typename UNDERLYING_TYPE> class Enum; // provides informations and services related to an enumeration type
+			class Namespace;
+			class ClassTemplate;
 		class ClassMember; // provides informations about a member of a class (such visibility)
 			class Property; // generalization of a typed data member (maybe a getter-setter pair)
 				template <typename OWNER_CLASS, typename PROPERTY_TYPE> class DataMemberProperty; // a data member
 			class Action; // a (non-const) function callable on a class instance
 			class Event;
-		class Namespace;
 
 	template < typename HASHER, typename STRING >
 		class Identifier; // coherent string-hash pair, or just an hash if STRING is void
@@ -91,6 +93,7 @@ namespace reflective
 #include "reflection\qualified_type_ptr.h"
 #include "reflection\special_functions.h"
 #include "reflection\string_functions.h"
+#include "reflection\namespace_member.h"
 #include "reflection\type.h"
 #include "reflection\primitive_types.h"
 #include "reflection\enum_member.h"

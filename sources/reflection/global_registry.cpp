@@ -34,6 +34,18 @@ namespace reflective
 		}
 	}
 
+	/*void GlobalRegistry::register_class_template(const ClassTemplate & i_class_template)
+	{
+		GlobalRegistry & instance = internal_instance();
+		const SymbolName full_name(i_type.full_name().c_str());
+		const auto res = instance.m_class_template_registry.insert(std::make_pair(full_name.hash(), &i_type));
+		REFLECTIVE_ASSERT(res.second, "Type already registered");
+	}
+
+	void GlobalRegistry::unregister_class_template(const ClassTemplate & i_class_template)
+	{
+	}*/
+
 	/*void GlobalRegistry::register_namespace(SymbolName i_namespace_full_name, const Namespace & i_namespace)
 	{
 		const auto res = m_namespace_registry.insert(std::make_pair(i_namespace_full_name, &i_namespace));

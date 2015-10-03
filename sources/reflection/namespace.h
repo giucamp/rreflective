@@ -33,27 +33,93 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace reflective
 {
 	/***/
-	class Namespace : public Symbol
+	class Namespace : public NamespaceMember
 	{
 	public:
 		
 		Namespace(SymbolName i_name);
 
-		void register_type(const Type & i_type);
+		class MembersList;
+		const MembersList & members() const { return m_members; }
+		
+		/** Registers a member in the namespace, storing a raw pointer to it. Adding a member
+			to a namespace when it is already present in the same or another namespace is an
+			error. Destroying a NamespaceMember while it is still present in a namespace leads
+			to undefined behaviour (probably a crash). */
+		void add_member(NamespaceMember & i_member);
 
-		void unregister_type(const Type & i_type);
+		/** Removes a member from the namespace. Trying to remove an object not present */
+		void remove_member(NamespaceMember & i_member);
 
-		void register_namespace(const Namespace & i_namespace);
+		bool contains(NamespaceMember & i_member) const 
+			{ return i_member.parent_namespace() == this; }
 
-		void unregister_namespace(const Namespace & i_namespace);
-	
-		Namespace * parent_namespace()					{ return m_parent_namespace; }
+		class MembersList
+		{
+		public:
 
-		const Namespace * parent_namespace() const		 { return m_parent_namespace; }
+			MembersList();
+
+			void add(NamespaceMember & i_member);
+
+			void remove(NamespaceMember & i_member);
+
+			class ConstIterator
+			{
+			public:
+
+				ConstIterator(const NamespaceMember * i_curr)
+					: m_curr(i_curr) { }
+
+				ConstIterator & operator ++ ()
+				{
+					m_curr = m_curr->m_next_member;
+					return *this;
+				}
+
+				bool operator == (ConstIterator & i_other) const
+				{ 
+					return m_curr == i_other.m_curr; 
+				}
+
+				bool operator != (ConstIterator & i_other) const
+				{
+					return m_curr != i_other.m_curr;
+				}
+
+				const NamespaceMember * operator ->() const
+				{
+					return m_curr;
+				}
+
+				const NamespaceMember & operator * () const
+				{
+					return *m_curr;
+				}
+				
+			private:
+				const NamespaceMember * m_curr;
+			};
+
+			ConstIterator cbegin() const
+			{
+				return ConstIterator(m_first_member); 
+			}
+
+			ConstIterator cend() const
+			{
+				return ConstIterator(nullptr);
+			}
+
+		private:
+			NamespaceMember * m_first_member, *m_last_member;
+		};	
+		
+		#if REFLECTIVE_ENABLE_TESTING
+			static void unit_test();
+		#endif
 
 	private:
-		Type * m_first_child_type;
-		Namespace * m_first_child_namespace;
-		Namespace * m_parent_namespace;
+		MembersList m_members;
 	};
 }

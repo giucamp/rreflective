@@ -13,7 +13,8 @@
 
 #include "reflection\special_functions.cpp"
 #include "reflection\primitive_types.cpp"
-#include "reflection\Type.cpp"
+#include "reflection\namespace_member.cpp"
+#include "reflection\type.cpp"
 #include "reflection\qualified_type_ptr.cpp"
 #include "reflection\obj_ptr.cpp"
 

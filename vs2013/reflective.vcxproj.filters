@@ -99,6 +99,9 @@
     <ClInclude Include="..\sources\reflection\global_registry.h">
       <Filter>reflection</Filter>
     </ClInclude>
+    <ClInclude Include="..\sources\reflection\namespace_member.h">
+      <Filter>reflection</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\sources\class\property\Property.cpp">
@@ -136,6 +139,9 @@
       <Filter>reflection</Filter>
     </ClCompile>
     <ClCompile Include="..\sources\reflection\global_registry.cpp">
+      <Filter>reflection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\reflection\namespace_member.cpp">
       <Filter>reflection</Filter>
     </ClCompile>
   </ItemGroup>
