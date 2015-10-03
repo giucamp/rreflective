@@ -32,104 +32,67 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	/***/
+	namespace details
+	{
+		class NamespaceMembersList // this class is not supposed to be referenced outside the library
+		{
+		public:
+
+			NamespaceMembersList();
+
+			void add(NamespaceMember & i_member);
+			void remove(NamespaceMember & i_member);
+
+			class ConstIterator;
+			
+			ConstIterator begin() const;
+			ConstIterator end() const;
+
+			ConstIterator cbegin() const;
+			ConstIterator cend() const;
+
+		private:
+			NamespaceMember * m_first_member, * m_last_member;
+		};
+	}
+
+	/** A namespace is a just a collection of types, inner namespaces, class tempates and anything that
+		derives from NamespaceMember. The user can add members to a non-const namespace with the method 
+		add_member, and he can remove them with the method remove_member. */
 	class Namespace : public NamespaceMember
 	{
 	public:
 		
+		/** Constructs a namespace, assigning a name to it */
 		Namespace(SymbolName i_name);
 
-		class MembersList;
-		const MembersList & members() const { return m_members; }
+		/** Returns a reference to the container of all the members of the namespace. The actual type of 
+			the container is an implementation detail. It support begin(), end(), cbegin() and cend(), so
+			it is suitable for range loops, but it should reffered to only with auto and decltype. The type 
+			of the elements of the container is const NamespaceMember */
+		const details::NamespaceMembersList & members() const { return m_members; }
 		
-		/** Registers a member in the namespace, storing a raw pointer to it. Adding a member
-			to a namespace when it is already present in the same or another namespace is an
-			error. Destroying a NamespaceMember while it is still present in a namespace leads
-			to undefined behaviour (probably a crash). */
+		/** Registers a member in the namespace, storing a raw pointer to it. Adding a member to a 
+			namespace when it is already present in the same or another namespace is an error. Destroying
+			a NamespaceMember while it is still present in a namespace leads to undefined behaviour (probably 
+			a crash). */
 		void add_member(NamespaceMember & i_member);
 
-		/** Removes a member from the namespace. Trying to remove an object not present */
+		/** Removes a member from the namespace. Trying to remove a member not present is an error.*/
 		void remove_member(NamespaceMember & i_member);
 
+		/** Returns whether this namespace contains the specifeid member */
 		bool contains(NamespaceMember & i_member) const 
 			{ return i_member.parent_namespace() == this; }
-
-		class MembersList
-		{
-		public:
-
-			MembersList();
-
-			void add(NamespaceMember & i_member);
-
-			void remove(NamespaceMember & i_member);
-
-			class ConstIterator
-			{
-			public:
-
-				ConstIterator(const NamespaceMember * i_curr)
-					: m_curr(i_curr) { }
-
-				ConstIterator & operator ++ ()
-				{
-					m_curr = m_curr->m_next_member;
-					return *this;
-				}
-
-				bool operator == (ConstIterator & i_other) const
-				{ 
-					return m_curr == i_other.m_curr; 
-				}
-
-				bool operator != (ConstIterator & i_other) const
-				{
-					return m_curr != i_other.m_curr;
-				}
-
-				const NamespaceMember * operator ->() const
-				{
-					return m_curr;
-				}
-
-				const NamespaceMember & operator * () const
-				{
-					return *m_curr;
-				}
 				
-			private:
-				const NamespaceMember * m_curr;
-			};
-
-			ConstIterator begin() const
-			{
-				return ConstIterator(m_first_member);
-			}
-
-			ConstIterator end() const
-			{
-				return ConstIterator(nullptr);
-			}
-
-			ConstIterator cbegin() const
-			{
-				return ConstIterator(m_first_member); 
-			}
-
-			ConstIterator cend() const
-			{
-				return ConstIterator(nullptr);
-			}
-
-		private:
-			NamespaceMember * m_first_member, *m_last_member;
-		};	
-		
 		#if REFLECTIVE_ENABLE_TESTING
+		
+			/** Runs an unit test for this class */
 			static void unit_test();
+		
 		#endif
 
-	private:
-		MembersList m_members;
+	private: // data member
+		details::NamespaceMembersList m_members;
 	};
 }

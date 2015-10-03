@@ -114,6 +114,7 @@ namespace reflective
 #include "reflection\special_functions.inl"
 #include "reflection\type.inl"
 #include "reflection\enum.inl"
+#include "reflection\namespace.inl"
 #include "reflection\get_naked_type.inl"
 
 #undef INCLUDING_REFLECTIVE

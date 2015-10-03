@@ -250,6 +250,7 @@
   <ItemGroup>
     <None Include="..\sources\reflection\enum.inl" />
     <None Include="..\sources\reflection\get_naked_type.inl" />
+    <None Include="..\sources\reflection\namespace.inl" />
     <None Include="..\sources\reflection\qualified_type_ptr.inl" />
     <None Include="..\sources\reflection\special_functions.inl" />
     <None Include="..\sources\reflection\type.inl" />

@@ -1,13 +1,13 @@
 
 namespace reflective
 {
-	Namespace::MembersList::MembersList()
+	details::NamespaceMembersList::NamespaceMembersList()
 		: m_first_member(nullptr), m_last_member(nullptr)
 	{
 
 	}
 
-	void Namespace::MembersList::add(NamespaceMember & i_member)
+	void details::NamespaceMembersList::add(NamespaceMember & i_member)
 	{
 		REFLECTIVE_ASSERT(i_member.m_next_member == nullptr, "The Namespace data is corrupted");
 
@@ -24,7 +24,7 @@ namespace reflective
 		}
 	}
 
-	void Namespace::MembersList::remove(NamespaceMember & i_member)
+	void details::NamespaceMembersList::remove(NamespaceMember & i_member)
 	{
 		REFLECTIVE_ASSERT(m_first_member != nullptr && m_last_member != nullptr, "The Namespace data is corrupted");
 

@@ -161,5 +161,8 @@
     <None Include="..\sources\reflection\get_naked_type.inl">
       <Filter>reflection</Filter>
     </None>
+    <None Include="..\sources\reflection\namespace.inl">
+      <Filter>reflection</Filter>
+    </None>
   </ItemGroup>
 </Project>

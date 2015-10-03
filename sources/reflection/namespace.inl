@@ -34,34 +34,61 @@ namespace reflective
 {
 	namespace details
 	{
-		class NamespaceMembersList;
-	}
-
-	class NamespaceMember : public Symbol
-	{
-	protected:
-
-		NamespaceMember(SymbolName i_name)
-			: Symbol(std::move(i_name)), m_parent(nullptr), m_next_member(nullptr)
+		class NamespaceMembersList::ConstIterator
 		{
+		public:
 
+			ConstIterator(const NamespaceMember * i_curr)
+				: m_curr(i_curr) { }
+
+			ConstIterator & operator ++ ()
+			{
+				m_curr = m_curr->m_next_member;
+				return *this;
+			}
+
+			bool operator == (ConstIterator & i_other) const
+			{
+				return m_curr == i_other.m_curr;
+			}
+
+			bool operator != (ConstIterator & i_other) const
+			{
+				return m_curr != i_other.m_curr;
+			}
+
+			const NamespaceMember * operator ->() const
+			{
+				return m_curr;
+			}
+
+			const NamespaceMember & operator * () const
+			{
+				return *m_curr;
+			}
+
+		private:
+			const NamespaceMember * m_curr;
+		};
+
+		inline NamespaceMembersList::ConstIterator NamespaceMembersList::begin() const
+		{
+			return ConstIterator(m_first_member);
 		}
 
-		NamespaceMember(const NamespaceMember &) = delete;
+		inline NamespaceMembersList::ConstIterator NamespaceMembersList::end() const
+		{
+			return ConstIterator(nullptr);
+		}
 
-		NamespaceMember & operator = (const NamespaceMember &) = delete;
+		inline NamespaceMembersList::ConstIterator NamespaceMembersList::cbegin() const
+		{
+			return ConstIterator(m_first_member);
+		}
 
-	public:
-
-		std::string full_name() const;
-
-		const Namespace * parent_namespace() const			{ return m_parent; }
-
-	private: // data members
-		const Namespace * m_parent;
-		NamespaceMember * m_next_member;
-		friend class Namespace;
-		friend class details::NamespaceMembersList;
-	};
+		inline NamespaceMembersList::ConstIterator NamespaceMembersList::cend() const
+		{
+			return ConstIterator(nullptr);
+		}
+	}
 }
-
