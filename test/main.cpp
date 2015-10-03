@@ -10,6 +10,7 @@ void bulk_list__test();
 
 int main()
 {
+	reflective::Namespace::unit_test();
 	reflective::QualifiedTypePtr::unit_test();
 
 	Name_test();

@@ -101,6 +101,16 @@ namespace reflective
 				const NamespaceMember * m_curr;
 			};
 
+			ConstIterator begin() const
+			{
+				return ConstIterator(m_first_member);
+			}
+
+			ConstIterator end() const
+			{
+				return ConstIterator(nullptr);
+			}
+
 			ConstIterator cbegin() const
 			{
 				return ConstIterator(m_first_member); 
