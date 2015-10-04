@@ -33,7 +33,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace reflective
 {
 	/** Retrives (by value) a QualifiedTypePtr associated to the template argument.
-		The resut  is never empty (is_empty() always return false). 
+		The resut  is never empty (is_empty() always return false).
 		The template argument cannot be void (get_type<void>() is declared deleted), but can be a void pointer (with any cv qualifiication). */
 	template <typename TYPE>
 		QualifiedTypePtr get_type();
@@ -58,31 +58,31 @@ namespace reflective
 		return static_cast<CV_Flags>(static_cast<underlying_type>(i_first) & static_cast<underlying_type>(i_seconds));
 	}
 
-	/** Lightweight value-class holding a pointer to a type, a number of indirection levels, and the cv-qualification (is it const?
-		is it volatile?) for each indirection level. A QualifiedTypePtr can tell:
+	/** Lightweight value-class holding a pointer to a type, a number of indirection levels, and the cv-qualification (is it \c const?
+		is it \c volatile?) for each indirection level. A QualifiedTypePtr can tell:
 			- The **number of indirection levels**, that is is the nuber of '*' or '&' or '&&' appearing in the C++ declaration of
 			   the type. A non-pointer types has zero indirection levels, while a pointer to a pointer has 2 indirection levels.
-			   References are considered like const pointer (that is get_type<float&>() == get_type<float*const>() ).
+			   References are considered like const pointer (that is \c get_type<float&>() == get_type<float*const>() ).
 			- The **primary type**, that is is the type of the first indirection level. For non-pointer types it is the same of the
-			   final type. For pointer types is always equal to the result of get_naked_type<void*>(). If an object of has to be 
+			   final type. For pointer types is always equal to the result of \c get_naked_type<void*>(). If an object of has to be 
 			   constructed, copied, or assigned, the primary type is what matters.
 			- The **final type**, that is the type of the last indirection level. The final type is the type remaining after stripping away 
 			  all the cv-quaification, pointer and reference parts from the C++ declaration. The final type can be thought as the type of 
 			  the final object, that is the object found indirecting all the indirection levels.
-			- cv-quaification for every insirection level, that is for every i >= 0 and <= indirection_levels.
-		
-		type						|primary type	|final type		|indirection levels		|const levels		|volatile levels
-		----------------------------|:-------------:|:-------------:|:---------------------:|:-----------------:|:------------------:
-		float						|float			|float			|0						|					|
-		volatile float				|float			|float			|0						|					|0
-		const float &				|void *			|float			|1						|0, 1				|
-		const void *				|void *			|void			|1						|1					|
-		void* const					|void *			|void			|1						|0					|
-		float*const*volatile**&		|void *			|float			|5						|0, 4				|3
-		
+			- **cv-quaification** for every insirection level, that is for every i >= 0 and <= indirection_levels.
+
+		|type						|primary type	|final type		|# of indirection levels    |const levels		|volatile levels	 |
+		|---------------------------|:-------------:|:-------------:|:-------------------------:|:-----------------:|:------------------:|
+		|float						|float			|float			|0						    |					|					 |
+		|volatile float				|float			|float			|0						    |					|0					 |
+		|const float &				|void *			|float			|1						    |0, 1				|					 |
+		|const void *				|void *			|void			|1						    |1					|					 |
+		|void* const				|void *			|void			|1						    |0					|					 |
+		|float*const*volatile**&	|void *			|float			|5						    |0, 4				|3					 |
+
 		QualifiedTypePtr is copyable, assignable and moveable.
-		Use get_type<TYPE>() to get a QualifiedTypePtr from a compile-time type.
-		Note: <const int *> and <int const *> are the same C++ type.
+		Use \c get_type<TYPE>() to get a \c QualifiedTypePtr from a compile-time type.
+		Note: <tt> <const int *> </tt> and <tt> <int const *> </tt> are the same C++ type. <br>
 		Implementation note: currently QualifiedTypePtr has the same size of 2 pointers. Anyway, the user should not rely on this assumption. */
 	class QualifiedTypePtr final
 	{
@@ -90,8 +90,8 @@ namespace reflective
 
 					// constants
 
-		/** Maximum indirection levels that this class can handle. This is 14 if uintptr_t is 32-bit wide or smaller, 28 otherwise.
-			The global function get_type<TYPE>() checks this imit at compile-time (with a static_assert). */
+		/** Maximum indirection levels that this class can handle. This is 14 if \c uintptr_t is 32-bit wide or smaller, 28 otherwise.
+			The global function \c get_type<TYPE>() checks this imit at compile-time (with a \c static_assert). */
 		static const size_t s_max_indirection_levels = std::numeric_limits<uintptr_t>::digits <= 32 ? 14 : 28;
 		
 		// uintptr_t must be binary
@@ -105,22 +105,23 @@ namespace reflective
 		size_t indirection_levels() const			{ return m_indirection_levels; }
 
 		/** Retrieves the primary type, that is the type at the 0-th indirection level. 
-			If the type is empty (= default constructed) the primary type is nullptr. Otherwise is != nullptr. */
+			If the type is empty (= default constructed) the primary type is nullptr. Otherwise is != \c nullptr. */
 		const Type * primary_type() const;
 
 		/** Retrivies the final type, that is the type at the last indirection level.
-			If the type is empty (= default constructed) the final type is nullptr. Otherwise is != nullptr. */
+			If the type is empty (= default constructed) the final type is nullptr. Otherwise is != \c nullptr. */
 		const Type * final_type() const				{ return m_final_type; }
 
 		/** Retrieves whether a given indirection level has a const qualifier.
-			@param i_indirection_level, (must be <= indirection_levels()), indirection level for which the consteness is 
-				queried. In the type: const**float, is_const(0) and is_const(1) return false, while is_const(2) returns true. */
+			@param i_indirection_level indirection level (must be <= \c indirection_levels()) for which the consteness is 
+				queried. In the type: <tt>float const**</tt>, <tt>is_const(0)</tt> and <tt>is_const(1)</tt> return \c false,
+				while <tt>is_const(2)</tt> returns \c true. */
 		bool is_const(size_t i_indirection_level) const;
 
 		/** Retrieves whether a given indirection level has a volatile qualifier.
-			@param i_indirection_level, (must be <= indirection_levels()), indirection level for which the volatileness is 
-				queried. In the type: volatile**float, is_volatile(0) and is_volatile(1) return false, while is_volatile(2)
-				returns true. */
+			@param i_indirection_level indirection level (must be <= \c indirection_levels()) for which the volatileness is 
+				queried. In the type: <tt>float volatile**</tt>, <tt>is_volatile(0)</tt> and <tt>is_volatile(1)</tt> return
+				\c false, while \c <tt>is_volatile(2)</tt> returns \c true. */
 		bool is_volatile(size_t i_indirection_level) const;
 
 		/** Returns whether is empty (that is default constructed). */
@@ -132,14 +133,15 @@ namespace reflective
 
 				// derived getters
 
-		/** Retrieves a CV_Flags that specifies the cv qualification for the specified indirection level.
-			Given the type: float volatile*const volatile*const*
-				- cv_flags(0) returns CV_Flags::None
-				- cv_flags(1) returns CV_Flags::Const
-				- cv_flags(2) returns CV_Flags::Const | CV_Flags::Volatile
-				- cv_flags(3) returns CV_Flags::Volatile
-			Implementation note: cv_flags() is impemented using is_const() and is_volatile().
-			@param i_indirection_level, (must be <= indirection_levels()), indirection level for which the qualification is queried. */
+		/** Retrieves a \c CV_Flags that specifies the cv qualification for the specified indirection level.
+			Given the type: <tt> float volatile*const volatile*const*</tt>
+				- \c cv_flags(0) returns <tt> CV_Flags::None </tt>
+				- \c cv_flags(1) returns <tt> CV_Flags::Const </tt>
+				- \c cv_flags(2) returns <tt> CV_Flags::Const | CV_Flags::Volatile </tt>
+				- \c cv_flags(3) returns <tt> CV_Flags::Volatile </tt>
+			
+			Implementation note: \c cv_flags() is impemented using \c is_const() and \c is_volatile().
+			@param i_indirection_level indirection level for which the qualification is queried. It must be <= \c indirection_levels() */
 		CV_Flags cv_flags(size_t i_indirection_level) const
 			{ return (is_const(i_indirection_level) ? CV_Flags::Const : CV_Flags::None) |
 				(is_volatile(i_indirection_level) ? CV_Flags::Volatile : CV_Flags::None); }
@@ -147,7 +149,7 @@ namespace reflective
 
 				// special functions
 	
-		/** Constructs an empty QualifiedTypePtr (is_empty() will return true). The object can later be assigned. */
+		/** Constructs an empty QualifiedTypePtr (is_empty() will return true). The object may be later the destination of an assignment, changing its state. */
 		QualifiedTypePtr();
 
 		/** Copies from the source QualifiedTypePtr */
@@ -171,6 +173,7 @@ namespace reflective
 		bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest);
 
 		#if REFLECTIVE_ENABLE_TESTING
+			/** Runs an unit test for this class */
 			static void unit_test();
 		#endif
 

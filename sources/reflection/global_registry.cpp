@@ -32,7 +32,7 @@ namespace reflective
 
 	void GlobalRegistry::register_member(const NamespaceMember & i_member)
 	{
-		REFLECTIVE_ASSERT(!is_registered(i_member), "Member already registered");
+		REFLECTIVE_ASSERT(!is_member_registered(i_member), "Member already registered");
 
 		const std::string full_name = i_member.full_name();
 		const SymbolName name(full_name.c_str());
@@ -59,7 +59,7 @@ namespace reflective
 		REFLECTIVE_ASSERT(found, "Member not found");
 	}
 
-	bool GlobalRegistry::is_registered(const NamespaceMember & i_member) const
+	bool GlobalRegistry::is_member_registered(const NamespaceMember & i_member) const
 	{
 		const std::string full_name = i_member.full_name();
 		const SymbolName name(full_name.c_str());

@@ -56,7 +56,7 @@ namespace reflective
 		Registering a type already registered is an error. */
 		void register_member(const NamespaceMember & i_member);
 
-		bool is_registered(const NamespaceMember & i_member) const;
+		bool is_member_registered(const NamespaceMember & i_member) const;
 
 		/** Unregisters a type previously registered. Unregistering a type not registered is an error. */
 		void unregister_member(const NamespaceMember & i_type);
