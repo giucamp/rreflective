@@ -40,13 +40,6 @@ namespace reflective
 		}
 	};
 
-	enum class SymbolTypeId
-	{
-		primitive_type_symbol,
-		class_symbol,
-		enum_symbol
-	};
-
 	/** A symbol is a named object. It may be a type (a class, an enum), a parameter, a property, etc.
 		Many classes of reflective derive (directky or indirecty) from Symbol. */
 	class Symbol

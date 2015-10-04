@@ -51,7 +51,7 @@ namespace reflective
 		static const size_t s_max_size = (1 << 24) - 1;
 		static const size_t s_max_alignment = (1 << 8) - 11;
 
-		Type(SymbolName i_name, size_t i_size, size_t i_alignment, const SpecialFunctions & i_special_functions);
+		Type(SymbolTypeId i_type_id, SymbolName i_name, size_t i_size, size_t i_alignment, const SpecialFunctions & i_special_functions);
 
 		virtual ~Type() {}
 

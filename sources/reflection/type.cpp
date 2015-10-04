@@ -3,8 +3,8 @@ void pt(const char*, size_t);
 
 namespace reflective
 {
-	Type::Type(SymbolName i_name, size_t i_size, size_t i_alignment, const SpecialFunctions & i_special_functions)
-		: NamespaceMember(std::move(i_name)), m_special_functions(i_special_functions), m_size(i_size), m_alignment(i_alignment)
+	Type::Type(SymbolTypeId i_type_id, SymbolName i_name, size_t i_size, size_t i_alignment, const SpecialFunctions & i_special_functions)
+		: NamespaceMember(i_type_id, std::move(i_name)), m_special_functions(i_special_functions), m_size(i_size), m_alignment(i_alignment)
 	{
 		pt(i_name.string().cbegin(), i_size);
 		REFLECTIVE_ASSERT(i_size <= s_max_size, "The size of the type exceeds s_max_size");

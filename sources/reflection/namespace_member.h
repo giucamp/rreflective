@@ -37,12 +37,21 @@ namespace reflective
 		class NamespaceMembersList;
 	}
 
+	enum class SymbolTypeId
+	{
+		primitive_type_symbol,
+		class_symbol,
+		enum_symbol,
+		class_template,
+		namespace_symbol,
+	};
+
 	class NamespaceMember : public Symbol
 	{
 	protected:
 
-		NamespaceMember(SymbolName i_name)
-			: Symbol(std::move(i_name)), m_parent(nullptr), m_next_member(nullptr)
+		NamespaceMember(SymbolTypeId i_type_id, SymbolName i_name)
+			: Symbol(std::move(i_name)), m_type_id(i_type_id), m_parent(nullptr), m_next_member(nullptr)
 		{
 
 		}
@@ -58,6 +67,7 @@ namespace reflective
 		const Namespace * parent_namespace() const			{ return m_parent; }
 
 	private: // data members
+		const SymbolTypeId m_type_id;
 		const Namespace * m_parent;
 		NamespaceMember * m_next_member;
 		friend class Namespace;
