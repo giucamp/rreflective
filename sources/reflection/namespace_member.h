@@ -39,12 +39,25 @@ namespace reflective
 
 	enum class SymbolTypeId
 	{
-		primitive_type_symbol,
-		class_symbol,
-		enum_symbol,
-		class_template,
-		namespace_symbol,
+		none					= 0,
+		is_type					= 1 << 0,
+		is_class				= 1 << 1,
+		is_enum					= 1 << 2,
+		is_class_template		= 1 << 3,
+		is_namespace			= 1 << 4,
 	};
+
+	inline SymbolTypeId operator | (SymbolTypeId i_first, SymbolTypeId i_seconds)
+	{
+		using underlying_type = std::underlying_type < SymbolTypeId >::type;
+		return static_cast<SymbolTypeId>(static_cast<underlying_type>(i_first) | static_cast<underlying_type>(i_seconds));
+	}
+
+	inline SymbolTypeId operator & (SymbolTypeId i_first, SymbolTypeId i_seconds)
+	{
+		using underlying_type = std::underlying_type < SymbolTypeId >::type;
+		return static_cast<SymbolTypeId>(static_cast<underlying_type>(i_first)& static_cast<underlying_type>(i_seconds));
+	}
 
 	class NamespaceMember : public Symbol
 	{
@@ -65,6 +78,8 @@ namespace reflective
 		std::string full_name() const;
 
 		const Namespace * parent_namespace() const			{ return m_parent; }
+
+		const SymbolTypeId get_type_id() const				{ return m_type_id; }
 
 	private: // data members
 		const SymbolTypeId m_type_id;

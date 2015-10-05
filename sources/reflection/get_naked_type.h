@@ -45,8 +45,8 @@ namespace reflective
 				std::is_fundamental<TYPE>::value || std::is_pointer<TYPE>::value || std::is_reference<TYPE>::value ||
 				std::is_rvalue_reference<TYPE>::value, "Type not supported" );
 
-			static const SymbolTypeId s_type_id = std::is_class<TYPE>::value ? SymbolTypeId::class_symbol :
-				(std::is_enum<TYPE>::value ? SymbolTypeId::enum_symbol : SymbolTypeId::primitive_type_symbol );
+			static const SymbolTypeId s_type_id = std::is_class<TYPE>::value ? SymbolTypeId::is_class :
+				(std::is_enum<TYPE>::value ? SymbolTypeId::is_enum : SymbolTypeId::is_type );
 		};
 
 		// defines ReflectedType (that is Class, Type, Enum, etc..) and static const ReflectedType * create()
@@ -54,33 +54,33 @@ namespace reflective
 
 		// SymbolTraits for void
 		template <>
-			struct SymbolTraits< void, SymbolTypeId::primitive_type_symbol>
+			struct SymbolTraits< void, SymbolTypeId::is_type>
 		{
 			using ReflectedType = reflective::Type;
 
 			static const ReflectedType * create()
 			{
-				Type * new_type = new Type(SymbolTypeId::primitive_type_symbol, "void", 0, 1, SpecialFunctions(nullptr, nullptr, nullptr, nullptr) );
+				Type * new_type = new Type(SymbolTypeId::is_type, "void", 0, 1, SpecialFunctions(nullptr, nullptr, nullptr, nullptr) );
 				return new_type;
 			}
 		};
 
 		// SymbolTraits for primitive types
 		template <typename TYPE> 
-			struct SymbolTraits< TYPE, SymbolTypeId::primitive_type_symbol>
+			struct SymbolTraits< TYPE, SymbolTypeId::is_type>
 		{
 			using ReflectedType = reflective::Type;
 
 			static const ReflectedType * create()
 			{
-				Type * new_type = new Type(SymbolTypeId::primitive_type_symbol, get_type_full_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value, SpecialFunctions::from_type<TYPE>());
+				Type * new_type = new Type(SymbolTypeId::is_type, get_type_full_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value, SpecialFunctions::from_type<TYPE>());
 				setup_type(*new_type, static_cast<TYPE*>(nullptr));
 				return new_type;
 			}
 		};
 
 		template <typename TYPE> 
-			struct SymbolTraits< TYPE, SymbolTypeId::class_symbol>
+			struct SymbolTraits< TYPE, SymbolTypeId::is_class>
 		{
 			using ReflectedType = reflective::Class;
 
@@ -93,7 +93,7 @@ namespace reflective
 		};
 
 		template <typename TYPE> 
-			struct SymbolTraits< TYPE, SymbolTypeId::enum_symbol >
+			struct SymbolTraits< TYPE, SymbolTypeId::is_enum >
 		{
 			using ReflectedType = reflective::Enum<std::underlying_type<TYPE>>;
 

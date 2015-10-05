@@ -67,7 +67,7 @@ namespace reflective
 			   final type. For pointer types is always equal to the result of \c get_naked_type<void*>(). If an object of has to be 
 			   constructed, copied, or assigned, the primary type is what matters.
 			- The **final type**, that is the type of the last indirection level. The final type is the type remaining after stripping away 
-			  all the cv-quaification, pointer and reference parts from the C++ declaration. The final type can be thought as the type of 
+			  all the cv-qualification, pointer and reference parts from the C++ declaration. The final type can be thought as the type of 
 			  the final object, that is the object found indirecting all the indirection levels.
 			- **cv-quaification** for every insirection level, that is for every i >= 0 and <= indirection_levels.
 
@@ -80,7 +80,7 @@ namespace reflective
 		|void* const				|void *			|void			|1						    |0					|					 |
 		|float*const*volatile**&	|void *			|float			|5						    |0, 4				|3					 |
 
-		QualifiedTypePtr is copyable, assignable and moveable.
+		QualifiedTypePtr is copyable, assignable and movable.
 		Use \c get_type<TYPE>() to get a \c QualifiedTypePtr from a compile-time type.
 		Note: <tt> <const int *> </tt> and <tt> <int const *> </tt> are the same C++ type. <br>
 		Implementation note: currently QualifiedTypePtr has the same size of 2 pointers. Anyway, the user should not rely on this assumption. */
@@ -100,7 +100,7 @@ namespace reflective
 
 					// getters
 
-		/** Returns the number of indirection levels of the type, that is is the nuber of '*' or '&' or '&&' appearing in the C++ 
+		/** Returns the number of indirection levels of the type, that is is the number of '*' or '&' or '&&' appearing in the C++ 
 			declaration. A non-pointer type has zero indirection levels, while a pointer to a pointer has 2 indirection levels.*/
 		size_t indirection_levels() const			{ return m_indirection_levels; }
 
@@ -108,7 +108,7 @@ namespace reflective
 			If the type is empty (= default constructed) the primary type is nullptr. Otherwise is != \c nullptr. */
 		const Type * primary_type() const;
 
-		/** Retrivies the final type, that is the type at the last indirection level.
+		/** Retrieves the final type, that is the type at the last indirection level.
 			If the type is empty (= default constructed) the final type is nullptr. Otherwise is != \c nullptr. */
 		const Type * final_type() const				{ return m_final_type; }
 
@@ -133,7 +133,7 @@ namespace reflective
 
 				// derived getters
 
-		/** Retrieves a \c CV_Flags that specifies the cv qualification for the specified indirection level.
+		/** Retrieves a \c CV_Flags that specifies the cv-qualification for the specified indirection level.
 			Given the type: <tt> float volatile*const volatile*const*</tt>
 				- \c cv_flags(0) returns <tt> CV_Flags::None </tt>
 				- \c cv_flags(1) returns <tt> CV_Flags::Const </tt>
@@ -159,7 +159,7 @@ namespace reflective
 		QualifiedTypePtr & operator = (const QualifiedTypePtr & i_source) = default;
 		
 
-				// comparaison
+				// comparison
 
 		/** Returns true whether two QualifiedTypePtrs are indistinguishable */
 		bool operator == (const QualifiedTypePtr & i_source) const;
@@ -191,6 +191,6 @@ namespace reflective
 		uintptr_t m_volatileness_word : s_max_indirection_levels;
 	};
 	
-	// deletes the speciaization with void
+	// deletes the specialization with void
 	template <> QualifiedTypePtr get_type<void>() = delete;
 }

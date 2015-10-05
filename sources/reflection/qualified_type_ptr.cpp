@@ -20,7 +20,7 @@ namespace reflective
 
 	namespace details
 	{
-		const Type * accept_naked_type(InStringBuffer & i_source, OutStringBuffer & i_error_dest)
+		const Type * accept_naked_type(InStringBuffer & i_source, OutStringBuffer & /*i_error_dest*/)
 		{
 			if (i_source.accept_literal("float"))
 			{
@@ -283,7 +283,7 @@ namespace reflective
 
 		/* QualifiedTypePtr is documented (as implementation note) to be big as two pointers. This static_assert is here
 			to verify the correctness of this note, but if it would ever fail on some compiler, it may safely be removed
-			(togheter with the implementation note), as no other assumptions on the size of QualifiedTypePtr are present
+			(together with the implementation note), as no other assumptions on the size of QualifiedTypePtr are present
 			in the library. */
 		static_assert(sizeof(QualifiedTypePtr) == sizeof(void*) * 2, "QualifiedTypePtr is not big as two pointers, as documented.");
 

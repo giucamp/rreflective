@@ -47,7 +47,7 @@ void Type_test()
 	using namespace reflective;
 	using namespace std;
 
-	auto b = reflective::has_to_string< reflective::QualifiedTypePtr>::value;
+	//auto b = reflective::has_to_string< reflective::QualifiedTypePtr>::value;
 
 	const auto & t1 = get_type<float>();
 	const auto & t2 = get_type<const float &>();
@@ -81,6 +81,9 @@ void Type_test()
 
 	cout << to_std_string(tf4) << endl;
 	cout << to_std_string(tf5) << endl;
+
+	cout << to_std_string(class_type.name()) << endl;
+	cout << to_std_string(enum_type.name()) << endl;
 
 	system("PAUSE");
 }

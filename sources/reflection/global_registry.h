@@ -46,21 +46,21 @@ namespace reflective
 		static GlobalRegistry & instance();
 
 		/** Finds a type from a full name ("reflective::Property", or "::reflective::Enum<int>")
-			@return pointer to the type if it has been found, false otherwise.
-			Implementation note: currently the complexity of this method is the same of std::unordered_map::find. */
+		@return pointer to the type if it has been found, false otherwise.
+		Implementation note: currently the complexity of this method is the same of std::unordered_map::find. */
 		//const NamespaceMember * find_member(StringView i_full_type_name);
+
+		const Type * find_type(StringView i_full_name);
 
 		/** Registers a type, storing a raw pointer to it in the registry. Types instantiated due
 		to the presence of a call to get_type() or get_naked_type() are automatically registered
 		to the global registry. The user may use this method only for types created explicitly.
 		Registering a type already registered is an error. */
 		void register_member(const NamespaceMember & i_member);
-
-		bool is_member_registered(const NamespaceMember & i_member) const;
-
+		
 		/** Unregisters a type previously registered. Unregistering a type not registered is an error. */
 		void unregister_member(const NamespaceMember & i_type);
-
+				
 		GlobalRegistry(const GlobalRegistry &) = delete;
 
 		GlobalRegistry & operator = (const GlobalRegistry &) = delete;
@@ -70,7 +70,7 @@ namespace reflective
 		GlobalRegistry();
 		
 		~GlobalRegistry() = default;
-		
+
 		template <typename TYPE>
 			const TYPE * find_member(StringView i_full_type_name);
 

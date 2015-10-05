@@ -32,10 +32,29 @@ namespace reflective
 
 	void GlobalRegistry::register_member(const NamespaceMember & i_member)
 	{
-		REFLECTIVE_ASSERT(!is_member_registered(i_member), "Member already registered");
-
 		const std::string full_name = i_member.full_name();
 		const SymbolName name(full_name.c_str());
+
+		#if REFLECTIVE_ASSERT_ENABLED
+
+			// check the type of the member
+			int type_check = 0;
+			type_check += (i_member.get_type_id() & SymbolTypeId::is_type) != SymbolTypeId::none ? 1 : 0;
+			type_check += (i_member.get_type_id() & SymbolTypeId::is_namespace) != SymbolTypeId::none ? 1 : 0;
+			type_check += (i_member.get_type_id() & SymbolTypeId::is_class_template) != SymbolTypeId::none ? 1 : 0;
+			REFLECTIVE_ASSERT(type_check == 1, "The member must be a type, a class template or a namespace");
+
+			// check for duplicates
+			const auto membed_type_id = i_member.get_type_id();
+			const auto range = m_registry.equal_range(name);
+			for (auto it = range.first; it != range.second; it++)
+			{
+				REFLECTIVE_ASSERT(it->second != &i_member, "Member already registered");
+				REFLECTIVE_ASSERT((it->second->get_type_id() & membed_type_id) != SymbolTypeId::none, "Member with the same name and type already registered");
+			}
+
+		#endif
+
 		m_registry.insert(std::make_pair(name, &i_member));
 	}
 
@@ -57,22 +76,5 @@ namespace reflective
 		}
 
 		REFLECTIVE_ASSERT(found, "Member not found");
-	}
-
-	bool GlobalRegistry::is_member_registered(const NamespaceMember & i_member) const
-	{
-		const std::string full_name = i_member.full_name();
-		const SymbolName name(full_name.c_str());
-
-		const auto range = m_registry.equal_range(name);
-		for (auto it = range.first; it != range.second; it++)
-		{
-			if (it->second == &i_member)
-			{
-				return true;
-			}
-		}
-
-		return false;
 	}
 }
