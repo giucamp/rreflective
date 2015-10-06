@@ -152,6 +152,8 @@ namespace reflective
 		/** Constructs an empty QualifiedTypePtr (is_empty() will return true). The object may be later the destination of an assignment, changing its state. */
 		QualifiedTypePtr();
 
+		QualifiedTypePtr(const Type & i_final_type, ArrayView<CV_Flags> i_cv_flags);
+
 		/** Copies from the source QualifiedTypePtr */
 		QualifiedTypePtr(const QualifiedTypePtr & i_source) = default;
 

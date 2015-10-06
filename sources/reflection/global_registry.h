@@ -49,7 +49,6 @@ namespace reflective
 		@return pointer to the type if it has been found, false otherwise.
 		Implementation note: currently the complexity of this method is the same of std::unordered_map::find. */
 		//const NamespaceMember * find_member(StringView i_full_type_name);
-
 		const Type * find_type(StringView i_full_name);
 
 		/** Registers a type, storing a raw pointer to it in the registry. Types instantiated due

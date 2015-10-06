@@ -77,4 +77,9 @@ namespace reflective
 
 		REFLECTIVE_ASSERT(found, "Member not found");
 	}
+
+	/*const Type * GlobalRegistry::find_type(StringView i_full_name)
+	{
+
+	}*/
 }

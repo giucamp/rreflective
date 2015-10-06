@@ -10,6 +10,26 @@ namespace reflective
 		REFLECTIVE_INTERNAL_ASSERT( (i_volatileness_word & ~((2 << i_indirection_levels) - 1)) == 0, "The volatileness word is not valid" );
 	}
 
+	QualifiedTypePtr::QualifiedTypePtr(const Type & i_final_type, ArrayView<CV_Flags> i_cv_flags)
+		: m_final_type(&i_final_type), m_indirection_levels(i_cv_flags.size()), m_constness_word(0), m_volatileness_word(0)
+	{
+		for (CV_Flags flags : i_cv_flags)
+		{
+			if ((flags & CV_Flags::Const) != CV_Flags::None)
+			{
+				m_constness_word |= 1;
+			}
+
+			if ((flags & CV_Flags::Volatile) != CV_Flags::None)
+			{
+				m_volatileness_word |= 1;
+			}
+
+			m_constness_word <<= 1;
+			m_volatileness_word <<= 1;
+		}
+	}
+
 	bool QualifiedTypePtr::operator == (const QualifiedTypePtr & i_source) const
 	{
 		return m_final_type == i_source.m_final_type &&

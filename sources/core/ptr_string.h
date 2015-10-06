@@ -66,6 +66,44 @@ namespace reflective
 		}
 	};
 
+	template <typename TYPE>
+		class ArrayView
+	{
+	public:
+
+		ArrayView()
+			: m_objects(nullptr), m_count(nullptr)
+		{
+		}
+
+		ArrayView(TYPE * i_objects, size_t i_size)
+			: m_objects(i_objects), m_size(i_size)
+		{
+		}
+
+		template <size_t SIZE>
+			ArrayView(TYPE(&i_objects)[SIZE])
+				: m_objects(i_objects), m_size(SIZE)
+		{
+		}
+
+		TYPE * data() const { return m_objects; }
+
+		TYPE * begin() const { return m_objects; }
+
+		TYPE * end() const { return m_objects + m_size; }
+
+		TYPE * cbegin() const { return m_objects; }
+
+		TYPE * cend() const { return m_objects + m_size; }
+
+		size_t size() const { return m_size; }
+
+	private:
+		TYPE * m_objects;
+		size_t m_size;
+	};
+
 	class StringView
 	{
 	public:
