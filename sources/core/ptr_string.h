@@ -72,7 +72,7 @@ namespace reflective
 	public:
 
 		ArrayView()
-			: m_objects(nullptr), m_count(nullptr)
+			: m_objects(nullptr), m_size(0)
 		{
 		}
 
@@ -96,6 +96,18 @@ namespace reflective
 		TYPE * cbegin() const { return m_objects; }
 
 		TYPE * cend() const { return m_objects + m_size; }
+
+		TYPE & operator [] (size_t i_index)
+		{
+			REFLECTIVE_ASSERT(i_index < m_size, "Index out of bounds"); 
+			return m_objects[i_index]; 
+		}
+
+		const TYPE & operator [] (size_t i_index) const
+		{
+			REFLECTIVE_ASSERT(i_index < m_size, "Index out of bounds");
+			return m_objects[i_index];
+		}
 
 		size_t size() const { return m_size; }
 

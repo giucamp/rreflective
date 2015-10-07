@@ -10,32 +10,38 @@ namespace reflective
 		REFLECTIVE_INTERNAL_ASSERT( (i_volatileness_word & ~((2 << i_indirection_levels) - 1)) == 0, "The volatileness word is not valid" );
 	}
 
+	bool impl(bool i_first, bool i_second)
+	{
+		if (i_first)
+			return i_second;
+		else
+			return true;
+	}
+
 	QualifiedTypePtr::QualifiedTypePtr(const Type & i_final_type, ArrayView<CV_Flags> i_cv_flags)
-		: m_final_type(&i_final_type), m_indirection_levels(i_cv_flags.size()), m_constness_word(0), m_volatileness_word(0)
+		: m_final_type(&i_final_type)
 	{
 		REFLECTIVE_ASSERT(i_cv_flags.size() <= s_max_indirection_levels, "The number of indirection levels exceeds s_max_indirection_levels");
+		
+		uintptr_t constness_word = 0, volatileness_word = 0;
 
-		uintptr_t constness_word, m_volatileness_word = 0;
-
-		for (CV_Flags flags : i_cv_flags)
+		const size_t size = i_cv_flags.size();
+		for (size_t index = 0; index < size; index++)
 		{
+			CV_Flags flags = i_cv_flags[index];
 			if ((flags & CV_Flags::Const) != CV_Flags::None)
 			{
-				constness_word |= 1;
+				constness_word |= uintptr_t(1) << index;
 			}
 
 			if ((flags & CV_Flags::Volatile) != CV_Flags::None)
 			{
-				olatileness_word |= 1;
+				volatileness_word |= uintptr_t(1) << index;
 			}
-
-			constness_word <<= 1;
-			volatileness_word <<= 1;
 		}
-
 		m_constness_word = constness_word;
 		m_volatileness_word = volatileness_word;
-
+		m_indirection_levels = size > 0 ? size - 1 : 0;
 
 		REFLECTIVE_INTERNAL_ASSERT(m_constness_word == constness_word && m_volatileness_word == volatileness_word, "internal error");
 	}
@@ -164,7 +170,8 @@ namespace reflective
 			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_volatile(0));
 			REFLECTIVE_TEST_ASSERT(q_type_ptr == q_type_ptr);
 			const CV_Flags cvs[] = { CV_Flags::None };
-			QualifiedTypePtr_unit_test_cvs(q_type_ptr, cvs); }
+			QualifiedTypePtr_unit_test_cvs(q_type_ptr, cvs); 
+			REFLECTIVE_TEST_ASSERT(q_type_ptr != QualifiedTypePtr()); }
 
 			// test <volatile TYPE>
 			{ const auto q_type_ptr = get_type<volatile TYPE>();
@@ -176,7 +183,8 @@ namespace reflective
 			REFLECTIVE_TEST_ASSERT(q_type_ptr.is_volatile(0));
 			REFLECTIVE_TEST_ASSERT(q_type_ptr == q_type_ptr);
 			const CV_Flags cvs[] = { CV_Flags::Volatile };
-			QualifiedTypePtr_unit_test_cvs(q_type_ptr, cvs); }
+			QualifiedTypePtr_unit_test_cvs(q_type_ptr, cvs); 
+			REFLECTIVE_TEST_ASSERT(q_type_ptr != QualifiedTypePtr()); }
 
 			// test <const TYPE &>
 			{ const auto q_type_ptr = get_type<const TYPE &>();
@@ -190,7 +198,8 @@ namespace reflective
 			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_volatile(1));
 			REFLECTIVE_TEST_ASSERT(q_type_ptr == q_type_ptr);
 			const CV_Flags cvs[] = { CV_Flags::Const, CV_Flags::Const };
-			QualifiedTypePtr_unit_test_cvs(q_type_ptr, cvs); }
+			QualifiedTypePtr_unit_test_cvs(q_type_ptr, cvs); 
+			REFLECTIVE_TEST_ASSERT(q_type_ptr != QualifiedTypePtr()); }
 
 			// test <TYPE *const*volatile**>
 			{ const auto q_type_ptr = get_type<TYPE*const*volatile**&>();
@@ -212,7 +221,8 @@ namespace reflective
 			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_volatile(5));
 			REFLECTIVE_TEST_ASSERT(q_type_ptr == q_type_ptr);
 			const CV_Flags cvs[] = { CV_Flags::Const, CV_Flags::None, CV_Flags::None, CV_Flags::Volatile, CV_Flags::Const, CV_Flags::None };
-			QualifiedTypePtr_unit_test_cvs(q_type_ptr, cvs); }
+			QualifiedTypePtr_unit_test_cvs(q_type_ptr, cvs);
+			REFLECTIVE_TEST_ASSERT(q_type_ptr != QualifiedTypePtr()); }
 		}
 
 		QualifiedTypePtr qualified_type_from_string(const char * i_string)
@@ -244,8 +254,57 @@ namespace reflective
 		QualifiedTypePtr_unit_test_type<float>();
 		QualifiedTypePtr_unit_test_type<std::vector<int>>();
 
+		REFLECTIVE_TEST_ASSERT(get_type<const void *>().is_const(1));
+		REFLECTIVE_TEST_ASSERT(get_type<void *const>().is_const(0));
+
 		// this must be rejected by the compiler
 		// get_type<void>();
+
+		{
+			CV_Flags cv_flags[] = { CV_Flags::Const | CV_Flags::Volatile, CV_Flags::None, CV_Flags::Volatile };
+			QualifiedTypePtr q_type_ptr(get_naked_type<float>(), cv_flags);
+			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_empty());
+			REFLECTIVE_TEST_ASSERT(q_type_ptr.final_type() == &get_naked_type<float>());
+			REFLECTIVE_TEST_ASSERT(q_type_ptr.primary_type() == &get_naked_type<void*>());
+			REFLECTIVE_TEST_ASSERT(q_type_ptr.is_const(0));
+			REFLECTIVE_TEST_ASSERT(q_type_ptr.is_volatile(0));
+			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_const(1));
+			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_volatile(1));
+			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_const(2));
+			REFLECTIVE_TEST_ASSERT(q_type_ptr.is_volatile(2));
+			REFLECTIVE_TEST_ASSERT(q_type_ptr.indirection_levels() == 2);			
+			REFLECTIVE_TEST_ASSERT(q_type_ptr.cv_flags(0) == (CV_Flags::Const | CV_Flags::Volatile) );
+			REFLECTIVE_TEST_ASSERT(q_type_ptr.cv_flags(1) == CV_Flags::None);
+			REFLECTIVE_TEST_ASSERT(q_type_ptr.cv_flags(2) == CV_Flags::Volatile);
+			REFLECTIVE_TEST_ASSERT(q_type_ptr == q_type_ptr);
+			REFLECTIVE_TEST_ASSERT(q_type_ptr != QualifiedTypePtr());
+			REFLECTIVE_TEST_ASSERT(q_type_ptr == get_type<float volatile * * volatile const >());
+		}
+		{
+			CV_Flags flags[] = { CV_Flags::None };
+			REFLECTIVE_TEST_ASSERT(QualifiedTypePtr(get_naked_type<void>(), ArrayView<CV_Flags>()) == QualifiedTypePtr(get_naked_type<void>(), flags));
+		}
+
+		{
+			CV_Flags cv_flags[] = { CV_Flags::Const | CV_Flags::Volatile, CV_Flags::None, CV_Flags::Volatile };
+			QualifiedTypePtr q_type_ptr(get_naked_type<void>(), cv_flags);
+			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_empty());
+			REFLECTIVE_TEST_ASSERT(q_type_ptr.final_type() == &get_naked_type<void>());
+			REFLECTIVE_TEST_ASSERT(q_type_ptr.primary_type() == &get_naked_type<void*>());
+			REFLECTIVE_TEST_ASSERT(q_type_ptr.is_const(0));
+			REFLECTIVE_TEST_ASSERT(q_type_ptr.is_volatile(0));
+			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_const(1));
+			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_volatile(1));
+			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_const(2));
+			REFLECTIVE_TEST_ASSERT(q_type_ptr.is_volatile(2));
+			REFLECTIVE_TEST_ASSERT(q_type_ptr.indirection_levels() == 2);
+			REFLECTIVE_TEST_ASSERT(q_type_ptr.cv_flags(0) == (CV_Flags::Const | CV_Flags::Volatile));
+			REFLECTIVE_TEST_ASSERT(q_type_ptr.cv_flags(1) == CV_Flags::None);
+			REFLECTIVE_TEST_ASSERT(q_type_ptr.cv_flags(2) == CV_Flags::Volatile);
+			REFLECTIVE_TEST_ASSERT(q_type_ptr == q_type_ptr);
+			REFLECTIVE_TEST_ASSERT(q_type_ptr != QualifiedTypePtr());
+			REFLECTIVE_TEST_ASSERT(q_type_ptr == get_type<void volatile * * volatile const >());
+		}
 
 		// test <void *const*volatile**>
 		{ const auto q_type_ptr = get_type<void*const*volatile**&>();
@@ -265,7 +324,8 @@ namespace reflective
 		REFLECTIVE_TEST_ASSERT(q_type_ptr.is_volatile(3));
 		REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_volatile(4));
 		REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_volatile(5));
-		REFLECTIVE_TEST_ASSERT(q_type_ptr == q_type_ptr); }
+		REFLECTIVE_TEST_ASSERT(q_type_ptr == q_type_ptr); 
+		REFLECTIVE_TEST_ASSERT(q_type_ptr != QualifiedTypePtr()); }
 
 		// test <const void *>
 		{ const auto q_type_ptr = get_type<const void *>();
@@ -277,7 +337,8 @@ namespace reflective
 		REFLECTIVE_TEST_ASSERT(q_type_ptr.is_const(1));
 		REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_volatile(0));
 		REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_volatile(1));
-		REFLECTIVE_TEST_ASSERT(q_type_ptr == q_type_ptr); }
+		REFLECTIVE_TEST_ASSERT(q_type_ptr == q_type_ptr);
+		REFLECTIVE_TEST_ASSERT(q_type_ptr != QualifiedTypePtr()); }
 
 		// test <void * const>
 		{ const auto q_type_ptr = get_type<void * const>();
@@ -289,7 +350,8 @@ namespace reflective
 		REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_const(1));
 		REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_volatile(0));
 		REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_volatile(1));
-		REFLECTIVE_TEST_ASSERT(q_type_ptr == q_type_ptr); }
+		REFLECTIVE_TEST_ASSERT(q_type_ptr == q_type_ptr);
+		REFLECTIVE_TEST_ASSERT(q_type_ptr != QualifiedTypePtr()); }
 
 		// test <void *>
 		{ const auto q_type_ptr = get_type<void *>();
@@ -301,7 +363,8 @@ namespace reflective
 		REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_const(1));
 		REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_volatile(0));
 		REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_volatile(1));
-		REFLECTIVE_TEST_ASSERT(q_type_ptr == q_type_ptr); }
+		REFLECTIVE_TEST_ASSERT(q_type_ptr == q_type_ptr);
+		REFLECTIVE_TEST_ASSERT(q_type_ptr != QualifiedTypePtr()); }
 
 		// test cv qualifiers for float volatile*const volatile*const*
 		{ const auto q_type_ptr = get_type<float volatile*const volatile*const*>();

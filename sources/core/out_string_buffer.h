@@ -48,7 +48,7 @@ namespace reflective
 		out << " and this is a string: " << string("str");
 
 		std::cout << dest << endl;
-		\endcode		
+		\endcode
 		If a buffer is provided, OutStringBuffer store a null-terminating character at the end of the string after construction 
 		and after any write. In no cases OutStringBuffer will write outsize the destination buffer. If the buffer is not big enough 
 		to store all the text that is written, the content is truncated. The user may check this with the member function is_truncated(). 

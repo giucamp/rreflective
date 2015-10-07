@@ -83,6 +83,14 @@ namespace reflective
 		QualifiedTypePtr is copyable, assignable and movable.
 		Use \c get_type<TYPE>() to get a \c QualifiedTypePtr from a compile-time type.
 		Note: <tt> <const int *> </tt> and <tt> <int const *> </tt> are the same C++ type. <br>
+		In the following table each cell of the same row constructs the same QualifiedTypePtr:
+		
+		|Type1											  |Type2 (=Type1)														|
+		|-------------------------------------------------|---------------------------------------------------------------------|
+		|get_type<void>()								  |QualifiedTypePtr(get_naked_type<void>(), ArrayView<CV_Flags>())
+		|get_type<const void volatile * >()				  |get_type<const void const * >()
+		|get_type<const void volatile * >()				  |CV_Flags flags[] = { CV_Flags::Volatile | CV_Flags::Const, CV_Flags::None }; QualifiedTypePtr(get_naked_type<void>(), flags);
+
 		Implementation note: currently QualifiedTypePtr has the same size of 2 pointers. Anyway, the user should not rely on this assumption. */
 	class QualifiedTypePtr final
 	{
@@ -152,6 +160,12 @@ namespace reflective
 		/** Constructs an empty QualifiedTypePtr (is_empty() will return true). The object may be later the destination of an assignment, changing its state. */
 		QualifiedTypePtr();
 
+		/** Constructs a non-empty QualifiedTypePtr from a final type and an array of CV_Flags's that specifies the cv-qualifiers of the indirection levels.
+			The size of the array of CV_Flags's determines the number of indirection levels
+			@i_final_type final type. May be get_naked_type<void>().
+			@i_cv_flags cv-qualification for each indirection level. The number of indirection levels of the type is the size of this array, minus 1. So, to
+				construct a pointer to a pointer, specify an array of 3 elements. If the array is empty, the number of indirection levels is zero.
+				The n-th element of this array specifies a combination of cv flags for the n-th indirection level.	*/
 		QualifiedTypePtr(const Type & i_final_type, ArrayView<CV_Flags> i_cv_flags);
 
 		/** Copies from the source QualifiedTypePtr */
