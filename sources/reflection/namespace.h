@@ -56,15 +56,15 @@ namespace reflective
 		};
 	}
 
-	/** \brief A namespace is a collection of types, inner namespaces, class tempates and anything that
-		derives from NamespaceMember. The user can add members to a non-const namespace with the method 
-		register_member, and he can remove them with the method unregister_member. Iteration of existing 
-		members is available using the method members().<br>
+	/** \brief A namespace is a named collection of types, inner namespaces, class tempates and anything
+		deriving from reflective::NamespaceMember. The user can add members to a non-const namespace with
+		the method register_member(), and he can remove them with the method unregister_member(). Iteration
+		of existing members is available using the method members().<br>
 		The name of members in the namespace is not constrained to be unique: for example a namespace may
 		contain a class C and a namespace with the same name, that contains inner types and class templates
 		of the class C.<br>
-		This class uses non-owning raw pointers to keep track of the members, so NamespaceMember must be
-		unregistered before being destroyed. A NamespaceMember can be present only in a Namespace at a time.
+		This class uses non-owning raw pointers to keep track of the members, so NamespaceMember's must be
+		unregistered before being destroyed. A NamespaceMember can be present only in a Namespace at a time.<br>
 		Impementation note: currently this class uses an intrusive linked-list to keep track of the 
 		NamespaceMember objects. */
 	class Namespace : public NamespaceMember
@@ -81,7 +81,7 @@ namespace reflective
 		/** \brief Returns a reference to the container of all the members of the namespace. The actual type of 
 			the container is an implementation detail. It support begin(), end(), cbegin() and cend(), so
 			it is suitable for range loops, but it should reffered to only with auto and decltype. The type 
-			of the elements of the container is const NamespaceMember.
+			of the elements of the container is const NamespaceMember. <br>
 			Note: the members of the namespace may be randomly distributed in the memory, so iterating them
 			is slow because cache-unfrendly. If you want to look-up a NamespaceMember given its full name, 
 			use the GlobalRegistry instead. */
@@ -90,11 +90,11 @@ namespace reflective
 		/** \brief Registers a member in the namespace, storing a raw pointer to it. Adding a member to a 
 			namespace when it is already present in the same or another namespace is an error. Destroying
 			a NamespaceMember while it is still present in a namespace leads to undefined behaviour (probably 
-			a crash). 
+			a crash). <br>
 			The complexity of this method is constant. */
 		void register_member(NamespaceMember & i_member);
 
-		/** \brief Removes a member from the registered members list. Trying to remove a member not present is an error.
+		/** \brief Removes a member from the registered members list. Trying to remove a member not present is an error.<br>
 			The complexity of this method is linear in the count of the registered members */
 		void unregister_member(NamespaceMember & i_member);
 

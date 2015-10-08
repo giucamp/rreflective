@@ -58,8 +58,8 @@ namespace reflective
 		return static_cast<CV_Flags>(static_cast<underlying_type>(i_first) & static_cast<underlying_type>(i_seconds));
 	}
 
-	/** Lightweight value-class holding a pointer to a type, a number of indirection levels, and the cv-qualification (is it \c const?
-		is it \c volatile?) for each indirection level. A QualifiedTypePtr can tell:
+	/** Lightweight value-class holding a pointer to a reflective::Type, a number of indirection levels, and the cv-qualification
+		(is it \c const? is it \c volatile?) for each indirection level. A QualifiedTypePtr can tell:
 			- The **number of indirection levels**, that is is the nuber of '*' or '&' or '&&' appearing in the C++ declaration of
 			   the type. A non-pointer types has zero indirection levels, while a pointer to a pointer has 2 indirection levels.
 			   References are considered like const pointer (that is \c get_type<float&>() == get_type<float*const>() ).
@@ -81,16 +81,9 @@ namespace reflective
 		|float*const*volatile**&	|void *			|float			|5						    |0, 4				|3					 |
 
 		QualifiedTypePtr is copyable, assignable and movable.
-		Use \c get_type<TYPE>() to get a \c QualifiedTypePtr from a compile-time type.
+		Use \c get_type<TYPE>() to get a \c QualifiedTypePtr from a compile-time type. 
 		Note: <tt> <const int *> </tt> and <tt> <int const *> </tt> are the same C++ type. <br>
-		In the following table each cell of the same row constructs the same QualifiedTypePtr:
 		
-		|Type1											  |Type2 (=Type1)														|
-		|-------------------------------------------------|---------------------------------------------------------------------|
-		|get_type<void>()								  |QualifiedTypePtr(get_naked_type<void>(), ArrayView<CV_Flags>())
-		|get_type<const void volatile * >()				  |get_type<const void const * >()
-		|get_type<const void volatile * >()				  |CV_Flags flags[] = { CV_Flags::Volatile | CV_Flags::Const, CV_Flags::None }; QualifiedTypePtr(get_naked_type<void>(), flags);
-
 		Implementation note: currently QualifiedTypePtr has the same size of 2 pointers. Anyway, the user should not rely on this assumption. */
 	class QualifiedTypePtr final
 	{
@@ -142,7 +135,7 @@ namespace reflective
 				// derived getters
 
 		/** Retrieves a \c CV_Flags that specifies the cv-qualification for the specified indirection level.
-			Given the type: <tt> float volatile*const volatile*const*</tt>
+			Given the type <tt>get_type<float volatile*const volatile*const*>()</tt>:
 				- \c cv_flags(0) returns <tt> CV_Flags::None </tt>
 				- \c cv_flags(1) returns <tt> CV_Flags::Const </tt>
 				- \c cv_flags(2) returns <tt> CV_Flags::Const | CV_Flags::Volatile </tt>
@@ -162,10 +155,10 @@ namespace reflective
 
 		/** Constructs a non-empty QualifiedTypePtr from a final type and an array of CV_Flags's that specifies the cv-qualifiers of the indirection levels.
 			The size of the array of CV_Flags's determines the number of indirection levels
-			@i_final_type final type. May be get_naked_type<void>().
-			@i_cv_flags cv-qualification for each indirection level. The number of indirection levels of the type is the size of this array, minus 1. So, to
-				construct a pointer to a pointer, specify an array of 3 elements. If the array is empty, the number of indirection levels is zero.
-				The n-th element of this array specifies a combination of cv flags for the n-th indirection level.	*/
+			@param i_final_type final type. May be get_naked_type<void>().
+			@param i_cv_flags cv-qualification for each indirection level. The n-th element of this array specifies a combination of cv flags for the n-th indirection 
+				level.The number of indirection levels of the type is the size of this array, minus 1. So, to construct a pointer to a pointer, specify an array
+				of 3 elements. If the array is empty, the number of indirection levels is zero. */
 		QualifiedTypePtr(const Type & i_final_type, ArrayView<CV_Flags> i_cv_flags);
 
 		/** Copies from the source QualifiedTypePtr */
