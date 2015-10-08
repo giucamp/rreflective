@@ -49,6 +49,11 @@ namespace reflective
 			return this->operator()(i_null_terminated_string, strlen(i_null_terminated_string));
 		}
 
+		ResultType operator() (StringView i_string) const
+		{
+			return this->operator()(i_string.data(), i_string.size());
+		}
+
 		ResultType operator() (const char * i_string, size_t i_length) const
 		{
 			/*	djb2 - http://www.cse.yorku.ca/~oz/hash.html

@@ -164,5 +164,8 @@
     <None Include="..\sources\reflection\namespace.inl">
       <Filter>reflection</Filter>
     </None>
+    <None Include="..\sources\core\in_string_buffer.inl">
+      <Filter>core</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -150,4 +150,9 @@ namespace reflective
 		const char * m_chars;
 		size_t m_size;
 	};
+
+	inline void to_string(OutStringBuffer & i_dest, const StringView & i_string_view)
+	{
+		i_dest.write_nstr(i_string_view.data(), i_string_view.size());
+	}
 }

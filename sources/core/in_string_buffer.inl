@@ -32,22 +32,16 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	using SymbolName = Identifier< StringHasher<uint32_t>, StringView >;
-
-	template <typename TYPE>
-		using Allocator = std::allocator<TYPE>;
-
-	static const UpDownCasterImplementation s_upDownCasterImplementation = UpDownCasterImplementation::Functions;
-
-	static const size_t s_global_registry_reserve = 512;
-
-	#define REFLECTIVE_ENABLE_TESTING		1
+	template <typename UNARY_FUNC>
+		inline StringView InStringBuffer::accept_until(const UNARY_FUNC & i_unary_func)
+	{			
+		const char * const start = m_next_char;		
+		const char * curr = start;
+		while (curr < m_end_of_buffer && !i_unary_func(*curr))
+		{
+			curr++;
+		}
+		m_next_char = curr;
+		return StringView(start, curr - start);
+	}
 }
-	
-#define REFLECTIVE_DEBUG 1
-
-#define REFLECTIVE_ASSERT_ENABLED 1
-
-#define REFLECTIVE_ASSERT(i_value, i_error_message)				if(!(i_value)) {__debugbreak();}
-#define REFLECTIVE_TEST_ASSERT(i_value)							if(!(i_value)) {__debugbreak();}
-#define REFLECTIVE_INTERNAL_ASSERT(i_value, i_error_message)	if(!(i_value)) {__debugbreak();}

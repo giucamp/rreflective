@@ -56,8 +56,8 @@ namespace reflective
 
 		}
 
-		Identifier(const char * i_string, size_t i_length)
-			: m_hash(Hasher()(i_string, i_length)), m_string(i_string, i_length)
+		Identifier(StringView i_string)
+			: m_hash(Hasher()(i_string)), m_string(i_string)
 		{
 
 		}

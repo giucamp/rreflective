@@ -22,7 +22,8 @@ namespace reflective
 		res.reserve(size_to_reserve);
 		for (int i = type_count - 1; i >= 0; i--)
 		{
-			res += names[i]->name().string().c_str();
+			const auto & name = names[i]->name().string();
+			res.append(name.data(), name.length());
 			if( i > 0 )
 			{
 				res += "::";

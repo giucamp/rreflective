@@ -58,11 +58,9 @@ namespace reflective
 	{
 		const Type * accept_naked_type(InStringBuffer & i_source, OutStringBuffer & /*i_error_dest*/)
 		{
-			if (i_source.accept_literal("float"))
-			{
-				return &get_naked_type<float>();
-			}
-			return nullptr;
+			// to do: handle template arguments
+			auto name = i_source.accept_until([](char i_char){ return isalnum(i_char) == 0; });
+			return GlobalRegistry::instance().find_type(name);
 		}
 	}
 
@@ -256,10 +254,7 @@ namespace reflective
 
 		REFLECTIVE_TEST_ASSERT(get_type<const void *>().is_const(1));
 		REFLECTIVE_TEST_ASSERT(get_type<void *const>().is_const(0));
-
-		// this must be rejected by the compiler
-		// get_type<void>();
-
+		
 		{
 			CV_Flags cv_flags[] = { CV_Flags::Const | CV_Flags::Volatile, CV_Flags::None, CV_Flags::Volatile };
 			QualifiedTypePtr q_type_ptr(get_naked_type<float>(), cv_flags);
@@ -412,6 +407,35 @@ namespace reflective
 		CHECK_TYPE(volatile float *const volatile*const*&&);
 		CHECK_TYPE(float *const volatile***&);
 		CHECK_TYPE(float *volatile**&&);
+
+		CHECK_TYPE(void);
+		CHECK_TYPE(const void);
+		CHECK_TYPE(volatile void const);
+		CHECK_TYPE(const void ***);
+		CHECK_TYPE(volatile void *const volatile*const*);
+		CHECK_TYPE(void *const volatile***);
+		CHECK_TYPE(void *volatile**);
+		//CHECK_TYPE(void&);
+		//CHECK_TYPE(const void&);
+		//CHECK_TYPE(volatile void const&);
+		CHECK_TYPE(const void ***&);
+		CHECK_TYPE(volatile void *const volatile*const*&&);
+		CHECK_TYPE(void *const volatile***&);
+		CHECK_TYPE(void *volatile**&&);
+		//CHECK_TYPE(void&&);
+		CHECK_TYPE(const void**);
+		CHECK_TYPE(volatile void **const);
+		CHECK_TYPE(const void ***const);
+		CHECK_TYPE(volatile const void *const volatile*const*);
+		CHECK_TYPE(void *const volatile***);
+		CHECK_TYPE(void *volatile**);
+		CHECK_TYPE(void**&&);
+		CHECK_TYPE(const void****&);
+		CHECK_TYPE(volatile void *const&);
+		CHECK_TYPE(const void *&&);
+		CHECK_TYPE(volatile void *const volatile*const*&&);
+		CHECK_TYPE(void *const volatile***&);
+		CHECK_TYPE(void *volatile**&&);
 
 		#undef CHECK_TYPE
 	}

@@ -30,6 +30,23 @@ namespace reflective
 		return s_instance;
 	}
 
+	const Type * GlobalRegistry::find_type(StringView i_full_name)
+	{
+		const SymbolName name(i_full_name);
+
+		const auto range = m_registry.equal_range(name);
+		for (auto it = range.first; it != range.second; it++)
+		{
+			const auto type_id = it->second->get_type_id();
+			if ((type_id & SymbolTypeId::is_type) != SymbolTypeId::none)
+			{
+				return static_cast<const Type *>( it->second );
+			}
+		}
+
+		return nullptr;
+	}
+
 	void GlobalRegistry::register_member(const NamespaceMember & i_member)
 	{
 		const std::string full_name = i_member.full_name();

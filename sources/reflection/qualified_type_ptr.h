@@ -32,13 +32,13 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	/** Retrives (by value) a QualifiedTypePtr associated to the template argument.
-		The resut  is never empty (is_empty() always return false).
-		The template argument cannot be void (get_type<void>() is declared deleted), but can be a void pointer (with any cv qualifiication). */
+	/** Retrieves (by value) a QualifiedTypePtr associated to the template argument.
+		The resut  is never empty (is_empty() always return false). The template 
+		argument may be void or any void pointer (with any cv-qualification). */
 	template <typename TYPE>
 		QualifiedTypePtr get_type();
 
-	/** Scoped enum that stores a combination of cv qualifiers. CV_Flags can be combined and subtracted with the overoaded bitwise operators | and &. */
+	/** Scoped enum that stores a combination of cv-qualifiers. CV_Flags can be combined and subtracted with the overloaded bitwise operators | and &. */
 	enum class CV_Flags
 	{
 		None = 0, /**< No flags */
@@ -199,7 +199,4 @@ namespace reflective
 		uintptr_t m_constness_word : s_max_indirection_levels;
 		uintptr_t m_volatileness_word : s_max_indirection_levels;
 	};
-	
-	// deletes the specialization with void
-	template <> QualifiedTypePtr get_type<void>() = delete;
 }

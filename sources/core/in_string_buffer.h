@@ -101,7 +101,10 @@ namespace reflective
 			return ReadAny<TYPE, has_assign_from_string<TYPE>::value>::read(*this, small_error_buffer, o_object);
 		}
 
-			//
+		template <typename UNARY_FUNC>
+			StringView accept_until(const UNARY_FUNC & i_unary_func);
+
+			//	
 
 		const char * next_char() const				{ return m_next_char; }
 

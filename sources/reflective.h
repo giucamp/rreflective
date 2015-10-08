@@ -67,7 +67,8 @@ namespace reflective
 
 	class OutStringBuffer;
 	class InStringBuffer;
-	class PtrString;	
+	class PtrString;
+	class StringView;
 	
 	enum class UpDownCasterImplementation
 	{
@@ -110,6 +111,7 @@ namespace reflective
 #include "reflection\global_registry.h"
 
 // inlines
+#include "core\in_string_buffer.inl"
 #include "reflection\qualified_type_ptr.inl"
 #include "reflection\special_functions.inl"
 #include "reflection\type.inl"

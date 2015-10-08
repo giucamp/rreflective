@@ -248,6 +248,7 @@
     <ClCompile Include="..\sources\reflective.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\sources\core\in_string_buffer.inl" />
     <None Include="..\sources\reflection\enum.inl" />
     <None Include="..\sources\reflection\get_naked_type.inl" />
     <None Include="..\sources\reflection\namespace.inl" />
