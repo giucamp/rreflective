@@ -17,8 +17,6 @@
 #include "reflection\type.cpp"
 #include "reflection\qualified_type_ptr.cpp"
 #include "reflection\obj_ptr.cpp"
-
-#include "class\property\Property.cpp"
-
+#include "reflection\property\property.cpp"
 #include "reflection\namespace.cpp"
 #include "reflection\global_registry.cpp"

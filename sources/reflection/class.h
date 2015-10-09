@@ -39,12 +39,12 @@ namespace reflective
 		Class(SymbolName i_name, size_t i_size, size_t i_alignment, const SpecialFunctions & i_special_functions)
 			: Type(SymbolTypeId::is_class | SymbolTypeId::is_type, std::move(i_name), i_size, i_alignment, i_special_functions) { }
 
-		const SymbolList<Property> & properites() const					{ return m_properites; }
+		const List<Property> & properites() const					{ return m_properites; }
 
-		void set_properites(SymbolList<Property> && i_properites)		{ m_properites = std::move(i_properites); }
+		void set_properites(List<Property> && i_properites)		{ m_properites = std::move(i_properites); }
 
 	private:
-		SymbolList<Property> m_properites;
-		//SymbolList<Actions> m_actions;
+		List<Property> m_properites;
+		//List<Actions> m_actions;
 	};
 }

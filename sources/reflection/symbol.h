@@ -32,31 +32,55 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	class EnumBase : public Type
+	struct SymbolNameHasher
 	{
-	public:
-		EnumBase(SymbolName i_name, size_t i_size, size_t i_alignment, const SpecialFunctions & i_special_functions)
-			: Type(SymbolTypeId::is_enum | SymbolTypeId::is_type, i_name, i_size, i_alignment, i_special_functions)
-				{ }
+		uint32_t operator () (const SymbolName & i_source) const
+		{
+			return i_source.hash();
+		}
 	};
 
-	template <typename UNDERLYING_TYPE>
-		class Enum : public EnumBase
+	class Attribute
 	{
 	public:
 
-		using Member = EnumMember<UNDERLYING_TYPE>;
+		Attribute(const Class & i_type) : m_type(i_type) { }
 
-		Enum(SymbolName i_name, const SpecialFunctions & i_special_functions);
-		
-		const List<Member> & members() const			{ return m_members; }
+		Attribute(const Symbol &) = delete;
 
-		const QualifiedTypePtr & underlying_type() const	{ return get_type<UNDERLYING_TYPE>(); }
-
-		void set_members(List<Member> && i_members)	{ m_members = std::move(i_members); }
+		Attribute & operator = (const Attribute &) = delete;
 
 	private:
-		List<Member> m_members;
+		const Class & m_type;
 	};
 
-} // namespace reflective
+	/** A symbol is a named object. It may be a type (a class, an enum), a parameter, a property, etc.
+		Many classes of reflective derive (directky or indirecty) from Symbol. */
+	class Symbol
+	{
+	protected:
+		
+		Symbol(SymbolName i_name)
+			: m_name(std::move(i_name)) { }
+
+	public:
+
+		Symbol(const Symbol &) = delete;
+
+		Symbol & operator = (const Symbol &) = delete;
+
+		const SymbolName & name() const
+		{
+			return m_name;
+		}
+
+		const List<Attribute> & attributes() const	{ return m_attributes; }
+
+		void set_attributes(List<Attribute> && i_attributes) { m_attributes = std::move(i_attributes); }
+
+	private:
+		const SymbolName m_name;
+		List<Attribute> m_attributes;
+	};
+}
+

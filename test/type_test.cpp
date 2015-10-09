@@ -33,7 +33,7 @@ namespace reflective
 	void setup_type(ReflectingType<MyNamespace::OtherNamespace::MyClass> & i_class, MyNamespace::OtherNamespace::MyClass *)
 	{
 		using ThisClass = MyNamespace::OtherNamespace::MyClass;
-		SymbolList<Property> empty = { 
+		List<Property> empty = { 
 			make_property<ThisClass>("IntVar", &ThisClass::m_int_var),
 			make_property<ThisClass>("FloatVar", &ThisClass::m_float_var),
 		};

@@ -25,38 +25,24 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ***********************************************************************************/
 
-#pragma once
-#ifndef INCLUDING_REFLECTIVE
-	#error "cant't include this header directly, include reflective.h instead"
-#endif
-
 namespace reflective
 {
-	class EnumBase : public Type
-	{
-	public:
-		EnumBase(SymbolName i_name, size_t i_size, size_t i_alignment, const SpecialFunctions & i_special_functions)
-			: Type(SymbolTypeId::is_enum | SymbolTypeId::is_type, i_name, i_size, i_alignment, i_special_functions)
-				{ }
-	};
-
-	template <typename UNDERLYING_TYPE>
-		class Enum : public EnumBase
+	class UnitTesingManager
 	{
 	public:
 
-		using Member = EnumMember<UNDERLYING_TYPE>;
+		static UnitTesingManager & instance();
 
-		Enum(SymbolName i_name, const SpecialFunctions & i_special_functions);
-		
-		const List<Member> & members() const			{ return m_members; }
-
-		const QualifiedTypePtr & underlying_type() const	{ return get_type<UNDERLYING_TYPE>(); }
-
-		void set_members(List<Member> && i_members)	{ m_members = std::move(i_members); }
+		void add_test(std::function<void()> i_test);
 
 	private:
-		List<Member> m_members;
+
+		struct TestEntry
+		{
+			std::function<void()> m_test;
+		};
+		
+		std::vector<TestEntry> m_tests;
 	};
 
-} // namespace reflective
+}

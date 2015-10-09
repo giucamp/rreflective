@@ -25,43 +25,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ***********************************************************************************/
 
-#pragma once
-#ifndef INCLUDING_REFLECTIVE
-	#error "cant't include this header directly, include reflective.h instead"
-#endif
+#include <functional>
+
+#include "..\reflective.h"
 
 namespace reflective
 {
-	struct SymbolNameHasher
-	{
-		uint32_t operator () (const SymbolName & i_source) const
-		{
-			return i_source.hash();
-		}
-	};
-
-	/** A symbol is a named object. It may be a type (a class, an enum), a parameter, a property, etc.
-		Many classes of reflective derive (directky or indirecty) from Symbol. */
-	class Symbol
-	{
-	protected:
-		
-		Symbol(SymbolName i_name)
-			: m_name(std::move(i_name)) { }
-
-	public:
-
-		Symbol(const Symbol &) = delete;
-
-		Symbol & operator = (const Symbol &) = delete;
-
-		const SymbolName & name() const
-		{
-			return m_name;
-		}
-
-	private:
-		const SymbolName m_name;
-	};
+	class UnitTesingManager;
 }
 
+
+#include "uint_test_manager.h"

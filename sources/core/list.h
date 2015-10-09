@@ -36,21 +36,13 @@ namespace reflective
 		This class is moveable but not copyable.
 	*/
 	template <typename SYMBOL>
-		class SymbolList
+		class List
 	{
 	public:
 
-		//SymbolList(SymbolList && i_from) = default;
+		List() {}
 
-		//SymbolList & operator = (SymbolList && i_from) = default;
-
-		//SymbolList(const SymbolList &) = delete;
-
-		//SymbolList & operator = (const SymbolList & i_from) = delete;
-
-		SymbolList() {}
-
-		SymbolList(std::initializer_list< std::shared_ptr<const SYMBOL> > i_symbols)
+		List(std::initializer_list< std::shared_ptr<const SYMBOL> > i_symbols)
 			: m_symbols(std::move(i_symbols))
 		{
 		}		

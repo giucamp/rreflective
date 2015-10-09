@@ -1,34 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="class">
-      <UniqueIdentifier>{8a7f1ee3-36fc-4f1c-abd6-33f6c8b95f11}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="class\property">
-      <UniqueIdentifier>{22b0283f-ce43-4767-b216-38d8540bd127}</UniqueIdentifier>
-    </Filter>
     <Filter Include="core">
       <UniqueIdentifier>{db18c095-47d7-490e-aaae-e3a22225a7aa}</UniqueIdentifier>
     </Filter>
     <Filter Include="reflection">
       <UniqueIdentifier>{fbb2c830-fbe2-4ae6-9504-2a8fa165c772}</UniqueIdentifier>
     </Filter>
+    <Filter Include="unit_testing">
+      <UniqueIdentifier>{4d0f4d0c-212d-4cb7-aa11-7a286d93f211}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="reflection\property">
+      <UniqueIdentifier>{5aee0120-f38c-441c-8026-8735713eb228}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\sources\reflective_common.h" />
     <ClInclude Include="..\sources\reflective_settings.h" />
-    <ClInclude Include="..\sources\class\property\Property.h">
-      <Filter>class\property</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sources\class\Class.h">
-      <Filter>class</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sources\class\ClassMember.h">
-      <Filter>class</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sources\class\property\DataMemberProperty.h">
-      <Filter>class\property</Filter>
-    </ClInclude>
     <ClInclude Include="..\sources\reflective.h" />
     <ClInclude Include="..\sources\core\traits.h">
       <Filter>core</Filter>
@@ -42,16 +30,10 @@
     <ClInclude Include="..\sources\core\out_string_buffer.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="..\sources\core\symbol_list.h">
-      <Filter>core</Filter>
-    </ClInclude>
     <ClInclude Include="..\sources\core\ptr_string.h">
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="..\sources\core\string_hash.h">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sources\core\symbol.h">
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="..\sources\core\bulk_list.h">
@@ -102,17 +84,32 @@
     <ClInclude Include="..\sources\reflection\namespace_member.h">
       <Filter>reflection</Filter>
     </ClInclude>
+    <ClInclude Include="..\sources\core\list.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\reflection\symbol.h">
+      <Filter>reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\reflection\class.h">
+      <Filter>reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\reflection\class_member.h">
+      <Filter>reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\reflection\property\property.h">
+      <Filter>reflection\property</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\reflection\property\data_member_property.h">
+      <Filter>reflection\property</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\unit_testing\uint_test_manager.h">
+      <Filter>unit_testing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\unit_testing\unit_testing.h">
+      <Filter>unit_testing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\sources\class\property\Property.cpp">
-      <Filter>class\property</Filter>
-    </ClCompile>
-    <ClCompile Include="..\sources\class\Class.cpp">
-      <Filter>class</Filter>
-    </ClCompile>
-    <ClCompile Include="..\sources\class\ClassMember.cpp">
-      <Filter>class</Filter>
-    </ClCompile>
     <ClCompile Include="..\sources\reflective.cpp" />
     <ClCompile Include="..\sources\core\in_string_buffer.cpp">
       <Filter>core</Filter>
@@ -143,6 +140,21 @@
     </ClCompile>
     <ClCompile Include="..\sources\reflection\namespace_member.cpp">
       <Filter>reflection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\reflection\class.cpp">
+      <Filter>reflection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\reflection\class_member.cpp">
+      <Filter>reflection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\reflection\property\property.cpp">
+      <Filter>reflection\property</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\unit_testing\unit_testing.cpp">
+      <Filter>unit_testing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\unit_testing\uint_test_manager.cpp">
+      <Filter>unit_testing</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

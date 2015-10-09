@@ -134,19 +134,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\sources\class\Class.h" />
-    <ClInclude Include="..\sources\class\ClassMember.h" />
-    <ClInclude Include="..\sources\class\property\DataMemberProperty.h" />
-    <ClInclude Include="..\sources\class\property\Property.h" />
     <ClInclude Include="..\sources\core\bulk_list.h" />
     <ClInclude Include="..\sources\core\ptr_string.h" />
     <ClInclude Include="..\sources\core\identifier.h" />
     <ClInclude Include="..\sources\core\in_string_buffer.h" />
     <ClInclude Include="..\sources\core\out_string_buffer.h" />
     <ClInclude Include="..\sources\core\string_hash.h" />
-    <ClInclude Include="..\sources\core\symbol.h" />
-    <ClInclude Include="..\sources\core\symbol_list.h" />
+    <ClInclude Include="..\sources\core\list.h" />
     <ClInclude Include="..\sources\core\traits.h" />
+    <ClInclude Include="..\sources\reflection\class.h" />
+    <ClInclude Include="..\sources\reflection\class_member.h" />
     <ClInclude Include="..\sources\reflection\class_template.h" />
     <ClInclude Include="..\sources\reflection\enum.h" />
     <ClInclude Include="..\sources\reflection\enum_member.h" />
@@ -157,34 +154,21 @@
     <ClInclude Include="..\sources\reflection\obj_ptr.h" />
     <ClInclude Include="..\sources\reflection\parameter.h" />
     <ClInclude Include="..\sources\reflection\primitive_types.h" />
+    <ClInclude Include="..\sources\reflection\property\data_member_property.h" />
+    <ClInclude Include="..\sources\reflection\property\property.h" />
     <ClInclude Include="..\sources\reflection\qualified_type_ptr.h" />
     <ClInclude Include="..\sources\reflection\special_functions.h" />
     <ClInclude Include="..\sources\reflection\string_functions.h" />
+    <ClInclude Include="..\sources\reflection\symbol.h" />
     <ClInclude Include="..\sources\reflection\type.h" />
     <ClInclude Include="..\sources\reflection\updown_caster.h" />
     <ClInclude Include="..\sources\reflective.h" />
     <ClInclude Include="..\sources\reflective_common.h" />
     <ClInclude Include="..\sources\reflective_settings.h" />
+    <ClInclude Include="..\sources\unit_testing\uint_test_manager.h" />
+    <ClInclude Include="..\sources\unit_testing\unit_testing.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\sources\class\Class.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\sources\class\ClassMember.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\sources\class\property\Property.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\sources\core\in_string_buffer.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -192,6 +176,18 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\sources\core\out_string_buffer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\reflection\class.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\reflection\class_member.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -227,6 +223,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\sources\reflection\property\property.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\sources\reflection\qualified_type_ptr.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -246,6 +248,13 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\sources\reflective.cpp" />
+    <ClCompile Include="..\sources\unit_testing\uint_test_manager.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\unit_testing\unit_testing.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\sources\core\in_string_buffer.inl" />
