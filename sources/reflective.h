@@ -74,6 +74,10 @@ namespace reflective
 	{
 		Functions
 	};
+
+	// void_t invented by Walter E. Brown - it will be available is std from C++17 on
+	template< class... >
+		using void_t = void;
 }
 
 #include "reflective_settings.h"
