@@ -160,36 +160,4 @@ namespace reflective
 		REFLECTIVE_ASSERT(i_indirection_level <= indirection_levels(), "indirection level out of bounds" );
 		return (m_volatileness_word & (static_cast<uintptr_t>(1) << i_indirection_level)) != 0;
 	}
-
-	template <typename OUT_STREAM>
-		inline void QualifiedTypePtr::to_string(OUT_STREAM & i_dest) const
-	{
-		if (!is_empty())
-		{
-			i_dest << final_type()->name();
-
-			uintptr_t level = 0;
-			const uintptr_t ind_levels = indirection_levels();
-			do {
-
-				if (is_const(level))
-				{
-					i_dest << " const";
-				}
-
-				if (is_volatile(level))
-				{
-					i_dest << " volatile";
-				}
-
-				if (level < ind_levels)
-				{
-					i_dest << " *";
-				}
-
-				level++;
-
-			} while (level <= ind_levels);
-		}
-	}
 }

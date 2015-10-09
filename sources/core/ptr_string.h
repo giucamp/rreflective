@@ -45,6 +45,8 @@ namespace reflective
 		PtrString(const char * i_chars)
 			: m_chars(i_chars) { }
 
+		const char * data() const { return m_chars; }
+
 		const char * c_str() const { return m_chars; }
 
 		const char * begin() const { return m_chars; }
@@ -58,13 +60,19 @@ namespace reflective
 		size_t size() const { return std::strlen(m_chars);  }
 
 		size_t length() const { return std::strlen(m_chars); }
-
-		template <typename OUT_STREAM>
-			void to_string(OUT_STREAM & i_dest) const
-		{
-			i_dest << m_chars;
-		}
 	};
+
+	inline std::ostream & operator << (std::ostream & i_dest, const PtrString & i_string)
+	{
+		i_dest.write(i_string.data(), i_string.length());
+		return i_dest;
+	}
+
+	inline OutStringBuffer & operator << (OutStringBuffer & i_dest, const PtrString & i_string)
+	{
+		i_dest.write_nstr(i_string.data(), i_string.length());
+		return i_dest;
+	}
 
 	template <typename TYPE>
 		class ArrayView
@@ -151,8 +159,15 @@ namespace reflective
 		size_t m_size;
 	};
 
-	inline void to_string(OutStringBuffer & i_dest, const StringView & i_string_view)
+	inline std::ostream & operator << (std::ostream & i_dest, const StringView & i_string)
 	{
-		i_dest.write_nstr(i_string_view.data(), i_string_view.size());
+		i_dest.write(i_string.data(), i_string.length());
+		return i_dest;
+	}
+
+	inline OutStringBuffer & operator << (OutStringBuffer & i_dest, const StringView & i_string)
+	{
+		i_dest.write_nstr(i_string.data(), i_string.length());
+		return i_dest;
 	}
 }

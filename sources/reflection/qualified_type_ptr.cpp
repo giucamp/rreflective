@@ -62,7 +62,51 @@ namespace reflective
 			auto name = i_source.accept_until([](char i_char){ return isalnum(i_char) == 0; });
 			return GlobalRegistry::instance().find_type(name);
 		}
+
+		template <typename OUT_STREAM>
+			inline void generic_to_string(OUT_STREAM & i_dest, const QualifiedTypePtr & i_qt)
+		{
+			if (!i_qt.is_empty())
+			{
+				i_dest << i_qt.final_type()->name();
+
+				uintptr_t level = 0;
+				const uintptr_t ind_levels = i_qt.indirection_levels();
+				do {
+
+					if (i_qt.is_const(level))
+					{
+						i_dest << " const";
+					}
+
+					if (i_qt.is_volatile(level))
+					{
+						i_dest << " volatile";
+					}
+
+					if (level < ind_levels)
+					{
+						i_dest << " *";
+					}
+
+					level++;
+
+				} while (level <= ind_levels);
+			}
+		}
 	}
+
+	OutStringBuffer & operator << (OutStringBuffer & i_dest, const QualifiedTypePtr & i_qualified_type)
+	{
+		details::generic_to_string(i_dest, i_qualified_type);
+		return i_dest;
+	}
+
+	std::ostream & operator << (std::ostream & i_dest, const QualifiedTypePtr & i_qualified_type)
+	{
+		details::generic_to_string(i_dest, i_qualified_type);
+		return i_dest;
+	}	
 
 	bool QualifiedTypePtr::assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest)
 	{

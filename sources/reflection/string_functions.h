@@ -37,21 +37,25 @@ namespace reflective
 	public:
 
 		using ToString = void(*)(const void * i_object, OutStringBuffer & i_dest);
+		using ToStdStream = void(*)(const void * i_object, std::ostream & i_dest);
 		using AssignFromString = bool (*)(void * i_object, InStringBuffer & i_source, OutStringBuffer & i_error_dest);
 
 		StringFunctions()
-			: m_to_string_function(nullptr), m_assign_from_string_function(nullptr)
+			: m_to_string(nullptr), m_assign_from_string_function(nullptr)
 		{
 		}
 
-		StringFunctions(ToString i_to_string_function, AssignFromString i_assign_from_string_function)
-			: m_to_string_function(i_to_string_function), m_assign_from_string_function(i_assign_from_string_function)
+		StringFunctions(ToString i_to_string, ToStdStream i_to_std_stream, AssignFromString i_assign_from_string_function)
+			: m_to_string(i_to_string), m_to_std_stream(i_to_std_stream), m_assign_from_string_function(i_assign_from_string_function)
 		{
 		}
 
 		template <typename TYPE>
 			static StringFunctions from_type()
-				{ return StringFunctions( &to_string_method_adater<TYPE>, &assign_from_string_method_adater<TYPE> ); }
+				{ return StringFunctions( 
+					&to_string_method_adater<TYPE>, 
+					&to_std_stream_method_adater<TYPE>,
+					&assign_from_string_method_adater<TYPE> ); }
 			
 	private:
 		
@@ -59,7 +63,14 @@ namespace reflective
 		{
 			const TYPE & obj = static_cast<const TYPE*>(i_object);
 			dbg_object_validate(obj);
-			obj.to_string(i_dest);
+			i_dest << obj;
+		}
+
+		template <typename TYPE> void to_std_stream_method_adater(const void * i_object, std::ostream & i_dest)
+		{
+			const TYPE & obj = static_cast<const TYPE*>(i_object);
+			dbg_object_validate(obj);
+			i_dest << obj;
 		}
 
 		template <typename TYPE> bool assign_from_string_method_adater(void * i_object, InStringBuffer & i_source, OutStringBuffer & i_error_dest)
@@ -70,7 +81,8 @@ namespace reflective
 		}
 
 	private:
-		ToString m_to_string_function;
+		ToString m_to_string;
+		ToStdStream m_to_std_stream;
 		AssignFromString m_assign_from_string_function;
 	};
 }

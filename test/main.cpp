@@ -2,6 +2,7 @@
 
 #include "..\sources\reflective.h"
 #include <sstream>
+#include <iostream>
 
 void Name_test();
 void SpecialFunctions_test();
@@ -11,6 +12,12 @@ void bulk_list__test();
 
 int main()
 {
+	{
+		using namespace std;
+		using namespace reflective;
+		cout << get_type<void***const**volatile*******>() << endl;
+	}
+
 	std::ostringstream s;
 	s << 1;
 	s << 1.f;

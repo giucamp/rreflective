@@ -111,12 +111,6 @@ namespace reflective
 			return m_hash >= i_source.m_hash;
 		}
 
-		template <typename OUT_STREAM>
-			void to_string(OUT_STREAM & i_dest) const
-		{
-			i_dest << m_string;
-		}
-		
 	private: // data members
 		HashType m_hash;
 		String m_string;
@@ -194,15 +188,39 @@ namespace reflective
 		{
 			return m_hash >= i_source.m_hash;
 		}
-
-		template <typename OUT_STREAM>
-			void to_string(OUT_STREAM & i_dest) const
-		{
-			i_dest << '%' << m_hash;
-		}
-
+		
 	private: // data members
 		HashType m_hash;
 	};
+
+	template < typename HASHER, typename STRING >
+		inline std::ostream & operator << (std::ostream & i_dest, const Identifier<HASHER, STRING> & i_identifier)
+	{
+		const auto & string = i_identifier.string();
+		i_dest.write(string.data(), string.length());
+		return i_dest;
+	}
+
+	template < typename HASHER, typename STRING >
+		inline OutStringBuffer & operator << (OutStringBuffer & i_dest, const Identifier<HASHER, STRING> & i_identifier)
+	{
+		const auto & string = i_identifier.string();
+		i_dest.write_nstr(string.data(), string.length());
+		return i_dest;
+	}
+
+	template < typename HASHER >
+		inline std::ostream & operator << (std::ostream & i_dest, const Identifier<HASHER, void> & i_identifier)
+	{
+		i_dest << '%' << i_identifier.hash();
+		return i_dest;
+	}
+
+	template < typename HASHER >
+		inline OutStringBuffer & operator << (OutStringBuffer & i_dest, const Identifier<HASHER, void> & i_identifier)
+	{
+		i_dest << '%' << i_identifier.hash();
+		return i_dest;
+	}
 }
 
