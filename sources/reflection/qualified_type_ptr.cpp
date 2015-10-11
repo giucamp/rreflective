@@ -18,7 +18,7 @@ namespace reflective
 			return true;
 	}
 
-	QualifiedTypePtr::QualifiedTypePtr(const Type & i_final_type, ArrayView<CV_Flags> i_cv_flags)
+	QualifiedTypePtr::QualifiedTypePtr(const Type & i_final_type, ArrayView<const CV_Flags> i_cv_flags)
 		: m_final_type(&i_final_type)
 	{
 		REFLECTIVE_ASSERT(i_cv_flags.size() <= s_max_indirection_levels, "The number of indirection levels exceeds s_max_indirection_levels");
@@ -300,8 +300,7 @@ namespace reflective
 		REFLECTIVE_TEST_ASSERT(get_type<void *const>().is_const(0));
 		
 		{
-			CV_Flags cv_flags[] = { CV_Flags::Const | CV_Flags::Volatile, CV_Flags::None, CV_Flags::Volatile };
-			QualifiedTypePtr q_type_ptr(get_naked_type<float>(), cv_flags);
+			QualifiedTypePtr q_type_ptr(get_naked_type<float>(), { CV_Flags::Const | CV_Flags::Volatile, CV_Flags::None, CV_Flags::Volatile });
 			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_empty());
 			REFLECTIVE_TEST_ASSERT(q_type_ptr.final_type() == &get_naked_type<float>());
 			REFLECTIVE_TEST_ASSERT(q_type_ptr.primary_type() == &get_naked_type<void*>());
@@ -320,13 +319,11 @@ namespace reflective
 			REFLECTIVE_TEST_ASSERT(q_type_ptr == get_type<float volatile * * volatile const >());
 		}
 		{
-			CV_Flags flags[] = { CV_Flags::None };
-			REFLECTIVE_TEST_ASSERT(QualifiedTypePtr(get_naked_type<void>(), ArrayView<CV_Flags>()) == QualifiedTypePtr(get_naked_type<void>(), flags));
+			REFLECTIVE_TEST_ASSERT(QualifiedTypePtr(get_naked_type<void>(), {} ) == QualifiedTypePtr(get_naked_type<void>(), { CV_Flags::None }));
 		}
 
 		{
-			CV_Flags cv_flags[] = { CV_Flags::Const | CV_Flags::Volatile, CV_Flags::None, CV_Flags::Volatile };
-			QualifiedTypePtr q_type_ptr(get_naked_type<void>(), cv_flags);
+			QualifiedTypePtr q_type_ptr(get_naked_type<void>(), { CV_Flags::Const | CV_Flags::Volatile, CV_Flags::None, CV_Flags::Volatile });
 			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_empty());
 			REFLECTIVE_TEST_ASSERT(q_type_ptr.final_type() == &get_naked_type<void>());
 			REFLECTIVE_TEST_ASSERT(q_type_ptr.primary_type() == &get_naked_type<void*>());

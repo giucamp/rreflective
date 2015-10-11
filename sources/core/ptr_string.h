@@ -89,11 +89,15 @@ namespace reflective
 		{
 		}
 
-		template <size_t SIZE>
+		/*template <size_t SIZE>
 			ArrayView(TYPE(&i_objects)[SIZE])
 				: m_objects(i_objects), m_size(SIZE)
 		{
-		}
+		}*/
+
+		ArrayView(std::initializer_list< typename std::remove_const< TYPE>::type > i_initializer_list)
+			: m_objects(i_initializer_list.begin()), m_size(i_initializer_list.end() - i_initializer_list.begin())
+				{ }
 
 		TYPE * data() const { return m_objects; }
 

@@ -159,7 +159,7 @@ namespace reflective
 			@param i_cv_flags cv-qualification for each indirection level. The n-th element of this array specifies a combination of cv flags for the n-th indirection 
 				level.The number of indirection levels of the type is the size of this array, minus 1. So, to construct a pointer to a pointer, specify an array
 				of 3 elements. If the array is empty, the number of indirection levels is zero. */
-		QualifiedTypePtr(const Type & i_final_type, ArrayView<CV_Flags> i_cv_flags);
+		QualifiedTypePtr(const Type & i_final_type, ArrayView<const CV_Flags> i_cv_flags);
 
 		/** Copies from the source QualifiedTypePtr */
 		QualifiedTypePtr(const QualifiedTypePtr & i_source) = default;
