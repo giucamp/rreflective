@@ -41,7 +41,9 @@ namespace reflective
 
 	static const size_t s_global_registry_reserve = 512;
 
-	#define REFLECTIVE_ENABLE_TESTING		1
+	#define REFLECTIVE_ENABLE_TESTING					1
+
+	#define REFLECTIVE_ENABLE_MULTIPLE_INHERITANCE		1
 }
 	
 #define REFLECTIVE_DEBUG 1

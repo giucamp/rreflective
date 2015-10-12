@@ -60,7 +60,7 @@ namespace reflective
 
 			static const ReflectedType * create()
 			{
-				Type * new_type = new Type(SymbolTypeId::is_type, "void", 0, 1, SpecialFunctions(nullptr, nullptr, nullptr, nullptr) );
+				Type * new_type = new Type(SymbolTypeId::is_type, "void", 0, 1, SpecialFunctions(nullptr, nullptr, nullptr, nullptr), {});
 				return new_type;
 			}
 		};
@@ -73,7 +73,7 @@ namespace reflective
 
 			static const ReflectedType * create()
 			{
-				Type * new_type = new Type(SymbolTypeId::is_type, get_type_full_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value, SpecialFunctions::from_type<TYPE>());
+				Type * new_type = new Type(SymbolTypeId::is_type, get_type_full_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value, SpecialFunctions::from_type<TYPE>(), {});
 				setup_type(*new_type, static_cast<TYPE*>(nullptr));
 				return new_type;
 			}
@@ -86,7 +86,7 @@ namespace reflective
 
 			static const ReflectedType * create()
 			{
-				Class * class_obj = new Class(get_type_full_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value, SpecialFunctions::from_type<TYPE>());
+				Class * class_obj = new Class(get_type_full_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value, SpecialFunctions::from_type<TYPE>(), {});
 				setup_type(*class_obj, static_cast<TYPE*>(nullptr));
 				return class_obj;
 			}

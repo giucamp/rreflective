@@ -40,6 +40,16 @@ namespace reflective
 	{
 	public:
 
+		using Caster = void * (*)(void * i_source);
+		
+		UpDownCaster()
+			: m_derived_to_base_func(nullptr), m_base_to_derived_func(nullptr)
+				{ }
+
+		UpDownCaster(Caster i_derived_to_base_func, Caster i_base_to_derived_func)
+			: m_derived_to_base_func(i_derived_to_base_func), m_base_to_derived_func(i_base_to_derived_func)
+				{ }
+
 		template <typename BASE, typename DERIVED>
 			static UpDownCaster from_types()
 		{
@@ -72,12 +82,6 @@ namespace reflective
 
 	private:
 		
-		using Caster = void * (*)(void * i_source);
-		
-		UpDownCaster(Caster i_derived_to_base_func, Caster i_base_to_derived_func)
-			: m_derived_to_base_func(i_derived_to_base_func), m_base_to_derived_func(i_base_to_derived_func)
-				{ }
-
 		template <typename BASE, typename DERIVED>
 			static void * cast_to_base(void * i_derived_ptr)
 		{
