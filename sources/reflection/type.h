@@ -74,11 +74,19 @@ namespace reflective
 
 					// inheritance
 
+		using MostDerivedFunc = const Type & (*)(const void * i_object);
+
 		bool is_or_inherits_from(const Type & i_base_type) const;
 
 		void * upcast(const Type & i_base_type, void * i_object) const;
 
-		bool to_most_derived(void * i_object, const Type * * o_most_derived_type) const;
+		void * downcast(const Type & i_derived_type, void * i_object) const;
+
+		const Type * most_derived(const void * i_object) const;
+
+	private:
+		void add_derived( Type * i_derived_type );
+		void remove_derived( Type * i_derived_type );
 
 	private:
 
@@ -86,10 +94,13 @@ namespace reflective
 		const size_t m_size;
 		const size_t m_alignment;
 
+		// inheritance data
 		BaseType m_single_base;
 		#if REFLECTIVE_ENABLE_MULTIPLE_INHERITANCE
 			std::vector<BaseType> m_base_types;
 		#endif
+		MostDerivedFunc m_most_derived_func;
+		Type * m_first_derived, * m_next_derived;
 
 		// misc
 		StringFunctions m_string_functions;
