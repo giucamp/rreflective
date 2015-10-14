@@ -59,5 +59,14 @@ namespace reflective
 		{
 			return ConstIterator(nullptr);
 		}
+
 	} // details
+
+	#if REFLECTIVE_ENABLE_MULTIPLE_INHERITANCE
+		inline bool Type::can_upcast_to(const Type & i_base_type) const
+		{
+			return base_type_multeplicity(i_base_type) == 1;
+		}
+	#endif
+
 }

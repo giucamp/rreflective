@@ -95,14 +95,16 @@ namespace reflective
 		
 		static const Type * accept_full_name(InStringBuffer & i_source, OutStringBuffer & i_error_dest);
 
-
-					// inheritance
+					//
 
 		using MostDerivedFunc = const Type & (*)(const void * i_object);
 
+
+					// inheritance	
+
 		const details::DerivedTypesList & derived_types() const { return m_derived_types; }
 
-		bool is_or_inherits_from(const Type & i_base_type) const;
+		bool can_upcast_to(const Type & i_base_type) const;
 
 		void * upcast(const Type & i_base_type, void * i_object) const;
 
@@ -110,9 +112,31 @@ namespace reflective
 
 		const Type * most_derived(const void * i_object) const;
 
+		void * try_dynamic_cast(const Type & i_dest_type, void * i_source_object) const
+		{
+			const Type * const most_derived_type = most_derived(i_source_object);
+			void * const most_derived_object = most_derived_type->downcast(*most_derived_type, i_source_object);
+
+			void * const dest_object = most_derived_type->upcast(i_dest_type, most_derived_object);
+			return dest_object;
+		}			
+		
+
+					// unit testing
+
+		#if REFLECTIVE_ENABLE_SELF_TESTING
+			/** Runs an unit test for this class */
+			static void unit_test();
+		#endif
+
 	private:
+
 		void add_derived( Type & i_derived_type );
 		void remove_derived( Type & i_derived_type );
+
+		#if REFLECTIVE_ENABLE_MULTIPLE_INHERITANCE	
+			size_t base_type_multeplicity(const Type & i_base_type) const;
+		#endif
 
 	private:
 
@@ -123,7 +147,7 @@ namespace reflective
 		// inheritance data
 		BaseType m_single_base;
 		#if REFLECTIVE_ENABLE_MULTIPLE_INHERITANCE
-			std::vector<BaseType> m_base_types;
+			std::vector<BaseType> m_other_base_types;
 		#endif
 		MostDerivedFunc m_most_derived_func;
 		Type * m_next_derived;

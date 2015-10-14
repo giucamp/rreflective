@@ -15,10 +15,10 @@ namespace reflective
 		{
 			m_single_base = i_base_types[0];
 			#if REFLECTIVE_ENABLE_MULTIPLE_INHERITANCE
-				m_base_types.resize(i_base_types.size() - 1);
+				m_other_base_types.resize(i_base_types.size() - 1);
 				for (size_t base_type_index = 1; base_type_index < i_base_types.size(); base_type_index++)
 				{
-					m_base_types[base_type_index - 1] = i_base_types[base_type_index];
+					m_other_base_types[base_type_index - 1] = i_base_types[base_type_index];
 				}
 			#else
 				REFLECTIVE_ASSERT(i_base_types.size() == 1, "More than one base type provided, but multiple inheritance is disabled (REFLECTIVE_ENABLE_MULTIPLE_INHERITANCE si false)");
@@ -80,34 +80,62 @@ namespace reflective
 
 			// inheritance
 
-	bool Type::is_or_inherits_from(const Type & i_base_type) const
-	{
-		const Type * curr_type = this;
-		do {
+	#if REFLECTIVE_ENABLE_MULTIPLE_INHERITANCE	
 
-			if (curr_type == &i_base_type)
-			{
-				return true;
-			}
+		/* this internal function count the occurrences of i_base_type among the base 
+			types of this type, but stop the search once the count is equal or greater than 2 */
+		size_t Type::base_type_multeplicity(const Type & i_base_type) const
+		{
+			size_t result = 0;
+			const Type * curr_type = this;
+			do {
 
-			#if REFLECTIVE_ENABLE_MULTIPLE_INHERITANCE
-
-				for (const auto & base : m_base_types)
+				if (curr_type == &i_base_type)
 				{
-					if (base.base_type()->is_or_inherits_from(i_base_type))
+					result++;
+					if (result >= 2)
 					{
-						return true;
+						return result;
 					}
 				}
 
-			#endif
+				for (const auto & base : m_other_base_types)
+				{
+					result += base.base_type()->base_type_multeplicity(i_base_type);
 
-			curr_type = curr_type->m_single_base.base_type();
+					if (result >= 2)
+					{
+						return result;
+					}
+				}
 
-		} while (curr_type != nullptr);
+				curr_type = curr_type->m_single_base.base_type();
 
-		return false;
-	}
+			} while (curr_type != nullptr);
+
+			return result;
+		}
+
+	#endif
+
+	#if !REFLECTIVE_ENABLE_MULTIPLE_INHERITANCE
+		bool Type::can_upcast_to(const Type & i_base_type) const
+		{
+			const Type * curr_type = this;
+			do {
+
+				if (curr_type == &i_base_type)
+				{
+					return true;
+				}
+
+				curr_type = curr_type->m_single_base.base_type();
+
+			} while (curr_type != nullptr);
+
+			return false;
+		}
+	#endif
 
 	const Type * Type::most_derived(const void * i_object) const
 	{
@@ -119,6 +147,20 @@ namespace reflective
 			{
 				return &(*curr_type->m_most_derived_func)(curr_object);
 			}
+
+			#if REFLECTIVE_ENABLE_MULTIPLE_INHERITANCE
+
+				for (const auto & base : m_other_base_types)
+				{
+					const void * base_object = base.updown_caster().derived_to_base(curr_object);
+					auto res = base.base_type()->most_derived(base_object);
+					if (res != nullptr)
+					{
+						return res;
+					}
+				}
+
+			#endif
 
 			const auto & base = curr_type->m_single_base;
 			curr_type = base.base_type();
@@ -147,9 +189,10 @@ namespace reflective
 
 			#if REFLECTIVE_ENABLE_MULTIPLE_INHERITANCE
 
-				for (const auto & base : m_base_types)
+				for (const auto & base : m_other_base_types)
 				{
-					void * casted = base.base_type()->upcast(i_base_type, curr_object);
+					void * base_object = base.updown_caster().derived_to_base(curr_object);
+					void * casted = base.base_type()->upcast(i_base_type, base_object);
 					if (casted != nullptr)
 					{
 						return casted;
@@ -171,4 +214,19 @@ namespace reflective
 	{
 		return i_object;
 	}
+
+	#if REFLECTIVE_ENABLE_SELF_TESTING
+
+		namespace details
+		{
+			void test_type_derived_list();
+		}
+
+		void Type::unit_test()
+		{
+			details::test_type_derived_list();
+		}
+
+	#endif
+
 }

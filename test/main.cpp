@@ -22,6 +22,7 @@ int main()
 	s << 1;
 	s << 1.f;
 
+	reflective::Type::unit_test();
 	reflective::Namespace::unit_test();
 	reflective::QualifiedTypePtr::unit_test();
 
