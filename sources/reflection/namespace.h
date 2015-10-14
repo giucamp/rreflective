@@ -43,7 +43,7 @@ namespace reflective
 			void add(NamespaceMember & i_member);
 			void remove(NamespaceMember & i_member);
 
-			class ConstIterator;
+			class ConstIterator; // defined later
 			
 			ConstIterator begin() const;
 			ConstIterator end() const;

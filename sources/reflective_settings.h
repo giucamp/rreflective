@@ -43,6 +43,8 @@ namespace reflective
 
 	#define REFLECTIVE_ENABLE_TESTING					1
 
+	#define REFLECTIVE_ENABLE_SELF_TESTING				1
+
 	#define REFLECTIVE_ENABLE_MULTIPLE_INHERITANCE		1
 }
 	

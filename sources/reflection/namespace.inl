@@ -90,5 +90,5 @@ namespace reflective
 		{
 			return ConstIterator(nullptr);
 		}
-	}
+	} // details
 }

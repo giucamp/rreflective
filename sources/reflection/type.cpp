@@ -5,7 +5,7 @@ namespace reflective
 			const SpecialFunctions & i_special_functions,
 			const ArrayView<BaseType> & i_base_types )
 			: NamespaceMember(i_type_id, std::move(i_name)), m_special_functions(i_special_functions), m_size(i_size), m_alignment(i_alignment), 
-			m_most_derived_func(nullptr), m_first_derived(nullptr), m_next_derived(nullptr)
+			m_most_derived_func(nullptr), m_next_derived(nullptr)
 	{
 		REFLECTIVE_ASSERT(i_size <= s_max_size, "The size of the type exceeds s_max_size");
 		REFLECTIVE_ASSERT(is_power_of_2(i_alignment), "The alignment of the type is not a power of 2");
@@ -29,23 +29,28 @@ namespace reflective
 
 			// derived types list
 
-	void Type::add_derived(Type * i_derived_type)
+	inline details::DerivedTypesList::DerivedTypesList()
+		: m_first(nullptr)
 	{
-		REFLECTIVE_ASSERT(i_derived_type->m_next_derived == nullptr, "Inconsistent list of derived types (calling add_derived twice?)");
-		i_derived_type->m_next_derived = m_first_derived;
-		m_first_derived = i_derived_type;
 	}
 
-	void Type::remove_derived(Type * i_derived_type)
+	inline void details::DerivedTypesList::add(Type & i_type)
 	{
-		Type * curr = m_first_derived, *prev = nullptr;
+		REFLECTIVE_ASSERT(i_type.m_next_derived == nullptr, "Inconsistent list of derived types (calling add_derived twice?)");
+		i_type.m_next_derived = m_first;
+		m_first = &i_type;
+	}
+
+	inline void details::DerivedTypesList::remove(Type & i_type)
+	{
+		Type * curr = m_first, *prev = nullptr;
 		do {
 
-			if (curr == i_derived_type)
+			if (curr == &i_type)
 			{
 				if (prev == nullptr)
 				{
-					m_first_derived = curr->m_next_derived;
+					m_first = curr->m_next_derived;
 				}
 				else
 				{
@@ -60,7 +65,17 @@ namespace reflective
 			REFLECTIVE_ASSERT(curr != nullptr, "Inconsistent list of derived types (calling remove_derived for a derived type not present?)");
 		} while (curr != nullptr);
 
-		i_derived_type->m_next_derived = nullptr;
+		i_type.m_next_derived = nullptr;
+	}
+
+	void Type::add_derived(Type & i_derived_type)
+	{
+		m_derived_types.add(i_derived_type);
+	}
+
+	void Type::remove_derived(Type & i_derived_type)
+	{
+		m_derived_types.remove(i_derived_type);
 	}
 
 			// inheritance

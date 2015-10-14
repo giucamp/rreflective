@@ -49,6 +49,30 @@ namespace reflective
 		const Type * m_base_type;
 		UpDownCaster<> m_updown_caster;
 	};
+
+	namespace details
+	{
+		class DerivedTypesList // this class is not supposed to be referenced outside the library
+		{
+		public:
+
+			DerivedTypesList();
+
+			void add(Type & i_type);
+			void remove(Type & i_type);
+
+			class ConstIterator; // defined later
+
+			ConstIterator begin() const;
+			ConstIterator end() const;
+
+			ConstIterator cbegin() const;
+			ConstIterator cend() const;
+
+		private:
+			Type * m_first;
+		};
+	}
 	
 	class Type : public NamespaceMember
 	{
@@ -76,6 +100,8 @@ namespace reflective
 
 		using MostDerivedFunc = const Type & (*)(const void * i_object);
 
+		const details::DerivedTypesList & derived_types() const { return m_derived_types; }
+
 		bool is_or_inherits_from(const Type & i_base_type) const;
 
 		void * upcast(const Type & i_base_type, void * i_object) const;
@@ -85,8 +111,8 @@ namespace reflective
 		const Type * most_derived(const void * i_object) const;
 
 	private:
-		void add_derived( Type * i_derived_type );
-		void remove_derived( Type * i_derived_type );
+		void add_derived( Type & i_derived_type );
+		void remove_derived( Type & i_derived_type );
 
 	private:
 
@@ -100,10 +126,13 @@ namespace reflective
 			std::vector<BaseType> m_base_types;
 		#endif
 		MostDerivedFunc m_most_derived_func;
-		Type * m_first_derived, * m_next_derived;
+		Type * m_next_derived;
+		details::DerivedTypesList m_derived_types;
 
 		// misc
 		StringFunctions m_string_functions;
+
+		friend class details::DerivedTypesList;
 	};
 }
 

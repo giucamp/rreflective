@@ -156,6 +156,9 @@
     <ClCompile Include="..\sources\unit_testing\uint_test_manager.cpp">
       <Filter>unit_testing</Filter>
     </ClCompile>
+    <ClCompile Include="..\sources\reflection\type_derived_list_test.cpp">
+      <Filter>reflection</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\sources\reflection\qualified_type_ptr.inl">
