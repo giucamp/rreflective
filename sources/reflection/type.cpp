@@ -116,9 +116,8 @@ namespace reflective
 			return result;
 		}
 
-	#endif
+	#else
 
-	#if !REFLECTIVE_ENABLE_MULTIPLE_INHERITANCE
 		bool Type::can_upcast_to(const Type & i_base_type) const
 		{
 			const Type * curr_type = this;
@@ -210,9 +209,64 @@ namespace reflective
 		return false;
 	}
 
-	void * Type::downcast(const Type & /*i_derived_type*/, void * i_object) const
+
+	void * Type::try_dynamic_cast(void * i_source_object, const Type & i_dest_type) const
 	{
-		return i_object;
+		const Type * most_derived_type = nullptr;
+		
+		/* upcast until a type that can tell which the most derived type is (that is a type for 
+			which m_most_derived_func != nullptr). The aim is obtaining a pointer to the most
+			derived type, but if the destination type is found, return immediately (the cast succeeded). */
+		void * curr_object = i_source_object;
+		const Type * curr_type = this;
+		do {
+
+			if (curr_type == &i_dest_type)
+			{
+				return curr_object;
+			}
+
+			if (curr_type->m_most_derived_func != nullptr)
+			{
+				most_derived_type = &(*curr_type->m_most_derived_func)(curr_object);
+				break;
+			}
+
+			#if REFLECTIVE_ENABLE_MULTIPLE_INHERITANCE
+
+				for (const auto & base : m_other_base_types)
+				{
+					void * base_object = base.updown_caster().derived_to_base(curr_object);
+					most_derived_type = base.base_type()->most_derived(base_object);					
+					if (most_derived_type != nullptr)
+					{
+						break;
+					}
+				}
+
+				if (most_derived_type != nullptr)
+				{
+					break;
+				}
+
+			#endif
+
+			const auto & base = curr_type->m_single_base;
+			curr_type = base.base_type();
+			curr_object = base.updown_caster().derived_to_base(curr_object);
+
+		} while (curr_type != nullptr);
+
+		if (most_derived_type == nullptr)
+		{
+			/* the cast may be possible, but there is not any base type with a MostDerivedFunc, so
+				there is no way of getting the most derived type. */
+			return nullptr;
+		}
+
+		// now we need a path from the most derived type to this type
+		std::vector<const Type*> base_types;
+		return nullptr; // do do
 	}
 
 	#if REFLECTIVE_ENABLE_SELF_TESTING

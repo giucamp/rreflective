@@ -107,19 +107,10 @@ namespace reflective
 		bool can_upcast_to(const Type & i_base_type) const;
 
 		void * upcast(const Type & i_base_type, void * i_object) const;
-
-		void * downcast(const Type & i_derived_type, void * i_object) const;
-
+		
 		const Type * most_derived(const void * i_object) const;
 
-		void * try_dynamic_cast(const Type & i_dest_type, void * i_source_object) const
-		{
-			const Type * const most_derived_type = most_derived(i_source_object);
-			void * const most_derived_object = most_derived_type->downcast(*most_derived_type, i_source_object);
-
-			void * const dest_object = most_derived_type->upcast(i_dest_type, most_derived_object);
-			return dest_object;
-		}			
+		void * try_dynamic_cast(void * i_source_object, const Type & i_dest_type) const;
 		
 
 					// unit testing
@@ -130,7 +121,7 @@ namespace reflective
 		#endif
 
 	private:
-
+		
 		void add_derived( Type & i_derived_type );
 		void remove_derived( Type & i_derived_type );
 
