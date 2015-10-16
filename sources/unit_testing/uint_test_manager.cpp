@@ -9,9 +9,9 @@ namespace reflective
 		return instance;
 	}
 
-	void UnitTesingManager::add_test(std::function<void()> i_test)
+	void UnitTesingManager::add_test(StringView i_full_path, std::function<void()> i_test)
 	{
-		TestEntry entry;
-		m_tests.push_back(entry);
+
 	}
+
 }

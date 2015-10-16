@@ -95,9 +95,12 @@ namespace reflective
 		
 		static const Type * accept_full_name(InStringBuffer & i_source, OutStringBuffer & i_error_dest);
 
+
 					//
 
 		using MostDerivedFunc = const Type & (*)(const void * i_object);
+
+		void set_most_derived_type_func(MostDerivedFunc i_function)			{ m_most_derived_func = i_function; }
 
 
 					// inheritance	
@@ -128,6 +131,8 @@ namespace reflective
 		#if REFLECTIVE_ENABLE_MULTIPLE_INHERITANCE	
 			size_t base_type_multeplicity(const Type & i_base_type) const;
 		#endif
+
+		bool internal_find_path_to_type(std::vector<BaseType> & io_base_types, const Type & i_target_type) const;
 
 	private:
 

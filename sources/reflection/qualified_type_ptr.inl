@@ -144,7 +144,7 @@ namespace reflective
 		else
 		{
 			// the type is a pointer
-			REFLECTIVE_INTERNAL_ASSERT(m_final_type != nullptr, "QualifiedTypePtr class invariant violated");
+			REFLECTIVE_INTERNAL_ASSERT(m_final_type != nullptr);
 			return &get_naked_type<void*>();
 		}
 	}

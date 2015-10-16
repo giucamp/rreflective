@@ -209,6 +209,40 @@ namespace reflective
 		return false;
 	}
 
+	bool Type::internal_find_path_to_type(std::vector<BaseType> & io_base_types, const Type & i_target_type) const
+	{
+		const Type * curr_type = this;
+		do {
+
+			if (curr_type == &i_target_type)
+			{
+				return true;
+			}			
+
+			#if REFLECTIVE_ENABLE_MULTIPLE_INHERITANCE
+
+				const size_t original_size = io_base_types.size();
+
+				for (const auto & base : m_other_base_types)
+				{
+					if (base.base_type()->internal_find_path_to_type(io_base_types, i_target_type))
+					{
+						return true;
+					}
+				}
+
+				io_base_types.resize(original_size);
+
+			#endif
+
+			const auto & base = curr_type->m_single_base;
+			io_base_types.push_back(base);
+			curr_type = base.base_type();
+
+		} while (curr_type != nullptr);
+
+		return false;
+	}
 
 	void * Type::try_dynamic_cast(void * i_source_object, const Type & i_dest_type) const
 	{
@@ -259,14 +293,36 @@ namespace reflective
 
 		if (most_derived_type == nullptr)
 		{
+			// now we need a path from the most derived type to this type
+			std::vector<BaseType> base_types;
+			if (most_derived_type->internal_find_path_to_type(base_types, *this))
+			{
+				REFLECTIVE_INTERNAL_ASSERT(std::find_if(base_types.begin(), base_types.end(), [this](const BaseType & i_base) {
+					return i_base.base_type() == this;
+				}) == base_types.end());
+				REFLECTIVE_INTERNAL_ASSERT(std::find_if(base_types.begin(), base_types.end(), [most_derived_type](const BaseType & i_base) {
+					return i_base.base_type() == most_derived_type;
+				}) != base_types.end());
+
+				curr_object = i_source_object;
+				for (auto base_type_it = base_types.crbegin(); base_type_it != base_types.crend(); base_type_it++)
+				{
+					curr_object = base_type_it->updown_caster().base_to_derived(curr_object);
+				}
+
+				return curr_object;
+			}
+			else
+			{
+				return nullptr; // i_dest_type is not a base of the most derived class
+			}
+		}
+		else
+		{
 			/* the cast may be possible, but there is not any base type with a MostDerivedFunc, so
 				there is no way of getting the most derived type. */
 			return nullptr;
 		}
-
-		// now we need a path from the most derived type to this type
-		std::vector<const Type*> base_types;
-		return nullptr; // do do
 	}
 
 	#if REFLECTIVE_ENABLE_SELF_TESTING

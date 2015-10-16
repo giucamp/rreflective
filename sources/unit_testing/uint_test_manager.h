@@ -33,16 +33,23 @@ namespace reflective
 
 		static UnitTesingManager & instance();
 
-		void add_test(std::function<void()> i_test);
+		void add_test(StringView i_full_path, std::function<void()> i_test);
 
 	private:
 
-		struct TestEntry
+		class TestEntry
 		{
+		public:
+
+			void add_test();
+
+		private:
+			std::string m_name;
 			std::function<void()> m_test;
+			std::vector<TestEntry> m_children;
 		};
-		
-		std::vector<TestEntry> m_tests;
+	
+		TestEntry m_root;
 	};
 
 }

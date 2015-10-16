@@ -13,13 +13,13 @@ namespace reflective
 
 		if (m_last_member != nullptr)
 		{
-			REFLECTIVE_INTERNAL_ASSERT(m_first_member != nullptr && m_last_member->m_next_member == nullptr, "Corrupted namespace data");
+			REFLECTIVE_INTERNAL_ASSERT(m_first_member != nullptr && m_last_member->m_next_member == nullptr);
 			m_last_member->m_next_member = &i_member;
 			m_last_member = &i_member;
 		}
 		else
 		{
-			REFLECTIVE_INTERNAL_ASSERT(m_first_member == nullptr, "Corrupted namespace data");
+			REFLECTIVE_INTERNAL_ASSERT(m_first_member == nullptr);
 			m_first_member = m_last_member = &i_member;
 		}
 	}
@@ -31,7 +31,7 @@ namespace reflective
 		NamespaceMember * curr = m_first_member, *prev = nullptr;
 		do {
 
-			REFLECTIVE_INTERNAL_ASSERT((curr->m_next_member == nullptr) == (curr == m_last_member), "Corrupted namespace data");
+			REFLECTIVE_INTERNAL_ASSERT((curr->m_next_member == nullptr) == (curr == m_last_member));
 
 			if (curr == &i_member)
 			{
