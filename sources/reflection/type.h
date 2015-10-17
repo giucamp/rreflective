@@ -82,7 +82,6 @@ namespace reflective
 		static const size_t s_max_alignment = (1 << 8) - 11;
 
 		Type(SymbolTypeId i_type_id, SymbolName i_name, size_t i_size, size_t i_alignment, 
-			const SpecialFunctions & i_special_functions,
 			const ArrayView<BaseType> & i_base_types );
 
 		virtual ~Type() {}
@@ -94,6 +93,12 @@ namespace reflective
 		void full_name_to_string(OutStringBuffer & i_dest) const;
 		
 		static const Type * accept_full_name(InStringBuffer & i_source, OutStringBuffer & i_error_dest);
+
+					// special_functions
+
+		const SpecialFunctions & special_functions() const { return m_special_functions; }
+
+		void set_special_functions(const SpecialFunctions & i_special_functions) { m_special_functions = i_special_functions; }
 
 
 					//
@@ -119,8 +124,10 @@ namespace reflective
 					// unit testing
 
 		#if REFLECTIVE_ENABLE_SELF_TESTING
+			
 			/** Runs an unit test for this class */
 			static void unit_test();
+
 		#endif
 
 	private:

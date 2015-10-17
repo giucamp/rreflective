@@ -135,6 +135,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\sources\core\bulk_list.h" />
+    <ClInclude Include="..\sources\core\fut_std.h" />
     <ClInclude Include="..\sources\core\ptr_string.h" />
     <ClInclude Include="..\sources\core\identifier.h" />
     <ClInclude Include="..\sources\core\in_string_buffer.h" />

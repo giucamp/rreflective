@@ -2,9 +2,8 @@
 namespace reflective
 {
 	Type::Type(SymbolTypeId i_type_id, SymbolName i_name, size_t i_size, size_t i_alignment,
-			const SpecialFunctions & i_special_functions,
 			const ArrayView<BaseType> & i_base_types )
-			: NamespaceMember(i_type_id, std::move(i_name)), m_special_functions(i_special_functions), m_size(i_size), m_alignment(i_alignment), 
+			: NamespaceMember(i_type_id, std::move(i_name)), m_size(i_size), m_alignment(i_alignment), 
 			m_most_derived_func(nullptr), m_next_derived(nullptr)
 	{
 		REFLECTIVE_ASSERT(i_size <= s_max_size, "The size of the type exceeds s_max_size");
@@ -291,7 +290,7 @@ namespace reflective
 
 		} while (curr_type != nullptr);
 
-		if (most_derived_type == nullptr)
+		if (most_derived_type != nullptr)
 		{
 			// now we need a path from the most derived type to this type
 			std::vector<BaseType> base_types;

@@ -1,5 +1,4 @@
 
-#include <algorithm>
 #include <inttypes.h>
 #include <limits>
 #include <array>

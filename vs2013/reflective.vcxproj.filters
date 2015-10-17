@@ -108,6 +108,9 @@
     <ClInclude Include="..\sources\unit_testing\unit_testing.h">
       <Filter>unit_testing</Filter>
     </ClInclude>
+    <ClInclude Include="..\sources\core\fut_std.h">
+      <Filter>core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\sources\reflective.cpp" />

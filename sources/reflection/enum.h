@@ -35,8 +35,8 @@ namespace reflective
 	class EnumBase : public Type
 	{
 	public:
-		EnumBase(SymbolName i_name, size_t i_size, size_t i_alignment, const SpecialFunctions & i_special_functions)
-			: Type(SymbolTypeId::is_enum | SymbolTypeId::is_type, i_name, i_size, i_alignment, i_special_functions, {} )
+		EnumBase(SymbolName i_name, size_t i_size, size_t i_alignment)
+			: Type(SymbolTypeId::is_enum | SymbolTypeId::is_type, i_name, i_size, i_alignment, {} )
 				{ }
 	};
 
@@ -47,7 +47,7 @@ namespace reflective
 
 		using Member = EnumMember<UNDERLYING_TYPE>;
 
-		Enum(SymbolName i_name, const SpecialFunctions & i_special_functions);
+		Enum(SymbolName i_name);
 		
 		const List<Member> & members() const			{ return m_members; }
 

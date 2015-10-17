@@ -48,6 +48,8 @@ namespace reflective
 			std::function<void()> m_test;
 			std::vector<TestEntry> m_children;
 		};
+
+		std::vector<TestEntry>::iterator internal_add_entry(StringView i_full_path);
 	
 		TestEntry m_root;
 	};

@@ -36,6 +36,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <type_traits>
 #include <unordered_map>
 #include <assert.h>
+#include <algorithm>
 
 #define INCLUDING_REFLECTIVE
 
@@ -74,16 +75,13 @@ namespace reflective
 	{
 		Functions
 	};
-
-	// void_t invented by Walter E. Brown - it will be available is std from C++17 on
-	template< class... >
-		using void_t = void;
 }
 
 #include "reflective_settings.h"
 #include "reflective_common.h"
 
 // core headers
+#include "core\fut_std.h"
 #include "core\traits.h"
 #include "core\in_string_buffer.h"
 #include "core\out_string_buffer.h"

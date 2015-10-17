@@ -179,6 +179,11 @@ namespace reflective
 		#endif
 	};
 
+	inline OutStringBuffer & operator << (OutStringBuffer & i_dest, const StringView & i_string)
+	{
+		i_dest.write_nstr(i_string.data(), i_string.length());
+		return i_dest;
+	}
 
 	template <typename TYPE>
 		inline std::string to_std_string(TYPE && i_object)

@@ -26,12 +26,12 @@ namespace reflective
 				};
 
 				std::array<Type, 6> types = {
-					Type{ SymbolTypeId::is_type, "t1", 16, 4, SpecialFunctions(), {} },
-					Type{ SymbolTypeId::is_type, "t2", 16, 4, SpecialFunctions(), {} },
-					Type{ SymbolTypeId::is_type, "t3", 16, 4, SpecialFunctions(), {} },
-					Type{ SymbolTypeId::is_type, "t4", 16, 4, SpecialFunctions(), {} },
-					Type{ SymbolTypeId::is_type, "t5", 16, 4, SpecialFunctions(), {} },
-					Type{ SymbolTypeId::is_type, "t6", 16, 4, SpecialFunctions(), {} } };
+					Type{ SymbolTypeId::is_type, "t1", 16, 4, {} },
+					Type{ SymbolTypeId::is_type, "t2", 16, 4, {} },
+					Type{ SymbolTypeId::is_type, "t3", 16, 4, {} },
+					Type{ SymbolTypeId::is_type, "t4", 16, 4, {} },
+					Type{ SymbolTypeId::is_type, "t5", 16, 4, {} },
+					Type{ SymbolTypeId::is_type, "t6", 16, 4, {} } };
 
 				test_equal();
 
