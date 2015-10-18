@@ -37,15 +37,10 @@ namespace reflective
 			return get_or_add_single(i_full_path);
 		}
 	}
-
+	
 	void UnitTesingManager::add_test(StringView i_full_path, std::function<void()> i_test)
 	{
-		REFLECTIVE_ASSERT( !Ext::contains_if(i_full_path, [](char i_char) {
-				return !std::isalnum(i_char) && i_char != '_' && i_char != '/';
-			} ), "Invalid character inside a test path");
-
-		//i_full_path.find('s');
-		//i_full_path.find("ss");
+		auto entry_it = m_root.get_or_add_path(i_full_path);
+		entry_it->set_test(i_test);
 	}
-
 }

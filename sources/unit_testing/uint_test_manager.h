@@ -32,7 +32,7 @@ namespace reflective
 	public:
 
 		static UnitTesingManager & instance();
-
+		
 		void add_test(StringView i_full_path, std::function<void()> i_test);
 
 	private:
@@ -45,13 +45,16 @@ namespace reflective
 
 			std::vector<TestEntry>::iterator get_or_add_single(StringView i_token);
 
+			void set_test(const std::function<void()> & i_function)
+			{
+				m_test = i_function;
+			}
+
 		private:
 			std::string m_name;
 			std::function<void()> m_test;
 			std::vector<TestEntry> m_children;
-		};
-
-		
+		};		
 	
 		TestEntry m_root;
 	};

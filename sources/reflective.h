@@ -69,7 +69,6 @@ namespace reflective
 	class OutStringBuffer;
 	class InStringBuffer;
 	class PtrString;
-	class StringView;
 	
 	enum class UpDownCasterImplementation
 	{
@@ -77,11 +76,13 @@ namespace reflective
 	};
 }
 
+#include "core\fut_std.h"
+
+
 #include "reflective_settings.h"
 #include "reflective_common.h"
 
 // core headers
-#include "core\fut_std.h"
 #include "core\traits.h"
 #include "core\in_string_buffer.h"
 #include "core\out_string_buffer.h"

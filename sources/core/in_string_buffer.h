@@ -140,4 +140,123 @@ namespace reflective
 									this, so it is provided only in debug.*/
 		#endif
 	};
+
+	template <typename BASIC_STRING, typename CHAR, typename CHAR_TRAITS >
+		inline bool starts_with(const BASIC_STRING & i_subject, BasicStringView<CHAR, CHAR_TRAITS> & i_what)
+	{
+		static_assert( std::is_same<BASIC_STRING::value_type, CHAR>::value &&
+			std::is_same<BASIC_STRING::traits_type, CHAR_TRAITS>::value );
+
+		auto const what_len = i_what.length();
+		return i_subject.length() >= what_len &&
+			CHAR_TRAITS::compare(i_subject.data(), i_what.data(), what_len) == 0;
+	}
+
+	template <typename CHAR, typename CHAR_TRAITS>
+		inline bool accept(BasicStringView<CHAR, CHAR_TRAITS> & io_subject, BasicStringView<CHAR, CHAR_TRAITS> & i_what)
+	{
+		if (starts_with(io_subject, i_what))
+		{
+			io_subject.remove_prefix(i_what.length());
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	template <typename CHAR, typename CHAR_TRAITS>
+		inline bool accept(BasicStringView<CHAR, CHAR_TRAITS> & io_subject, CHAR i_what)
+	{
+		if (io_subject.length() > 0 && CHAR_TRAITS::eq( io_subject[0], i_what ) )
+		{
+			io_subject.remove_prefix(1);
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	template <typename CHAR, typename CHAR_TRAITS, typename PREDICATE >
+		BasicStringView<CHAR, CHAR_TRAITS> read_until(BasicStringView<CHAR, CHAR_TRAITS> & io_subject, PREDICATE && i_predicate)
+	{
+		auto from = io_subject.data();
+		size_t size = 0;
+
+		size_t const dest_length = io_subject.length();
+		while (size < dest_length && !i_predicate(io_subject[size]) )
+		{
+			size++;
+		}
+
+		io_subject.remove_prefix(space_count);
+		return StringView(from, size);
+	}
+
+	template <typename CHAR, typename CHAR_TRAITS, typename PREDICATE >
+		BasicStringView<CHAR, CHAR_TRAITS> read_until_eq(BasicStringView<CHAR, CHAR_TRAITS> & io_subject, CHAR i_target)
+	{
+		auto from = io_subject.data();
+		size_t size = 0;
+
+		size_t const dest_length = io_subject.length();
+		while (size < dest_length && !CHAR_TRAITS::eq( io_subject[size], i_target) )
+		{
+			size++;
+		}
+
+		io_subject.remove_prefix(space_count);
+		return StringView(from, size);
+	}
+
+	template <typename CHAR, typename CHAR_TRAITS, typename PREDICATE >
+		BasicStringView<CHAR, CHAR_TRAITS> read_while(BasicStringView<CHAR, CHAR_TRAITS> & io_subject, PREDICATE && i_predicate)
+	{
+		auto from = io_subject.data();
+		size_t size = 0;
+
+		size_t const dest_length = io_subject.length();
+		while (size < dest_length && i_predicate(io_subject[size]) )
+		{
+			size++;
+		}
+
+		io_subject.remove_prefix(space_count);
+		return StringView(from, size);
+	}
+
+
+	template <typename CHAR, typename CHAR_TRAITS, typename PREDICATE >
+		BasicStringView<CHAR, CHAR_TRAITS> read_while_eq(BasicStringView<CHAR, CHAR_TRAITS> & io_subject, CHAR i_target)
+	{
+		auto from = io_subject.data();
+		size_t size = 0;
+
+		size_t const dest_length = io_subject.length();
+		while (size < dest_length && CHAR_TRAITS::eq( io_subject[size], i_target) )
+		{
+			size++;
+		}
+
+		io_subject.remove_prefix(space_count);
+		return StringView(from, size);
+	}
+
+	template <typename CHAR, typename CHAR_TRAITS>
+		inline size_t read_whitespaces(BasicStringView<CHAR, CHAR_TRAITS> & io_subject)
+	{
+		size_t space_count = 0;
+
+		size_t const dest_length = io_subject.length();
+		while (space_count < dest_length && isspace( io_subject[space_count]))
+		{
+			space_count++;
+		}
+
+		io_subject.remove_prefix(space_count);
+		return space_count;
+	}
 }

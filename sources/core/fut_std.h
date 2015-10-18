@@ -78,13 +78,13 @@ namespace reflective
 
 		TYPE & operator [] (size_t i_index)
 		{
-			REFLECTIVE_ASSERT(i_index < m_size, "Index out of bounds");
+			assert(i_index < m_size);
 			return m_objects[i_index];
 		}
 
 		const TYPE & operator [] (size_t i_index) const
 		{
-			REFLECTIVE_ASSERT(i_index < m_size, "Index out of bounds");
+			assert(i_index < m_size);
 			return m_objects[i_index];
 		}
 
@@ -96,31 +96,45 @@ namespace reflective
 	};
 
 	/** Non-owning range of contigous char - see http://en.cppreference.com/w/cpp/experimental/basic_string_view */
-	class StringView
+	template <typename CHAR, typename CHAR_TRAITS = std::char_traits<CHAR> >
+		class BasicStringView
 	{
 	public:
 
+		using traits_type = CHAR_TRAITS;
+		using value_type = CHAR;
+		using pointer = CHAR *;
+		using const_pointer = const CHAR *;
+		using reference = CHAR &;
+		using const_reference = const CHAR &;
+		using const_iterator = const CHAR *;
+		using iterator = const CHAR *;
+		using reverse_iterator = std::reverse_iterator<iterator>;
+		using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+		using size_type = std::size_t;
+		using difference_type = std::ptrdiff_t;
+
 		static REFLECTIVE_CONSTEXPR const size_t npos = static_cast<size_t>(-1);
 
-		REFLECTIVE_CONSTEXPR StringView() REFLECTIVE_NOEXCEPT
+		REFLECTIVE_CONSTEXPR BasicStringView() REFLECTIVE_NOEXCEPT
 			: m_chars(nullptr), m_size(0)
 				{ }
 
-		REFLECTIVE_CONSTEXPR StringView(const std::string & i_source) REFLECTIVE_NOEXCEPT
+		REFLECTIVE_CONSTEXPR BasicStringView(const std::string & i_source) REFLECTIVE_NOEXCEPT
 			: m_chars(i_source.data()), m_size(i_source.length())
 				{ }
 
-		REFLECTIVE_CONSTEXPR StringView(const StringView & i_source) = default REFLECTIVE_NOEXCEPT;
+		REFLECTIVE_CONSTEXPR BasicStringView(const BasicStringView & i_source) = default REFLECTIVE_NOEXCEPT;
 
-		REFLECTIVE_CONSTEXPR StringView(const char * i_c_string)
-			: m_chars(i_c_string), m_size(strlen(i_c_string))
+		REFLECTIVE_CONSTEXPR BasicStringView(const char * i_c_string)
+			: m_chars(i_c_string), m_size(CHAR_TRAITS::length(i_c_string))
 				{ }
 
-		REFLECTIVE_CONSTEXPR StringView(const char * i_c_string, size_t i_size)
+		REFLECTIVE_CONSTEXPR BasicStringView(const char * i_c_string, size_t i_size)
 			: m_chars(i_c_string), m_size(i_size)
 				{ }
 
-		StringView & operator = (const StringView & i_source) = default REFLECTIVE_NOEXCEPT;
+		BasicStringView & operator = (const BasicStringView & i_source) = default REFLECTIVE_NOEXCEPT;
 		
 
 		REFLECTIVE_CONSTEXPR const char * begin() const REFLECTIVE_NOEXCEPT { return m_chars; }
@@ -133,7 +147,7 @@ namespace reflective
 
 		REFLECTIVE_CONSTEXPR const char & operator [] (size_t i_index) const REFLECTIVE_NOEXCEPT
 		{
-			REFLECTIVE_ASSERT(i_index < m_size, "Index out of bounds");
+			assert(i_index < m_size);
 			return m_chars[i_index];
 		}
 
@@ -141,20 +155,20 @@ namespace reflective
 		{
 			if (i_index >= m_size)
 			{
-				throw std::out_of_range("index out of range to reflective::StringView::at");
+				throw std::out_of_range("index out of range to reflective::BasicStringView::at");
 			}
 			return m_chars[i_index];
 		}
 
 		REFLECTIVE_CONSTEXPR const char & front() const REFLECTIVE_NOEXCEPT
 		{
-			REFLECTIVE_ASSERT(m_size > 0, "Can't call on empty string");
+			assert(m_size > 0);
 			return m_chars[0];
 		}
 
 		REFLECTIVE_CONSTEXPR const char & back() const REFLECTIVE_NOEXCEPT
 		{
-			REFLECTIVE_ASSERT(m_size > 0, "Can't call on empty string");
+			assert(m_size > 0);
 			return m_chars[m_size - 1];
 		}
 
@@ -171,26 +185,26 @@ namespace reflective
 
 		REFLECTIVE_CONSTEXPR void remove_prefix( size_t i_char_count )
 		{
-			REFLECTIVE_ASSERT(i_char_count <= m_size, "remove_prefix with wrong argument");
+			assert(i_char_count <= m_size);
 			m_chars += i_char_count;
 			m_size -= i_char_count;
 		}
 
 		REFLECTIVE_CONSTEXPR void remove_suffix(size_t i_char_count) REFLECTIVE_NOEXCEPT
 		{
-			REFLECTIVE_ASSERT(i_char_count <= m_size, "remove_suffix with wrong argument");
+			assert(i_char_count <= m_size);
 			m_size -= i_char_count;
 		}		
 		
-		REFLECTIVE_CONSTEXPR void swap(StringView i_other) REFLECTIVE_NOEXCEPT
+		REFLECTIVE_CONSTEXPR void swap(BasicStringView i_other) REFLECTIVE_NOEXCEPT
 		{
 			std::swap(m_chars, i_other.m_chars);
 			std::swap(m_size, i_other.m_size);
 		}
 
-		REFLECTIVE_CONSTEXPR int compare(StringView i_other) const REFLECTIVE_NOEXCEPT
+		REFLECTIVE_CONSTEXPR int compare(BasicStringView i_other) const REFLECTIVE_NOEXCEPT
 		{
-			auto result = std::char_traits<char>::compare(m_chars, i_other.m_chars, std::min(m_size, i_other.m_size));
+			auto result = CHAR_TRAITS::compare(m_chars, i_other.m_chars, std::min(m_size, i_other.m_size));
 			if (result != 0)
 			{
 				return result;
@@ -203,14 +217,14 @@ namespace reflective
 
 		// REFLECTIVE_CONSTEXPR void copy(....) // not impemented
 
-		REFLECTIVE_CONSTEXPR StringView substr(size_t i_pos, size_t i_count = npos) const
+		REFLECTIVE_CONSTEXPR BasicStringView substr(size_t i_pos, size_t i_count = npos) const
 		{
 			if (i_pos >= m_size)
 			{
-				throw std::out_of_range("index out of range to reflective::StringView::at");
+				throw std::out_of_range("index out of range to reflective::BasicStringView::at");
 			}
 
-			return StringView(m_chars, std::min(i_count, m_size - i_pos) );
+			return BasicStringView(m_chars, std::min(i_count, m_size - i_pos) );
 		}
 
 		REFLECTIVE_CONSTEXPR size_t find(char i_target_char, size_t i_pos = 0) const
@@ -220,7 +234,7 @@ namespace reflective
 				return npos;
 			}
 
-			auto const res = std::char_traits<char>::find(m_chars + i_pos, m_size - i_pos, i_target_char);
+			auto const res = CHAR_TRAITS::find(m_chars + i_pos, m_size - i_pos, i_target_char);
 			if (res != nullptr)
 			{
 				return res - m_chars;
@@ -231,7 +245,7 @@ namespace reflective
 			}
 		}
 
-		REFLECTIVE_CONSTEXPR size_t find(StringView i_target_string, size_t i_pos = 0) const
+		REFLECTIVE_CONSTEXPR size_t find(BasicStringView i_target_string, size_t i_pos = 0) const
 		{
 			if (i_target_string.size() == 0)
 			{
@@ -248,7 +262,7 @@ namespace reflective
 			auto const first_target_char = i_target_string[0];
 			auto compare_result = 0; // probably the optimizer will remove this initialization
 			do {				
-				auto const res = std::char_traits<char>::find(curr_start, remaing_length, first_target_char);
+				auto const res = CHAR_TRAITS::find(curr_start, remaing_length, first_target_char);
 				if (res == nullptr)
 				{
 					return npos;
@@ -261,39 +275,39 @@ namespace reflective
 					return npos;
 				}
 
-				compare_result = std::char_traits<char>::compare(curr_start, i_target_string.data(), i_target_string.length());
+				compare_result = CHAR_TRAITS::compare(curr_start, i_target_string.data(), i_target_string.length());
 				
 			} while (compare_result != 0);
 
 			return curr_start - m_chars;
 		}
 
-		bool operator == (const StringView i_other) const
+		bool operator == (const BasicStringView i_other) const
 		{
 			return compare(i_other) == 0;
 		}
 
-		bool operator != (const StringView i_other) const
+		bool operator != (const BasicStringView i_other) const
 		{
 			return compare(i_other) != 0;
 		}
 
-		bool operator > (const StringView i_other) const
+		bool operator > (const BasicStringView i_other) const
 		{
 			return compare(i_other) > 0;
 		}
 
-		bool operator < (const StringView i_other) const
+		bool operator < (const BasicStringView i_other) const
 		{
 			return compare(i_other) < 0;
 		}
 
-		bool operator >= (const StringView i_other) const
+		bool operator >= (const BasicStringView i_other) const
 		{
 			return compare(i_other) >= 0;
 		}
 
-		bool operator <= (const StringView i_other) const
+		bool operator <= (const BasicStringView i_other) const
 		{
 			return compare(i_other) <= 0;
 		}
@@ -302,6 +316,11 @@ namespace reflective
 		const char * m_chars;
 		size_t m_size;
 	};
+	
+	using StringView = BasicStringView<char>;
+	using WStringView = BasicStringView<wchar_t>;
+	using u16StringView = BasicStringView<char16_t>;
+	using u32StringView = BasicStringView<char32_t>;
 
 	inline std::ostream & operator << (std::ostream & i_dest, const StringView & i_string)
 	{
