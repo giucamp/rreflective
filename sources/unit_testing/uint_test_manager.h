@@ -41,7 +41,9 @@ namespace reflective
 		{
 		public:
 
-			void add_test();
+			std::vector<TestEntry>::iterator get_or_add_path(StringView i_full_path);
+
+			std::vector<TestEntry>::iterator get_or_add_single(StringView i_token);
 
 		private:
 			std::string m_name;
@@ -49,7 +51,7 @@ namespace reflective
 			std::vector<TestEntry> m_children;
 		};
 
-		std::vector<TestEntry>::iterator internal_add_entry(StringView i_full_path);
+		
 	
 		TestEntry m_root;
 	};

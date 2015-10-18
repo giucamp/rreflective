@@ -182,15 +182,28 @@ namespace reflective
 			m_size -= i_char_count;
 		}		
 		
-		REFLECTIVE_CONSTEXPR void swap(StringView i_other)
+		REFLECTIVE_CONSTEXPR void swap(StringView i_other) REFLECTIVE_NOEXCEPT
 		{
 			std::swap(m_chars, i_other.m_chars);
 			std::swap(m_size, i_other.m_size);
 		}
 
+		REFLECTIVE_CONSTEXPR int compare(StringView i_other) const REFLECTIVE_NOEXCEPT
+		{
+			auto result = std::char_traits<char>::compare(m_chars, i_other.m_chars, std::min(m_size, i_other.m_size));
+			if (result != 0)
+			{
+				return result;
+			}
+			else
+			{
+				return static_cast<int>(m_size) - static_cast<int>(i_other.m_size);
+			}			
+		}
+
 		// REFLECTIVE_CONSTEXPR void copy(....) // not impemented
 
-		REFLECTIVE_CONSTEXPR StringView substr(size_t i_pos, size_t i_count) const
+		REFLECTIVE_CONSTEXPR StringView substr(size_t i_pos, size_t i_count = npos) const
 		{
 			if (i_pos >= m_size)
 			{
@@ -255,6 +268,36 @@ namespace reflective
 			return curr_start - m_chars;
 		}
 
+		bool operator == (const StringView i_other) const
+		{
+			return compare(i_other) == 0;
+		}
+
+		bool operator != (const StringView i_other) const
+		{
+			return compare(i_other) != 0;
+		}
+
+		bool operator > (const StringView i_other) const
+		{
+			return compare(i_other) > 0;
+		}
+
+		bool operator < (const StringView i_other) const
+		{
+			return compare(i_other) < 0;
+		}
+
+		bool operator >= (const StringView i_other) const
+		{
+			return compare(i_other) >= 0;
+		}
+
+		bool operator <= (const StringView i_other) const
+		{
+			return compare(i_other) <= 0;
+		}
+		
 	private:
 		const char * m_chars;
 		size_t m_size;
@@ -275,25 +318,25 @@ namespace reflective
 	public:
 		
 		template <typename CONTAINER, typename ELEMENT>
-			static auto find(const CONTAINER & i_container, ELEMENT && i_value) -> decltype(std::find(i_container.begin(), i_container.end(), i_value))
+			static auto find(CONTAINER & i_container, ELEMENT && i_value) -> decltype(std::find(i_container.begin(), i_container.end(), i_value))
 		{
 			return std::find(i_container.begin(), i_container.end(), i_value);
 		}
 
 		template <typename CONTAINER, typename PREDICATE>
-			static auto find_if(const CONTAINER & i_container, PREDICATE && i_predicate) -> decltype(std::find_if(i_container.begin(), i_container.end(), i_predicate))
+			static auto find_if(CONTAINER & i_container, PREDICATE && i_predicate) -> decltype(std::find_if(i_container.begin(), i_container.end(), i_predicate))
 		{
 			return std::find_if(i_container.begin(), i_container.end(), i_predicate);
 		}
 
 		template <typename CONTAINER, typename ELEMENT>
-			static bool contains(const CONTAINER & i_container, ELEMENT && i_value)
+			static bool contains(CONTAINER & i_container, ELEMENT && i_value)
 		{
 			return std::find(i_container.begin(), i_container.end(), i_value) != i_container.end();
 		}
 
 		template <typename CONTAINER, typename PREDICATE>
-			static bool contains_if(const CONTAINER & i_container, PREDICATE && i_predicate)
+			static bool contains_if(CONTAINER & i_container, PREDICATE && i_predicate)
 		{
 			return std::find_if(i_container.begin(), i_container.end(), i_predicate) != i_container.end();
 		}
