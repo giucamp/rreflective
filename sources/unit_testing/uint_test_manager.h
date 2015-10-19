@@ -29,33 +29,26 @@ namespace reflective
 {
 	class UnitTesingManager
 	{
+	private:
+		UnitTesingManager();
+
 	public:
 
 		static UnitTesingManager & instance();
 		
-		void add_test(StringView i_full_path, std::function<void()> i_test);
+		UnitTesingManager(const UnitTesingManager &) = delete;
+
+		UnitTesingManager & operator = (const UnitTesingManager &) = delete;
+				
+		void add_correctness_test(StringView i_path, std::function<void()> i_function);
+
+		void add_performance_test(StringView i_path, std::function<void()> i_function, StringView i_version_label);
 
 		void run(StringView i_path = StringView());
 
 	private:
-
-		struct TestEntry;
-
-		TestEntry * find_entry(StringView i_full_path);
-
-		TestEntry & find_or_add_entry(StringView i_full_path);
-
-	private:
-
-		struct TestEntry
-		{
-		public:
-			std::string m_name;
-			std::function<void()> m_test;
-			std::vector<TestEntry> m_children;
-		};		
-	
-		TestEntry m_root;
+		class Impl;
+		const std::unique_ptr<Impl> m_impl;	
 	};
 
 }
