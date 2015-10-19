@@ -40,8 +40,8 @@ namespace reflective
 			if (entry_it == entry->m_children.end())
 			{
 				entry->m_children.emplace_back();
-				entry->m_name.assign(i_token.data(), i_token.size());
 				entry = &entry->m_children.back();
+				entry->m_name.assign(i_token.data(), i_token.size());
 			}
 			else
 			{
