@@ -35,22 +35,21 @@ namespace reflective
 		
 		void add_test(StringView i_full_path, std::function<void()> i_test);
 
+		void run(StringView i_path = StringView());
+
 	private:
 
-		class TestEntry
+		struct TestEntry;
+
+		TestEntry * find_entry(StringView i_full_path);
+
+		TestEntry & find_or_add_entry(StringView i_full_path);
+
+	private:
+
+		struct TestEntry
 		{
 		public:
-
-			std::vector<TestEntry>::iterator get_or_add_path(StringView i_full_path);
-
-			std::vector<TestEntry>::iterator get_or_add_single(StringView i_token);
-
-			void set_test(const std::function<void()> & i_function)
-			{
-				m_test = i_function;
-			}
-
-		private:
 			std::string m_name;
 			std::function<void()> m_test;
 			std::vector<TestEntry> m_children;

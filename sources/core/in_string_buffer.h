@@ -141,19 +141,16 @@ namespace reflective
 		#endif
 	};
 
-	template <typename BASIC_STRING, typename CHAR, typename CHAR_TRAITS >
-		inline bool starts_with(const BASIC_STRING & i_subject, BasicStringView<CHAR, CHAR_TRAITS> & i_what)
+	template <typename CHAR, typename CHAR_TRAITS>
+		inline bool starts_with(BasicStringView<CHAR, CHAR_TRAITS> i_subject, BasicStringView<CHAR, CHAR_TRAITS> i_what)
 	{
-		static_assert( std::is_same<BASIC_STRING::value_type, CHAR>::value &&
-			std::is_same<BASIC_STRING::traits_type, CHAR_TRAITS>::value );
-
 		auto const what_len = i_what.length();
 		return i_subject.length() >= what_len &&
 			CHAR_TRAITS::compare(i_subject.data(), i_what.data(), what_len) == 0;
 	}
 
 	template <typename CHAR, typename CHAR_TRAITS>
-		inline bool accept(BasicStringView<CHAR, CHAR_TRAITS> & io_subject, BasicStringView<CHAR, CHAR_TRAITS> & i_what)
+		inline bool accept(BasicStringView<CHAR, CHAR_TRAITS> & io_subject, BasicStringView<CHAR, CHAR_TRAITS> i_what)
 	{
 		if (starts_with(io_subject, i_what))
 		{
@@ -192,11 +189,11 @@ namespace reflective
 			size++;
 		}
 
-		io_subject.remove_prefix(space_count);
-		return StringView(from, size);
+		io_subject.remove_prefix(size);
+		return BasicStringView<CHAR, CHAR_TRAITS>(from, size);
 	}
 
-	template <typename CHAR, typename CHAR_TRAITS, typename PREDICATE >
+	template <typename CHAR, typename CHAR_TRAITS>
 		BasicStringView<CHAR, CHAR_TRAITS> read_until_eq(BasicStringView<CHAR, CHAR_TRAITS> & io_subject, CHAR i_target)
 	{
 		auto from = io_subject.data();
@@ -208,8 +205,8 @@ namespace reflective
 			size++;
 		}
 
-		io_subject.remove_prefix(space_count);
-		return StringView(from, size);
+		io_subject.remove_prefix(size);
+		return BasicStringView<CHAR, CHAR_TRAITS>(from, size);
 	}
 
 	template <typename CHAR, typename CHAR_TRAITS, typename PREDICATE >
@@ -224,12 +221,12 @@ namespace reflective
 			size++;
 		}
 
-		io_subject.remove_prefix(space_count);
-		return StringView(from, size);
+		io_subject.remove_prefix(size);
+		return BasicStringView<CHAR, CHAR_TRAITS>(from, size);
 	}
 
 
-	template <typename CHAR, typename CHAR_TRAITS, typename PREDICATE >
+	template <typename CHAR, typename CHAR_TRAITS>
 		BasicStringView<CHAR, CHAR_TRAITS> read_while_eq(BasicStringView<CHAR, CHAR_TRAITS> & io_subject, CHAR i_target)
 	{
 		auto from = io_subject.data();
@@ -241,8 +238,8 @@ namespace reflective
 			size++;
 		}
 
-		io_subject.remove_prefix(space_count);
-		return StringView(from, size);
+		io_subject.remove_prefix(size);
+		return BasicStringView<CHAR, CHAR_TRAITS>(from, size);
 	}
 
 	template <typename CHAR, typename CHAR_TRAITS>
@@ -258,5 +255,23 @@ namespace reflective
 
 		io_subject.remove_prefix(space_count);
 		return space_count;
+	}
+
+	template <typename CHAR, typename CHAR_TRAITS, typename PREDICATE>
+		inline void for_each_token(BasicStringView<CHAR, CHAR_TRAITS> i_subject, CHAR i_separator, PREDICATE && i_predicate)
+	{
+		auto remaining = i_subject;
+		auto has_more = remaining.length() > 0;
+		while (has_more)
+		{			
+			auto curr_token = read_until_eq(remaining, i_separator);
+			has_more = remaining.length() > 0;
+
+			if (has_more)
+			{
+				remaining.remove_prefix(1);
+			}			
+			i_predicate(curr_token);
+		}
 	}
 }

@@ -1,6 +1,7 @@
 
 
 #include "..\sources\reflective.h"
+#include "..\sources\unit_testing\unit_testing.h"
 #include <sstream>
 #include <iostream>
 
@@ -12,6 +13,42 @@ void bulk_list__test();
 
 int main()
 {
+	{
+		using namespace reflective;
+		using namespace std;
+		
+		struct
+		{
+			StringView path;
+			vector<StringView> tokens;
+		} tests[] = {
+			{ "", { } },
+			{ "/",{ "", "" } },
+			{ "//",{ "", "", "" } },
+			{ "abc", { "abc" } },
+			{ "/def/efg",{ "", "def", "efg" } },
+			{ "def/efg/",{ "def", "efg", "" } },
+			{ "def//efg/",{ "def", "", "efg", "" } },
+			{ "abc/def/efg",{ "abc", "def", "efg" } },
+			{ "/abc/def/", { "", "abc", "def", "" } },
+		};
+
+		for (const auto & test : tests)
+		{
+			vector<StringView> copy;
+			for_each_token(test.path, '/', [&copy](StringView i_token) {
+				copy.push_back( i_token );
+			});
+			REFLECTIVE_INTERNAL_ASSERT(copy==test.tokens);			
+		}
+
+		UnitTesingManager::instance().add_test("abc", [] {});
+		UnitTesingManager::instance().add_test("abc/efg", [] {});
+		UnitTesingManager::instance().add_test("abc/efg/rre", [] {});
+		UnitTesingManager::instance().run("abc");
+		UnitTesingManager::instance().run("abc/efg/rre");
+	}
+
 	{
 		using namespace std;
 		using namespace reflective;

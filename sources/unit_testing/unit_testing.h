@@ -26,6 +26,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ***********************************************************************************/
 
 #include <functional>
+#include <chrono>
+#include <thread>
 
 #include "..\reflective.h"
 

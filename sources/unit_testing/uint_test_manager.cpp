@@ -7,40 +7,63 @@ namespace reflective
 		return instance;
 	}
 
-	std::vector<UnitTesingManager::TestEntry>::iterator UnitTesingManager::TestEntry::get_or_add_single(StringView i_token)
+	UnitTesingManager::TestEntry * UnitTesingManager::find_entry(StringView i_full_path)
 	{
-		auto const existing_it = Ext::find_if(m_children, [&i_token](const TestEntry & i_entry) { return i_token == i_entry.m_name.c_str(); });
-		if (existing_it != m_children.end())
-		{
-			return existing_it;
-		}
-		else
-		{
-			m_children.emplace_back();
-			return m_children.end() - 1;
-		}
+		TestEntry * entry = &m_root;
+		for_each_token(i_full_path, '/', [&entry](StringView i_token) {
+
+			if (entry != nullptr)
+			{
+				auto entry_it = Ext::find_if(entry->m_children, [i_token](const TestEntry & i_entry) { return i_token == i_entry.m_name.c_str(); });
+
+				if (entry_it == entry->m_children.end())
+				{
+					entry = nullptr;
+				}
+				else
+				{
+					entry = &*entry_it;
+				}
+			}
+		});
+
+		return entry;
 	}
 
-	std::vector<UnitTesingManager::TestEntry>::iterator UnitTesingManager::TestEntry::get_or_add_path(StringView i_full_path)
+	UnitTesingManager::TestEntry & UnitTesingManager::find_or_add_entry(StringView i_full_path)
 	{
-		auto res = Ext::find(i_full_path, '/');
-		if (res != i_full_path.end())
-		{
-			auto const separator_pos = res - i_full_path.begin();
-			auto const first_token = i_full_path.substr(0, separator_pos);
-			auto const remaining_path = i_full_path.substr(separator_pos + 1);
-			auto const child_id = get_or_add_single(first_token);
-			return child_id->get_or_add_path(remaining_path);
-		}
-		else
-		{
-			return get_or_add_single(i_full_path);
-		}
+		TestEntry * entry = &m_root;
+		for_each_token(i_full_path, '/', [&entry](StringView i_token) {
+
+			auto entry_it = Ext::find_if(entry->m_children, [i_token](const TestEntry & i_entry) { return i_token == i_entry.m_name.c_str(); });
+
+			if (entry_it == entry->m_children.end())
+			{
+				entry->m_children.emplace_back();
+				entry->m_name.assign(i_token.data(), i_token.size());
+				entry = &entry->m_children.back();
+			}
+			else
+			{
+				entry = &*entry_it;
+			}
+		});
+
+		return *entry;
 	}
 	
 	void UnitTesingManager::add_test(StringView i_full_path, std::function<void()> i_test)
 	{
-		auto entry_it = m_root.get_or_add_path(i_full_path);
-		entry_it->set_test(i_test);
+		auto & entry = find_or_add_entry(i_full_path);
+		entry.m_test = i_test;
+	}
+
+	void UnitTesingManager::run(StringView i_path)
+	{
+		auto entry = find_entry(i_path);
+		if (entry != nullptr)
+		{
+
+		}
 	}
 }
