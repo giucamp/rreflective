@@ -26,10 +26,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ***********************************************************************************/
 
 #include "..\reflective.h"
+#include <random>
 
 namespace reflective
 {
 	class UnitTesingManager;
 }
 
+#include "correctness_test_context.h"
 #include "uint_test_manager.h"

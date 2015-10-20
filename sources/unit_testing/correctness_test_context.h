@@ -27,32 +27,47 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	class UnitTesingManager
+	class CorrectnessTestContext
 	{
-	private:
-		UnitTesingManager();
-
 	public:
 
-		static UnitTesingManager & instance();
+		CorrectnessTestContext()
+			: m_random(std::random_device()())
+		{
 
-		UnitTesingManager(const UnitTesingManager &) = delete;
+		}
 
-		UnitTesingManager & operator = (const UnitTesingManager &) = delete;
+		uint32_t random_uint32(uint32_t i_exclusive_upper)
+		{
+			return std::uniform_int_distribution<uint32_t>(0, i_exclusive_upper - 1)(m_random);
+		}
 
-		using PerformanceTestFunction = void (*)();
-		
-		using CorrectnessTestFunction = void(*)(CorrectnessTestContext & i_context);
+		uint32_t random_uint32(uint32_t i_inclusive_lower, uint32_t i_exclusive_upper)
+		{
+			return std::uniform_int_distribution<uint32_t>(i_inclusive_lower, i_exclusive_upper - 1)(m_random);
+		}
 
-		void add_correctness_test(StringView i_path, CorrectnessTestFunction i_function);
+		char random_char()
+		{
+			return 'A' + static_cast<char>(random_uint32('Z' - 'A'));
+		}
 
-		void add_performance_test(StringView i_path, PerformanceTestFunction i_function, StringView i_version_label);
+		std::string random_string(uint32_t i_exclusive_length_upper)
+		{
+			const uint32_t len = random_uint32(i_exclusive_length_upper);
+			std::string result;
+			result.reserve(len);
+			for (uint32_t i = 0; i < len; i++)
+			{
+				result += random_char();
+			}
+			return result;
+		}
 
-		void run(StringView i_path = StringView());
+		std::mt19937 random_generator() { return m_random; }
 
 	private:
-		class Impl;
-		const std::unique_ptr<Impl> m_impl;	
+		std::mt19937 m_random;
 	};
 
-}
+} // namespace reflective

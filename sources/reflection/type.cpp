@@ -324,7 +324,7 @@ namespace reflective
 		}
 	}
 
-	#if REFLECTIVE_ENABLE_SELF_TESTING
+	#if REFLECTIVE_ENABLE_TESTING
 
 		namespace details
 		{

@@ -42,9 +42,9 @@ int main()
 			REFLECTIVE_INTERNAL_ASSERT(copy==test.tokens);			
 		}
 
-		UnitTesingManager::instance().add_correctness_test("abc", [] {});
-		UnitTesingManager::instance().add_correctness_test("abc/efg", [] {});
-		UnitTesingManager::instance().add_correctness_test("abc/efg/rre", [] {});
+		UnitTesingManager::instance().add_performance_test("abc", [] {}, "");
+		UnitTesingManager::instance().add_performance_test("abc/efg", [] {}, "");
+		UnitTesingManager::instance().add_performance_test("abc/efg/rre", [] {}, "");
 		UnitTesingManager::instance().run("abc");
 		UnitTesingManager::instance().run("abc/efg/rre");
 	}

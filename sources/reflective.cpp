@@ -14,11 +14,13 @@
 #include "reflection\primitive_types.cpp"
 #include "reflection\namespace_member.cpp"
 #include "reflection\type.cpp"
-#if REFLECTIVE_ENABLE_SELF_TESTING
-	#include "reflection\type_derived_list_test.cpp"
-#endif
 #include "reflection\qualified_type_ptr.cpp"
 #include "reflection\obj_ptr.cpp"
 #include "reflection\property\property.cpp"
 #include "reflection\namespace.cpp"
 #include "reflection\global_registry.cpp"
+
+#if REFLECTIVE_ENABLE_TESTING
+	#include "unit_testing\unit_testing.h"
+	#include "reflection\type_derived_list_test.cpp"
+#endif

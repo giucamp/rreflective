@@ -178,7 +178,7 @@ namespace reflective
 
 		bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest);
 
-		#if REFLECTIVE_ENABLE_SELF_TESTING
+		#if REFLECTIVE_ENABLE_TESTING
 			/** Runs an unit test for this class */
 			static void unit_test();
 		#endif

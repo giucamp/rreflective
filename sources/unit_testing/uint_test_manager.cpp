@@ -3,43 +3,44 @@ namespace reflective
 {
 	class UnitTesingManager::Impl
 	{
-		class Test
+		class CorrectnessTest
 		{
 		public:
 
-			Test(const Test &) = delete;
-
-			Test & operator = (const Test &) = delete;
-
-			Test(TestFunction i_function)
-				: m_function(std::move(i_function))
+			CorrectnessTest(CorrectnessTestFunction i_function)
+				: m_function(i_function)
 			{
 			}
 
-		private:
+			void run(CorrectnessTestContext & i_context)
+			{
+				(*m_function)(i_context);
+			}
+
+		private:			
+			CorrectnessTestFunction m_function;
 			std::chrono::duration<double> m_duration;
-			TestFunction m_function;
 		};
 
-		class CorrectnessTest : public Test
+		class PerformanceTest
 		{
 		public:
-			CorrectnessTest(TestFunction i_function)
-				: Test(std::move(i_function))
-			{
-			}
-		};
 
-		class PerformanceTest : public Test
-		{
-		public:
-			PerformanceTest(TestFunction i_function, StringView i_version_label)
-				: Test(std::move(i_function)), m_version_label(i_version_label.data(), i_version_label.size())
+			PerformanceTest(PerformanceTestFunction i_function, StringView i_version_label)
+				: m_function(i_function), m_version_label(i_version_label.data(), i_version_label.size())
 			{
 			}
+
+			void run()
+			{
+				(*m_function)();
+			}
+
 
 		private:
+			PerformanceTestFunction m_function;
 			std::string m_version_label;
+			std::chrono::duration<double> m_duration;
 		};
 
 		class Node
@@ -50,12 +51,15 @@ namespace reflective
 
 			const std::string & name() const { return m_name; }
 
-			void add_test(std::shared_ptr< Test > i_test)
+			void add_correctess_test(CorrectnessTest i_correctess_test)
 			{
-				m_tests.push_back(i_test);
+				m_correctness_tests.emplace_back(std::move(i_correctess_test));
 			}
 
-			const std::vector< std::shared_ptr< Test > > & tests() const { return m_tests; }
+			void add_performance_test(PerformanceTest i_performance_test)
+			{
+				m_performance_tests.emplace_back(std::move(i_performance_test));
+			}
 
 			const std::vector<Node> & children() const { return m_children; }
 
@@ -78,9 +82,28 @@ namespace reflective
 				}
 			}
 
+			void run(CorrectnessTestContext & i_context)
+			{
+				for (auto & child : m_children)
+				{
+					child.run(i_context);
+				}
+
+				for (auto & test : m_correctness_tests)
+				{
+					test.run(i_context);
+				}
+
+				for (auto & test : m_performance_tests)
+				{
+					test.run();
+				}
+			}
+
 		private:
 			std::string m_name;
-			std::vector< std::shared_ptr< Test > > m_tests;
+			std::vector< CorrectnessTest > m_correctness_tests;
+			std::vector< PerformanceTest > m_performance_tests;
 			std::vector<Node> m_children;
 		};
 
@@ -128,22 +151,23 @@ namespace reflective
 			return *node;
 		}
 
-		void add_correctness_test(StringView i_path, TestFunction i_function)
+		void add_correctness_test(StringView i_path, CorrectnessTestFunction i_function)
 		{
-			find_or_add_entry(i_path).add_test(std::make_shared<CorrectnessTest>(i_function));
+			find_or_add_entry(i_path).add_correctess_test(CorrectnessTestFunction(i_function));
 		}
 
-		void add_performance_test(StringView i_path, TestFunction i_function, StringView i_version_label)
+		void add_performance_test(StringView i_path, PerformanceTestFunction i_function, StringView i_version_label)
 		{
-			find_or_add_entry(i_path).add_test(std::make_shared<PerformanceTest>(i_function, i_version_label));
+			find_or_add_entry(i_path).add_performance_test(PerformanceTest(i_function, i_version_label));
 		}
 
 		void run(StringView i_path)
 		{
+			CorrectnessTestContext correctnessContext;
 			auto node = find_entry(i_path);
 			if (node != nullptr)
 			{
-				
+				node->run(correctnessContext);
 			}
 		}
 	};
@@ -159,12 +183,12 @@ namespace reflective
 	{
 	}
 
-	void UnitTesingManager::add_correctness_test(StringView i_path, TestFunction i_function)
+	void UnitTesingManager::add_correctness_test(StringView i_path, CorrectnessTestFunction i_function)
 	{
 		m_impl->add_correctness_test(i_path, i_function);
 	}
 
-	void UnitTesingManager::add_performance_test(StringView i_path, TestFunction i_function, StringView i_version_label)
+	void UnitTesingManager::add_performance_test(StringView i_path, PerformanceTestFunction i_function, StringView i_version_label)
 	{
 		m_impl->add_performance_test(i_path, i_function, i_version_label);
 	}

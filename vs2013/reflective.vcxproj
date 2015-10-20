@@ -166,6 +166,7 @@
     <ClInclude Include="..\sources\reflective.h" />
     <ClInclude Include="..\sources\reflective_common.h" />
     <ClInclude Include="..\sources\reflective_settings.h" />
+    <ClInclude Include="..\sources\unit_testing\correctness_test_context.h" />
     <ClInclude Include="..\sources\unit_testing\uint_test_manager.h" />
     <ClInclude Include="..\sources\unit_testing\unit_testing.h" />
   </ItemGroup>

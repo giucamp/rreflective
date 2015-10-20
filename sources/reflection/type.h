@@ -123,7 +123,7 @@ namespace reflective
 
 					// unit testing
 
-		#if REFLECTIVE_ENABLE_SELF_TESTING
+		#if REFLECTIVE_ENABLE_TESTING
 			
 			/** Runs an unit test for this class */
 			static void unit_test();
