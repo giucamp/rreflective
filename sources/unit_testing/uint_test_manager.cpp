@@ -11,20 +11,20 @@ namespace reflective
 
 			Test & operator = (const Test &) = delete;
 
-			Test(std::function<void()> i_function)
+			Test(TestFunction i_function)
 				: m_function(std::move(i_function))
 			{
 			}
 
 		private:
 			std::chrono::duration<double> m_duration;
-			std::function<void()> m_function;
+			TestFunction m_function;
 		};
 
 		class CorrectnessTest : public Test
 		{
 		public:
-			CorrectnessTest(std::function<void()> i_function)
+			CorrectnessTest(TestFunction i_function)
 				: Test(std::move(i_function))
 			{
 			}
@@ -33,8 +33,8 @@ namespace reflective
 		class PerformanceTest : public Test
 		{
 		public:
-			PerformanceTest(std::function<void()> i_function, std::string i_version_label)
-				: Test(std::move(i_function)), m_version_label(std::move(i_version_label))
+			PerformanceTest(TestFunction i_function, StringView i_version_label)
+				: Test(std::move(i_function)), m_version_label(i_version_label.data(), i_version_label.size())
 			{
 			}
 
@@ -94,10 +94,10 @@ namespace reflective
 
 		}
 
-		Node * find_entry(StringView i_full_path)
+		Node * find_entry(StringView i_path)
 		{
 			Node * node = &m_root;
-			for_each_token(i_full_path, '/', [&node](StringView i_token) {
+			for_each_token(i_path, '/', [&node](StringView i_token) {
 
 				if (node != nullptr)
 				{
@@ -108,10 +108,10 @@ namespace reflective
 			return node;
 		}
 
-		Node & find_or_add_entry(StringView i_full_path)
+		Node & find_or_add_entry(StringView i_path)
 		{
 			Node * node = &m_root;
-			for_each_token(i_full_path, '/', [&node](StringView i_token) {
+			for_each_token(i_path, '/', [&node](StringView i_token) {
 
 				Node * child = node->find_child(i_token);
 
@@ -128,14 +128,14 @@ namespace reflective
 			return *node;
 		}
 
-		void add_correctness_test(StringView i_path, std::function<void()> i_function)
+		void add_correctness_test(StringView i_path, TestFunction i_function)
 		{
 			find_or_add_entry(i_path).add_test(std::make_shared<CorrectnessTest>(i_function));
 		}
 
-		void add_performance_test(StringView i_path, std::function<void()> i_function, StringView i_version_label)
+		void add_performance_test(StringView i_path, TestFunction i_function, StringView i_version_label)
 		{
-			//find_or_add_entry(i_path).add_test(std::make_shared<PerformanceTest>(i_function, i_version_label));
+			find_or_add_entry(i_path).add_test(std::make_shared<PerformanceTest>(i_function, i_version_label));
 		}
 
 		void run(StringView i_path)
@@ -143,7 +143,7 @@ namespace reflective
 			auto node = find_entry(i_path);
 			if (node != nullptr)
 			{
-
+				
 			}
 		}
 	};
@@ -159,12 +159,12 @@ namespace reflective
 	{
 	}
 
-	void UnitTesingManager::add_correctness_test(StringView i_path, std::function<void()> i_function)
+	void UnitTesingManager::add_correctness_test(StringView i_path, TestFunction i_function)
 	{
 		m_impl->add_correctness_test(i_path, i_function);
 	}
 
-	void UnitTesingManager::add_performance_test(StringView i_path, std::function<void()> i_function, StringView i_version_label)
+	void UnitTesingManager::add_performance_test(StringView i_path, TestFunction i_function, StringView i_version_label)
 	{
 		m_impl->add_performance_test(i_path, i_function, i_version_label);
 	}

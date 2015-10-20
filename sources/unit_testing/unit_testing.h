@@ -26,7 +26,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ***********************************************************************************/
 
 #include "..\reflective.h"
-#include <functional>
 
 namespace reflective
 {

@@ -34,15 +34,17 @@ namespace reflective
 
 	public:
 
+		using TestFunction = void (*)();
+
 		static UnitTesingManager & instance();
 		
 		UnitTesingManager(const UnitTesingManager &) = delete;
 
 		UnitTesingManager & operator = (const UnitTesingManager &) = delete;
 				
-		void add_correctness_test(StringView i_path, std::function<void()> i_function);
+		void add_correctness_test(StringView i_path, TestFunction i_function);
 
-		void add_performance_test(StringView i_path, std::function<void()> i_function, StringView i_version_label);
+		void add_performance_test(StringView i_path, TestFunction i_function, StringView i_version_label);
 
 		void run(StringView i_path = StringView());
 
