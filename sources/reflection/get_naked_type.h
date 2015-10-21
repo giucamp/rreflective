@@ -31,7 +31,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif
 
 namespace reflective
-{	
+{
 	const Namespace & root_namespace();
 
 	Namespace & edit_root_namespace();
@@ -58,7 +58,7 @@ namespace reflective
 		{
 			using ReflectedType = reflective::Type;
 
-			static const ReflectedType * create()
+			static const Type * create()
 			{
 				Type * new_type = new Type(SymbolTypeId::is_type, "void", 0, 1, {});
 				return new_type;
@@ -71,27 +71,16 @@ namespace reflective
 		{
 			using ReflectedType = reflective::Type;
 
-			static const ReflectedType * create()
-			{
-				Type * new_type = new Type(SymbolTypeId::is_type, get_type_full_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value, {});
-				new_type->set_special_functions(SpecialFunctions::from_type<TYPE>());
-				setup_type(*new_type, static_cast<TYPE*>(nullptr));
-				return new_type;
-			}
+			static const Type * create();
 		};
-
+		
+		// SymbolTraits for classes
 		template <typename TYPE> 
 			struct SymbolTraits< TYPE, SymbolTypeId::is_class>
 		{
 			using ReflectedType = reflective::Class;
 
-			static const ReflectedType * create()
-			{
-				Class * class_obj = new Class(get_type_full_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value, { } );
-				class_obj->set_special_functions(SpecialFunctions::from_type<TYPE>());
-				setup_type(*class_obj, static_cast<TYPE*>(nullptr));
-				return class_obj;
-			}
+			static const Class * create();
 		};
 
 		template <typename TYPE> 
@@ -99,13 +88,7 @@ namespace reflective
 		{
 			using ReflectedType = reflective::Enum<std::underlying_type<TYPE>>;
 
-			static const ReflectedType * create()
-			{
-				Enum< std::underlying_type<TYPE> > * enum_obj = new Enum< std::underlying_type<TYPE> >(get_type_full_name<TYPE>());
-				enum_obj->set_special_functions(SpecialFunctions::from_type<TYPE>());
-				setup_type(*enum_obj, static_cast<TYPE*>(nullptr));
-				return enum_obj;
-			}
+			static const reflective::Enum<std::underlying_type<TYPE>> * create();
 		};
 
 		template <typename TYPE>
@@ -113,10 +96,71 @@ namespace reflective
 				void*, std::decay_t<TYPE > >;
 	}
 
+
 	template <typename TYPE>
-		using ReflectingType = typename details::SymbolTraits<
-			details::CleanType<TYPE>, details::GetSymbolTypeId< details::CleanType<TYPE> >::s_type_id >::ReflectedType;
+	using ReflectingType = typename details::SymbolTraits<
+		details::CleanType<TYPE>, details::GetSymbolTypeId< details::CleanType<TYPE> >::s_type_id >::ReflectedType;
 
 	template <typename TYPE>
 		const ReflectingType<TYPE> & get_naked_type();
+
+
+	template <typename TYPE>
+		class TypeSetupContext
+	{
+	public:
+
+		TypeSetupContext(typename ReflectingType<TYPE> * i_type)
+			: m_type(i_type)
+		{
+
+		}
+
+		typename ReflectingType<TYPE> * type() const { return m_type; }
+
+	private:
+		typename ReflectingType<TYPE> * m_type;
+	};
+
+	template <typename TYPE>
+		void setup_type(TypeSetupContext<TYPE> & i_context)
+	{
+		i_context.type()->set_implicit_reflection(true);
+	}
+
+	namespace details
+	{
+		// SymbolTraits::create for primitive types
+		template <typename TYPE>
+			inline const Type * SymbolTraits< TYPE, SymbolTypeId::is_type>::create()
+		{
+			Type * new_type = new Type(SymbolTypeId::is_type, get_type_full_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value, {});
+			new_type->set_special_functions(SpecialFunctions::from_type<TYPE>());
+			TypeSetupContext<TYPE> context(new_type);
+			setup_type(context);
+			return new_type;
+		}
+
+		// SymbolTraits::create for class types
+		template <typename TYPE>
+			inline const Class * SymbolTraits< TYPE, SymbolTypeId::is_class>::create()
+		{
+			Class * class_obj = new Class(get_type_full_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value, {});
+			class_obj->set_special_functions(SpecialFunctions::from_type<TYPE>());
+			TypeSetupContext<TYPE> context(class_obj);
+			setup_type(context);
+			return class_obj;
+		}
+
+		// SymbolTraits::create for class enums
+		template <typename TYPE>
+			inline const typename reflective::Enum<std::underlying_type<TYPE>> * SymbolTraits< TYPE, SymbolTypeId::is_enum >::create()
+		{
+			Enum< std::underlying_type<TYPE> > * enum_obj = new Enum< std::underlying_type<TYPE> >(get_type_full_name<TYPE>());
+			enum_obj->set_special_functions(SpecialFunctions::from_type<TYPE>());
+			TypeSetupContext<TYPE> context(enum_obj);
+			setup_type(context);
+			return enum_obj;
+		}
+	}
 }

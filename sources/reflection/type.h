@@ -50,6 +50,15 @@ namespace reflective
 		UpDownCaster<> m_updown_caster;
 	};
 
+
+	struct TypeDescriptor
+	{
+		std::string m_namespace_path;
+		std::string m_name;
+		List<Attribute> m_attributes;
+		List<Property> m_properties;
+	};
+
 	namespace details
 	{
 		class DerivedTypesList // this class is not supposed to be referenced outside the library
@@ -93,6 +102,19 @@ namespace reflective
 		void full_name_to_string(OutStringBuffer & i_dest) const;
 		
 		static const Type * accept_full_name(InStringBuffer & i_source, OutStringBuffer & i_error_dest);
+
+
+					// flags
+		
+		void set_implicit_reflection(bool i_value)
+		{
+			m_implicit_reflection = i_value;
+		}
+
+		bool is_implicit_reflection() const
+		{
+			return m_implicit_reflection;
+		}
 
 					// special_functions
 
@@ -146,6 +168,8 @@ namespace reflective
 		SpecialFunctions m_special_functions;
 		const size_t m_size;
 		const size_t m_alignment;
+
+		bool m_implicit_reflection; // temp
 
 		// inheritance data
 		BaseType m_single_base;

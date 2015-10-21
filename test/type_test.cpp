@@ -30,14 +30,15 @@ void pt(const char*n, size_t s)
 
 namespace reflective
 {
-	void setup_type(ReflectingType<MyNamespace::OtherNamespace::MyClass> & i_class, MyNamespace::OtherNamespace::MyClass *)
+	template <>
+	void setup_type(TypeSetupContext<MyNamespace::OtherNamespace::MyClass> & i_context)
 	{
 		using ThisClass = MyNamespace::OtherNamespace::MyClass;
 		List<Property> empty = { 
 			make_property<ThisClass>("IntVar", &ThisClass::m_int_var),
 			make_property<ThisClass>("FloatVar", &ThisClass::m_float_var),
 		};
-		i_class.set_properites(std::move(empty));
+		i_context.type()->set_properites(std::move(empty));
 	}
 }
 

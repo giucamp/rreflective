@@ -55,6 +55,8 @@ int main()
 		cout << get_type<void***const**volatile*******>() << endl;
 	}
 
+	Type_test();
+
 	std::ostringstream s;
 	s << 1;
 	s << 1.f;
@@ -66,8 +68,6 @@ int main()
 	Name_test();
 
 	bulk_list__test();
-
-	Type_test();
 
 	Stream_test();	
 		

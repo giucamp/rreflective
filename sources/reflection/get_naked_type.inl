@@ -1,11 +1,6 @@
 
 namespace reflective
 {
-	inline void setup_type(Type & /*i_type*/, void * )
-	{
-
-	}
-
 	namespace details
 	{
 		template <typename TYPE>

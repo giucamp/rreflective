@@ -6,6 +6,8 @@ namespace reflective
 			: NamespaceMember(i_type_id, std::move(i_name)), m_size(i_size), m_alignment(i_alignment), 
 			m_most_derived_func(nullptr), m_next_derived(nullptr)
 	{
+		m_implicit_reflection = false;
+
 		REFLECTIVE_ASSERT(i_size <= s_max_size, "The size of the type exceeds s_max_size");
 		REFLECTIVE_ASSERT(is_power_of_2(i_alignment), "The alignment of the type is not a power of 2");
 		REFLECTIVE_ASSERT(i_alignment <= s_max_alignment, "The alignment of the type exceeds s_max_alignment");
