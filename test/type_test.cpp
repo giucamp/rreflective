@@ -30,7 +30,6 @@ void pt(const char*n, size_t s)
 
 namespace reflective
 {
-	template <>
 	void setup_type(TypeSetupContext<MyNamespace::OtherNamespace::MyClass> & i_context)
 	{
 		using ThisClass = MyNamespace::OtherNamespace::MyClass;
