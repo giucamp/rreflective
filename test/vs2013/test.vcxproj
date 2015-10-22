@@ -116,6 +116,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\auto_gen.cpp" />
     <ClCompile Include="..\bulk_list_test.cpp" />
     <ClCompile Include="..\main.cpp" />
     <ClCompile Include="..\name_test.cpp" />

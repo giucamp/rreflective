@@ -45,6 +45,12 @@ namespace reflective
 		const Type * base_type() const					{ return m_base_type; }
 		const UpDownCaster<> & updown_caster() const	{ return m_updown_caster; }
 
+		template <typename DERIVED_TYPE, typename BASE_TYPE >
+			static BaseType from_types()
+		{
+			return BaseType( &get_naked_type<BASE_TYPE>(), UpDownCaster<>::from_types<BASE_TYPE, DERIVED_TYPE>() );
+		}
+
 	private:
 		const Type * m_base_type;
 		UpDownCaster<> m_updown_caster;
@@ -90,8 +96,7 @@ namespace reflective
 		static const size_t s_max_size = (1 << 24) - 1;
 		static const size_t s_max_alignment = (1 << 8) - 11;
 
-		Type(SymbolTypeId i_type_id, SymbolName i_name, size_t i_size, size_t i_alignment, 
-			const ArrayView<BaseType> & i_base_types );
+		Type(SymbolTypeId i_type_id, SymbolName i_name, size_t i_size, size_t i_alignment );
 
 		virtual ~Type() {}
 
@@ -131,6 +136,8 @@ namespace reflective
 
 
 					// inheritance	
+
+		void set_base_types(const ArrayView<const BaseType> & i_base_types);
 
 		const details::DerivedTypesList & derived_types() const { return m_derived_types; }
 

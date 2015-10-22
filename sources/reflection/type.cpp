@@ -1,8 +1,7 @@
 
 namespace reflective
 {
-	Type::Type(SymbolTypeId i_type_id, SymbolName i_name, size_t i_size, size_t i_alignment,
-			const ArrayView<BaseType> & i_base_types )
+	Type::Type(SymbolTypeId i_type_id, SymbolName i_name, size_t i_size, size_t i_alignment )
 			: NamespaceMember(i_type_id, std::move(i_name)), m_size(i_size), m_alignment(i_alignment), 
 			m_most_derived_func(nullptr), m_next_derived(nullptr)
 	{
@@ -11,7 +10,10 @@ namespace reflective
 		REFLECTIVE_ASSERT(i_size <= s_max_size, "The size of the type exceeds s_max_size");
 		REFLECTIVE_ASSERT(is_power_of_2(i_alignment), "The alignment of the type is not a power of 2");
 		REFLECTIVE_ASSERT(i_alignment <= s_max_alignment, "The alignment of the type exceeds s_max_alignment");
+	}
 
+	void Type::set_base_types(const ArrayView<const BaseType> & i_base_types)
+	{
 		if (i_base_types.size() >= 1)
 		{
 			m_single_base = i_base_types[0];
@@ -23,6 +25,13 @@ namespace reflective
 				}
 			#else
 				REFLECTIVE_ASSERT(i_base_types.size() == 1, "More than one base type provided, but multiple inheritance is disabled (REFLECTIVE_ENABLE_MULTIPLE_INHERITANCE si false)");
+			#endif
+		}
+		else
+		{
+			m_single_base = BaseType();
+			#if REFLECTIVE_ENABLE_MULTIPLE_INHERITANCE
+				m_other_base_types.clear();
 			#endif
 		}
 	}

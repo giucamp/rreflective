@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="ClassEntry.cs" />
     <Compile Include="ClassHierarchy.cs" />
+    <Compile Include="ClassProperty.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

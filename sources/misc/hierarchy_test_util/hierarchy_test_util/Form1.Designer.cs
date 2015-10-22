@@ -42,6 +42,7 @@
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.textBox1.Size = new System.Drawing.Size(728, 473);
             this.textBox1.TabIndex = 0;
+            this.textBox1.WordWrap = false;
             // 
             // Form1
             // 
@@ -51,6 +52,7 @@
             this.Controls.Add(this.textBox1);
             this.Name = "Form1";
             this.Text = "Form1";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.ResumeLayout(false);
             this.PerformLayout();
 

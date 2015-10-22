@@ -60,7 +60,7 @@ namespace reflective
 
 			static const Type * create()
 			{
-				Type * new_type = new Type(SymbolTypeId::is_type, "void", 0, 1, {});
+				Type * new_type = new Type(SymbolTypeId::is_type, "void", 0, 1 );
 				return new_type;
 			}
 		};
@@ -134,7 +134,7 @@ namespace reflective
 		template <typename TYPE>
 			inline const Type * SymbolTraits< TYPE, SymbolTypeId::is_type>::create()
 		{
-			Type * new_type = new Type(SymbolTypeId::is_type, get_type_full_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value, {});
+			Type * new_type = new Type(SymbolTypeId::is_type, get_type_full_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value);
 			new_type->set_special_functions(SpecialFunctions::from_type<TYPE>());
 			TypeSetupContext<TYPE> context(new_type);
 			setup_type(context);
@@ -145,7 +145,7 @@ namespace reflective
 		template <typename TYPE>
 			inline const Class * SymbolTraits< TYPE, SymbolTypeId::is_class>::create()
 		{
-			Class * class_obj = new Class(get_type_full_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value, {});
+			Class * class_obj = new Class(get_type_full_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value);
 			class_obj->set_special_functions(SpecialFunctions::from_type<TYPE>());
 			TypeSetupContext<TYPE> context(class_obj);
 			setup_type(context);

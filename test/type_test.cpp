@@ -8,7 +8,15 @@ namespace MyNamespace
 {
 	namespace OtherNamespace
 	{
-		class MyClass
+		class MyBaseClass
+		{
+		};
+
+		class MyBaseClass1
+		{
+		};
+
+		class MyClass: public MyBaseClass, public MyBaseClass1
 		{
 		public:
 			int m_int_var = 0;
@@ -33,6 +41,11 @@ namespace reflective
 	void setup_type(TypeSetupContext<MyNamespace::OtherNamespace::MyClass> & i_context)
 	{
 		using ThisClass = MyNamespace::OtherNamespace::MyClass;
+		
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, MyNamespace::OtherNamespace::MyBaseClass>(),
+			BaseType::from_types<ThisClass, MyNamespace::OtherNamespace::MyBaseClass1>() });
+		
 		List<Property> empty = { 
 			make_property<ThisClass>("IntVar", &ThisClass::m_int_var),
 			make_property<ThisClass>("FloatVar", &ThisClass::m_float_var),

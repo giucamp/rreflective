@@ -7,6 +7,7 @@
     <ClCompile Include="..\type_test.cpp" />
     <ClCompile Include="..\stream_test.cpp" />
     <ClCompile Include="..\bulk_list_test.cpp" />
+    <ClCompile Include="..\auto_gen.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\test_common.h" />
