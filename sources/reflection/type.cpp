@@ -180,7 +180,7 @@ namespace reflective
 		return nullptr;
 	}
 
-	void * Type::upcast(const Type & i_base_type, void * i_object) const
+	void * Type::upcast(void * i_object, const Type & i_dest_base_type) const
 	{
 		void * curr_object = i_object;
 		if (curr_object == nullptr)
@@ -191,7 +191,7 @@ namespace reflective
 		const Type * curr_type = this;
 		do {
 
-			if (curr_type == &i_base_type)
+			if (curr_type == &i_dest_base_type)
 			{
 				return curr_object;
 			}
@@ -201,7 +201,7 @@ namespace reflective
 				for (const auto & base : m_other_base_types)
 				{
 					void * base_object = base.updown_caster().derived_to_base(curr_object);
-					void * casted = base.base_type()->upcast(i_base_type, base_object);
+					void * casted = base.base_type()->upcast(base_object, i_dest_base_type);
 					if (casted != nullptr)
 					{
 						return casted;
@@ -216,7 +216,7 @@ namespace reflective
 
 		} while (curr_type != nullptr);
 
-		return false;
+		return nullptr;
 	}
 
 	bool Type::internal_find_path_to_type(std::vector<BaseType> & io_base_types, const Type & i_target_type) const

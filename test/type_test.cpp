@@ -54,7 +54,6 @@ namespace reflective
 	}
 }
 
-
 void Type_test()
 {
 	using namespace reflective;

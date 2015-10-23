@@ -36,15 +36,34 @@ namespace reflective
 	{
 	public:
 
-		ObjPtr(void * i_objcts, QualifiedTypePtr i_qualified_type)
-			: m_objcts(i_objcts), m_qualified_type(i_qualified_type)
+		ObjPtr() : m_object(nullptr) {  }
+		
+		ObjPtr(void * i_object, QualifiedTypePtr i_qualified_type)
+			: m_object(i_object), m_type(i_qualified_type)
 		{
 		}
 
+		template <typename TYPE>
+			ObjPtr(TYPE * i_object)
+				: m_object(i_object), m_type(get_type<TYPE>())
+		{
 
+		}
+
+		void * object() const					{ return m_object; }
+
+		const QualifiedTypePtr & type() const	{ return m_type; }
+
+		ObjPtr cast_to(QualifiedTypePtr i_dest_type) const;
+
+		ObjPtr upcast_to(QualifiedTypePtr i_dest_type) const;
+
+		template <typename DEST_TYPE>
+		ObjPtr cast_to() const
+			{ return cast_to(get_type(DEST_TYPE)); }
 
 	private:		
-		void * m_objcts;
-		QualifiedTypePtr m_qualified_type;
+		void * m_object;
+		QualifiedTypePtr m_type;
 	};
 }

@@ -44,11 +44,44 @@ namespace hierarchy_test_util
 
         public void AddRandomBaseClasses(int i_derivationCount)
         {
-            for(int i = 0; i < m_classes.Count; i++ )
+            int der = 0;
+            while(der < i_derivationCount)
+            {
+                int i = m_rand.Next(m_classes.Count);
+                int j = m_rand.Next(m_classes.Count);
+                if( i > j )
+                {
+                    Utils.Swap(ref i, ref j);
+                }
+                else if(i==j)
+                {
+                    continue;
+                }
+                ClassEntry baseC = m_classes[i];
+                ClassEntry derC = m_classes[j];
+                var existingBases = derC.GetAllBases();
+                var baseBases = baseC.GetAllBases();
+                baseBases.Add(baseC);
+                if (!baseBases.Overlaps(existingBases))
+                {
+                    System.Diagnostics.Debug.WriteLine(derC.Name +" : "+ baseC.Name);
+                    derC.AddBase(baseC, false);
+                    Save();
+                    der++;
+                }
+            }
+
+            /*int[] is_ = Utils.CreateIntArray(m_classes.Count);
+            Utils.Shuffle(is_, m_rand);
+
+            foreach(int i in is_)
             {
                 ClassEntry derC = m_classes[i];
-                
-                for (int j = 0; j < i; j++)
+
+                int[] js_ = Utils.CreateIntArray(i);
+                Utils.Shuffle(js_, m_rand);
+                                
+                foreach(int j in js_)
                 {
                     ClassEntry baseC = m_classes[j];
                     var existingBases = derC.GetAllBases();
@@ -56,12 +89,10 @@ namespace hierarchy_test_util
                     baseBases.Add(baseC);
                     if( !baseBases.Overlaps(existingBases) )
                     {
-                        //Save();
-                        //System.Diagnostics.Debug.WriteLine("Adding to " + derC.Name + " the base " + baseC.Name );
                         derC.AddBase(baseC, false);
                     }
                 }
-            }
+            }*/
             /*int currDer = 0;
             while(currDer < i_derivationCount)
             {

@@ -16,10 +16,10 @@ namespace hierarchy_test_util
         {
             InitializeComponent();
 
-            ClassHierarchy h = new ClassHierarchy("test" ,0.5, 0.5, 100);
+            ClassHierarchy h = new ClassHierarchy("test" ,0.5, 0.5, 6);
             h.FileName = System.Windows.Forms.Application.StartupPath + "/../../../../../../test/auto_gen.cpp";
 
-            h.AddRandomBaseClasses(4);
+            h.AddRandomBaseClasses(6);
             textBox1.AppendText(h.GenerateSourceCode());
             
             h.Save();

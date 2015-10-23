@@ -62,7 +62,7 @@ namespace hierarchy_test_util
             if (m_nextNaked >= m_shuffledNakedTypes.Count)
             {
                 m_shuffledNakedTypes = new List<string>(m_nakedTypes);
-                Shuffle(m_nakedTypes);
+                Utils.Shuffle(m_nakedTypes, m_random);
                 m_nextNaked = 0;
             }
 
@@ -94,17 +94,6 @@ namespace hierarchy_test_util
                 currInd++;
             }
             return res;
-        }
-
-        void Shuffle<T>(IList<T> i_dest)
-        {
-            for( int i = 0; i < i_dest.Count; i++ )
-            {
-                int j = m_random.Next(i_dest.Count);
-                var temp = i_dest[i];
-                i_dest[i] = i_dest[j];
-                i_dest[j] = temp;
-            }
         }
 
         public ClassProperty NewProp(double i_indirectionChance, double i_cvQuaificationChance, int i_maxIndirections)

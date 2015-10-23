@@ -56,15 +56,6 @@ namespace reflective
 		UpDownCaster<> m_updown_caster;
 	};
 
-
-	struct TypeDescriptor
-	{
-		std::string m_namespace_path;
-		std::string m_name;
-		List<Attribute> m_attributes;
-		List<Property> m_properties;
-	};
-
 	namespace details
 	{
 		class DerivedTypesList // this class is not supposed to be referenced outside the library
@@ -143,7 +134,7 @@ namespace reflective
 
 		bool can_upcast_to(const Type & i_base_type) const;
 
-		void * upcast(const Type & i_base_type, void * i_object) const;
+		void * upcast(void * i_object, const Type & i_dest_base_type) const;
 		
 		const Type * most_derived(const void * i_object) const;
 
