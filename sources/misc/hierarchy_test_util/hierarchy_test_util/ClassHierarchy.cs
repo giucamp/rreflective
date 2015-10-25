@@ -11,10 +11,12 @@ namespace hierarchy_test_util
         public string HierarchyName { get; set; }
         public double VTableChance { get; set; }
         public double VBaseChance { get; set; }
+        public double MostDerivedTypeFuncChance { get; set; }
         public int ClassCount { get; set; }
         public int DerivationFactor { get; set; }
         public bool AllowMultipleInheritance { get; set; }
-        
+        public int TestCount { get; set; }
+
         public HierarchySettings(string i_hierarchyName)
         {
             HierarchyName = i_hierarchyName;
@@ -22,7 +24,9 @@ namespace hierarchy_test_util
             ClassCount = 100;
             DerivationFactor = 5;
             VTableChance = 0.5;
+            MostDerivedTypeFuncChance = 1.5;
             VBaseChance = 0;
+            TestCount = 1000;
         }
     }
 
@@ -48,7 +52,8 @@ namespace hierarchy_test_util
                 }
 
                 bool hasVTable = m_rand.NextDouble() < m_settings.VTableChance;
-                m_classes.Add(new ClassEntry("reflective::details::" + i_settings.HierarchyName, "Class_" + classIndex.ToString(), hasVTable, props));
+                bool hasMDTFunc = m_rand.NextDouble() < m_settings.MostDerivedTypeFuncChance;
+                m_classes.Add(new ClassEntry("reflective::details::" + i_settings.HierarchyName, "Class_" + classIndex.ToString(), hasVTable, hasMDTFunc, props));
             }
 
             AddRandomBaseClasses();
@@ -131,6 +136,78 @@ namespace hierarchy_test_util
             } 
         }
 
+        ClassEntry RandClass()
+        {
+            return m_classes[m_rand.Next(m_classes.Count)];
+        }
+
+        private void GenerateTest(TextOut i_output)
+        {
+            i_output.AppendLine("namespace reflective");
+            i_output.AppendLine("{");
+            i_output.Tab();
+
+            i_output.AppendLine("namespace details");
+            i_output.AppendLine("{");
+            i_output.Tab();
+
+            i_output.AppendLine("namespace " + m_settings.HierarchyName);
+            i_output.AppendLine("{");
+            i_output.Tab();
+
+            i_output.AppendLine("void test_" + m_settings.HierarchyName + "_test()");
+            i_output.AppendLine("{");
+            i_output.Tab();
+            
+            i_output.AppendLine("// objects");
+            foreach (ClassEntry classObj in m_classes)
+            {
+                i_output.AppendLine(classObj.Name + " obj_" + classObj.Name + ";");
+            }
+            i_output.AppendLine("");
+
+
+            i_output.AppendLine("");
+            i_output.AppendLine("// pointers");
+            for (int i = 0; i < m_settings.TestCount; i++)
+            {
+                // complete object
+                ClassEntry completeClassObj = RandClass();
+                i_output.AppendLine("ObjPtr ref_complete_ptr_" + i.ToString() + " = &obj_" + completeClassObj.Name + ";");
+                i_output.AppendLine(completeClassObj.Name + " * native_complete_ptr_" + i.ToString() + " = &obj_" + completeClassObj.Name + ";");
+                
+                // upcast
+                ClassEntry baseClass = completeClassObj.GetRandomBaseOrThis(m_rand);
+                i_output.AppendLine("ObjPtr ref_base_ptr_" + i.ToString() + " = ref_complete_ptr_" + i.ToString() + ".upcast_to(get_type<" + baseClass.Name + ">());");
+                i_output.AppendLine(baseClass.Name + " * native_base_ptr_" + i.ToString() + " = native_complete_ptr_" + i.ToString() + ";");
+
+                // dynamic_cast
+                ClassEntry destClass = RandClass();
+                i_output.AppendLine("ObjPtr ref_dyn_ptr_" + i.ToString() + " = ref_base_ptr_" + i.ToString() + ".cast_to(get_type<" + destClass.Name + ">());");
+                i_output.AppendLine(destClass.Name + " * native_dyn_ptr_" + i.ToString() + " = " + "dynamic_cast<" + destClass.Name + "*>(native_base_ptr_" + i.ToString() + ");");
+
+                // assert
+                i_output.AppendLine("REFLECTIVE_INTERNAL_ASSERT(" +
+                    "native_dyn_ptr_" + i.ToString() + " == " +
+                    "static_cast<" + destClass.Name + "*>( ref_base_ptr_" + i.ToString() + ".object() )" +
+                    ");");
+                i_output.AppendLine("");
+            }
+            i_output.AppendLine("");
+            
+            i_output.Untab();
+            i_output.AppendLine("}");
+
+            i_output.Untab();
+            i_output.AppendLine("}");
+
+            i_output.Untab();
+            i_output.AppendLine("}");
+
+            i_output.Untab();
+            i_output.AppendLine("}");
+        }
+
         public string GenerateSourceCode()
         {
             TextOut output = new TextOut();
@@ -169,12 +246,12 @@ namespace hierarchy_test_util
             {
                 classEntry.WriteDefinition(output);
             }
+            
+            output.Untab();
+            output.AppendLine("}");
 
             output.Untab();
-            output.AppendLine("};");
-
-            output.Untab();
-            output.AppendLine("};");
+            output.AppendLine("}");
 
             output.AppendLine("");
             foreach (ClassEntry classEntry in m_classes)
@@ -184,6 +261,7 @@ namespace hierarchy_test_util
             output.Untab();
             output.AppendLine("};");
 
+            GenerateTest(output);
 
             return output.ToString();
         }

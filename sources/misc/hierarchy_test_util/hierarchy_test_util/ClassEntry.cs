@@ -10,17 +10,18 @@ namespace hierarchy_test_util
     {
         private string m_parentNamespace;
         private string m_name;
-        private bool m_hasVTable;
+        private bool m_hasVTable, m_hasMDTFunc;
         private IEnumerable<ClassEntry> m_bases;
         private List<ClassEntry> m_nonVirtualBases = new List<ClassEntry>();
         private List<ClassEntry> m_virtualBases = new List<ClassEntry>();
         private List<ClassProperty> m_properties;
         
-        public ClassEntry(string i_parentNamespace, string i_name, bool i_hasVTable,
+        public ClassEntry(string i_parentNamespace, string i_name, bool i_hasVTable, bool i_hasMDTFunc,
             List<ClassProperty> i_props)
         {
             m_bases = m_nonVirtualBases.Concat(m_virtualBases);
             m_hasVTable = i_hasVTable;
+            m_hasMDTFunc = i_hasMDTFunc;
             m_parentNamespace = i_parentNamespace;
             m_name = i_name;
             m_properties = i_props;
@@ -77,6 +78,17 @@ namespace hierarchy_test_util
             }
             return false;
         }
+
+        public ClassEntry GetRandomBaseOrThis(Random i_rand)
+        {
+            List<ClassEntry> bases = new List<ClassEntry>();
+            List<ClassEntry> virtualBases = new List<ClassEntry>();
+            GetAllBases(bases, virtualBases);
+            virtualBases.RemoveDupicates();
+            bases.AddRange(virtualBases);
+            bases.Add(this);
+            return bases[i_rand.Next(bases.Count)];
+        }
         
         public void GetAllBases(List<ClassEntry> i_nonVirtualBases, List<ClassEntry> i_virtualBases)
         {
@@ -116,13 +128,25 @@ namespace hierarchy_test_util
             i_output.Tab();
          
             i_output.AppendLine("public:");
+            
+            // vtable
             if (m_hasVTable)
-            {
+            {                
                 i_output.AppendLine("virtual ~" + Name + "() {}");
                 i_output.AppendLine("virtual int vfunct_" + Name + "() { return 42; }");
             }
 
-            foreach(ClassProperty prop in m_properties)
+            if(m_hasMDTFunc)
+            {
+                i_output.AppendLine("virtual const reflective::Type & virtual_get_type() const");
+                i_output.AppendLine("\t{ return reflective::get_naked_type<" +Name + ">(); }");
+                i_output.AppendLine("");
+                i_output.AppendLine("static const reflective::Type & static_get_type(const void * i_object)");
+                i_output.AppendLine("\t{ return static_cast<const " + Name + " *>(i_object)->virtual_get_type(); }");
+            }
+
+            // properties
+            foreach (ClassProperty prop in m_properties)
             {
                 i_output.AppendLine(prop.Type + " " + prop.Name + ";" );
             }
@@ -159,8 +183,10 @@ namespace hierarchy_test_util
                 i_output.Untab();
             }
 
+            i_output.AppendLine("i_context;");
+
             i_output.Untab();
-            i_output.AppendLine("};");
+            i_output.AppendLine("}");
         }
     }
 }

@@ -11,8 +11,22 @@ void Type_test();
 void Stream_test();
 void bulk_list__test();
 
+namespace reflective
+{
+	namespace details
+	{
+		namespace test
+		{
+			void test_test_test();
+		}
+	}
+}
+
+
 int main()
 {
+	//reflective::details::test::test_test_test();
+
 	{
 		using namespace reflective;
 		using namespace std;

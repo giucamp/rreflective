@@ -59,8 +59,8 @@ namespace reflective
 		ObjPtr upcast_to(QualifiedTypePtr i_dest_type) const;
 
 		template <typename DEST_TYPE>
-		ObjPtr cast_to() const
-			{ return cast_to(get_type(DEST_TYPE)); }
+			ObjPtr cast_to() const
+				{ return cast_to(get_type(DEST_TYPE)); }
 
 	private:		
 		void * m_object;
