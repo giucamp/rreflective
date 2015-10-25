@@ -11,13 +11,15 @@ namespace hierarchy_test_util
         private string m_parentNamespace;
         private string m_name;
         private bool m_hasVTable;
-        private List<ClassEntry> m_bases = new List<ClassEntry>();
+        private IEnumerable<ClassEntry> m_bases;
+        private List<ClassEntry> m_nonVirtualBases = new List<ClassEntry>();
+        private List<ClassEntry> m_virtualBases = new List<ClassEntry>();
         private List<ClassProperty> m_properties;
-        private HashSet<ClassEntry> m_virtualBases = new HashSet<ClassEntry>();
-
+        
         public ClassEntry(string i_parentNamespace, string i_name, bool i_hasVTable,
             List<ClassProperty> i_props)
         {
+            m_bases = m_nonVirtualBases.Concat(m_virtualBases);
             m_hasVTable = i_hasVTable;
             m_parentNamespace = i_parentNamespace;
             m_name = i_name;
@@ -34,16 +36,33 @@ namespace hierarchy_test_util
             get { return m_parentNamespace.Length > 0 ? m_parentNamespace +"::" + m_name : m_name; }
         }
 
-        public List<ClassEntry> Bases
+        public IEnumerable<ClassEntry> Bases
         {
             get { return m_bases; }
         }
 
         public void AddBase(ClassEntry i_base, bool i_virtual)
         {
-            m_bases.Add(i_base);
-            if( i_virtual )
+            if(!i_virtual)
+            {
+                m_nonVirtualBases.Add(i_base);
+            }
+            else
+            {
                 m_virtualBases.Add(i_base);
+            }                
+        }
+
+        public void RemoveBase(ClassEntry i_base, bool i_virtual)
+        {
+            if (!i_virtual)
+            {
+                m_nonVirtualBases.Remove(i_base);
+            }
+            else
+            {
+                m_virtualBases.Remove(i_base);
+            }
         }
 
         public bool HasBaseClass(ClassEntry i_other)
@@ -58,20 +77,15 @@ namespace hierarchy_test_util
             }
             return false;
         }
-
-        public HashSet<ClassEntry> GetAllBases()
+        
+        public void GetAllBases(List<ClassEntry> i_nonVirtualBases, List<ClassEntry> i_virtualBases)
         {
-            HashSet<ClassEntry> set = new HashSet<ClassEntry>();
-            GetAllBases(set);
-            return set;
-        }
+            i_nonVirtualBases.AddRange(m_nonVirtualBases);
+            i_virtualBases.AddRange(m_virtualBases);
 
-        private void GetAllBases(HashSet<ClassEntry> i_dest)
-        {
-            foreach( ClassEntry baseC in m_bases )
+            foreach ( ClassEntry baseC in m_bases )
             {
-                i_dest.Add(baseC);
-                baseC.GetAllBases(i_dest);
+                baseC.GetAllBases(i_nonVirtualBases, i_virtualBases);
             }            
         }
 
@@ -100,17 +114,19 @@ namespace hierarchy_test_util
             i_output.NewLine();
             i_output.AppendLine("{");
             i_output.Tab();
-            if( m_hasVTable )
+         
+            i_output.AppendLine("public:");
+            if (m_hasVTable)
             {
-                i_output.AppendLine("public:");
                 i_output.AppendLine("virtual ~" + Name + "() {}");
                 i_output.AppendLine("virtual int vfunct_" + Name + "() { return 42; }");
-
-                foreach(ClassProperty prop in m_properties)
-                {
-                    i_output.AppendLine(prop.Type + " " + prop.Name + ";" );
-                }
             }
+
+            foreach(ClassProperty prop in m_properties)
+            {
+                i_output.AppendLine(prop.Type + " " + prop.Name + ";" );
+            }
+
             i_output.Untab();
             i_output.AppendLine("};");
         }
@@ -123,18 +139,18 @@ namespace hierarchy_test_util
             i_output.Tab();
             i_output.AppendLine("using ThisClass = " + FullName + ";");
 
-
-
-            if (m_bases.Count > 0)
+            ClassEntry[] bases = m_bases.ToArray();
+            int baseCount = bases.Length;
+            if (baseCount > 0)
             {
                 i_output.AppendLine("i_context.type()->set_base_types( {");
                 i_output.Tab();
 
-                for (int baseIndex = 0; baseIndex < m_bases.Count; baseIndex++)
+                for (int baseIndex = 0; baseIndex < baseCount; baseIndex++)
                 {
-                    ClassEntry baseClass = m_bases[baseIndex];
+                    ClassEntry baseClass = bases[baseIndex];
                     string term;
-                    if (baseIndex + 1 < m_bases.Count)
+                    if (baseIndex + 1 < baseCount)
                         term = ",";
                     else
                         term = " });";

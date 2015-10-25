@@ -46,5 +46,39 @@ namespace hierarchy_test_util
             i_first = i_second;
             i_second = temp;
         }
+
+        public static void RemoveDupicates<T>(this List<T> i_list)
+        {
+            int count = i_list.Count;
+            for(int i = 0; i < count - 1; i++ )
+            {
+                T el = i_list[i];
+                for (int j = i + 1; j < count; j++)
+                {
+                    if( i_list[j].Equals(el) )
+                    {
+                        i_list.RemoveAt(j);
+                        count--;
+                    }
+                }                    
+            }
+        }
+
+        public static bool HasDupicates<T>(this IEnumerable<T> i_collection)
+        {
+            HashSet<T> set = new HashSet<T>();
+            foreach( T el in i_collection)
+            {
+                if( set.Contains(el))
+                {
+                    return true;
+                }
+                else
+                {
+                    set.Add(el);
+                }
+            }
+            return false;
+        }
     }
 }

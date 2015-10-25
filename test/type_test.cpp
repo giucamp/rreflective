@@ -36,6 +36,28 @@ void pt(const char*n, size_t s)
 	std::cout << n << ", size: " << s << std::endl;
 }
 
+class A
+{
+	double g;
+	virtual void gdd() {}
+};
+
+class B : public virtual A
+{
+	double g;
+};
+
+class C : public virtual A
+{
+	double g;
+};
+
+class D: public B, public C
+{
+	double g;
+};
+
+
 namespace reflective
 {
 	void setup_type(TypeSetupContext<MyNamespace::OtherNamespace::MyClass> & i_context)
@@ -56,6 +78,8 @@ namespace reflective
 
 void Type_test()
 {
+	A * a = new D();
+	D * d = dynamic_cast<D*>(a);
 	using namespace reflective;
 	using namespace std;
 

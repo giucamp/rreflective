@@ -6,22 +6,39 @@ using System.Threading.Tasks;
 
 namespace hierarchy_test_util
 {
-    class ClassHierarchy
+    public class HierarchySettings
     {
+        public string HierarchyName { get; set; }
+        public double VTableChance { get; set; }
+        public double VBaseChance { get; set; }
+        public int ClassCount { get; set; }
+        public int DerivationFactor { get; set; }
+        public bool AllowMultipleInheritance { get; set; }
+        
+        public HierarchySettings(string i_hierarchyName)
+        {
+            HierarchyName = i_hierarchyName;
+            AllowMultipleInheritance = true;
+            ClassCount = 100;
+            DerivationFactor = 5;
+            VTableChance = 0.5;
+            VBaseChance = 0;
+        }
+    }
+
+    public class ClassHierarchy
+    {
+        private HierarchySettings m_settings;
         private Random m_rand = new Random(3);
-        private string m_hierarchyName;
         private List<ClassEntry> m_classes = new List<ClassEntry>();
 
         private PropertyFactory m_propFactory;
-        private double m_vTableChance, m_vBaseChance;
-
-        public ClassHierarchy(string i_hierarchyName, double i_vTableChance, double i_vBaseChance, int i_classCount)
+        
+        public ClassHierarchy(HierarchySettings i_settings)
         {
-            m_hierarchyName = i_hierarchyName;
-            m_vTableChance = i_vTableChance;
-            m_vBaseChance = i_vBaseChance;
+            m_settings = i_settings;
             m_propFactory = new PropertyFactory(m_rand);
-            for ( int classIndex = 0; classIndex < i_classCount; classIndex++)
+            for ( int classIndex = 0; classIndex < i_settings.ClassCount; classIndex++)
             {
                 List<ClassProperty> props = new List<ClassProperty>();
                 int propCount = m_rand.Next(10);
@@ -30,22 +47,49 @@ namespace hierarchy_test_util
                     props.Add(m_propFactory.NewProp(.7, 0.0, 28));
                 }
 
-                bool hasVTable = m_rand.NextDouble() < m_vTableChance;
-                m_classes.Add(new ClassEntry("reflective::details::" + i_hierarchyName, "Class_" + classIndex.ToString(), hasVTable, props));
+                bool hasVTable = m_rand.NextDouble() < m_settings.VTableChance;
+                m_classes.Add(new ClassEntry("reflective::details::" + i_settings.HierarchyName, "Class_" + classIndex.ToString(), hasVTable, props));
             }
+
+            AddRandomBaseClasses();
         }
 
         public string FileName { get; set; }
+
+        public HierarchySettings Settings
+        {
+            get
+            {
+                return m_settings;
+            }
+        }
 
         public void Save()
         {
             System.IO.File.WriteAllText(FileName, GenerateSourceCode() );
         }
 
-        public void AddRandomBaseClasses(int i_derivationCount)
+        bool HasAmbiguity()
         {
-            int der = 0;
-            while(der < i_derivationCount)
+            foreach(ClassEntry currClass in m_classes)
+            {
+                List<ClassEntry> nonVirtualBases = new List<ClassEntry>();
+                List<ClassEntry> virtualBases = new List<ClassEntry>();
+                currClass.GetAllBases(nonVirtualBases, virtualBases);
+                virtualBases.RemoveDupicates();
+
+                if( nonVirtualBases.Concat(virtualBases).HasDupicates() )
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private void AddRandomBaseClasses()
+        {
+            int fails = 0;
+            while(fails < m_classes.Count * m_settings.DerivationFactor)
             {
                 int i = m_rand.Next(m_classes.Count);
                 int j = m_rand.Next(m_classes.Count);
@@ -57,58 +101,34 @@ namespace hierarchy_test_util
                 {
                     continue;
                 }
+
+                bool success = false;
+
                 ClassEntry baseC = m_classes[i];
                 ClassEntry derC = m_classes[j];
-                var existingBases = derC.GetAllBases();
-                var baseBases = baseC.GetAllBases();
-                baseBases.Add(baseC);
-                if (!baseBases.Overlaps(existingBases))
+                if (!derC.Bases.Contains(baseC))
                 {
-                    System.Diagnostics.Debug.WriteLine(derC.Name +" : "+ baseC.Name);
-                    derC.AddBase(baseC, false);
-                    Save();
-                    der++;
-                }
-            }
-
-            /*int[] is_ = Utils.CreateIntArray(m_classes.Count);
-            Utils.Shuffle(is_, m_rand);
-
-            foreach(int i in is_)
-            {
-                ClassEntry derC = m_classes[i];
-
-                int[] js_ = Utils.CreateIntArray(i);
-                Utils.Shuffle(js_, m_rand);
-                                
-                foreach(int j in js_)
-                {
-                    ClassEntry baseC = m_classes[j];
-                    var existingBases = derC.GetAllBases();
-                    var baseBases = baseC.GetAllBases();
-                    baseBases.Add(baseC);
-                    if( !baseBases.Overlaps(existingBases) )
+                    bool isVirtualBase = m_rand.NextDouble() < m_settings.VBaseChance;
+                    derC.AddBase(baseC, isVirtualBase);
+                    if (!HasAmbiguity())
                     {
-                        derC.AddBase(baseC, false);
+                        success = true;                        
+                    }
+                    else
+                    {
+                        derC.RemoveBase(baseC, isVirtualBase);
                     }
                 }
-            }*/
-            /*int currDer = 0;
-            while(currDer < i_derivationCount)
-            {
-                int firstClass = m_rand.Next(m_classes.Count - 1);
-                int secondClass = m_rand.Next(firstClass + 1, m_classes.Count);
-                if( !m_classes[secondClass].HasBaseClass(m_classes[firstClass]) )
+
+                if (success)
                 {
-                    bool vBase = m_rand.NextDouble() < m_vBaseChance;
-                    m_classes[secondClass].AddBase(m_classes[firstClass], vBase);
-                    if(!m_classes[secondClass].HasBaseClass(m_classes[firstClass]))
-                    {
-                        int gg = 0;
-                    }
-                    currDer++;
+                    fails = 0;
                 }
-            } */           
+                else
+                {
+                    fails++;
+                }
+            } 
         }
 
         public string GenerateSourceCode()
@@ -125,6 +145,14 @@ namespace hierarchy_test_util
             output.AppendLine(@"");
             output.AppendLine(@"");
 
+            output.AppendLine(" /******** Configuration ");
+            output.AppendLine(" * Class count: " + m_settings.ClassCount.ToString() );
+            output.AppendLine(" * Derivation factor: " + m_settings.DerivationFactor.ToString());
+            output.AppendLine(" * Virtual table chance: " + ((int)(m_settings.VTableChance * 100)).ToString() + "%");
+            output.AppendLine(" * Virtual base chance: " + ((int)(m_settings.VBaseChance * 100)).ToString() + "%");
+            output.AppendLine(" * Allow multipe inheritance: " + m_settings.AllowMultipleInheritance.ToString() + "");
+            output.AppendLine(" ********/");
+
             output.AppendLine("namespace reflective");
             output.AppendLine("{");
             output.Tab();
@@ -133,7 +161,7 @@ namespace hierarchy_test_util
             output.AppendLine("{");
             output.Tab();
 
-            output.AppendLine("namespace " + m_hierarchyName);
+            output.AppendLine("namespace " + m_settings.HierarchyName);
             output.AppendLine("{");
             output.Tab();
 

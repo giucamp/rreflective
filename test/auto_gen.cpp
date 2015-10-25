@@ -8,6 +8,13 @@
 #include "..\sources\reflective.h"
 
 
+ /******** Configuration 
+ * Class count: 100
+ * Derivation factor: 5
+ * Virtual table chance: 50%
+ * Virtual base chance: 0%
+ * Allow multipe inheritance: True
+ ********/
 namespace reflective
 {
 	namespace details
@@ -16,11 +23,19 @@ namespace reflective
 		{
 			class Class_0
 			{
+				public:
+				unsigned int m_prop1;
+				signed int***** m_prop2;
 			};
 			class Class_1
 			{
+				public:
+				unsigned short int m_prop3;
+				signed short int*** m_prop4;
+				unsigned long int m_prop5;
+				signed long int* m_prop6;
 			};
-			class Class_2 : public Class_1
+			class Class_2
 			{
 				public:
 				virtual ~Class_2() {}
@@ -34,7 +49,7 @@ namespace reflective
 				double****** m_prop13;
 				long double********* m_prop14;
 			};
-			class Class_3 : public Class_2
+			class Class_3
 			{
 				public:
 				virtual ~Class_3() {}
@@ -44,11 +59,902 @@ namespace reflective
 				unsigned long int* m_prop17;
 				signed long int m_prop18;
 			};
-			class Class_4 : public Class_3, public Class_0
+			class Class_4
 			{
+				public:
+				signed short int** m_prop19;
+				char m_prop20;
+				long double m_prop21;
 			};
-			class Class_5 : public Class_2
+			class Class_5
 			{
+				public:
+				unsigned int m_prop22;
+				signed long long int*** m_prop23;
+				signed char m_prop24;
+			};
+			class Class_6 : public Class_5
+			{
+				public:
+				virtual ~Class_6() {}
+				virtual int vfunct_Class_6() { return 42; }
+				float m_prop25;
+				unsigned short int m_prop26;
+				unsigned char m_prop27;
+				double m_prop28;
+			};
+			class Class_7
+			{
+				public:
+				virtual ~Class_7() {}
+				virtual int vfunct_Class_7() { return 42; }
+				signed int*** m_prop29;
+				long double********** m_prop30;
+				unsigned char****** m_prop31;
+				signed long int m_prop32;
+				signed short int********* m_prop33;
+			};
+			class Class_8
+			{
+				public:
+				virtual ~Class_8() {}
+				virtual int vfunct_Class_8() { return 42; }
+				unsigned long long int****** m_prop34;
+				char* m_prop35;
+				unsigned short int***** m_prop36;
+				unsigned long int** m_prop37;
+				double m_prop38;
+				signed char m_prop39;
+			};
+			class Class_9 : public Class_8
+			{
+				public:
+				signed long long int** m_prop40;
+			};
+			class Class_10
+			{
+				public:
+			};
+			class Class_11
+			{
+				public:
+				virtual ~Class_11() {}
+				virtual int vfunct_Class_11() { return 42; }
+			};
+			class Class_12
+			{
+				public:
+				virtual ~Class_12() {}
+				virtual int vfunct_Class_12() { return 42; }
+				unsigned int**** m_prop41;
+				float*********** m_prop42;
+			};
+			class Class_13
+			{
+				public:
+				signed int m_prop43;
+				signed short int** m_prop44;
+				unsigned long long int m_prop45;
+				unsigned int* m_prop46;
+				unsigned long int m_prop47;
+				float** m_prop48;
+				unsigned char*** m_prop49;
+				signed long long int m_prop50;
+				signed char***** m_prop51;
+			};
+			class Class_14
+			{
+				public:
+				virtual ~Class_14() {}
+				virtual int vfunct_Class_14() { return 42; }
+				signed long int m_prop52;
+				unsigned short int** m_prop53;
+				double** m_prop54;
+				char* m_prop55;
+				long double***** m_prop56;
+				unsigned short int* m_prop57;
+				float* m_prop58;
+			};
+			class Class_15
+			{
+				public:
+				virtual ~Class_15() {}
+				virtual int vfunct_Class_15() { return 42; }
+				unsigned int** m_prop59;
+			};
+			class Class_16
+			{
+				public:
+				char m_prop60;
+				long double m_prop61;
+				unsigned long long int**** m_prop62;
+				signed long int** m_prop63;
+				double* m_prop64;
+				signed char**** m_prop65;
+				unsigned long int m_prop66;
+			};
+			class Class_17
+			{
+				public:
+				signed long long int****** m_prop67;
+				unsigned char m_prop68;
+				signed int***** m_prop69;
+				signed short int**** m_prop70;
+				unsigned short int***** m_prop71;
+				double**** m_prop72;
+				char m_prop73;
+			};
+			class Class_18 : public Class_6, public Class_0
+			{
+				public:
+				virtual ~Class_18() {}
+				virtual int vfunct_Class_18() { return 42; }
+				unsigned long long int*** m_prop74;
+				unsigned long int m_prop75;
+				long double******** m_prop76;
+				signed short int* m_prop77;
+				unsigned int** m_prop78;
+				float** m_prop79;
+				signed long int****** m_prop80;
+				signed int********* m_prop81;
+				signed long long int** m_prop82;
+			};
+			class Class_19 : public Class_15
+			{
+				public:
+				virtual ~Class_19() {}
+				virtual int vfunct_Class_19() { return 42; }
+			};
+			class Class_20 : public Class_0
+			{
+				public:
+				signed char** m_prop83;
+			};
+			class Class_21 : public Class_15
+			{
+				public:
+				virtual ~Class_21() {}
+				virtual int vfunct_Class_21() { return 42; }
+				unsigned char* m_prop84;
+				signed short int* m_prop85;
+				unsigned long long int*** m_prop86;
+			};
+			class Class_22 : public Class_11, public Class_10
+			{
+				public:
+				virtual ~Class_22() {}
+				virtual int vfunct_Class_22() { return 42; }
+			};
+			class Class_23
+			{
+				public:
+				char* m_prop87;
+				long double******* m_prop88;
+				unsigned char m_prop89;
+				double********** m_prop90;
+				signed long long int*** m_prop91;
+				signed char*** m_prop92;
+			};
+			class Class_24 : public Class_18, public Class_7
+			{
+				public:
+				virtual ~Class_24() {}
+				virtual int vfunct_Class_24() { return 42; }
+				unsigned int** m_prop93;
+				unsigned long int* m_prop94;
+				float m_prop95;
+				signed long int* m_prop96;
+				signed int* m_prop97;
+				unsigned short int** m_prop98;
+				unsigned long long int** m_prop99;
+			};
+			class Class_25 : public Class_11
+			{
+				public:
+				signed int** m_prop100;
+			};
+			class Class_26 : public Class_10
+			{
+				public:
+				virtual ~Class_26() {}
+				virtual int vfunct_Class_26() { return 42; }
+				signed long int** m_prop101;
+				signed short int* m_prop102;
+				double*** m_prop103;
+				char m_prop104;
+				unsigned long int m_prop105;
+				float*** m_prop106;
+			};
+			class Class_27 : public Class_15, public Class_23, public Class_7
+			{
+				public:
+				unsigned char m_prop107;
+				signed char*** m_prop108;
+				long double******** m_prop109;
+				unsigned int m_prop110;
+				signed long long int*** m_prop111;
+				unsigned short int****** m_prop112;
+				char** m_prop113;
+				signed long int m_prop114;
+				unsigned char m_prop115;
+			};
+			class Class_28
+			{
+				public:
+				virtual ~Class_28() {}
+				virtual int vfunct_Class_28() { return 42; }
+			};
+			class Class_29 : public Class_28, public Class_25
+			{
+				public:
+				unsigned int m_prop116;
+				float** m_prop117;
+				signed char** m_prop118;
+			};
+			class Class_30
+			{
+				public:
+				virtual ~Class_30() {}
+				virtual int vfunct_Class_30() { return 42; }
+			};
+			class Class_31 : public Class_30, public Class_2, public Class_28
+			{
+				public:
+				virtual ~Class_31() {}
+				virtual int vfunct_Class_31() { return 42; }
+				long double*** m_prop119;
+				unsigned long int* m_prop120;
+				double* m_prop121;
+				unsigned long long int********* m_prop122;
+			};
+			class Class_32
+			{
+				public:
+				virtual ~Class_32() {}
+				virtual int vfunct_Class_32() { return 42; }
+				unsigned short int* m_prop123;
+				signed long long int** m_prop124;
+				signed short int*** m_prop125;
+			};
+			class Class_33 : public Class_23, public Class_16
+			{
+				public:
+			};
+			class Class_34 : public Class_17, public Class_14, public Class_21, public Class_11, public Class_7, public Class_4, public Class_32, public Class_0, public Class_12, public Class_6, public Class_16, public Class_28, public Class_13, public Class_23, public Class_9, public Class_1, public Class_10
+			{
+				public:
+				virtual ~Class_34() {}
+				virtual int vfunct_Class_34() { return 42; }
+				signed int* m_prop126;
+				signed long int**** m_prop127;
+				unsigned char* m_prop128;
+				double* m_prop129;
+				signed int m_prop130;
+				char m_prop131;
+				signed short int* m_prop132;
+			};
+			class Class_35 : public Class_23, public Class_6, public Class_7
+			{
+				public:
+				float********* m_prop133;
+				unsigned short int* m_prop134;
+				unsigned int*** m_prop135;
+			};
+			class Class_36 : public Class_17
+			{
+				public:
+				unsigned long long int* m_prop136;
+				unsigned long int m_prop137;
+				signed long long int* m_prop138;
+				long double m_prop139;
+				signed char** m_prop140;
+				signed long long int** m_prop141;
+			};
+			class Class_37 : public Class_2
+			{
+				public:
+				virtual ~Class_37() {}
+				virtual int vfunct_Class_37() { return 42; }
+				long double* m_prop142;
+				signed long int m_prop143;
+				char****** m_prop144;
+				unsigned short int m_prop145;
+				signed short int** m_prop146;
+			};
+			class Class_38 : public Class_19
+			{
+				public:
+				virtual ~Class_38() {}
+				virtual int vfunct_Class_38() { return 42; }
+				unsigned long int*** m_prop147;
+				signed int***** m_prop148;
+				unsigned char m_prop149;
+			};
+			class Class_39 : public Class_14
+			{
+				public:
+				virtual ~Class_39() {}
+				virtual int vfunct_Class_39() { return 42; }
+				unsigned int m_prop150;
+				float* m_prop151;
+				double** m_prop152;
+			};
+			class Class_40
+			{
+				public:
+				virtual ~Class_40() {}
+				virtual int vfunct_Class_40() { return 42; }
+				signed char** m_prop153;
+				unsigned long long int* m_prop154;
+			};
+			class Class_41 : public Class_38, public Class_17, public Class_9, public Class_4, public Class_28, public Class_30, public Class_3, public Class_39
+			{
+				public:
+				signed long int m_prop155;
+				signed short int* m_prop156;
+				signed int m_prop157;
+				unsigned long long int*** m_prop158;
+				unsigned char* m_prop159;
+				char*********** m_prop160;
+			};
+			class Class_42 : public Class_2, public Class_12, public Class_23, public Class_36, public Class_38, public Class_40, public Class_4, public Class_32, public Class_14
+			{
+				public:
+				virtual ~Class_42() {}
+				virtual int vfunct_Class_42() { return 42; }
+			};
+			class Class_43 : public Class_13
+			{
+				public:
+				double** m_prop161;
+			};
+			class Class_44 : public Class_12, public Class_33, public Class_40
+			{
+				public:
+				virtual ~Class_44() {}
+				virtual int vfunct_Class_44() { return 42; }
+				unsigned long int m_prop162;
+				unsigned short int* m_prop163;
+				signed long long int*** m_prop164;
+				signed char m_prop165;
+				unsigned int****** m_prop166;
+				float m_prop167;
+				long double m_prop168;
+				char*** m_prop169;
+				long double* m_prop170;
+			};
+			class Class_45 : public Class_24, public Class_15, public Class_25, public Class_3, public Class_10
+			{
+				public:
+				signed long int* m_prop171;
+				unsigned long long int** m_prop172;
+				unsigned char m_prop173;
+				double********* m_prop174;
+				signed long long int****** m_prop175;
+				signed short int* m_prop176;
+			};
+			class Class_46 : public Class_9
+			{
+				public:
+				unsigned short int m_prop177;
+			};
+			class Class_47 : public Class_44, public Class_22, public Class_21, public Class_28, public Class_18, public Class_4, public Class_14, public Class_43, public Class_8, public Class_2, public Class_30
+			{
+				public:
+				virtual ~Class_47() {}
+				virtual int vfunct_Class_47() { return 42; }
+				signed char m_prop178;
+				unsigned int* m_prop179;
+			};
+			class Class_48 : public Class_25, public Class_37, public Class_39, public Class_4, public Class_30
+			{
+				public:
+				virtual ~Class_48() {}
+				virtual int vfunct_Class_48() { return 42; }
+				float m_prop180;
+				unsigned long int* m_prop181;
+				signed int* m_prop182;
+				unsigned short int* m_prop183;
+				long double m_prop184;
+				float m_prop185;
+			};
+			class Class_49 : public Class_2, public Class_5, public Class_7, public Class_17, public Class_26, public Class_39, public Class_1
+			{
+				public:
+				virtual ~Class_49() {}
+				virtual int vfunct_Class_49() { return 42; }
+				double******** m_prop186;
+				unsigned long long int*** m_prop187;
+				signed short int*** m_prop188;
+				char m_prop189;
+				signed long long int m_prop190;
+				unsigned char**** m_prop191;
+				signed char** m_prop192;
+				signed int* m_prop193;
+			};
+			class Class_50 : public Class_49, public Class_30, public Class_13, public Class_8, public Class_40, public Class_32, public Class_23, public Class_21, public Class_11, public Class_20, public Class_16, public Class_4, public Class_28
+			{
+				public:
+				unsigned long int m_prop194;
+			};
+			class Class_51 : public Class_6
+			{
+				public:
+				virtual ~Class_51() {}
+				virtual int vfunct_Class_51() { return 42; }
+				unsigned int**** m_prop195;
+				signed long int**** m_prop196;
+				signed char*** m_prop197;
+			};
+			class Class_52 : public Class_38, public Class_24, public Class_9, public Class_12, public Class_1, public Class_32, public Class_40, public Class_30
+			{
+				public:
+				virtual ~Class_52() {}
+				virtual int vfunct_Class_52() { return 42; }
+				signed short int** m_prop198;
+				unsigned long long int* m_prop199;
+			};
+			class Class_53 : public Class_22
+			{
+				public:
+				virtual ~Class_53() {}
+				virtual int vfunct_Class_53() { return 42; }
+				unsigned short int*** m_prop200;
+				unsigned int* m_prop201;
+				signed long long int* m_prop202;
+				float* m_prop203;
+				unsigned long int* m_prop204;
+				signed long int m_prop205;
+				double* m_prop206;
+				unsigned char**** m_prop207;
+				long double** m_prop208;
+			};
+			class Class_54 : public Class_13, public Class_36, public Class_39, public Class_44
+			{
+				public:
+				char* m_prop209;
+			};
+			class Class_55 : public Class_35, public Class_0
+			{
+				public:
+				signed int* m_prop210;
+				float m_prop211;
+				double**** m_prop212;
+				unsigned short int** m_prop213;
+				signed short int*** m_prop214;
+				signed long int**** m_prop215;
+				unsigned long long int**** m_prop216;
+				unsigned char** m_prop217;
+				unsigned long int m_prop218;
+			};
+			class Class_56 : public Class_15
+			{
+				public:
+				virtual ~Class_56() {}
+				virtual int vfunct_Class_56() { return 42; }
+				char m_prop219;
+				signed int** m_prop220;
+				long double m_prop221;
+				signed long long int*** m_prop222;
+				signed char** m_prop223;
+				unsigned int* m_prop224;
+			};
+			class Class_57
+			{
+				public:
+				double* m_prop225;
+				unsigned short int**** m_prop226;
+				long double m_prop227;
+				char****** m_prop228;
+				float m_prop229;
+				unsigned int* m_prop230;
+				signed short int* m_prop231;
+				unsigned long int***** m_prop232;
+				signed int* m_prop233;
+			};
+			class Class_58
+			{
+				public:
+				unsigned long long int* m_prop234;
+				signed long int************** m_prop235;
+				signed char* m_prop236;
+				signed long long int m_prop237;
+				unsigned char* m_prop238;
+				double m_prop239;
+				signed short int m_prop240;
+			};
+			class Class_59 : public Class_8, public Class_10, public Class_31, public Class_32, public Class_11, public Class_1, public Class_58, public Class_4, public Class_3, public Class_57
+			{
+				public:
+				unsigned int m_prop241;
+				char* m_prop242;
+				long double** m_prop243;
+			};
+			class Class_60
+			{
+				public:
+				virtual ~Class_60() {}
+				virtual int vfunct_Class_60() { return 42; }
+				signed char m_prop244;
+				signed int** m_prop245;
+			};
+			class Class_61 : public Class_14, public Class_38, public Class_23, public Class_1, public Class_7, public Class_6, public Class_30, public Class_28, public Class_40, public Class_4, public Class_57, public Class_32
+			{
+				public:
+				signed long long int***** m_prop246;
+				float** m_prop247;
+				signed long int m_prop248;
+				unsigned long int*** m_prop249;
+				unsigned long long int** m_prop250;
+				unsigned char* m_prop251;
+				unsigned short int* m_prop252;
+			};
+			class Class_62 : public Class_42, public Class_30, public Class_24, public Class_25, public Class_43, public Class_28, public Class_3, public Class_57, public Class_26, public Class_1, public Class_16, public Class_46, public Class_58, public Class_60
+			{
+				public:
+				virtual ~Class_62() {}
+				virtual int vfunct_Class_62() { return 42; }
+				signed short int* m_prop253;
+			};
+			class Class_63 : public Class_57, public Class_46
+			{
+				public:
+				virtual ~Class_63() {}
+				virtual int vfunct_Class_63() { return 42; }
+				long double** m_prop254;
+				unsigned short int m_prop255;
+			};
+			class Class_64 : public Class_2, public Class_54, public Class_1, public Class_30, public Class_28, public Class_58
+			{
+				public:
+				signed long int m_prop256;
+			};
+			class Class_65 : public Class_51, public Class_17, public Class_4, public Class_3, public Class_32, public Class_57
+			{
+				public:
+				virtual ~Class_65() {}
+				virtual int vfunct_Class_65() { return 42; }
+				unsigned long int** m_prop257;
+			};
+			class Class_66 : public Class_10, public Class_7, public Class_9, public Class_58, public Class_20, public Class_23
+			{
+				public:
+				virtual ~Class_66() {}
+				virtual int vfunct_Class_66() { return 42; }
+				signed long long int******* m_prop258;
+				unsigned long long int* m_prop259;
+			};
+			class Class_67 : public Class_64, public Class_32, public Class_63, public Class_45, public Class_4, public Class_60
+			{
+				public:
+				virtual ~Class_67() {}
+				virtual int vfunct_Class_67() { return 42; }
+			};
+			class Class_68 : public Class_53, public Class_32, public Class_57
+			{
+				public:
+				double m_prop260;
+				signed char***** m_prop261;
+				float* m_prop262;
+				char m_prop263;
+				unsigned char m_prop264;
+				unsigned int m_prop265;
+			};
+			class Class_69
+			{
+				public:
+				signed int******** m_prop266;
+				long double m_prop267;
+				unsigned short int* m_prop268;
+				signed long long int*** m_prop269;
+				signed short int m_prop270;
+				unsigned int* m_prop271;
+				signed long int m_prop272;
+				unsigned long long int*** m_prop273;
+				float* m_prop274;
+			};
+			class Class_70 : public Class_56, public Class_66, public Class_65, public Class_39, public Class_60, public Class_37, public Class_28, public Class_69, public Class_43, public Class_30, public Class_25
+			{
+				public:
+				virtual ~Class_70() {}
+				virtual int vfunct_Class_70() { return 42; }
+				signed int* m_prop275;
+				unsigned char******** m_prop276;
+				char*** m_prop277;
+			};
+			class Class_71 : public Class_51, public Class_17, public Class_57, public Class_40
+			{
+				public:
+				unsigned long int* m_prop278;
+				signed char********** m_prop279;
+				double* m_prop280;
+				char m_prop281;
+				float* m_prop282;
+				signed long int*** m_prop283;
+				signed int******* m_prop284;
+				signed long long int** m_prop285;
+				unsigned int******* m_prop286;
+			};
+			class Class_72 : public Class_43, public Class_12
+			{
+				public:
+				virtual ~Class_72() {}
+				virtual int vfunct_Class_72() { return 42; }
+				long double*** m_prop287;
+				unsigned short int* m_prop288;
+				unsigned long int m_prop289;
+				signed short int* m_prop290;
+				double**** m_prop291;
+				unsigned char** m_prop292;
+			};
+			class Class_73 : public Class_31, public Class_65, public Class_44, public Class_21, public Class_22, public Class_69, public Class_8, public Class_7, public Class_39, public Class_0, public Class_13, public Class_1, public Class_60, public Class_58
+			{
+				public:
+				unsigned long long int*** m_prop293;
+				signed char* m_prop294;
+				unsigned long int* m_prop295;
+				unsigned int**** m_prop296;
+				signed long int m_prop297;
+				char m_prop298;
+				signed long long int** m_prop299;
+			};
+			class Class_74 : public Class_4, public Class_13, public Class_69, public Class_5, public Class_38, public Class_3, public Class_26, public Class_28, public Class_17, public Class_23, public Class_2, public Class_32
+			{
+				public:
+				long double**** m_prop300;
+			};
+			class Class_75 : public Class_49, public Class_30, public Class_23, public Class_57, public Class_58, public Class_29, public Class_72, public Class_56, public Class_0, public Class_32, public Class_16, public Class_60, public Class_3, public Class_46, public Class_40, public Class_4
+			{
+				public:
+				virtual ~Class_75() {}
+				virtual int vfunct_Class_75() { return 42; }
+				float** m_prop301;
+				unsigned char***** m_prop302;
+				signed int m_prop303;
+				unsigned short int********* m_prop304;
+			};
+			class Class_76 : public Class_16, public Class_28, public Class_12, public Class_0, public Class_11, public Class_10, public Class_32, public Class_30, public Class_58, public Class_3, public Class_60
+			{
+				public:
+				virtual ~Class_76() {}
+				virtual int vfunct_Class_76() { return 42; }
+				signed short int******* m_prop305;
+				signed char* m_prop306;
+				unsigned long long int*** m_prop307;
+				double m_prop308;
+				unsigned long long int m_prop309;
+				signed long long int m_prop310;
+				char m_prop311;
+				unsigned short int**** m_prop312;
+				unsigned char******* m_prop313;
+			};
+			class Class_77 : public Class_43, public Class_39, public Class_4, public Class_27, public Class_71, public Class_76, public Class_46, public Class_69, public Class_2, public Class_1
+			{
+				public:
+				virtual ~Class_77() {}
+				virtual int vfunct_Class_77() { return 42; }
+				float m_prop314;
+				signed int m_prop315;
+				unsigned long int***** m_prop316;
+			};
+			class Class_78 : public Class_20, public Class_46, public Class_74, public Class_1, public Class_58, public Class_14, public Class_60, public Class_12, public Class_7, public Class_57, public Class_30, public Class_16, public Class_25
+			{
+				public:
+				signed short int* m_prop317;
+				long double* m_prop318;
+				signed char******** m_prop319;
+			};
+			class Class_79 : public Class_40, public Class_46, public Class_37, public Class_15, public Class_68, public Class_33, public Class_69, public Class_36, public Class_39, public Class_20, public Class_60, public Class_30, public Class_4, public Class_12, public Class_6, public Class_1, public Class_7, public Class_13, public Class_28
+			{
+				public:
+				virtual ~Class_79() {}
+				virtual int vfunct_Class_79() { return 42; }
+				double m_prop320;
+			};
+			class Class_80 : public Class_52, public Class_26, public Class_33, public Class_69, public Class_36, public Class_39, public Class_29, public Class_4, public Class_37, public Class_13, public Class_57, public Class_58
+			{
+				public:
+				unsigned int** m_prop321;
+			};
+			class Class_81 : public Class_5, public Class_69, public Class_21, public Class_13, public Class_58, public Class_63, public Class_39, public Class_36, public Class_32, public Class_12, public Class_0, public Class_3, public Class_16, public Class_31, public Class_22, public Class_1, public Class_40, public Class_60, public Class_7, public Class_23
+			{
+				public:
+				virtual ~Class_81() {}
+				virtual int vfunct_Class_81() { return 42; }
+				signed long int m_prop322;
+				signed short int* m_prop323;
+			};
+			class Class_82 : public Class_16, public Class_36, public Class_3, public Class_69
+			{
+				public:
+				signed char*** m_prop324;
+				signed long long int*********** m_prop325;
+				unsigned char******** m_prop326;
+				unsigned long int** m_prop327;
+				unsigned int* m_prop328;
+				long double*** m_prop329;
+				signed long int m_prop330;
+				float*************** m_prop331;
+			};
+			class Class_83 : public Class_16, public Class_69, public Class_2, public Class_9, public Class_20, public Class_25, public Class_61, public Class_36, public Class_72, public Class_60, public Class_3, public Class_10, public Class_58
+			{
+				public:
+				virtual ~Class_83() {}
+				virtual int vfunct_Class_83() { return 42; }
+				double m_prop332;
+				unsigned short int m_prop333;
+				signed int**** m_prop334;
+				unsigned long long int* m_prop335;
+				char******** m_prop336;
+				signed char m_prop337;
+				float* m_prop338;
+				signed short int** m_prop339;
+				double* m_prop340;
+			};
+			class Class_84 : public Class_60, public Class_0, public Class_35, public Class_12
+			{
+				public:
+				unsigned char** m_prop341;
+				signed long int* m_prop342;
+			};
+			class Class_85 : public Class_57, public Class_28, public Class_42, public Class_30, public Class_22, public Class_3, public Class_9, public Class_6, public Class_20, public Class_1, public Class_7, public Class_60, public Class_58, public Class_13
+			{
+				public:
+				virtual ~Class_85() {}
+				virtual int vfunct_Class_85() { return 42; }
+			};
+			class Class_86 : public Class_2, public Class_84, public Class_41, public Class_68, public Class_40, public Class_13, public Class_1, public Class_69, public Class_16, public Class_58
+			{
+				public:
+				long double* m_prop343;
+				unsigned long long int* m_prop344;
+				unsigned short int******* m_prop345;
+				unsigned long int**** m_prop346;
+				signed int**** m_prop347;
+				unsigned int* m_prop348;
+				signed long long int*** m_prop349;
+			};
+			class Class_87
+			{
+				public:
+				virtual ~Class_87() {}
+				virtual int vfunct_Class_87() { return 42; }
+				char m_prop350;
+				signed char*** m_prop351;
+				signed int**** m_prop352;
+				signed long int m_prop353;
+				unsigned long long int*** m_prop354;
+				char**** m_prop355;
+				float m_prop356;
+			};
+			class Class_88 : public Class_60, public Class_59, public Class_24, public Class_19, public Class_40, public Class_14, public Class_17, public Class_23, public Class_69, public Class_87, public Class_13, public Class_16, public Class_12
+			{
+				public:
+				unsigned char*** m_prop357;
+				unsigned short int** m_prop358;
+				long double m_prop359;
+			};
+			class Class_89 : public Class_56, public Class_40, public Class_46, public Class_10, public Class_1, public Class_60
+			{
+				public:
+				unsigned long int m_prop360;
+				signed long long int** m_prop361;
+				signed short int* m_prop362;
+				unsigned int m_prop363;
+				double** m_prop364;
+				char* m_prop365;
+				signed long long int******* m_prop366;
+				float********* m_prop367;
+				unsigned char m_prop368;
+			};
+			class Class_90 : public Class_14, public Class_52, public Class_4, public Class_23, public Class_82, public Class_58, public Class_57, public Class_37, public Class_25, public Class_10, public Class_43, public Class_87, public Class_60, public Class_28
+			{
+				public:
+				virtual ~Class_90() {}
+				virtual int vfunct_Class_90() { return 42; }
+				unsigned long int* m_prop369;
+				signed char m_prop370;
+				unsigned long long int*** m_prop371;
+				double* m_prop372;
+				unsigned int****** m_prop373;
+				signed int** m_prop374;
+				signed short int m_prop375;
+				long double***** m_prop376;
+			};
+			class Class_91 : public Class_72, public Class_87, public Class_55, public Class_82, public Class_57
+			{
+				public:
+				virtual ~Class_91() {}
+				virtual int vfunct_Class_91() { return 42; }
+				unsigned short int**** m_prop377;
+				signed long int m_prop378;
+				char m_prop379;
+			};
+			class Class_92 : public Class_48, public Class_32, public Class_91, public Class_89
+			{
+				public:
+				virtual ~Class_92() {}
+				virtual int vfunct_Class_92() { return 42; }
+				unsigned char**** m_prop380;
+				unsigned int**** m_prop381;
+				unsigned long long int m_prop382;
+				signed long int m_prop383;
+				signed short int*** m_prop384;
+				signed int m_prop385;
+				unsigned short int** m_prop386;
+				long double*** m_prop387;
+			};
+			class Class_93 : public Class_13, public Class_53, public Class_63, public Class_2, public Class_56, public Class_4, public Class_84, public Class_32, public Class_36, public Class_58, public Class_16, public Class_87, public Class_39, public Class_28, public Class_3
+			{
+				public:
+				virtual ~Class_93() {}
+				virtual int vfunct_Class_93() { return 42; }
+				unsigned long int******** m_prop388;
+				float***** m_prop389;
+				signed char m_prop390;
+				signed long long int**** m_prop391;
+				double*** m_prop392;
+				char m_prop393;
+				long double*** m_prop394;
+				unsigned int************ m_prop395;
+			};
+			class Class_94 : public Class_25, public Class_66, public Class_4, public Class_60, public Class_16, public Class_1, public Class_19, public Class_6, public Class_30, public Class_17, public Class_57, public Class_37, public Class_32, public Class_14, public Class_12, public Class_40, public Class_87, public Class_43, public Class_28, public Class_3
+			{
+				public:
+				unsigned long int m_prop396;
+				signed short int******* m_prop397;
+				signed char m_prop398;
+			};
+			class Class_95 : public Class_4, public Class_49, public Class_72, public Class_28, public Class_57, public Class_15, public Class_69, public Class_11, public Class_9, public Class_20, public Class_16, public Class_40, public Class_87, public Class_23, public Class_32, public Class_58, public Class_30, public Class_60, public Class_3
+			{
+				public:
+				virtual ~Class_95() {}
+				virtual int vfunct_Class_95() { return 42; }
+				signed int** m_prop399;
+				signed long long int m_prop400;
+				signed long int m_prop401;
+				unsigned long long int m_prop402;
+			};
+			class Class_96 : public Class_54, public Class_10, public Class_31, public Class_69, public Class_9, public Class_56, public Class_32, public Class_1, public Class_60, public Class_4, public Class_18, public Class_3, public Class_57, public Class_11, public Class_58
+			{
+				public:
+				virtual ~Class_96() {}
+				virtual int vfunct_Class_96() { return 42; }
+				unsigned short int** m_prop403;
+				unsigned char* m_prop404;
+				double** m_prop405;
+				float m_prop406;
+				unsigned short int m_prop407;
+			};
+			class Class_97 : public Class_68, public Class_16, public Class_51, public Class_2, public Class_13, public Class_12, public Class_30, public Class_23, public Class_3, public Class_40, public Class_8, public Class_20, public Class_56, public Class_7, public Class_87, public Class_36, public Class_4, public Class_69, public Class_28, public Class_14, public Class_1, public Class_58
+			{
+				public:
+				unsigned long int* m_prop408;
+				long double*** m_prop409;
+				char m_prop410;
+				signed long long int*** m_prop411;
+				unsigned long long int** m_prop412;
+				unsigned int********* m_prop413;
+				unsigned char** m_prop414;
+				double** m_prop415;
+				float** m_prop416;
+			};
+			class Class_98 : public Class_58, public Class_92, public Class_28
+			{
+				public:
+				virtual ~Class_98() {}
+				virtual int vfunct_Class_98() { return 42; }
+			};
+			class Class_99 : public Class_66, public Class_51, public Class_13, public Class_29, public Class_82, public Class_30, public Class_38, public Class_40, public Class_1, public Class_60, public Class_57, public Class_12, public Class_32, public Class_2, public Class_14
+			{
+				public:
+				signed char m_prop417;
+				signed short int*** m_prop418;
+				signed int m_prop419;
+				signed long int m_prop420;
+				signed long long int**** m_prop421;
+				unsigned long int* m_prop422;
+				signed long int** m_prop423;
 			};
 		};
 	};
@@ -64,26 +970,999 @@ namespace reflective
 	void setup_type(TypeSetupContext<reflective::details::test::Class_2> & i_context)
 	{
 		using ThisClass = reflective::details::test::Class_2;
-		i_context.type()->set_base_types( {
-			BaseType::from_types<ThisClass, reflective::details::test::Class_1>() });
 	};
 	void setup_type(TypeSetupContext<reflective::details::test::Class_3> & i_context)
 	{
 		using ThisClass = reflective::details::test::Class_3;
-		i_context.type()->set_base_types( {
-			BaseType::from_types<ThisClass, reflective::details::test::Class_2>() });
 	};
 	void setup_type(TypeSetupContext<reflective::details::test::Class_4> & i_context)
 	{
 		using ThisClass = reflective::details::test::Class_4;
-		i_context.type()->set_base_types( {
-			BaseType::from_types<ThisClass, reflective::details::test::Class_3>(),
-			BaseType::from_types<ThisClass, reflective::details::test::Class_0>() });
 	};
 	void setup_type(TypeSetupContext<reflective::details::test::Class_5> & i_context)
 	{
 		using ThisClass = reflective::details::test::Class_5;
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_6> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_6;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_5>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_7> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_7;
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_8> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_8;
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_9> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_9;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_8>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_10> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_10;
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_11> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_11;
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_12> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_12;
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_13> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_13;
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_14> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_14;
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_15> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_15;
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_16> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_16;
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_17> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_17;
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_18> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_18;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_6>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_0>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_19> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_19;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_15>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_20> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_20;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_0>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_21> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_21;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_15>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_22> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_22;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_11>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_10>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_23> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_23;
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_24> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_24;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_18>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_7>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_25> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_25;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_11>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_26> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_26;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_10>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_27> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_27;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_15>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_23>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_7>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_28> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_28;
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_29> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_29;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_28>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_25>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_30> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_30;
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_31> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_31;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_30>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_2>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_28>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_32> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_32;
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_33> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_33;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_23>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_16>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_34> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_34;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_17>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_14>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_21>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_11>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_7>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_4>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_32>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_0>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_12>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_6>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_16>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_28>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_13>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_23>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_9>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_1>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_10>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_35> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_35;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_23>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_6>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_7>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_36> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_36;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_17>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_37> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_37;
 		i_context.type()->set_base_types( {
 			BaseType::from_types<ThisClass, reflective::details::test::Class_2>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_38> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_38;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_19>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_39> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_39;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_14>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_40> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_40;
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_41> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_41;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_38>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_17>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_9>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_4>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_28>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_30>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_3>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_39>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_42> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_42;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_2>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_12>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_23>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_36>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_38>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_40>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_4>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_32>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_14>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_43> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_43;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_13>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_44> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_44;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_12>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_33>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_40>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_45> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_45;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_24>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_15>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_25>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_3>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_10>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_46> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_46;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_9>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_47> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_47;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_44>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_22>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_21>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_28>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_18>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_4>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_14>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_43>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_8>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_2>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_30>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_48> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_48;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_25>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_37>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_39>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_4>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_30>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_49> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_49;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_2>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_5>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_7>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_17>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_26>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_39>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_1>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_50> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_50;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_49>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_30>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_13>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_8>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_40>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_32>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_23>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_21>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_11>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_20>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_16>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_4>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_28>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_51> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_51;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_6>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_52> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_52;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_38>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_24>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_9>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_12>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_1>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_32>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_40>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_30>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_53> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_53;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_22>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_54> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_54;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_13>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_36>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_39>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_44>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_55> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_55;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_35>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_0>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_56> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_56;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_15>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_57> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_57;
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_58> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_58;
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_59> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_59;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_8>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_10>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_31>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_32>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_11>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_1>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_58>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_4>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_3>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_57>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_60> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_60;
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_61> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_61;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_14>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_38>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_23>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_1>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_7>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_6>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_30>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_28>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_40>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_4>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_57>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_32>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_62> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_62;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_42>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_30>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_24>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_25>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_43>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_28>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_3>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_57>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_26>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_1>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_16>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_46>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_58>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_60>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_63> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_63;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_57>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_46>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_64> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_64;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_2>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_54>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_1>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_30>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_28>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_58>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_65> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_65;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_51>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_17>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_4>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_3>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_32>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_57>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_66> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_66;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_10>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_7>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_9>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_58>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_20>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_23>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_67> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_67;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_64>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_32>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_63>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_45>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_4>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_60>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_68> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_68;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_53>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_32>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_57>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_69> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_69;
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_70> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_70;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_56>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_66>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_65>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_39>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_60>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_37>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_28>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_69>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_43>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_30>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_25>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_71> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_71;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_51>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_17>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_57>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_40>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_72> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_72;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_43>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_12>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_73> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_73;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_31>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_65>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_44>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_21>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_22>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_69>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_8>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_7>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_39>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_0>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_13>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_1>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_60>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_58>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_74> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_74;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_4>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_13>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_69>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_5>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_38>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_3>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_26>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_28>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_17>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_23>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_2>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_32>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_75> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_75;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_49>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_30>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_23>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_57>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_58>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_29>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_72>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_56>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_0>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_32>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_16>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_60>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_3>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_46>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_40>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_4>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_76> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_76;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_16>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_28>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_12>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_0>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_11>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_10>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_32>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_30>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_58>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_3>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_60>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_77> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_77;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_43>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_39>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_4>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_27>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_71>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_76>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_46>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_69>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_2>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_1>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_78> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_78;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_20>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_46>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_74>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_1>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_58>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_14>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_60>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_12>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_7>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_57>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_30>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_16>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_25>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_79> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_79;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_40>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_46>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_37>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_15>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_68>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_33>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_69>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_36>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_39>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_20>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_60>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_30>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_4>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_12>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_6>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_1>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_7>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_13>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_28>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_80> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_80;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_52>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_26>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_33>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_69>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_36>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_39>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_29>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_4>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_37>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_13>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_57>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_58>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_81> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_81;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_5>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_69>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_21>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_13>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_58>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_63>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_39>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_36>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_32>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_12>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_0>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_3>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_16>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_31>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_22>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_1>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_40>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_60>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_7>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_23>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_82> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_82;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_16>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_36>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_3>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_69>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_83> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_83;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_16>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_69>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_2>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_9>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_20>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_25>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_61>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_36>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_72>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_60>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_3>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_10>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_58>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_84> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_84;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_60>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_0>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_35>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_12>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_85> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_85;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_57>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_28>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_42>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_30>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_22>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_3>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_9>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_6>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_20>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_1>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_7>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_60>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_58>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_13>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_86> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_86;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_2>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_84>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_41>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_68>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_40>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_13>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_1>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_69>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_16>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_58>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_87> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_87;
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_88> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_88;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_60>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_59>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_24>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_19>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_40>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_14>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_17>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_23>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_69>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_87>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_13>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_16>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_12>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_89> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_89;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_56>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_40>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_46>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_10>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_1>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_60>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_90> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_90;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_14>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_52>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_4>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_23>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_82>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_58>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_57>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_37>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_25>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_10>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_43>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_87>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_60>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_28>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_91> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_91;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_72>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_87>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_55>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_82>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_57>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_92> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_92;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_48>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_32>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_91>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_89>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_93> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_93;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_13>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_53>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_63>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_2>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_56>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_4>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_84>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_32>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_36>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_58>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_16>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_87>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_39>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_28>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_3>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_94> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_94;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_25>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_66>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_4>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_60>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_16>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_1>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_19>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_6>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_30>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_17>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_57>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_37>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_32>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_14>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_12>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_40>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_87>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_43>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_28>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_3>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_95> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_95;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_4>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_49>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_72>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_28>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_57>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_15>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_69>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_11>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_9>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_20>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_16>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_40>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_87>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_23>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_32>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_58>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_30>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_60>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_3>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_96> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_96;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_54>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_10>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_31>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_69>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_9>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_56>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_32>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_1>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_60>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_4>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_18>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_3>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_57>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_11>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_58>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_97> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_97;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_68>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_16>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_51>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_2>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_13>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_12>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_30>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_23>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_3>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_40>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_8>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_20>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_56>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_7>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_87>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_36>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_4>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_69>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_28>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_14>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_1>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_58>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_98> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_98;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_58>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_92>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_28>() });
+	};
+	void setup_type(TypeSetupContext<reflective::details::test::Class_99> & i_context)
+	{
+		using ThisClass = reflective::details::test::Class_99;
+		i_context.type()->set_base_types( {
+			BaseType::from_types<ThisClass, reflective::details::test::Class_66>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_51>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_13>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_29>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_82>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_30>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_38>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_40>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_1>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_60>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_57>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_12>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_32>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_2>(),
+			BaseType::from_types<ThisClass, reflective::details::test::Class_14>() });
 	};
 };
