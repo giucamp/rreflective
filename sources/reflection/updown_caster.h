@@ -85,17 +85,27 @@ namespace reflective
 		template <typename BASE, typename DERIVED>
 			static void * cast_to_base(void * i_derived_ptr)
 		{
-			REFLECTIVE_ASSERT(i_derived_ptr != nullptr, "cast_to_base can't handle nul pointers");
-			DERIVED * derived_ptr = static_cast<DERIVED*>(i_derived_ptr);
-			return static_cast<BASE*>(derived_ptr);
+			REFLECTIVE_ASSERT(i_derived_ptr != nullptr, "cast_to_base can't handle null pointers");
+
+			auto derived_ptr = static_cast<DERIVED*>(i_derived_ptr);
+			dbg_object_validate(*derived_ptr);
+
+			auto base_ptr = static_cast<BASE*>(derived_ptr);
+			dbg_object_validate(*base_ptr);
+			return base_ptr;
 		}
 
 		template <typename BASE, typename DERIVED>
 			static void * cast_to_derived(void * i_base_ptr)
 		{
-			REFLECTIVE_ASSERT(i_base_ptr != nullptr, "cast_to_derived can't handle nul pointers");
-			BASE * base_ptr = static_cast<BASE*>(i_base_ptr);
-			return static_cast<DERIVED*>(base_ptr);
+			REFLECTIVE_ASSERT(i_base_ptr != nullptr, "cast_to_derived can't handle null pointers");
+
+			auto base_ptr = static_cast<BASE*>(i_base_ptr);
+			dbg_object_validate(*base_ptr);
+
+			auto derived_ptr = static_cast<DERIVED*>(base_ptr);
+			dbg_object_validate(*derived_ptr);
+			return base_ptr;
 		}
 
 	private:

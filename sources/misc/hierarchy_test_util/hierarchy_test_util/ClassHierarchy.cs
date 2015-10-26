@@ -16,6 +16,7 @@ namespace hierarchy_test_util
         public int DerivationFactor { get; set; }
         public bool AllowMultipleInheritance { get; set; }
         public int TestCount { get; set; }
+        public bool EmitTypeChecks { get; set; }
 
         public HierarchySettings(string i_hierarchyName)
         {
@@ -27,6 +28,7 @@ namespace hierarchy_test_util
             MostDerivedTypeFuncChance = 1.5;
             VBaseChance = 0;
             TestCount = 1000;
+            EmitTypeChecks = true;
         }
     }
 
@@ -147,6 +149,19 @@ namespace hierarchy_test_util
             i_output.AppendLine("{");
             i_output.Tab();
 
+            if (m_settings.EmitTypeChecks)
+            {
+                foreach (ClassEntry currClass in m_classes)
+                {
+                    i_output.AppendLine("template <> inline void dbg_object_validate(const " + currClass.FullName + " & i_object)");
+                    i_output.AppendLine("{");
+                    i_output.Tab();
+                    i_output.AppendLine("REFLECTIVE_INTERNAL_ASSERT(i_object.type_name == \"" + currClass.Name + "\");");
+                    i_output.Untab();
+                    i_output.AppendLine("}");
+                }
+            }
+
             i_output.AppendLine("namespace details");
             i_output.AppendLine("{");
             i_output.Tab();
@@ -189,6 +204,8 @@ namespace hierarchy_test_util
                     "native_base_ptr_" + i.ToString() + " == " +
                     "static_cast<" + baseClass.Name + "*>( ref_base_ptr_" + i.ToString() + ".object() )" +
                     ");");
+                i_output.AppendLine("reflective::dbg_object_validate(*ref_base_ptr_" + i.ToString() + ".get_if_type_matches<" + baseClass.Name + ">());");
+                
 
                 // dynamic_cast
                 i_output.AppendLine(destClass.Name + " * native_dyn_ptr_" + i.ToString() + " = " + "dynamic_cast<" + destClass.Name + "*>(native_base_ptr_" + i.ToString() + ");");
@@ -197,6 +214,12 @@ namespace hierarchy_test_util
                     "native_dyn_ptr_" + i.ToString() + " == " +
                     "static_cast<" + destClass.Name + "*>( ref_dyn_ptr_" + i.ToString() + ".object() )" +
                     ");");
+                i_output.AppendLine("if( !ref_dyn_ptr_" + i.ToString() + ".empty() )");
+                i_output.AppendLine("{");
+                i_output.Tab();
+                i_output.AppendLine("reflective::dbg_object_validate(*ref_dyn_ptr_" + i.ToString() + ".get_if_type_matches<" + destClass.Name + ">());");                
+                i_output.Untab();
+                i_output.AppendLine("}");
                 i_output.AppendLine("");
             }
             i_output.AppendLine("");
@@ -250,7 +273,7 @@ namespace hierarchy_test_util
 
             foreach ( ClassEntry classEntry in m_classes)
             {
-                classEntry.WriteDefinition(output);
+                classEntry.WriteDefinition(output, m_settings.EmitTypeChecks);
             }
             
             output.Untab();

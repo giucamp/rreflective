@@ -101,7 +101,7 @@ namespace hierarchy_test_util
             }            
         }
 
-        public void WriteDefinition(TextOut i_output)
+        public void WriteDefinition(TextOut i_output, bool i_emitTypeChecks)
         {
             i_output.Append("class " + Name);
 
@@ -134,6 +134,11 @@ namespace hierarchy_test_util
             {                
                 i_output.AppendLine("virtual ~" + Name + "() {}");
                 i_output.AppendLine("virtual int vfunct_" + Name + "() { return 42; }");
+            }
+
+            if (i_emitTypeChecks)
+            {
+                i_output.AppendLine("std::string type_name = \"" + Name + "\";");
             }
 
             if(m_hasMDTFunc)

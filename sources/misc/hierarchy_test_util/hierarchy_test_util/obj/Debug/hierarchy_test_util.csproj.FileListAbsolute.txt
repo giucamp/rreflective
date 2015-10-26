@@ -7,3 +7,11 @@ D:\SmartGit\rreflective2\sources\misc\hierarchy_test_util\hierarchy_test_util\ob
 D:\SmartGit\rreflective2\sources\misc\hierarchy_test_util\hierarchy_test_util\obj\Debug\hierarchy_test_util.exe
 D:\SmartGit\rreflective2\sources\misc\hierarchy_test_util\hierarchy_test_util\obj\Debug\hierarchy_test_util.pdb
 D:\SmartGit\rreflective2\sources\misc\hierarchy_test_util\hierarchy_test_util\obj\Debug\hierarchy_test_util.csprojResolveAssemblyReference.cache
+C:\Users\giuseppe.campana\Documents\GitHub\rreflective\sources\misc\hierarchy_test_util\hierarchy_test_util\bin\Debug\hierarchy_test_util.exe.config
+C:\Users\giuseppe.campana\Documents\GitHub\rreflective\sources\misc\hierarchy_test_util\hierarchy_test_util\obj\Debug\hierarchy_test_util.Form1.resources
+C:\Users\giuseppe.campana\Documents\GitHub\rreflective\sources\misc\hierarchy_test_util\hierarchy_test_util\obj\Debug\hierarchy_test_util.Properties.Resources.resources
+C:\Users\giuseppe.campana\Documents\GitHub\rreflective\sources\misc\hierarchy_test_util\hierarchy_test_util\obj\Debug\hierarchy_test_util.csproj.GenerateResource.Cache
+C:\Users\giuseppe.campana\Documents\GitHub\rreflective\sources\misc\hierarchy_test_util\hierarchy_test_util\bin\Debug\hierarchy_test_util.exe
+C:\Users\giuseppe.campana\Documents\GitHub\rreflective\sources\misc\hierarchy_test_util\hierarchy_test_util\bin\Debug\hierarchy_test_util.pdb
+C:\Users\giuseppe.campana\Documents\GitHub\rreflective\sources\misc\hierarchy_test_util\hierarchy_test_util\obj\Debug\hierarchy_test_util.exe
+C:\Users\giuseppe.campana\Documents\GitHub\rreflective\sources\misc\hierarchy_test_util\hierarchy_test_util\obj\Debug\hierarchy_test_util.pdb

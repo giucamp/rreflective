@@ -62,6 +62,24 @@ namespace reflective
 			ObjPtr cast_to() const
 				{ return cast_to(get_type(DEST_TYPE)); }
 
+		template <typename DEST_TYPE>
+		DEST_TYPE * get_if_type_matches()
+		{
+			if (m_type == get_type<DEST_TYPE>())
+			{
+				return static_cast<DEST_TYPE*>(m_object);
+			}
+			else
+			{
+				return nullptr;
+			}
+		}
+
+		bool empty() const
+		{
+			return m_object == nullptr;
+		}
+
 	private:		
 		void * m_object;
 		QualifiedTypePtr m_type;
