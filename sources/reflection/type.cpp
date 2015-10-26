@@ -173,7 +173,10 @@ namespace reflective
 
 			const auto & base = curr_type->m_single_base;
 			curr_type = base.base_type();
-			curr_object = base.updown_caster().derived_to_base(curr_object);
+			if (curr_type != nullptr)
+			{
+				curr_object = base.updown_caster().derived_to_base(curr_object);
+			}
 
 		} while (curr_type != nullptr);
 
@@ -212,7 +215,10 @@ namespace reflective
 
 			const auto & base = curr_type->m_single_base;
 			curr_type = base.base_type();
-			curr_object = base.updown_caster().derived_to_base(curr_object);
+			if (curr_type != nullptr)
+			{
+				curr_object = base.updown_caster().derived_to_base(curr_object);
+			}
 
 		} while (curr_type != nullptr);
 
@@ -297,15 +303,18 @@ namespace reflective
 
 			const auto & base = curr_type->m_single_base;
 			curr_type = base.base_type();
-			curr_object = base.updown_caster().derived_to_base(curr_object);
+			if (curr_type != nullptr)
+			{
+				curr_object = base.updown_caster().derived_to_base(curr_object);
+			}
 
 		} while (curr_type != nullptr);
 
 		if (most_derived_type != nullptr)
 		{
-			// now we need a path from the most derived type to this type
+			// now we need a path from the most derived type to i_dest_type
 			std::vector<BaseType> base_types;
-			if (most_derived_type->internal_find_path_to_type(base_types, *this))
+			if (most_derived_type->internal_find_path_to_type(base_types, i_dest_type))
 			{
 				REFLECTIVE_INTERNAL_ASSERT(std::find_if(base_types.begin(), base_types.end(), [this](const BaseType & i_base) {
 					return i_base.base_type() == this;

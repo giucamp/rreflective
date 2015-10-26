@@ -23,7 +23,7 @@ namespace reflective
 		{
 			auto source_primary_type = m_type.primary_type();
 			auto dest_primary_type = i_dest_type.primary_type();
-			auto result = source_primary_type->try_dynamic_cast(m_object, *dest_primary_type);
+			auto result = source_primary_type->upcast(m_object, *dest_primary_type);
 			if (result != nullptr)
 			{
 				return ObjPtr(result, i_dest_type);

@@ -163,6 +163,7 @@ namespace hierarchy_test_util
             i_output.Tab();
             i_output.AppendLine("using ThisClass = " + FullName + ";");
 
+            // bases
             ClassEntry[] bases = m_bases.ToArray();
             int baseCount = bases.Length;
             if (baseCount > 0)
@@ -183,7 +184,8 @@ namespace hierarchy_test_util
                 i_output.Untab();
             }
 
-            i_output.AppendLine("i_context;");
+            // gmdt function
+            i_output.AppendLine("i_context.type()->set_most_derived_type_func(&ThisClass::static_get_type);");
 
             i_output.Untab();
             i_output.AppendLine("}");

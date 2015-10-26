@@ -21,7 +21,7 @@ namespace hierarchy_test_util
         {
             HierarchyName = i_hierarchyName;
             AllowMultipleInheritance = true;
-            ClassCount = 100;
+            ClassCount = 10;
             DerivationFactor = 5;
             VTableChance = 0.5;
             MostDerivedTypeFuncChance = 1.5;
@@ -168,28 +168,34 @@ namespace hierarchy_test_util
 
 
             i_output.AppendLine("");
-            i_output.AppendLine("// pointers");
+            i_output.AppendLine("// test upcast and dynamic cast");
+            i_output.AppendLine("");
+            i_output.AppendLine("");
             for (int i = 0; i < m_settings.TestCount; i++)
             {
-                // complete object
                 ClassEntry completeClassObj = RandClass();
-                i_output.AppendLine("ObjPtr ref_complete_ptr_" + i.ToString() + " = &obj_" + completeClassObj.Name + ";");
-                i_output.AppendLine(completeClassObj.Name + " * native_complete_ptr_" + i.ToString() + " = &obj_" + completeClassObj.Name + ";");
-                
-                // upcast
                 ClassEntry baseClass = completeClassObj.GetRandomBaseOrThis(m_rand);
-                i_output.AppendLine("ObjPtr ref_base_ptr_" + i.ToString() + " = ref_complete_ptr_" + i.ToString() + ".upcast_to(get_type<" + baseClass.Name + ">());");
+                ClassEntry destClass = RandClass();
+                i_output.AppendLine("// upcasting from " + completeClassObj.Name + " to " + baseClass.Name + ", and the dynamic casting to " + destClass.Name);
+
+                // complete object
+                i_output.AppendLine(completeClassObj.Name + " * native_complete_ptr_" + i.ToString() + " = &obj_" + completeClassObj.Name + ";");
+                i_output.AppendLine("ObjPtr ref_complete_ptr_" + i.ToString() + " = &obj_" + completeClassObj.Name + ";");
+
+                // upcast
                 i_output.AppendLine(baseClass.Name + " * native_base_ptr_" + i.ToString() + " = native_complete_ptr_" + i.ToString() + ";");
+                i_output.AppendLine("ObjPtr ref_base_ptr_" + i.ToString() + " = ref_complete_ptr_" + i.ToString() + ".upcast_to(get_type<" + baseClass.Name + ">());");
+                i_output.AppendLine("REFLECTIVE_INTERNAL_ASSERT(" +
+                    "native_base_ptr_" + i.ToString() + " == " +
+                    "static_cast<" + baseClass.Name + "*>( ref_base_ptr_" + i.ToString() + ".object() )" +
+                    ");");
 
                 // dynamic_cast
-                ClassEntry destClass = RandClass();
-                i_output.AppendLine("ObjPtr ref_dyn_ptr_" + i.ToString() + " = ref_base_ptr_" + i.ToString() + ".cast_to(get_type<" + destClass.Name + ">());");
                 i_output.AppendLine(destClass.Name + " * native_dyn_ptr_" + i.ToString() + " = " + "dynamic_cast<" + destClass.Name + "*>(native_base_ptr_" + i.ToString() + ");");
-
-                // assert
+                i_output.AppendLine("ObjPtr ref_dyn_ptr_" + i.ToString() + " = ref_base_ptr_" + i.ToString() + ".cast_to(get_type<" + destClass.Name + ">());");                
                 i_output.AppendLine("REFLECTIVE_INTERNAL_ASSERT(" +
                     "native_dyn_ptr_" + i.ToString() + " == " +
-                    "static_cast<" + destClass.Name + "*>( ref_base_ptr_" + i.ToString() + ".object() )" +
+                    "static_cast<" + destClass.Name + "*>( ref_dyn_ptr_" + i.ToString() + ".object() )" +
                     ");");
                 i_output.AppendLine("");
             }
