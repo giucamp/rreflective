@@ -22,7 +22,7 @@ namespace hierarchy_test_util
         {
             HierarchyName = i_hierarchyName;
             AllowMultipleInheritance = true;
-            ClassCount = 10;
+            ClassCount = 5;
             DerivationFactor = 5;
             VTableChance = 0.5;
             MostDerivedTypeFuncChance = 1.5;

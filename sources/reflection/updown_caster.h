@@ -105,7 +105,7 @@ namespace reflective
 
 			auto derived_ptr = static_cast<DERIVED*>(base_ptr);
 			dbg_object_validate(*derived_ptr);
-			return base_ptr;
+			return derived_ptr;
 		}
 
 	private:

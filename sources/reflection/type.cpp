@@ -243,6 +243,7 @@ namespace reflective
 				{
 					if (base.base_type()->internal_find_path_to_type(io_base_types, i_target_type))
 					{
+						io_base_types.push_back(base);
 						return true;
 					}
 				}
@@ -312,24 +313,28 @@ namespace reflective
 
 		if (most_derived_type != nullptr)
 		{
-			// now we need a path from the most derived type to i_dest_type
+			/* now we need a path from this type to the most derived type, to obtain a pointer
+				to the most derived type */
 			std::vector<BaseType> base_types;
-			if (most_derived_type->internal_find_path_to_type(base_types, i_dest_type))
+			if (most_derived_type->internal_find_path_to_type(base_types, *this))
 			{
-				REFLECTIVE_INTERNAL_ASSERT(std::find_if(base_types.begin(), base_types.end(), [this](const BaseType & i_base) {
+				REFLECTIVE_INTERNAL_ASSERT(base_types.size() == 0 || std::find_if(base_types.begin(), base_types.end(), [this](const BaseType & i_base) {
 					return i_base.base_type() == this;
-				}) == base_types.end());
-				REFLECTIVE_INTERNAL_ASSERT(std::find_if(base_types.begin(), base_types.end(), [most_derived_type](const BaseType & i_base) {
-					return i_base.base_type() == most_derived_type;
 				}) != base_types.end());
+				REFLECTIVE_INTERNAL_ASSERT(base_types.size() == 0 || std::find_if(base_types.begin(), base_types.end(), [most_derived_type](const BaseType & i_base) {
+					return i_base.base_type() == most_derived_type;
+				}) == base_types.end());
 
+				// downcast from tjis type to the most derived
 				curr_object = i_source_object;
 				for (auto base_type_it = base_types.crbegin(); base_type_it != base_types.crend(); base_type_it++)
 				{
 					curr_object = base_type_it->updown_caster().base_to_derived(curr_object);
 				}
 
-				return curr_object;
+				// now upcast from the most derived to the destination type.
+				void * result = most_derived_type->upcast(curr_object, i_dest_type);
+				return result;
 			}
 			else
 			{
