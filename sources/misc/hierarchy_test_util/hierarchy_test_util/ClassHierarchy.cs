@@ -9,6 +9,7 @@ namespace hierarchy_test_util
     public class HierarchySettings
     {
         public string HierarchyName { get; set; }
+        public int RandomSeed { get; set; }
         public double VTableChance { get; set; }
         public double VBaseChance { get; set; }
         public double MostDerivedTypeFuncChance { get; set; }
@@ -22,13 +23,14 @@ namespace hierarchy_test_util
         {
             HierarchyName = i_hierarchyName;
             AllowMultipleInheritance = true;
-            ClassCount = 5;
+            ClassCount = 6;
             DerivationFactor = 5;
             VTableChance = 0.5;
             MostDerivedTypeFuncChance = 1.5;
             VBaseChance = 0;
             TestCount = 1000;
             EmitTypeChecks = true;
+            RandomSeed = 568;
         }
     }
 
@@ -42,6 +44,7 @@ namespace hierarchy_test_util
         
         public ClassHierarchy(HierarchySettings i_settings)
         {
+            m_rand = new Random(i_settings.RandomSeed);
             m_settings = i_settings;
             m_propFactory = new PropertyFactory(m_rand);
             for ( int classIndex = 0; classIndex < i_settings.ClassCount; classIndex++)
@@ -252,11 +255,17 @@ namespace hierarchy_test_util
             output.AppendLine(@"");
 
             output.AppendLine(" /******** Configuration ");
-            output.AppendLine(" * Class count: " + m_settings.ClassCount.ToString() );
-            output.AppendLine(" * Derivation factor: " + m_settings.DerivationFactor.ToString());
-            output.AppendLine(" * Virtual table chance: " + ((int)(m_settings.VTableChance * 100)).ToString() + "%");
-            output.AppendLine(" * Virtual base chance: " + ((int)(m_settings.VBaseChance * 100)).ToString() + "%");
-            output.AppendLine(" * Allow multipe inheritance: " + m_settings.AllowMultipleInheritance.ToString() + "");
+            output.AppendLine(" * hierarchy name: " + m_settings.HierarchyName);
+            output.AppendLine(" * class count: " + m_settings.ClassCount.ToString() );
+            output.AppendLine(" * derivation factor: " + m_settings.DerivationFactor.ToString());
+            output.AppendLine(" * virtual table chance: " + ((int)(m_settings.VTableChance * 100)).ToString() + "%");
+            output.AppendLine(" * virtual base chance: " + ((int)(m_settings.VBaseChance * 100)).ToString() + "%");
+            output.AppendLine(" * allow multiple inheritance: " + m_settings.AllowMultipleInheritance.ToString() + "");
+            output.AppendLine(" * most-derived-type function chance: " + ((int)(m_settings.MostDerivedTypeFuncChance * 100)).ToString() + "%");
+            output.AppendLine(" * test count: " + m_settings.TestCount.ToString());
+            output.AppendLine(" * emit type checks: " + m_settings.EmitTypeChecks.ToString());
+            output.AppendLine(" * random seed: " + m_settings.RandomSeed.ToString());            
+
             output.AppendLine(" ********/");
 
             output.AppendLine("namespace reflective");

@@ -201,7 +201,7 @@ namespace reflective
 
 			#if REFLECTIVE_ENABLE_MULTIPLE_INHERITANCE
 
-				for (const auto & base : m_other_base_types)
+				for (const auto & base : curr_type->m_other_base_types)
 				{
 					void * base_object = base.updown_caster().derived_to_base(curr_object);
 					void * casted = base.base_type()->upcast(base_object, i_dest_base_type);
@@ -237,18 +237,16 @@ namespace reflective
 
 			#if REFLECTIVE_ENABLE_MULTIPLE_INHERITANCE
 
-				const size_t original_size = io_base_types.size();
-
-				for (const auto & base : m_other_base_types)
+			for (const auto & base : curr_type->m_other_base_types)
 				{
+					const size_t original_size = io_base_types.size();
 					if (base.base_type()->internal_find_path_to_type(io_base_types, i_target_type))
 					{
 						io_base_types.push_back(base);
 						return true;
 					}
-				}
-
-				io_base_types.resize(original_size);
+					io_base_types.resize(original_size);
+				}			
 
 			#endif
 
@@ -325,11 +323,11 @@ namespace reflective
 					return i_base.base_type() == most_derived_type;
 				}) == base_types.end());
 
-				// downcast from tjis type to the most derived
+				// downcast from this type to the most derived
 				curr_object = i_source_object;
-				for (auto base_type_it = base_types.crbegin(); base_type_it != base_types.crend(); base_type_it++)
+				for (const auto & base : base_types)
 				{
-					curr_object = base_type_it->updown_caster().base_to_derived(curr_object);
+					curr_object = base.updown_caster().base_to_derived(curr_object);
 				}
 
 				// now upcast from the most derived to the destination type.

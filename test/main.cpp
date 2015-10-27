@@ -25,7 +25,7 @@ namespace reflective
 
 int main()
 {
-	reflective::details::test::test_test_test();
+	//reflective::details::test::test_test_test();
 
 	{
 		using namespace reflective;
