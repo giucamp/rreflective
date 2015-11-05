@@ -227,71 +227,82 @@ namespace reflective
 
 	struct TypeInfo
 	{
-		int dist = -1;
+		int multepl = 0;
 		BaseType base;
+		const Type * m_derived_type = nullptr;
 	};
 
 	bool Type::internal_find_path_to_type(const Type & i_source_type, const Type & i_target_type, std::vector<BaseType> & io_base_types)
 	{
 		std::map<const Type*, TypeInfo> map;
-
 		std::vector<const Type*> stack;
 
 		stack.push_back(&i_source_type);
 
-		while( stack.size() > 0 )
+		for(;;)
 		{
+			if (stack.size() == 0)
+			{
+				return false;
+			}
+
 			const auto curr_type = stack.back();
 			stack.pop_back();
 
-			for( const auto & base : curr_type->m_other_base_types )
+			if (curr_type == &i_target_type)
 			{
-				if (map[base.base_type()].dist == -1)
+				// found
+				break;
+			}
+
+			{
+				const auto & base = curr_type->m_single_base;
+				if (base.base_type() != nullptr)
 				{
 					auto & map_item = map[base.base_type()];
-					map_item.dist = map[curr_type].dist + 1;
+					map_item.multepl++;
+					if (map_item.m_derived_type == nullptr)
+					{
+						map_item.m_derived_type = curr_type;
+						map_item.base = base;
+						stack.push_back(base.base_type());
+					}
+				}
+			}
+
+			for( const auto & base : curr_type->m_other_base_types )
+			{
+				auto & map_item = map[base.base_type()];
+				map_item.multepl++;
+				if (map_item.m_derived_type == nullptr)
+				{
+					map_item.m_derived_type = curr_type;
 					map_item.base = base;
 					stack.push_back(base.base_type());
-				}
-				else
-				{
-					return false;
 				}
 			}
 		}
 
-
-
-		/*const Type * curr_type = this;
-		do {
-
-			if (curr_type == &i_target_type)
+		// io_base_types should contain the destination, but not the source
+		auto curr_type = &i_target_type;
+		for (;;)
+		{
+			if (curr_type == &i_source_type)
 			{
-				return true;
-			}			
+				break;
+			}		
 
-			#if REFLECTIVE_ENABLE_MULTIPLE_INHERITANCE
-
-			for (const auto & base : curr_type->m_other_base_types)
+			if (map[curr_type].multepl != 1)
 			{
-				const size_t original_size = io_base_types.size();
-				if (base.base_type()->internal_find_path_to_type(io_base_types, i_target_type))
-				{
-					io_base_types.push_back(base);
-					return true;
-				}
-				io_base_types.resize(original_size);
-			}			
+				// ambiguous base
+				return false;
+			}
+			io_base_types.push_back(map[curr_type].base);
 
-			#endif
+			curr_type = map[curr_type].m_derived_type;
+		}
 
-			const auto & base = curr_type->m_single_base;
-			io_base_types.push_back(base);
-			curr_type = base.base_type();
-
-		} while (curr_type != nullptr);*/
-
-		return false;
+		return true;
 	}
 
 	void * Type::try_dynamic_cast(void * i_source_object, const Type & i_dest_type) const
@@ -346,17 +357,16 @@ namespace reflective
 
 		if (most_derived_type != nullptr)
 		{
-			/* now we need a path from this type to the most derived type, to obtain a pointer
+			/* now we need a path from the most derived type to this type, to obtain a pointer
 				to the most derived type */
 			std::vector<BaseType> base_types;
-			if (internal_find_path_to_type(*this, *most_derived_type, base_types))
+			if (internal_find_path_to_type(*most_derived_type, *this, base_types))
 			{
-				REFLECTIVE_INTERNAL_ASSERT(base_types.size() == 0 || std::find_if(base_types.begin(), base_types.end(), [this](const BaseType & i_base) {
-					return i_base.base_type() == this;
-				}) != base_types.end());
-				REFLECTIVE_INTERNAL_ASSERT(base_types.size() == 0 || std::find_if(base_types.begin(), base_types.end(), [most_derived_type](const BaseType & i_base) {
-					return i_base.base_type() == most_derived_type;
-				}) == base_types.end());
+				// base_types should contain this, but not most_derived_type
+				REFLECTIVE_INTERNAL_ASSERT(base_types.size() == 0 || Ext::contains_if(base_types, [this](const BaseType & i_base) {
+					return i_base.base_type() == this; }));
+				REFLECTIVE_INTERNAL_ASSERT(base_types.size() == 0 || !Ext::contains_if(base_types, [most_derived_type](const BaseType & i_base) {
+					return i_base.base_type() == most_derived_type; }));
 
 				// downcast from this type to the most derived
 				curr_object = i_source_object;
