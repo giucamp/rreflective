@@ -329,8 +329,11 @@ namespace reflective
 	}
 
 	// void_t invented by Walter E. Brown - it will be available is std from C++17 on
-	template< class... >
-		using VoidT = void;
+	namespace details
+	{
+		template<typename... Ts> struct MakeVoid { typedef void type; };
+	}	
+	template<typename... Ts> using VoidT = typename details::MakeVoid<Ts...>::type;
 
 	class Ext
 	{
