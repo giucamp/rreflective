@@ -159,7 +159,7 @@ namespace reflective
 			size_t base_type_multeplicity(const Type & i_base_type) const;
 		#endif
 
-		bool internal_find_path_to_type(std::vector<BaseType> & io_base_types, const Type & i_target_type) const;
+		static bool internal_find_path_to_type(const Type & i_source_type, const Type & i_target_type, std::vector<BaseType> & io_base_types);
 
 	private:
 

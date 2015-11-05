@@ -2,6 +2,7 @@
 #include <inttypes.h>
 #include <limits>
 #include <array>
+#include <map>
 #include <ctype.h>
 
 
