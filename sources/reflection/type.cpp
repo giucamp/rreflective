@@ -370,7 +370,7 @@ namespace reflective
 
 				// downcast from this type to the most derived
 				curr_object = i_source_object;
-				for (auto base_it = base_types.crbegin(); base_it != base_types.crend(); base_it++ )
+				for (auto base_it = base_types.cbegin(); base_it != base_types.cend(); base_it++ )
 				{
 					curr_object = base_it->updown_caster().base_to_derived(curr_object);
 				}
