@@ -64,7 +64,7 @@ namespace hierarchy_test_util
             }
         }
 
-        public static bool HasDupicates<T>(this IEnumerable<T> i_collection)
+        public static bool HasInheritancheLoop<T>(this IEnumerable<T> i_collection)
         {
             HashSet<T> set = new HashSet<T>();
             foreach( T el in i_collection)

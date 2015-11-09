@@ -161,7 +161,7 @@ namespace reflective
 
 				for (const auto & base : m_other_base_types)
 				{
-					const void * base_object = base.updown_caster().derived_to_base(curr_object);
+					const void * base_object = base.derived_to_base(curr_object);
 					auto res = base.base_type()->most_derived(base_object);
 					if (res != nullptr)
 					{
@@ -175,7 +175,7 @@ namespace reflective
 			curr_type = base.base_type();
 			if (curr_type != nullptr)
 			{
-				curr_object = base.updown_caster().derived_to_base(curr_object);
+				curr_object = base.derived_to_base(curr_object);
 			}
 
 		} while (curr_type != nullptr);
@@ -203,7 +203,7 @@ namespace reflective
 
 				for (const auto & base : curr_type->m_other_base_types)
 				{
-					void * base_object = base.updown_caster().derived_to_base(curr_object);
+					void * base_object = base.derived_to_base(curr_object);
 					void * casted = base.base_type()->upcast(base_object, i_dest_base_type);
 					if (casted != nullptr)
 					{
@@ -217,7 +217,7 @@ namespace reflective
 			curr_type = base.base_type();
 			if (curr_type != nullptr)
 			{
-				curr_object = base.updown_caster().derived_to_base(curr_object);
+				curr_object = base.derived_to_base(curr_object);
 			}
 
 		} while (curr_type != nullptr);
@@ -331,7 +331,7 @@ namespace reflective
 
 				for (const auto & base : m_other_base_types)
 				{
-					void * base_object = base.updown_caster().derived_to_base(curr_object);
+					void * base_object = base.derived_to_base(curr_object);
 					most_derived_type = base.base_type()->most_derived(base_object);					
 					if (most_derived_type != nullptr)
 					{
@@ -350,7 +350,7 @@ namespace reflective
 			curr_type = base.base_type();
 			if (curr_type != nullptr)
 			{
-				curr_object = base.updown_caster().derived_to_base(curr_object);
+				curr_object = base.derived_to_base(curr_object);
 			}
 
 		} while (curr_type != nullptr);
@@ -372,7 +372,7 @@ namespace reflective
 				curr_object = i_source_object;
 				for (auto base_it = base_types.cbegin(); base_it != base_types.cend(); base_it++ )
 				{
-					curr_object = base_it->updown_caster().base_to_derived(curr_object);
+					curr_object = base_it->base_to_derived(curr_object);
 				}
 
 				// now upcast from the most derived to the destination type.

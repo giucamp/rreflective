@@ -70,9 +70,11 @@ namespace reflective
 	class InStringBuffer;
 	class PtrString;
 	
-	enum class UpDownCasterImplementation
+	enum class InheritanceSupport
 	{
-		Functions
+		Functions,
+		OffsettingAndFunctions,
+		Offsetting,
 	};
 }
 

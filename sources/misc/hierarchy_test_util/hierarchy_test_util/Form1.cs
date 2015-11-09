@@ -16,7 +16,7 @@ namespace hierarchy_test_util
         {
             InitializeComponent();
 
-            ClassHierarchy h = new ClassHierarchy(new HierarchySettings("test"));
+            ClassHierarchy h = new ClassHierarchy(new HierarchySettings("hier"));
             h.FileName = System.Windows.Forms.Application.StartupPath + "/../../../../../../test/auto_gen.cpp";
 
             textBox1.AppendText(h.GenerateSourceCode());

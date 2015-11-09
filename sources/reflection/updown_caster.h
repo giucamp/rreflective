@@ -32,29 +32,40 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	template <UpDownCasterImplementation IMPL = s_upDownCasterImplementation>
-		class UpDownCaster;
+	template <InheritanceSupport IMPL> class BaseRelationship;
+
+	using BaseType = BaseRelationship<s_inheritance_support>;
 
 	template <>
-		class UpDownCaster<UpDownCasterImplementation::Functions>
+		class BaseRelationship<InheritanceSupport::Functions> final
 	{
 	public:
 
 		using Caster = void * (*)(void * i_source);
 		
-		UpDownCaster()
-			: m_derived_to_base_func(nullptr), m_base_to_derived_func(nullptr)
+		BaseRelationship()
+			: m_base_type(nullptr), m_is_virtual(false),
+			  m_derived_to_base_func(nullptr), m_base_to_derived_func(nullptr)
 				{ }
 
-		UpDownCaster(Caster i_derived_to_base_func, Caster i_base_to_derived_func)
-			: m_derived_to_base_func(i_derived_to_base_func), m_base_to_derived_func(i_base_to_derived_func)
+		BaseRelationship(const Type * i_base_type, bool i_virtual, Caster i_derived_to_base_func, Caster i_base_to_derived_func)
+			: m_base_type(i_base_type), m_is_virtual(i_virtual),
+			  m_derived_to_base_func(i_derived_to_base_func), m_base_to_derived_func(i_base_to_derived_func)
 				{ }
 
-		template <typename BASE, typename DERIVED>
-			static UpDownCaster from_types()
+		template <typename DERIVED, typename BASE>
+			static BaseRelationship from_types()
 		{
-			return UpDownCaster(&cast_to_base<BASE, DERIVED>, &cast_to_derived<BASE, DERIVED>);
+			return BaseRelationship(&get_naked_type<BASE>(), false, &cast_to_base<DERIVED, BASE>, &cast_to_derived<DERIVED, BASE>);
 		}
+
+		template <typename DERIVED, typename BASE>
+			static BaseRelationship from_types_virtual()
+		{
+			return BaseRelationship(&get_naked_type<BASE>(), false, &cast_to_base<DERIVED, BASE>, &cast_virtual_to_derived<DERIVED, BASE>);
+		}
+
+		const Type * base_type() const { return m_base_type; }
 
 		void * derived_to_base(void * i_derived_ptr) const
 		{
@@ -80,9 +91,14 @@ namespace reflective
 			return (*m_base_to_derived_func)(const_cast<void*>(i_base_ptr));
 		}
 
+		bool is_virtual() const
+		{
+			return m_is_virtual;
+		}
+
 	private:
 		
-		template <typename BASE, typename DERIVED>
+		template <typename DERIVED, typename BASE>
 			static void * cast_to_base(void * i_derived_ptr)
 		{
 			REFLECTIVE_ASSERT(i_derived_ptr != nullptr, "cast_to_base can't handle null pointers");
@@ -95,7 +111,7 @@ namespace reflective
 			return base_ptr;
 		}
 
-		template <typename BASE, typename DERIVED>
+		template <typename DERIVED, typename BASE>
 			static void * cast_to_derived(void * i_base_ptr)
 		{
 			REFLECTIVE_ASSERT(i_base_ptr != nullptr, "cast_to_derived can't handle null pointers");
@@ -108,8 +124,22 @@ namespace reflective
 			return derived_ptr;
 		}
 
+		template <typename DERIVED, typename BASE>
+			static void * cast_virtual_to_derived(void * i_base_ptr)
+		{
+			REFLECTIVE_ASSERT(i_base_ptr != nullptr, "cast_to_derived can't handle null pointers");
+
+			auto base_ptr = static_cast<BAE*>(i_base_ptr);
+			dbg_object_validate(*base_ptr);
+
+			auto derived_ptr = static_cast<DERIVED*>(base_ptr);
+			dbg_object_validate(*derived_ptr);
+			return derived_ptr;
+		}
+
 	private:
-		
+		const Type * m_base_type;
+		bool m_is_virtual;
 		Caster m_derived_to_base_func;
 		Caster m_base_to_derived_func;
 	};

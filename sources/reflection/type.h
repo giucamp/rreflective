@@ -32,30 +32,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	struct BaseType
-	{
-	public:
-
-		BaseType()
-			: m_base_type(nullptr) { }
-
-		BaseType(const Type * i_base_type, const UpDownCaster<> & i_updown_caster)
-			: m_base_type(i_base_type), m_updown_caster(i_updown_caster) { }
-
-		const Type * base_type() const					{ return m_base_type; }
-		const UpDownCaster<> & updown_caster() const	{ return m_updown_caster; }
-
-		template <typename DERIVED_TYPE, typename BASE_TYPE >
-			static BaseType from_types()
-		{
-			return BaseType( &get_naked_type<BASE_TYPE>(), UpDownCaster<>::from_types<BASE_TYPE, DERIVED_TYPE>() );
-		}
-
-	private:
-		const Type * m_base_type;
-		UpDownCaster<> m_updown_caster;
-	};
-
 	namespace details
 	{
 		class DerivedTypesList // this class is not supposed to be referenced outside the library

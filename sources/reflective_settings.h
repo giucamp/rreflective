@@ -37,7 +37,7 @@ namespace reflective
 	template <typename TYPE>
 		using Allocator = std::allocator<TYPE>;
 
-	static const UpDownCasterImplementation s_upDownCasterImplementation = UpDownCasterImplementation::Functions;
+	static const InheritanceSupport s_inheritance_support = InheritanceSupport::Functions;
 
 	static const size_t s_global_registry_reserve = 512;
 

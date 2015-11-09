@@ -23,12 +23,12 @@ namespace hierarchy_test_util
         {
             HierarchyName = i_hierarchyName;
             AllowMultipleInheritance = true;
-            ClassCount = 6;
+            ClassCount = 5;
             DerivationFactor = 5;
             VTableChance = 0.5;
             MostDerivedTypeFuncChance = 1.5;
-            VBaseChance = 0;
-            TestCount = 1000;
+            VBaseChance = 0.5;
+            TestCount = 10;
             EmitTypeChecks = true;
             RandomSeed = 568;
         }
@@ -88,7 +88,7 @@ namespace hierarchy_test_util
                 currClass.GetAllBases(nonVirtualBases, virtualBases);
                 virtualBases.RemoveDupicates();
 
-                if( nonVirtualBases.Concat(virtualBases).HasDupicates() )
+                if( nonVirtualBases.Concat(virtualBases).HasInheritancheLoop() )
                 {
                     return true;
                 }
@@ -173,59 +173,67 @@ namespace hierarchy_test_util
             i_output.AppendLine("{");
             i_output.Tab();
 
-            i_output.AppendLine("void test_" + m_settings.HierarchyName + "_test()");
-            i_output.AppendLine("{");
-            i_output.Tab();
-            
-            i_output.AppendLine("// objects");
-            foreach (ClassEntry classObj in m_classes)
-            {
-                i_output.AppendLine(classObj.Name + " obj_" + classObj.Name + ";");
-            }
+            i_output.AppendLine("struct Stats { int m_test_count = 0; int m_failed_cast_count = 0; };");
             i_output.AppendLine("");
 
-
-            i_output.AppendLine("");
-            i_output.AppendLine("// test upcast and dynamic cast");
-            i_output.AppendLine("");
-            i_output.AppendLine("");
             for (int i = 0; i < m_settings.TestCount; i++)
             {
+                i_output.AppendLine("void test_" + m_settings.HierarchyName + "_" + i.ToString() + "(Stats & io_stats)");
+                i_output.AppendLine("{");
+                i_output.Tab();
+
                 ClassEntry completeClassObj = RandClass();
                 ClassEntry baseClass = completeClassObj.GetRandomBaseOrThis(m_rand);
                 ClassEntry destClass = RandClass();
+
                 i_output.AppendLine("// upcasting from " + completeClassObj.Name + " to " + baseClass.Name + ", and the dynamic casting to " + destClass.Name);
 
                 // complete object
-                i_output.AppendLine(completeClassObj.Name + " * native_complete_ptr_" + i.ToString() + " = &obj_" + completeClassObj.Name + ";");
-                i_output.AppendLine("ObjPtr ref_complete_ptr_" + i.ToString() + " = &obj_" + completeClassObj.Name + ";");
+                i_output.AppendLine(completeClassObj.Name + " complete_object;");
+                i_output.AppendLine(completeClassObj.Name + " * native_complete_ptr = &complete_object;");
+                i_output.AppendLine("ObjPtr ref_complete_ptr = &complete_object;");
 
                 // upcast
-                i_output.AppendLine(baseClass.Name + " * native_base_ptr_" + i.ToString() + " = native_complete_ptr_" + i.ToString() + ";");
-                i_output.AppendLine("ObjPtr ref_base_ptr_" + i.ToString() + " = ref_complete_ptr_" + i.ToString() + ".upcast_to(get_type<" + baseClass.Name + ">());");
+                i_output.AppendLine("");
+                i_output.AppendLine(baseClass.Name + " * native_base_ptr = native_complete_ptr;");
+                i_output.AppendLine("ObjPtr ref_base_ptr = ref_complete_ptr.upcast_to(get_type<" + baseClass.Name + ">());");
                 i_output.AppendLine("REFLECTIVE_INTERNAL_ASSERT(" +
-                    "native_base_ptr_" + i.ToString() + " == " +
-                    "static_cast<" + baseClass.Name + "*>( ref_base_ptr_" + i.ToString() + ".object() )" +
-                    ");");
-                i_output.AppendLine("reflective::dbg_object_validate(*ref_base_ptr_" + i.ToString() + ".get_if_type_matches<" + baseClass.Name + ">());");
-                
+                    "native_base_ptr == static_cast<" + baseClass.Name + "*>( ref_base_ptr.object() ) );");
+                i_output.AppendLine("reflective::dbg_object_validate(*ref_base_ptr.get_if_type_matches<" + baseClass.Name + ">());");
 
                 // dynamic_cast
-                i_output.AppendLine(destClass.Name + " * native_dyn_ptr_" + i.ToString() + " = " + "dynamic_cast<" + destClass.Name + "*>(native_base_ptr_" + i.ToString() + ");");
-                i_output.AppendLine("ObjPtr ref_dyn_ptr_" + i.ToString() + " = ref_base_ptr_" + i.ToString() + ".cast_to(get_type<" + destClass.Name + ">());");                
-                i_output.AppendLine("REFLECTIVE_INTERNAL_ASSERT(" +
-                    "native_dyn_ptr_" + i.ToString() + " == " +
-                    "static_cast<" + destClass.Name + "*>( ref_dyn_ptr_" + i.ToString() + ".object() )" +
-                    ");");
-                i_output.AppendLine("if( !ref_dyn_ptr_" + i.ToString() + ".empty() )");
+                i_output.AppendLine("");
+                i_output.AppendLine(destClass.Name + " * native_dyn_ptr = " + "dynamic_cast<" + destClass.Name + "*>(native_base_ptr);");
+                i_output.AppendLine("ObjPtr ref_dyn_ptr = ref_base_ptr.cast_to(get_type<" + destClass.Name + ">());");
+                i_output.AppendLine("REFLECTIVE_INTERNAL_ASSERT( native_dyn_ptr == " +
+                    "static_cast<" + destClass.Name + "*>( ref_dyn_ptr.object() ) );");
+                i_output.AppendLine("if( !ref_dyn_ptr.empty() )");
                 i_output.AppendLine("{");
                 i_output.Tab();
-                i_output.AppendLine("reflective::dbg_object_validate(*ref_dyn_ptr_" + i.ToString() + ".get_if_type_matches<" + destClass.Name + ">());");                
+                i_output.AppendLine("reflective::dbg_object_validate(*ref_dyn_ptr.get_if_type_matches<" + destClass.Name + ">());");
                 i_output.Untab();
                 i_output.AppendLine("}");
+
                 i_output.AppendLine("");
+                i_output.AppendLine("io_stats.m_test_count++;");
+                i_output.AppendLine("if(native_dyn_ptr == nullptr)");
+                i_output.Tab();                
+                i_output.AppendLine("io_stats.m_failed_cast_count++;");
+                i_output.Untab();
+
+                i_output.Untab();
+                i_output.AppendLine("}");
             }
-            i_output.AppendLine("");
+
+            i_output.AppendLine("void test_" + m_settings.HierarchyName + "()");
+            i_output.AppendLine("{");
+            i_output.Tab();
+            
+            i_output.AppendLine("Stats stats;");
+            for (int i = 0; i < m_settings.TestCount; i++)
+            {
+                i_output.AppendLine("test_" + m_settings.HierarchyName + "_" + i.ToString() + "(stats);");
+            }
             
             i_output.Untab();
             i_output.AppendLine("}");

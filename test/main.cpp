@@ -17,7 +17,7 @@ namespace reflective
 	{
 		namespace test
 		{
-			void test_test_test();
+			void test_hier();
 		}
 	}
 }
@@ -25,7 +25,7 @@ namespace reflective
 
 int main()
 {
-	reflective::details::test::test_test_test();
+	reflective::details::test::test_hier();
 
 	{
 		using namespace reflective;
