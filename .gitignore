@@ -18,3 +18,4 @@
 *.suo
 doc/Doc/
 sources/misc/hierarchy_test_util/hierarchy_test_util/bin/
+sources/misc/hierarchy_test_util/hierarchy_test_util/obj/
