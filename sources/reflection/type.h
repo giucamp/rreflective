@@ -115,6 +115,11 @@ namespace reflective
 		const Type * most_derived(const void * i_object) const;
 
 		void * try_dynamic_cast(void * i_source_object, const Type & i_dest_type) const;
+
+		class BaseTypeContainer;
+
+		/** Returns a container of all the base types of this type.*/
+		const BaseTypeContainer base_types() const;
 		
 
 					// unit testing

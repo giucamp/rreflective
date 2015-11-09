@@ -23,12 +23,12 @@ namespace hierarchy_test_util
         {
             HierarchyName = i_hierarchyName;
             AllowMultipleInheritance = true;
-            ClassCount = 5;
-            DerivationFactor = 5;
+            ClassCount = 6;
+            DerivationFactor = 7;
             VTableChance = 0.5;
             MostDerivedTypeFuncChance = 1.5;
             VBaseChance = 0.5;
-            TestCount = 10;
+            TestCount = 30;
             EmitTypeChecks = true;
             RandomSeed = 568;
         }
@@ -79,7 +79,7 @@ namespace hierarchy_test_util
             System.IO.File.WriteAllText(FileName, GenerateSourceCode() );
         }
 
-        bool HasAmbiguity()
+        bool HasInheritancheLoop()
         {
             foreach(ClassEntry currClass in m_classes)
             {
@@ -88,7 +88,7 @@ namespace hierarchy_test_util
                 currClass.GetAllBases(nonVirtualBases, virtualBases);
                 virtualBases.RemoveDupicates();
 
-                if( nonVirtualBases.Concat(virtualBases).HasInheritancheLoop() )
+                if( nonVirtualBases.Concat(virtualBases).HasDuplicate() )
                 {
                     return true;
                 }
@@ -120,7 +120,7 @@ namespace hierarchy_test_util
                 {
                     bool isVirtualBase = m_rand.NextDouble() < m_settings.VBaseChance;
                     derC.AddBase(baseC, isVirtualBase);
-                    if (!HasAmbiguity())
+                    if (!HasInheritancheLoop())
                     {
                         success = true;                        
                     }

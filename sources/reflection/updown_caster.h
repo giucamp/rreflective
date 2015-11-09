@@ -62,7 +62,7 @@ namespace reflective
 		template <typename DERIVED, typename BASE>
 			static BaseRelationship from_types_virtual()
 		{
-			return BaseRelationship(&get_naked_type<BASE>(), false, &cast_to_base<DERIVED, BASE>, &cast_virtual_to_derived<DERIVED, BASE>);
+			return BaseRelationship(&get_naked_type<BASE>(), true, &cast_to_base<DERIVED, BASE>, &cast_virtual_to_derived<DERIVED, BASE>);
 		}
 
 		const Type * base_type() const { return m_base_type; }
@@ -129,10 +129,10 @@ namespace reflective
 		{
 			REFLECTIVE_ASSERT(i_base_ptr != nullptr, "cast_to_derived can't handle null pointers");
 
-			auto base_ptr = static_cast<BAE*>(i_base_ptr);
+			auto base_ptr = static_cast<BASE*>(i_base_ptr);
 			dbg_object_validate(*base_ptr);
 
-			auto derived_ptr = static_cast<DERIVED*>(base_ptr);
+			auto derived_ptr = dynamic_cast<DERIVED*>(base_ptr);
 			dbg_object_validate(*derived_ptr);
 			return derived_ptr;
 		}

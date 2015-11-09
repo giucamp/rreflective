@@ -184,10 +184,21 @@ namespace hierarchy_test_util
                         term = ",";
                     else
                         term = " });";
-                    i_output.AppendLine("BaseType::from_types<ThisClass, " + baseClass.FullName + ">()" + term);
+                    if( m_virtualBases.Contains( baseClass) )
+                        i_output.AppendLine("BaseType::from_types_virtual<ThisClass, " + baseClass.FullName + ">()" + term);
+                    else
+                        i_output.AppendLine("BaseType::from_types<ThisClass, " + baseClass.FullName + ">()" + term);
                 }
                 i_output.Untab();
             }
+
+            // test base_types container
+            i_output.AppendLine("");
+            i_output.AppendLine("for( const auto & base : i_context.type()->base_types() )");
+            i_output.AppendLine("{");
+            i_output.Tab();
+            i_output.Untab();
+            i_output.AppendLine("}");
 
             // gmdt function
             i_output.AppendLine("i_context.type()->set_most_derived_type_func(&ThisClass::static_get_type);");

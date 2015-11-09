@@ -228,6 +228,7 @@ namespace reflective
 	struct TypeInfo
 	{
 		int multepl = 0;
+		int virtual_multepl = 0;
 		BaseType base;
 		const Type * m_derived_type = nullptr;
 	};
@@ -260,7 +261,14 @@ namespace reflective
 				if (base.base_type() != nullptr)
 				{
 					auto & map_item = map[base.base_type()];
-					map_item.multepl++;
+					if (base.is_virtual())
+					{
+						map_item.virtual_multepl = 1;
+					}
+					else
+					{
+						map_item.multepl++;
+					}
 					if (map_item.m_derived_type == nullptr)
 					{
 						map_item.m_derived_type = curr_type;
@@ -273,7 +281,14 @@ namespace reflective
 			for( const auto & base : curr_type->m_other_base_types )
 			{
 				auto & map_item = map[base.base_type()];
-				map_item.multepl++;
+				if (base.is_virtual())
+				{
+					map_item.virtual_multepl = 1;
+				}
+				else
+				{
+					map_item.multepl++;
+				}
 				if (map_item.m_derived_type == nullptr)
 				{
 					map_item.m_derived_type = curr_type;
@@ -290,16 +305,18 @@ namespace reflective
 			if (curr_type == &i_source_type)
 			{
 				break;
-			}		
+			}
 
-			if (map[curr_type].multepl != 1)
+			auto & map_entry = map[curr_type];
+
+			if (map_entry.multepl + map_entry.virtual_multepl != 1)
 			{
 				// ambiguous base
 				return false;
 			}
-			io_base_types.push_back(map[curr_type].base);
+			io_base_types.push_back(map_entry.base);
 
-			curr_type = map[curr_type].m_derived_type;
+			curr_type = map_entry.m_derived_type;
 		}
 
 		return true;
