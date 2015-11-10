@@ -23,12 +23,12 @@ namespace hierarchy_test_util
         {
             HierarchyName = i_hierarchyName;
             AllowMultipleInheritance = true;
-            ClassCount = 400;
+            ClassCount = 20;
             DerivationFactor = 1;
             VTableChance = 0.5;
             MostDerivedTypeFuncChance = 1.5;
             VBaseChance = 0.5;
-            TestCount = 500;
+            TestCount = 40;
             EmitTypeChecks = true;
             RandomSeed = 568;
         }

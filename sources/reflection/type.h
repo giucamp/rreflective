@@ -101,6 +101,8 @@ namespace reflective
 
 		void set_most_derived_type_func(MostDerivedFunc i_function)			{ m_most_derived_func = i_function; }
 
+		MostDerivedFunc most_derived_type_func() const						{ return m_most_derived_func; }
+
 
 					// inheritance	
 

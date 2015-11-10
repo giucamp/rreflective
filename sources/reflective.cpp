@@ -24,4 +24,5 @@
 #if REFLECTIVE_ENABLE_TESTING
 	#include "unit_testing\unit_testing.h"
 	#include "reflection\type_derived_list_test.cpp"
+	#include "reflection\type_inheritance_test.cpp"
 #endif

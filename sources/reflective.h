@@ -95,7 +95,7 @@ namespace reflective
 
 // type headers
 #include "reflection\symbol.h"
-#include "reflection\updown_caster.h"
+#include "reflection\base_type.h"
 #include "reflection\qualified_type_ptr.h"
 #include "reflection\special_functions.h"
 #include "reflection\string_functions.h"

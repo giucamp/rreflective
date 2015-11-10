@@ -162,7 +162,7 @@
     <ClInclude Include="..\sources\reflection\string_functions.h" />
     <ClInclude Include="..\sources\reflection\symbol.h" />
     <ClInclude Include="..\sources\reflection\type.h" />
-    <ClInclude Include="..\sources\reflection\updown_caster.h" />
+    <ClInclude Include="..\sources\reflection\base_type.h" />
     <ClInclude Include="..\sources\reflective.h" />
     <ClInclude Include="..\sources\reflective_common.h" />
     <ClInclude Include="..\sources\reflective_settings.h" />
@@ -250,6 +250,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\sources\reflection\type_derived_list_test.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\sources\reflection\type_inheritance_test.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

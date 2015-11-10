@@ -399,11 +399,13 @@ namespace reflective
 		namespace details
 		{
 			void test_type_derived_list();
+			void type_inheritance_test();
 		}
 
 		void Type::unit_test()
 		{
 			details::test_type_derived_list();
+			details::type_inheritance_test();
 		}
 
 	#endif

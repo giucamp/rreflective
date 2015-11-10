@@ -51,9 +51,6 @@
     <ClInclude Include="..\sources\reflection\type.h">
       <Filter>reflection</Filter>
     </ClInclude>
-    <ClInclude Include="..\sources\reflection\updown_caster.h">
-      <Filter>reflection</Filter>
-    </ClInclude>
     <ClInclude Include="..\sources\reflection\enum.h">
       <Filter>reflection</Filter>
     </ClInclude>
@@ -114,6 +111,9 @@
     <ClInclude Include="..\sources\unit_testing\correctness_test_context.h">
       <Filter>unit_testing</Filter>
     </ClInclude>
+    <ClInclude Include="..\sources\reflection\base_type.h">
+      <Filter>reflection</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\sources\reflective.cpp" />
@@ -163,6 +163,9 @@
       <Filter>unit_testing</Filter>
     </ClCompile>
     <ClCompile Include="..\sources\reflection\type_derived_list_test.cpp">
+      <Filter>reflection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\reflection\type_inheritance_test.cpp">
       <Filter>reflection</Filter>
     </ClCompile>
   </ItemGroup>
