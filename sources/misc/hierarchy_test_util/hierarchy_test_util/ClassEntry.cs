@@ -171,6 +171,7 @@ namespace hierarchy_test_util
             // bases
             ClassEntry[] bases = m_bases.ToArray();
             int baseCount = bases.Length;
+
             if (baseCount > 0)
             {
                 i_output.AppendLine("i_context.type()->set_base_types( {");
@@ -192,16 +193,30 @@ namespace hierarchy_test_util
                 i_output.Untab();
             }
 
+            // gmdt function
+            i_output.AppendLine("i_context.type()->set_most_derived_type_func(&ThisClass::static_get_type);");
+
             // test base_types container
             i_output.AppendLine("");
+            i_output.AppendLine("// test base_types container");
+            i_output.AppendLine("std::vector<const reflective::Type*> test_bases = {");
+            for (int baseIndex = 0; baseIndex < baseCount; baseIndex++)
+            {
+                i_output.AppendLine("&reflective::get_naked_type<" + bases[baseIndex].FullName + ">(), ");
+            }
+            i_output.AppendLine("};");
             i_output.AppendLine("for( const auto & base : i_context.type()->base_types() )");
             i_output.AppendLine("{");
             i_output.Tab();
+            i_output.AppendLine("auto it = reflective::Ext::find_if(test_bases, ");
+            i_output.Tab();
+            i_output.AppendLine("[&base] (const reflective::Type * i_s) { return i_s == base.base_type(); } );");
+            i_output.Untab();
+            i_output.AppendLine("REFLECTIVE_INTERNAL_ASSERT( it != test_bases.end() );");
+            i_output.AppendLine("test_bases.erase(it);");
             i_output.Untab();
             i_output.AppendLine("}");
-
-            // gmdt function
-            i_output.AppendLine("i_context.type()->set_most_derived_type_func(&ThisClass::static_get_type);");
+            i_output.AppendLine("REFLECTIVE_INTERNAL_ASSERT( test_bases.size() == 0 );");
 
             i_output.Untab();
             i_output.AppendLine("}");

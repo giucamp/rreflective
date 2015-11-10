@@ -14,7 +14,7 @@ namespace hierarchy_test_util
         public double VBaseChance { get; set; }
         public double MostDerivedTypeFuncChance { get; set; }
         public int ClassCount { get; set; }
-        public int DerivationFactor { get; set; }
+        public double DerivationFactor { get; set; }
         public bool AllowMultipleInheritance { get; set; }
         public int TestCount { get; set; }
         public bool EmitTypeChecks { get; set; }
@@ -23,12 +23,12 @@ namespace hierarchy_test_util
         {
             HierarchyName = i_hierarchyName;
             AllowMultipleInheritance = true;
-            ClassCount = 6;
-            DerivationFactor = 7;
+            ClassCount = 400;
+            DerivationFactor = 1;
             VTableChance = 0.5;
             MostDerivedTypeFuncChance = 1.5;
             VBaseChance = 0.5;
-            TestCount = 30;
+            TestCount = 500;
             EmitTypeChecks = true;
             RandomSeed = 568;
         }
@@ -186,7 +186,7 @@ namespace hierarchy_test_util
                 ClassEntry baseClass = completeClassObj.GetRandomBaseOrThis(m_rand);
                 ClassEntry destClass = RandClass();
 
-                i_output.AppendLine("// upcasting from " + completeClassObj.Name + " to " + baseClass.Name + ", and the dynamic casting to " + destClass.Name);
+                i_output.AppendLine("// upcasting from " + completeClassObj.Name + " to " + baseClass.Name + ", and then dynamic casting to " + destClass.Name);
 
                 // complete object
                 i_output.AppendLine(completeClassObj.Name + " complete_object;");

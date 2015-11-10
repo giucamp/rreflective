@@ -73,81 +73,143 @@ namespace reflective
 		BaseTypeContainer(const BaseTypeContainer &) = delete;
 		BaseTypeContainer & operator = (const BaseTypeContainer &) = delete;
 		
-		class const_iterator
-		{
-		public:
-
-			const_iterator()
-				: m_type(nullptr), m_curr(nullptr)
+		#if REFLECTIVE_ENABLE_MULTIPLE_INHERITANCE
+			class const_iterator
 			{
-			}
+			public:
 
-			const_iterator(const Type & i_type)
-				: m_type(&i_type)
-			{
-				m_curr = &m_type->m_single_base;
-				if (m_curr->base_type() == nullptr)
+				const_iterator()
+					: m_type(nullptr), m_curr(nullptr)
 				{
+				}
+
+				const_iterator(const Type & i_type)
+					: m_type(&i_type)
+				{
+					m_curr = &m_type->m_single_base;
+					if (m_curr->base_type() == nullptr)
+					{
+						m_curr = nullptr;
+					}
+				}
+
+				const_iterator operator ++ ()
+				{
+					const_iterator temp = *this;
+					(*this)++;
+					return temp;
+				}
+
+				const_iterator & operator ++ (int)
+				{
+					REFLECTIVE_ASSERT(m_curr != nullptr, "This iterator cannot be incremented");
+					if (m_curr == &m_type->m_single_base)
+					{
+						m_vect_it = m_type->m_other_base_types.cbegin();
+					}
+					else
+					{
+						m_vect_it++;
+					}
+					if (m_vect_it == m_type->m_other_base_types.cend())
+					{
+						m_curr = nullptr;
+					}
+					else
+					{
+						m_curr = &*m_vect_it;
+					}
+					return *this;
+				}
+
+				bool operator == (const const_iterator i_other) const
+				{
+					return m_curr == i_other.m_curr;
+				}
+
+				bool operator != (const const_iterator i_other) const
+				{
+					return m_curr != i_other.m_curr;
+				}
+
+				const BaseType & operator * () const
+				{ 
+					REFLECTIVE_ASSERT(m_curr != nullptr, "This iterator cannot be indirected");
+					return *m_curr; 
+				}
+
+				const BaseType * operator -> () const
+				{
+					REFLECTIVE_ASSERT(m_curr != nullptr, "This iterator cannot be indirected");
+					return m_curr; 
+				}
+
+			private:
+				const Type * m_type;
+				const BaseType * m_curr;
+				std::vector<BaseType>::const_iterator m_vect_it;
+			};
+		#else
+			class const_iterator
+			{
+			public:
+
+				const_iterator()
+					: m_curr(nullptr)
+				{
+				}
+
+				const_iterator(const Type & i_type)
+				{
+					m_curr = &i_type->m_single_base;
+					if (m_curr->base_type() == nullptr)
+					{
+						m_curr = nullptr;
+					}
+				}
+
+				const_iterator operator ++ ()
+				{
+					const_iterator temp = *this;
+					(*this)++;
+					return temp;
+				}
+
+				const_iterator & operator ++ (int)
+				{
+					REFLECTIVE_ASSERT(m_curr != nullptr, "This iterator cannot be incremented");
 					m_curr = nullptr;
+					return *this;
 				}
-			}
 
-			const_iterator operator ++ ()
-			{
-				const_iterator temp = *this;
-				++(*this);
-				return temp;
-			}
-
-			const_iterator & operator ++ (int)
-			{
-				REFLECTIVE_ASSERT(m_curr != nullptr, "This iterator cannot be incremented");
-				if (m_curr == &m_type->m_single_base)
+				bool operator == (const const_iterator i_other) const
 				{
-					m_vect_it = m_type->m_other_base_types.cbegin();
+					return m_curr == i_other.m_curr;
 				}
-				else
+
+				bool operator != (const const_iterator i_other) const
 				{
-					m_vect_it++;
+					return m_curr != i_other.m_curr;
 				}
-				if (m_vect_it == m_type->m_other_base_types.cend())
+
+				const BaseType & operator * () const
+				{ 
+					REFLECTIVE_ASSERT(m_curr != nullptr, "This iterator cannot be indirected");
+					return *m_curr; 
+				}
+
+				const BaseType * operator -> () const
 				{
-					m_curr = nullptr;
+					REFLECTIVE_ASSERT(m_curr != nullptr, "This iterator cannot be indirected");
+					return m_curr; 
 				}
-				else
-				{
-					m_curr = &*m_vect_it;
-				}
-				return *this;
-			}
 
-			bool operator == (const const_iterator i_other) const
-			{
-				return m_curr == i_other.m_curr;
-			}
-
-			bool operator != (const const_iterator i_other) const
-			{
-				return m_curr != i_other.m_curr;
-			}
-
-			const BaseType & operator * () const
-			{ 
-				REFLECTIVE_ASSERT(m_curr != nullptr, "This iterator cannot be indirected");
-				return *m_curr; 
-			}
-
-			const BaseType * operator -> () const
-			{
-				REFLECTIVE_ASSERT(m_curr != nullptr, "This iterator cannot be indirected");
-				return m_curr; 
-			}
-
-		private:
-			const Type * m_type;
-			const BaseType * m_curr;
-			std::vector<BaseType>::const_iterator m_vect_it;
-		};
+			private:
+				const Type * m_type;
+				const BaseType * m_curr;
+				std::vector<BaseType>::const_iterator m_vect_it;
+			};
+		#endif
 
 		const_iterator begin() const
 		{

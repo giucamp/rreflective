@@ -227,10 +227,17 @@ namespace reflective
 
 	struct TypeInfo
 	{
-		int multepl = 0;
-		int virtual_multepl = 0;
-		BaseType base;
-		const Type * m_derived_type = nullptr;
+		uintptr_t m_multeplicity : std::numeric_limits<uintptr_t>::digits - 1;
+		uintptr_t m_virtual_multeplicity : 1;
+		BaseType m_base;
+		const Type * m_derived_type;
+
+		TypeInfo()
+		{
+			m_multeplicity = 0;
+			m_virtual_multeplicity = 0;
+			m_derived_type = nullptr;
+		}
 	};
 
 	bool Type::internal_find_path_to_type(const Type & i_source_type, const Type & i_target_type, std::vector<BaseType> & io_base_types)
@@ -255,44 +262,22 @@ namespace reflective
 				// found
 				break;
 			}
-
-			{
-				const auto & base = curr_type->m_single_base;
-				if (base.base_type() != nullptr)
-				{
-					auto & map_item = map[base.base_type()];
-					if (base.is_virtual())
-					{
-						map_item.virtual_multepl = 1;
-					}
-					else
-					{
-						map_item.multepl++;
-					}
-					if (map_item.m_derived_type == nullptr)
-					{
-						map_item.m_derived_type = curr_type;
-						map_item.base = base;
-						stack.push_back(base.base_type());
-					}
-				}
-			}
-
-			for( const auto & base : curr_type->m_other_base_types )
+			
+			for( const auto & base : curr_type->base_types() )
 			{
 				auto & map_item = map[base.base_type()];
 				if (base.is_virtual())
 				{
-					map_item.virtual_multepl = 1;
+					map_item.m_virtual_multeplicity = 1;
 				}
 				else
 				{
-					map_item.multepl++;
+					map_item.m_multeplicity++;
 				}
 				if (map_item.m_derived_type == nullptr)
 				{
 					map_item.m_derived_type = curr_type;
-					map_item.base = base;
+					map_item.m_base = base;
 					stack.push_back(base.base_type());
 				}
 			}
@@ -309,12 +294,12 @@ namespace reflective
 
 			auto & map_entry = map[curr_type];
 
-			if (map_entry.multepl + map_entry.virtual_multepl != 1)
+			if (map_entry.m_multeplicity + map_entry.m_virtual_multeplicity != 1)
 			{
 				// ambiguous base
 				return false;
 			}
-			io_base_types.push_back(map_entry.base);
+			io_base_types.push_back(map_entry.m_base);
 
 			curr_type = map_entry.m_derived_type;
 		}
