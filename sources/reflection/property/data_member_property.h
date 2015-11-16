@@ -16,9 +16,9 @@ namespace reflective
 
 	private:
 
-		void * get_value_inplace_impl(void * i_owner_object) const override
+		void * get_value_inplace_impl(ObjPtr i_owner_object) const override
 		{
-			OWNER_CLASS & owner_object = *static_cast<OWNER_CLASS*>(i_owner_object);
+			OWNER_CLASS & owner_object = *static_cast<OWNER_CLASS*>(i_owner_object.object());
 			dbg_object_validate(owner_object);
 			
 			PROPERTY_TYPE & property_value = owner_object.*m_member;
@@ -27,9 +27,9 @@ namespace reflective
 			return &property_value;
 		}
 
-		bool get_value_impl(const void * i_owner_object, void * i_dest) const override
+		bool get_value_impl(ObjPtr i_owner_object, void * i_dest) const override
 		{
-			const OWNER_CLASS & owner_object = *static_cast<const OWNER_CLASS*>(i_owner_object);
+			const OWNER_CLASS & owner_object = *static_cast<const OWNER_CLASS*>(i_owner_object.object());
 			dbg_object_validate(owner_object);
 
 			const PROPERTY_TYPE & property_value = owner_object.*m_member;
@@ -40,9 +40,9 @@ namespace reflective
 			return true;
 		}
 
-		bool set_value_impl(void * i_owner_object, const void * i_source) const override
+		bool set_value_impl(ObjPtr i_owner_object, const void * i_source) const override
 		{
-			OWNER_CLASS & owner_object = *static_cast<OWNER_CLASS*>(i_owner_object);
+			OWNER_CLASS & owner_object = *static_cast<OWNER_CLASS*>(i_owner_object.object());
 			dbg_object_validate(owner_object);
 
 			PROPERTY_TYPE & dest_property = owner_object.*m_member;

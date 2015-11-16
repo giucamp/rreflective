@@ -1,24 +1,6 @@
 
 namespace reflective
 {
-	template <typename TYPE>
-		const TYPE * GlobalRegistry::find_member(StringView i_full_type_name)
-	{
-		const SymbolName name(i_full_type_name.data(), i_full_type_name.length());
-
-		const auto range = m_registry.equal_range(name);
-		for (auto it = range.first; it != range.second; it++)
-		{
-			const TYPE * const result = dynamic_cast<const TYPE*>(it->second);
-			if (result != nullptr)
-			{
-				return result;
-			}
-		}
-
-		return nullptr;
-	}
-
 	GlobalRegistry::GlobalRegistry()
 	{
 		m_registry.reserve(s_global_registry_reserve);
@@ -28,6 +10,20 @@ namespace reflective
 	{
 		static GlobalRegistry s_instance;
 		return s_instance;
+	}
+
+	void GlobalRegistry::register_type(const Type & i_type, const std::type_info & i_type_info)
+	{
+		register_member(i_type);
+		auto res = m_types.insert(std::make_pair(&i_type_info, &i_type));
+		REFLECTIVE_ASSERT(res.second, "A type with the same std::type_info has already been registered");
+	}
+
+	void GlobalRegistry::unregister_type(const Type & i_type, const std::type_info & i_type_info)
+	{
+		unregister_member(i_type);
+		const auto removed_count = m_types.erase(&i_type_info);
+		REFLECTIVE_ASSERT(removed_count == 1, "Type not unregistered");
 	}
 
 	const Type * GlobalRegistry::find_type(StringView i_full_name)

@@ -14,7 +14,11 @@ namespace reflective
 		const ReflectingType<TYPE> * create_type()
 	{
 		const ReflectingType<TYPE> * result = details::SymbolTraits<TYPE, details::GetSymbolTypeId<TYPE>::s_type_id >::create();
-		GlobalRegistry::instance().register_member(*result);
+		#if REFLECTIVE_USE_DYNAMIC_CAST_AND_TYPE_ID
+			GlobalRegistry::instance().register_type(*result, typeid(TYPE));
+		#else
+			GlobalRegistry::instance().register_type(*result);
+		#endif
 		return result;
 	}
 		
