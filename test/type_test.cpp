@@ -21,6 +21,7 @@ namespace MyNamespace
 		public:
 			int m_int_var = 0;
 			float m_float_var = 0.f;
+			const float m_const_float_var = 0.f;
 		};
 
 		enum MyEnum
@@ -45,6 +46,7 @@ namespace reflective
 		List<Property> empty = { 
 			make_property<ThisClass>("IntVar", &ThisClass::m_int_var),
 			make_property<ThisClass>("FloatVar", &ThisClass::m_float_var),
+			make_property<ThisClass>("ConstFloatVar", &ThisClass::m_const_float_var),
 		};
 		i_context.type()->set_properites(std::move(empty));
 	}

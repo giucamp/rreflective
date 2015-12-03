@@ -36,7 +36,7 @@ namespace reflective
 
 	#define REFLECTIVE_NOEXCEPT
 	
-	/** This header provides a temporary, not fuly not compliant implementation of some classes which are not 
+	/** This header provides a temporary, not fully not compliant implementation of some classes which are not 
 		in C++14, but should be included in the C++17. To avoid confusion with the standard, the names defined
 		are all camel case or inside the static class reflective::Ext, so that in the future they may become
 		aliases of the standard names. */

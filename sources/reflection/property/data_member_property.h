@@ -12,7 +12,11 @@ namespace reflective
 		using MemberPtr = PROPERTY_TYPE (OWNER_CLASS::*);
 
 		DataMemberProperty(SymbolName i_name, MemberPtr i_member, ClassMember::Flags i_flags)
-			: Property(std::move(i_name), get_type<PROPERTY_TYPE>(), i_flags), m_member(i_member) { }
+			: Property(std::move(i_name), get_type<PROPERTY_TYPE>(), i_flags | (ClassMember::Flags::can_get_value | ClassMember::Flags::can_set_value |
+				ClassMember::Flags::can_get_value_inplace | ClassMember::Flags::can_set_value_inplace)),
+				m_member(i_member) 
+		{
+		}
 
 	private:
 
@@ -40,7 +44,7 @@ namespace reflective
 			return true;
 		}
 
-		bool set_value_impl(ObjPtr i_owner_object, const void * i_source) const override
+		bool set_value_impl(ObjPtr i_owner_object, const void * i_source, OutStringBuffer & /*o_fail_reason*/) const override
 		{
 			OWNER_CLASS & owner_object = *static_cast<OWNER_CLASS*>(i_owner_object.object());
 			dbg_object_validate(owner_object);
@@ -59,9 +63,63 @@ namespace reflective
 	};
 
 	template <typename OWNER_CLASS, typename PROPERTY_TYPE>
-		inline std::shared_ptr<DataMemberProperty<OWNER_CLASS, PROPERTY_TYPE>> make_property(SymbolName i_name, PROPERTY_TYPE(OWNER_CLASS::*i_member),
+		class ConstDataMemberProperty : public Property
+	{
+	public:
+
+		using MemberPtr = PROPERTY_TYPE (OWNER_CLASS::*);
+
+		ConstDataMemberProperty(SymbolName i_name, MemberPtr i_member, ClassMember::Flags i_flags)
+			: Property(std::move(i_name), get_type<PROPERTY_TYPE>(), i_flags | (ClassMember::Flags::can_get_value | ClassMember::Flags::can_get_value_inplace)), m_member(i_member) { }
+
+	private:
+
+		void * get_value_inplace_impl(ObjPtr i_owner_object) const override
+		{
+			OWNER_CLASS & owner_object = *static_cast<OWNER_CLASS*>(i_owner_object.object());
+			dbg_object_validate(owner_object);
+			
+			PROPERTY_TYPE & property_value = owner_object.*m_member;
+			dbg_object_validate(property_value);
+			
+			return &property_value;
+		}
+
+		bool get_value_impl(ObjPtr i_owner_object, void * i_dest) const override
+		{
+			const OWNER_CLASS & owner_object = *static_cast<const OWNER_CLASS*>(i_owner_object.object());
+			dbg_object_validate(owner_object);
+
+			const PROPERTY_TYPE & property_value = owner_object.*m_member;
+			dbg_object_validate(property_value);
+
+			new(i_dest) PROPERTY_TYPE( property_value );
+
+			return true;
+		}
+
+		bool set_value_impl(ObjPtr /*i_owner_object*/, const void * /*i_source*/, OutStringBuffer & /*o_fail_reason*/) const override
+		{
+			REFLECTIVE_INTERNAL_ASSERT(false); // the base class (Property) should never call this for properties with the flag ClassMember::Flags::readonly_member
+			return false;
+		}
+		
+	private:
+		const MemberPtr m_member;
+	};
+
+
+	template <typename OWNER_CLASS, typename PROPERTY_TYPE>
+		inline std::shared_ptr<DataMemberProperty<OWNER_CLASS, PROPERTY_TYPE>> make_property(SymbolName i_name, PROPERTY_TYPE (OWNER_CLASS::*i_member),
 			ClassMember::Flags i_flags = ClassMember::Flags::none)
 	{
 		return std::make_unique<DataMemberProperty<OWNER_CLASS, PROPERTY_TYPE>>(i_name, i_member, i_flags);
+	}
+
+	template <typename OWNER_CLASS, typename PROPERTY_TYPE>
+		inline std::shared_ptr<ConstDataMemberProperty<OWNER_CLASS, PROPERTY_TYPE>> make_property(SymbolName i_name, const PROPERTY_TYPE(OWNER_CLASS::*i_member),
+			ClassMember::Flags i_flags = ClassMember::Flags::none)
+	{
+		return std::make_unique<ConstDataMemberProperty<OWNER_CLASS, PROPERTY_TYPE>>(i_name, i_member, i_flags);
 	}
 }

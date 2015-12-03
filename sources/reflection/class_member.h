@@ -41,8 +41,10 @@ namespace reflective
 			none = 0,
 			private_member = 1 << 0,
 			protected_member = 1 << 1,
-			writeonly_member = 1 << 2,
-			readonly_member = 1 << 3,
+			can_get_value = 1 << 2,
+			can_get_value_inplace = 1 << 3,
+			can_set_value = 1 << 5,
+			can_set_value_inplace = 1 << 5,
 		};
 		
 		ClassMember(SymbolName i_name, Flags i_flags);
@@ -74,11 +76,6 @@ namespace reflective
 		: Symbol(i_name), m_flags(i_flags) 
 	{
 		#if REFLECTIVE_ASSERT_ENABLED
-			if (has_flags(Flags::readonly_member))
-			{
-				REFLECTIVE_ASSERT(!has_flags(Flags::writeonly_member), "ClassMember::Flags: readonly_member and writeonly_member are incompatible");
-			}
-
 			if (has_flags(Flags::private_member))
 			{
 				REFLECTIVE_ASSERT(!has_flags(Flags::protected_member), "ClassMember::Flags: private_member and protected_member are incompatible");
