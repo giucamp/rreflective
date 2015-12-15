@@ -37,8 +37,8 @@ namespace reflective
 		- all the class templates instantiated to the presence of a call to get_type() or get_naked_type()
 		- all the namespaces containing (directly or indirectly) the registered types and class templates.
 		The global registry holds non-owning raw pointers to the registered object. If the pointed object
-		is destroyed while beeing still registered, the pointer become dangling, and accessing the object
-		leads to an undefined behaviour. */
+		is destroyed while being still registered, the pointer become dangling, and accessing the object
+		leads to an undefined behavior. */
 	class GlobalRegistry
 	{
 	public:

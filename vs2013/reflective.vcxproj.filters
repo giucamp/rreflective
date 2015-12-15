@@ -36,9 +36,6 @@
     <ClInclude Include="..\sources\core\string_hash.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="..\sources\core\bulk_list.h">
-      <Filter>core</Filter>
-    </ClInclude>
     <ClInclude Include="..\sources\reflection\qualified_type_ptr.h">
       <Filter>reflection</Filter>
     </ClInclude>

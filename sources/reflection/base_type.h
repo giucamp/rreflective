@@ -41,14 +41,14 @@ namespace reflective
 	{
 	public:
 
-		using Caster = void * (*)(void * i_source);
+		using CasterFuncPtr = void * (*)(void * i_source);
 		
 		BaseRelationship()
 			: m_base_type(nullptr), m_is_virtual(false),
 			  m_derived_to_base_func(nullptr), m_base_to_derived_func(nullptr)
 				{ }
 
-		BaseRelationship(const Type * i_base_type, bool i_virtual, Caster i_derived_to_base_func, Caster i_base_to_derived_func)
+		BaseRelationship(const Type * i_base_type, bool i_virtual, CasterFuncPtr i_derived_to_base_func, CasterFuncPtr i_base_to_derived_func)
 			: m_base_type(i_base_type), m_is_virtual(i_virtual),
 			  m_derived_to_base_func(i_derived_to_base_func), m_base_to_derived_func(i_base_to_derived_func)
 				{ }
@@ -140,8 +140,8 @@ namespace reflective
 	private:
 		const Type * m_base_type;
 		bool m_is_virtual;
-		Caster m_derived_to_base_func;
-		Caster m_base_to_derived_func;
+		CasterFuncPtr m_derived_to_base_func;
+		CasterFuncPtr m_base_to_derived_func;
 	};
 }
 

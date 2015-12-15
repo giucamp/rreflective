@@ -70,11 +70,7 @@ namespace reflective
 		}
 
 	public:
-
-		NamespaceMember(const NamespaceMember &) = delete;
-
-		NamespaceMember & operator = (const NamespaceMember &) = delete;
-
+		
 		std::string full_name() const;
 
 		const Namespace * parent_namespace() const			{ return m_parent; }

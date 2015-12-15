@@ -34,7 +34,7 @@ namespace reflective
 {
 	namespace details
 	{
-		class NamespaceMembersList // this class is not supposed to be referenced outside the library
+		class NamespaceMembersList // this class is the return type of Namespace::members, but is not supposed to be referenced outside the library
 		{
 		public:
 
@@ -56,7 +56,7 @@ namespace reflective
 		};
 	}
 
-	/** \brief A namespace is a named collection of types, inner namespaces, class tempates and anything
+	/** \brief A namespace is a named collection of types, inner namespaces, class templates and anything
 		deriving from reflective::NamespaceMember. The user can add members to a non-const namespace with
 		the method register_member(), and he can remove them with the method unregister_member(). Iteration
 		of existing members is available using the method members().<br>
@@ -65,7 +65,7 @@ namespace reflective
 		of the class C.<br>
 		This class uses non-owning raw pointers to keep track of the members, so NamespaceMember's must be
 		unregistered before being destroyed. A NamespaceMember can be present only in a Namespace at a time.<br>
-		Impementation note: currently this class uses an intrusive linked-list to keep track of the 
+		Implementation note: currently this class uses an intrusive linked-list to keep track of the 
 		NamespaceMember objects. */
 	class Namespace : public NamespaceMember
 	{
@@ -80,16 +80,16 @@ namespace reflective
 
 		/** \brief Returns a reference to the container of all the members of the namespace. The actual type of 
 			the container is an implementation detail. It support begin(), end(), cbegin() and cend(), so
-			it is suitable for range loops, but it should reffered to only with auto and decltype. The type 
+			it is suitable for range loops, but it should used only with auto and decltype. The type 
 			of the elements of the container is const NamespaceMember. <br>
 			Note: the members of the namespace may be randomly distributed in the memory, so iterating them
-			is slow because cache-unfrendly. If you want to look-up a NamespaceMember given its full name, 
+			is slow because cache-unfriendly. If you want to look-up a NamespaceMember given its full name, 
 			use the GlobalRegistry instead. */
 		const details::NamespaceMembersList & members() const { return m_members; }
 		
 		/** \brief Registers a member in the namespace, storing a raw pointer to it. Adding a member to a 
 			namespace when it is already present in the same or another namespace is an error. Destroying
-			a NamespaceMember while it is still present in a namespace leads to undefined behaviour (probably 
+			a NamespaceMember while it is still present in a namespace leads to undefined behavior (probably 
 			a crash). <br>
 			The complexity of this method is constant. */
 		void register_member(NamespaceMember & i_member);
@@ -98,7 +98,7 @@ namespace reflective
 			The complexity of this method is linear in the count of the registered members */
 		void unregister_member(NamespaceMember & i_member);
 
-		/** Returns whether this namespace contains the specifeid member */
+		/** Returns whether this namespace contains the specified member */
 		bool contains(NamespaceMember & i_member) const 
 			{ return i_member.parent_namespace() == this; }
 
