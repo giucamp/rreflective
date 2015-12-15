@@ -67,7 +67,7 @@ namespace reflective
 	{
 	public:
 
-		using MemberPtr = PROPERTY_TYPE (OWNER_CLASS::*);
+		using MemberPtr = const PROPERTY_TYPE (OWNER_CLASS::*);
 
 		ConstDataMemberProperty(SymbolName i_name, MemberPtr i_member, ClassMember::Flags i_flags)
 			: Property(std::move(i_name), get_type<PROPERTY_TYPE>(), i_flags | (ClassMember::Flags::can_get_value | ClassMember::Flags::can_get_value_inplace)), m_member(i_member) { }
@@ -79,10 +79,10 @@ namespace reflective
 			OWNER_CLASS & owner_object = *static_cast<OWNER_CLASS*>(i_owner_object.object());
 			dbg_object_validate(owner_object);
 			
-			PROPERTY_TYPE & property_value = owner_object.*m_member;
+			const PROPERTY_TYPE & property_value = owner_object.*m_member;
 			dbg_object_validate(property_value);
 			
-			return &property_value;
+			return const_cast<PROPERTY_TYPE*>( &property_value );
 		}
 
 		bool get_value_impl(ObjPtr i_owner_object, void * i_dest) const override

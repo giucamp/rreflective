@@ -22,6 +22,8 @@ namespace MyNamespace
 			int m_int_var = 0;
 			float m_float_var = 0.f;
 			const float m_const_float_var = 0.f;
+
+			MyClass & operator = (const MyClass &) = delete;
 		};
 
 		enum MyEnum

@@ -34,7 +34,7 @@ namespace reflective
 		}
 		else
 		{
-			return false;
+			return nullptr;
 		}
 	}
 
@@ -46,7 +46,7 @@ namespace reflective
 		}
 		else
 		{
-			return false;
+			return nullptr;
 		}		
 	}
 }

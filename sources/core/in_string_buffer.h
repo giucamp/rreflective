@@ -80,10 +80,7 @@ namespace reflective
 		bool accept_range(char i_first, char i_last);
 
 		bool accept_whitespaces();
-
-
-		//StringView read_string_until();
-
+		
 
 				// read
 
