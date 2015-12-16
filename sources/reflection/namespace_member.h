@@ -37,37 +37,16 @@ namespace reflective
 		class NamespaceMembersList;
 	}
 
-	enum class SymbolTypeId
-	{
-		none					= 0,
-		is_type					= 1 << 0,
-		is_class				= 1 << 1,
-		is_enum					= 1 << 2,
-		is_class_template		= 1 << 3,
-		is_namespace			= 1 << 4,
-	};
-
-	inline SymbolTypeId operator | (SymbolTypeId i_first, SymbolTypeId i_seconds)
-	{
-		using underlying_type = std::underlying_type < SymbolTypeId >::type;
-		return static_cast<SymbolTypeId>(static_cast<underlying_type>(i_first) | static_cast<underlying_type>(i_seconds));
-	}
-
-	inline SymbolTypeId operator & (SymbolTypeId i_first, SymbolTypeId i_seconds)
-	{
-		using underlying_type = std::underlying_type < SymbolTypeId >::type;
-		return static_cast<SymbolTypeId>(static_cast<underlying_type>(i_first)& static_cast<underlying_type>(i_seconds));
-	}
-
 	class NamespaceMember : public Symbol
 	{
 	protected:
 
-		NamespaceMember(SymbolTypeId i_type_id, SymbolName i_name)
-			: Symbol(std::move(i_name)), m_type_id(i_type_id), m_parent(nullptr), m_next_member(nullptr)
+		NamespaceMember(SymbolName i_name)
+			: Symbol(std::move(i_name)), m_parent(nullptr), m_next_member(nullptr)
 		{
-
 		}
+
+		virtual ~NamespaceMember() = default;
 
 	public:
 		
@@ -75,10 +54,7 @@ namespace reflective
 
 		const Namespace * parent_namespace() const			{ return m_parent; }
 
-		const SymbolTypeId get_type_id() const				{ return m_type_id; }
-
 	private: // data members
-		const SymbolTypeId m_type_id;
 		const Namespace * m_parent;
 		NamespaceMember * m_next_member;
 		friend class Namespace;

@@ -37,7 +37,7 @@ namespace reflective
 	public:
 
 		ClassTemplate(SymbolName i_name, std::vector<Parameter> i_parameters)
-			: NamespaceMember(SymbolTypeId::is_class_template, std::move(i_name)), m_parameters(std::move(i_parameters))
+			: NamespaceMember(std::move(i_name)), m_parameters(std::move(i_parameters))
 		{
 		}
 

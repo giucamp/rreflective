@@ -37,7 +37,7 @@ namespace reflective
 	public:
 
 		Class(SymbolName i_name, size_t i_size, size_t i_alignment )
-			: Type(SymbolTypeId::is_class | SymbolTypeId::is_type, std::move(i_name), i_size, i_alignment) { }
+			: Type(std::move(i_name), i_size, i_alignment) { }
 
 		const List<Property> & properites() const					{ return m_properites; }
 

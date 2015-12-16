@@ -62,7 +62,7 @@ namespace reflective
 	}
 
 	Namespace::Namespace(SymbolName i_name)
-		: NamespaceMember(SymbolTypeId::is_namespace, std::move(i_name))
+		: NamespaceMember(std::move(i_name))
 	{
 	}
 

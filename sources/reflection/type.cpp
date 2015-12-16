@@ -1,8 +1,8 @@
 
 namespace reflective
 {
-	Type::Type(SymbolTypeId i_type_id, SymbolName i_name, size_t i_size, size_t i_alignment )
-			: NamespaceMember(i_type_id, std::move(i_name)), m_size(i_size), m_alignment(i_alignment), 
+	Type::Type(SymbolName i_name, size_t i_size, size_t i_alignment )
+			: NamespaceMember(std::move(i_name)), m_size(i_size), m_alignment(i_alignment), 
 			m_most_derived_func(nullptr), m_next_derived(nullptr)
 	{
 		m_implicit_reflection = false;

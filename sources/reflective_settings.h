@@ -44,8 +44,6 @@ namespace reflective
 	static const InheritanceSupport s_inheritance_support = InheritanceSupport::Functions;
 
 	#define REFLECTIVE_ENABLE_MULTIPLE_INHERITANCE		1
-
-	#define REFLECTIVE_USE_DYNAMIC_CAST_AND_TYPE_ID		1
 }
 	
 #define REFLECTIVE_DEBUG 1

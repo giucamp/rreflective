@@ -50,23 +50,13 @@ namespace reflective
 			Implementation note: currently the complexity of this method is the same of std::unordered_map::find. */
 		const Type * find_type(StringView i_full_name);
 
-		#if REFLECTIVE_USE_DYNAMIC_CAST_AND_TYPE_ID
+		void register_member(const NamespaceMember & i_member);
 
-			void register_type(const Type & i_type, const std::type_info & i_type_info);
+		void unregister_member(const NamespaceMember & i_member);
 		
-			void unregister_type(const Type & i_type, const std::type_info & i_type_info);
+		void register_type_info(const Type & i_type, const std::type_info & i_type_info);
 
-		#else
-
-			/** Registers a type, storing a raw pointer to it in the registry. Types instantiated due
-				to the presence of a call to get_type() or get_naked_type() are automatically registered
-				to the global registry. The user may use this method only for types created explicitly.
-				Registering a type already registered is an error. */
-			void register_type(const Type & i_type);
-
-			void unregister_type(const Type & i_type);
-		
-		#endif
+		void unregister_type_info(const Type & i_type, const std::type_info & i_type_info);
 							
 		GlobalRegistry(const GlobalRegistry &) = delete;
 
@@ -77,10 +67,6 @@ namespace reflective
 		GlobalRegistry();
 		
 		~GlobalRegistry() = default;
-
-		void register_member(const NamespaceMember & i_member);
-
-		void unregister_member(const NamespaceMember & i_type);
 
 	private: // data members
 		std::unordered_multimap<SymbolName, const NamespaceMember *, SymbolNameHasher > m_registry;

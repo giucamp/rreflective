@@ -100,8 +100,9 @@ namespace reflective
 
 		bool set_value_impl(ObjPtr /*i_owner_object*/, const void * /*i_source*/, OutStringBuffer & /*o_fail_reason*/) const override
 		{
-			REFLECTIVE_INTERNAL_ASSERT(false); // the base class (Property) should never call this for properties with the flag ClassMember::Flags::readonly_member
-			return false;
+			bool _false = false;
+			REFLECTIVE_INTERNAL_ASSERT(_false); // the base class (Property) should never call this for properties with the flag ClassMember::Flags::readonly_member
+			return _false;
 		}
 		
 	private:

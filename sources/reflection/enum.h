@@ -36,7 +36,7 @@ namespace reflective
 	{
 	public:
 		EnumBase(SymbolName i_name, size_t i_size, size_t i_alignment)
-			: Type(SymbolTypeId::is_enum | SymbolTypeId::is_type, i_name, i_size, i_alignment )
+			: Type(i_name, i_size, i_alignment )
 				{ }
 	};
 
