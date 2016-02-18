@@ -22,7 +22,7 @@ namespace reflective
 	};
 
 	/** Checks at compile time if a type has member function with this name and signature:
-			bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest);
+			bool assign_from_string(StringView & i_source, OutStringBuffer & i_error_dest);
 		Usage: const bool has = has_assign_from_string<MyClass>::value; */
 	template <typename TYPE> class has_assign_from_string
 	{
@@ -32,7 +32,7 @@ namespace reflective
 
 		template <typename U, U> struct really_has;
 
-		template<typename C> static Yes& Test(really_has <bool (C::*)(InStringBuffer & i_source, OutStringBuffer & i_error_dest), &C::assign_from_string>*);
+		template<typename C> static Yes& Test(really_has <bool (C::*)(StringView & i_source, OutStringBuffer & i_error_dest), &C::assign_from_string>*);
 		template<typename> static No& Test(...);
 
 	public:

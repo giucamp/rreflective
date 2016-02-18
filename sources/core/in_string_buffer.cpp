@@ -1,7 +1,7 @@
 
 namespace reflective
 {
-	InStringBuffer::InStringBuffer(const char * i_buffer, size_t i_buffer_size)
+	/*StringView::StringView(const char * i_buffer, size_t i_buffer_size)
 	{
 		m_next_char = i_buffer;
 		m_end_of_buffer = i_buffer + i_buffer_size;
@@ -12,7 +12,7 @@ namespace reflective
 		#endif
 	}
 
-	bool InStringBuffer::accept_char(char i_character)
+	bool StringView::accept_char(char i_character)
 	{
 		REFLECTIVE_ASSERT(i_character != 0, "Can't accept the null character")
 		if (m_next_char < m_end_of_buffer)
@@ -26,7 +26,7 @@ namespace reflective
 		return false;
 	}
 
-	bool InStringBuffer::accept_char_case_ins(char i_character)
+	bool StringView::accept_char_case_ins(char i_character)
 	{
 		REFLECTIVE_ASSERT(i_character != 0, "Can't accept the null character")
 		if (m_next_char < m_end_of_buffer)
@@ -40,7 +40,7 @@ namespace reflective
 		return false;
 	}
 
-	bool InStringBuffer::accept_cstr(const char * i_string, size_t i_string_length)
+	bool StringView::accept_cstr(const char * i_string, size_t i_string_length)
 	{
 		REFLECTIVE_ASSERT(memchr(i_string, 0, i_string_length) == nullptr, "The input string contains a null character");
 
@@ -56,7 +56,7 @@ namespace reflective
 		}
 	}
 	
-	bool InStringBuffer::accept_cstr_case_ins(const char * i_string, size_t i_string_length)
+	bool StringView::accept_cstr_case_ins(const char * i_string, size_t i_string_length)
 	{
 		REFLECTIVE_ASSERT(memchr(i_string, 0, i_string_length) == nullptr, "The input string contains a null character");
 
@@ -72,21 +72,8 @@ namespace reflective
 		}
 	}
 
-	bool InStringBuffer::accept_range(char i_first, char i_last)
-	{
-		if (m_next_char < m_end_of_buffer)
-		{
-			if (*m_next_char >= i_first && *m_next_char <= i_last)
-			{
-				m_next_char++;
-				return true;
-			}
-		}
-		return false;
-	}
 
-
-	bool InStringBuffer::accept_whitespaces()
+	bool StringView::accept_whitespaces()
 	{
 		bool result = false;
 		while (m_next_char < m_end_of_buffer && isspace(*m_next_char))
@@ -97,10 +84,10 @@ namespace reflective
 		return result;
 	}
 
-	void InStringBuffer::manual_advance(size_t i_read_length)
+	void StringView::manual_advance(size_t i_read_length)
 	{
 		REFLECTIVE_ASSERT(i_read_length <= remaining_buffer_length(), "OVERFOWING THE BUFFER!!!");
 		m_next_char += i_read_length;
-	}
+	}*/
 }
 

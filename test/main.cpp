@@ -26,7 +26,7 @@ namespace reflective
 int main()
 {
 	reflective::details::hier::test_hier();
-
+	
 	{
 		using namespace reflective;
 		using namespace std;
@@ -50,7 +50,7 @@ int main()
 		for (const auto & test : tests)
 		{
 			vector<StringView> copy;
-			for_each_token(test.path, '/', [&copy](StringView i_token) {
+			test.path.for_each_token( '/', [&copy](StringView i_token) {
 				copy.push_back( i_token );
 			});
 			REFLECTIVE_INTERNAL_ASSERT(copy==test.tokens);			

@@ -32,57 +32,379 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	class InStringBuffer
+	/** Non-owning range of contiguous char - see http://en.cppreference.com/w/cpp/experimental/basic_string_view */
+	template <typename CHAR, typename CHAR_TRAITS >
+		class BasicStringView
 	{
 	public:
 
-		InStringBuffer(const char * i_buffer, size_t i_length);
+		using traits_type = CHAR_TRAITS;
+		using value_type = CHAR;
+		using pointer = CHAR *;
+		using const_pointer = const CHAR *;
+		using reference = CHAR &;
+		using const_reference = const CHAR &;
+		using const_iterator = const CHAR *;
+		using iterator = const CHAR *;
+		using reverse_iterator = std::reverse_iterator<iterator>;
+		using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+		using size_type = std::size_t;
+		using difference_type = std::ptrdiff_t;
+		
+		static REFLECTIVE_CONSTEXPR const size_t npos = static_cast<size_t>(-1);
 
-		InStringBuffer(const char * i_null_terminated_string)
-			: InStringBuffer(i_null_terminated_string, strlen(i_null_terminated_string))
+
+					/**** ctors, assignment ****/
+
+		/** Constructs an empty string view. For an empty view, begin() == end(), and range based loops end before the first iteration. */
+		REFLECTIVE_CONSTEXPR BasicStringView() REFLECTIVE_NOEXCEPT
+			: m_chars(nullptr), m_size(0)
 				{ }
 
-		
-			// accept
-		
-		bool accept_char(char i_character);
+		/** Copy-constructs a string view. The new view will share the character buffer with the source, but each of them
+			has its own begin-end markers. */
+		REFLECTIVE_CONSTEXPR BasicStringView(const BasicStringView & i_source) = default REFLECTIVE_NOEXCEPT;
 
-		bool accept_cstr(const char * i_string, size_t i_string_length);
+		/** Constructs a string view from a std::basic_string (that is a std::string, a std::wstring, etc.). If the source string gets reallocated, 
+			truncated or destroyed, accessing the content of the string view will lead to undefined behavior. */
+		REFLECTIVE_CONSTEXPR BasicStringView(const std::basic_string<CHAR, CHAR_TRAITS> & i_source) REFLECTIVE_NOEXCEPT
+			: m_chars(i_source.data()), m_size(i_source.length())
+				{ }
+
+		/** Constructs a string view from a null-terminated string pointer */
+		REFLECTIVE_CONSTEXPR BasicStringView(const CHAR * i_c_string)
+			: m_chars(i_c_string), m_size(CHAR_TRAITS::length(i_c_string))
+				{ }
+
+		/** Constructs a string view from a pointer to the first char and the length. Accessing the content of the view when
+			the memory pointed by i_first_char is no more valid, leads to undefined behavior. */
+		REFLECTIVE_CONSTEXPR BasicStringView(const CHAR * i_first_char, size_t i_length)
+			: m_chars(i_first_char), m_size(i_length)
+				{ }
+
+		/** Copy-assigns a string view. this view will share the character buffer with the source, but each of them
+			has its own begin-end markers. */
+		BasicStringView & operator = (const BasicStringView & i_source) = default REFLECTIVE_NOEXCEPT;
 		
-		bool accept_cstr(const char * i_null_terminated_string)
+
+
+					/**** container-like methods ****/
+		
+		REFLECTIVE_CONSTEXPR const CHAR * begin() const REFLECTIVE_NOEXCEPT
 		{
-			return accept_cstr(i_null_terminated_string, strlen(i_null_terminated_string));
-		}		
+			return m_chars;
+		}
+
+		REFLECTIVE_CONSTEXPR const CHAR * end() const REFLECTIVE_NOEXCEPT
+		{
+			return m_chars + m_size;
+		}
+
+		REFLECTIVE_CONSTEXPR const CHAR * cbegin() const REFLECTIVE_NOEXCEPT
+		{
+			return m_chars;
+		}
+
+		REFLECTIVE_CONSTEXPR const CHAR * cend() const REFLECTIVE_NOEXCEPT
+		{
+			return m_chars + m_size;
+		}
+
+		REFLECTIVE_CONSTEXPR const CHAR & operator [] (size_t i_index) const REFLECTIVE_NOEXCEPT
+		{
+			REFLECTIVE_ASSERT(i_index < m_size, "invalid index for reflective::BasicStringView::operator []" );
+			return m_chars[i_index];
+		}
+
+		REFLECTIVE_CONSTEXPR const CHAR & at(size_t i_index) const
+		{
+			if (i_index >= m_size)
+			{
+				throw std::out_of_range("index out of range to reflective::BasicStringView::at");
+			}
+			return m_chars[i_index];
+		}
+
+		REFLECTIVE_CONSTEXPR const CHAR & front() const REFLECTIVE_NOEXCEPT
+		{
+			REFLECTIVE_ASSERT(m_size > 0, "reflective::BasicStringView::front called on empty string");
+			return m_chars[0];
+		}
+
+		REFLECTIVE_CONSTEXPR const CHAR & back() const REFLECTIVE_NOEXCEPT
+		{
+			REFLECTIVE_ASSERT(m_size > 0, "reflective::BasicStringView::back called on empty string");
+			return m_chars[m_size - 1];
+		}
+
+		REFLECTIVE_CONSTEXPR const CHAR * data() const
+		{
+			return m_chars;
+		}
+
+		REFLECTIVE_CONSTEXPR size_t size() const REFLECTIVE_NOEXCEPT
+		{
+			return m_size;
+		}
+
+		REFLECTIVE_CONSTEXPR size_t length() const REFLECTIVE_NOEXCEPT
+		{
+			return m_size; 
+		}
+
+		REFLECTIVE_CONSTEXPR size_t max_size() const REFLECTIVE_NOEXCEPT
+		{
+			return std::numeric_limits<size_t>::max(); 
+		}
+
+		REFLECTIVE_CONSTEXPR bool empty() const REFLECTIVE_NOEXCEPT
+		{
+			return m_size == 0;
+		}
+
+
+						/**** const methods ****/
+
+		/** Lexicographically compares the content of two string view, using the specified char traits instead of the one of this string view.
+			@return 0 if the string views have the same content, a negative value if the first is less that the second, or a positive value otherwise. */
+		template <typename OTHER_CHAR_TRAITS>
+			REFLECTIVE_CONSTEXPR int ot_compare(BasicStringView i_other) const REFLECTIVE_NOEXCEPT
+		{
+			auto result = OTHER_CHAR_TRAITS::compare(m_chars, i_other.m_chars, std::min(m_size, i_other.m_size));
+			if (result != 0)
+			{
+				return result;
+			}
+			else
+			{
+				return static_cast<int>(m_size)-static_cast<int>(i_other.m_size);
+			}
+		}
+
+		/** Lexicographically compares the content of two string view.
+			@return 0 if the string views have the same content, a negative value if the first is less that the second, or a positive value otherwise. */
+		REFLECTIVE_CONSTEXPR int compare(BasicStringView i_other) const REFLECTIVE_NOEXCEPT
+		{
+			return ot_compare<CHAR_TRAITS>(i_other);
+		}
+
+		/** Returns a new string view that represent a part of this view.
+			@param i_pos zero-based index of the first char to include in the new view. If it is equal to the length of this view, the result
+				is an empty view. If it is greater than the length, a std::out_of_range exception is thrown
+			@param i_count optional value indicating the number of char to include in the result view. Any value is legal for this parameter. The actual length 
+				of the view is the minimum between i_count and length() - i_pos. By default all the chars starting from i_pos are included. */
+		REFLECTIVE_CONSTEXPR BasicStringView substr(size_t i_pos, size_t i_count = npos) const
+		{
+			if (i_pos > m_size)
+			{
+				throw std::out_of_range("index out of range to reflective::BasicStringView::at");
+			}
+
+			return BasicStringView(m_chars, std::min(i_count, m_size - i_pos));
+		}
+
+		REFLECTIVE_CONSTEXPR size_t find(CHAR i_target_char, size_t i_pos = 0) const REFLECTIVE_NOEXCEPT
+		{
+			if (i_pos >= m_size)
+			{
+				return npos;
+			}
+
+			auto const res = CHAR_TRAITS::find(m_chars + i_pos, m_size - i_pos, i_target_char);
+			if (res != nullptr)
+			{
+				return res - m_chars;
+			}
+			else
+			{
+				return npos;
+			}
+		}
+
+		REFLECTIVE_CONSTEXPR size_t find(BasicStringView i_target_string, size_t i_pos = 0) const REFLECTIVE_NOEXCEPT
+		{
+			if (i_target_string.size() == 0)
+			{
+				return 0; // the empty string is present in any string, even in another empty string
+			}
+
+			if (m_size <= i_pos)
+			{
+				return npos; // fails for search paste the end of this, or in any case if this is empty
+			}
+
+			auto curr_start = m_chars + i_pos;
+			auto remaing_length = m_size;
+			auto const first_target_char = i_target_string[0];
+			auto compare_result = 0; // probably the optimizer will remove this initialization
+			do {
+				auto const res = CHAR_TRAITS::find(curr_start, remaing_length, first_target_char);
+				if (res == nullptr)
+				{
+					return npos;
+				}
+
+				remaing_length -= res - curr_start;
+				curr_start = res;
+				if (i_target_string.length() > remaing_length)
+				{
+					return npos;
+				}
+
+				compare_result = CHAR_TRAITS::compare(curr_start, i_target_string.data(), i_target_string.length());
+
+			} while (compare_result != 0);
+
+			return curr_start - m_chars;
+		}
+
+		REFLECTIVE_CONSTEXPR bool starts_with(BasicStringView<CHAR, CHAR_TRAITS> i_string) const REFLECTIVE_NOEXCEPT
+		{
+			auto const string_len = i_string.length();
+			return m_size >= string_len &&
+				CHAR_TRAITS::compare(m_chars, i_string.data(), string_len) == 0;
+		}
+
+		REFLECTIVE_CONSTEXPR bool starts_with(CHAR i_char) const REFLECTIVE_NOEXCEPT
+		{
+			return ot_starts_with<CHAR_TRAITS>(i_char);
+		}
+
+		template <typename OTHER_CHAR_TRAITS>
+			REFLECTIVE_CONSTEXPR bool ot_starts_with(CHAR i_char) const REFLECTIVE_NOEXCEPT
+		{
+			return m_size >= 1 && OTHER_CHAR_TRAITS::eq(*m_chars, i_char);
+		}
+
+			bool operator == (BasicStringView i_other) const
+		{
+			return compare(i_other) == 0;
+		}
+
+		bool operator != (BasicStringView i_other) const
+		{
+			return compare(i_other) != 0;
+		}
+
+		bool operator > (const BasicStringView i_other) const
+		{
+			return compare(i_other) > 0;
+		}
+
+		bool operator < (const BasicStringView i_other) const
+		{
+			return compare(i_other) < 0;
+		}
+
+		bool operator >= (const BasicStringView i_other) const
+		{
+			return compare(i_other) >= 0;
+		}
+
+		bool operator <= (const BasicStringView i_other) const
+		{
+			return compare(i_other) <= 0;
+		}
+
+
+			/***  ***/
+
+		REFLECTIVE_CONSTEXPR void remove_prefix(size_t i_char_count)
+		{
+			REFLECTIVE_ASSERT(i_char_count <= m_size, "reflective::BasicStringView::remove_prefix called with invalid param");
+			m_chars += i_char_count;
+			m_size -= i_char_count;
+		}
+
+		REFLECTIVE_CONSTEXPR bool remove_prefix_char(CHAR i_char) REFLECTIVE_NOEXCEPT
+		{
+			if (starts_with(i_char))
+			{
+				m_chars++;
+				m_size--;
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		REFLECTIVE_CONSTEXPR bool remove_prefix_string(BasicStringView i_string) REFLECTIVE_NOEXCEPT
+		{
+			if (starts_with(i_string))
+			{
+				remove_prefix(i_string.length());
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
 
 		template <size_t ARRAY_SIZE>
-		bool accept_literal(const char(&i_array)[ARRAY_SIZE])
+			REFLECTIVE_CONSTEXPR bool remove_prefix_literal(const CHAR(&i_array)[ARRAY_SIZE]) REFLECTIVE_NOEXCEPT
 		{
-			REFLECTIVE_ASSERT(i_array[ARRAY_SIZE - 1] == 0, "the array must contain a null terminated string");
-			return accept_cstr(i_array, ARRAY_SIZE - 1);
-		}
-			
-		bool accept_char_case_ins(char i_character);
-
-		bool accept_cstr_case_ins(const char * i_null_terminated_string)
-		{
-			return accept_cstr_case_ins(i_null_terminated_string, strlen(i_null_terminated_string));
+			REFLECTIVE_ASSERT(i_array[ARRAY_SIZE - 1] == 0, "the array must be null-terminated");
+			return remove_prefix_string(StringView( i_array, ARRAY_SIZE - 1));
 		}
 
-		bool accept_cstr_case_ins(const char * i_string, size_t i_string_length);
-
-		template <size_t ARRAY_SIZE>
-			bool accept_literal_case_ins(const char(&i_array)[ARRAY_SIZE])
+		REFLECTIVE_CONSTEXPR bool remove_prefix_writespaces() REFLECTIVE_NOEXCEPT
 		{
-			REFLECTIVE_ASSERT(i_array[ARRAY_SIZE - 1] == 0, "the array must contain a null terminated string");
-			return accept_cstr_case_ins(i_array, ARRAY_SIZE - 1);
+			bool some_space_removed = false;
+			while (m_size > 0 && isspace(CHAR_TRAITS::to_int_type(*m_chars)) != 0)
+			{
+				m_chars++;
+				m_size--;
+				some_space_removed = true;
+			}
+			return some_space_removed;
 		}
 
-		bool accept_range(char i_first, char i_last);
+		template <typename PREDICATE>
+			REFLECTIVE_CONSTEXPR BasicStringView remove_prefix_while(PREDICATE && i_predicate) REFLECTIVE_NOEXCEPT
+		{
+			const CHAR * const original_chars = m_chars;
+			while (m_size > 0 && i_predicate(*m_chars) )
+			{
+				m_chars++;
+				m_size--;
+			}
+			return BasicStringView(original_chars, m_chars - original_chars);
+		}
 
-		bool accept_whitespaces();
-		
+		REFLECTIVE_CONSTEXPR void remove_suffix(size_t i_char_count) REFLECTIVE_NOEXCEPT
+		{
+			REFLECTIVE_ASSERT(i_char_count <= m_size, "reflective::BasicStringView::remove_suffix called with invalid param");
+			m_size -= i_char_count;
+		}
 
-				// read
+		REFLECTIVE_CONSTEXPR void swap(BasicStringView i_other) REFLECTIVE_NOEXCEPT
+		{
+			std::swap(m_chars, i_other.m_chars);
+			std::swap(m_size, i_other.m_size);
+		}
+
+		template <typename PREDICATE>
+			void for_each_token(CHAR i_separator, PREDICATE && i_predicate) const
+		{
+			auto remaining = *this;
+			auto has_more = remaining.length() > 0;
+			while (has_more)
+			{
+				auto curr_token = remaining.remove_prefix_while( [i_separator](CHAR i_char)->bool { return i_char != i_separator; } );
+				has_more = remaining.length() > 0;
+
+				if (has_more)
+				{
+					remaining.remove_prefix(1);
+				}
+				i_predicate(curr_token);
+			}
+		}
+
+
 
 		template <typename TYPE>
 			bool read(TYPE & o_object, OutStringBuffer i_error)
@@ -93,182 +415,37 @@ namespace reflective
 		template <typename TYPE>
 			bool read(TYPE & o_object)
 		{
-			char small_buffer[sizeof(int)];
+			CHAR small_buffer[sizeof(int)];
 			OutStringBuffer small_error_buffer(small_buffer);
 			return ReadAny<TYPE, has_assign_from_string<TYPE>::value>::read(*this, small_error_buffer, o_object);
 		}
-
-		template <typename UNARY_FUNC>
-			StringView accept_until(const UNARY_FUNC & i_unary_func);
-
-			//	
-
-		const char * next_char() const				{ return m_next_char; }
-
-		const char * end_of_buffer() const			{ return m_end_of_buffer; }
-
-		size_t remaining_buffer_length() const		{ return m_end_of_buffer - m_next_char; }
-
-		void manual_advance(size_t i_read_length);
 
 	private:
 
 		template <typename TYPE, bool HAS_ASSIGN_FROM_STRING_METHOD> struct ReadAny;
 		template <typename TYPE> struct ReadAny < TYPE, true >
 		{
-			static bool read(InStringBuffer & i_source, OutStringBuffer & i_error_dest, TYPE & o_object) 
+			static bool read(BasicStringView & i_source, OutStringBuffer & i_error_dest, TYPE & o_object)
 			{
 				return o_object.assign_from_string(i_source, i_error_dest);
 			}
 		};
 		template <typename TYPE> struct ReadAny < TYPE, false >
 		{
-			static bool read(InStringBuffer & i_source, OutStringBuffer & i_error_dest, TYPE & o_object)
+			static bool read(BasicStringView & i_source, OutStringBuffer & i_error_dest, TYPE & o_object)
 			{
 				return assign_from_string(i_source, i_error_dest, o_object);
 			}
 		};
 
 	private:
-		const char * m_next_char;
-		const char * m_end_of_buffer;
-		#ifdef _DEBUG
-			const char * m_dbg_buffer; /**< pointer to the beginning of the buffer (which can be nullptr). The stream does not need
-									this, so it is provided only in debug.*/
-		#endif
+		const CHAR * m_chars;
+		size_t m_size;
 	};
 
-	template <typename CHAR, typename CHAR_TRAITS>
-		inline bool starts_with(BasicStringView<CHAR, CHAR_TRAITS> i_subject, BasicStringView<CHAR, CHAR_TRAITS> i_what)
+	inline std::ostream & operator << (std::ostream & i_dest, const StringView & i_string)
 	{
-		auto const what_len = i_what.length();
-		return i_subject.length() >= what_len &&
-			CHAR_TRAITS::compare(i_subject.data(), i_what.data(), what_len) == 0;
-	}
-
-	template <typename CHAR, typename CHAR_TRAITS>
-		inline bool accept(BasicStringView<CHAR, CHAR_TRAITS> & io_subject, BasicStringView<CHAR, CHAR_TRAITS> i_what)
-	{
-		if (starts_with(io_subject, i_what))
-		{
-			io_subject.remove_prefix(i_what.length());
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-	template <typename CHAR, typename CHAR_TRAITS>
-		inline bool accept(BasicStringView<CHAR, CHAR_TRAITS> & io_subject, CHAR i_what)
-	{
-		if (io_subject.length() > 0 && CHAR_TRAITS::eq( io_subject[0], i_what ) )
-		{
-			io_subject.remove_prefix(1);
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-	template <typename CHAR, typename CHAR_TRAITS, typename PREDICATE >
-		BasicStringView<CHAR, CHAR_TRAITS> read_until(BasicStringView<CHAR, CHAR_TRAITS> & io_subject, PREDICATE && i_predicate)
-	{
-		auto from = io_subject.data();
-		size_t size = 0;
-
-		size_t const dest_length = io_subject.length();
-		while (size < dest_length && !i_predicate(io_subject[size]) )
-		{
-			size++;
-		}
-
-		io_subject.remove_prefix(size);
-		return BasicStringView<CHAR, CHAR_TRAITS>(from, size);
-	}
-
-	template <typename CHAR, typename CHAR_TRAITS>
-		BasicStringView<CHAR, CHAR_TRAITS> read_until_eq(BasicStringView<CHAR, CHAR_TRAITS> & io_subject, CHAR i_target)
-	{
-		auto from = io_subject.data();
-		size_t size = 0;
-
-		size_t const dest_length = io_subject.length();
-		while (size < dest_length && !CHAR_TRAITS::eq( io_subject[size], i_target) )
-		{
-			size++;
-		}
-
-		io_subject.remove_prefix(size);
-		return BasicStringView<CHAR, CHAR_TRAITS>(from, size);
-	}
-
-	template <typename CHAR, typename CHAR_TRAITS, typename PREDICATE >
-		BasicStringView<CHAR, CHAR_TRAITS> read_while(BasicStringView<CHAR, CHAR_TRAITS> & io_subject, PREDICATE && i_predicate)
-	{
-		auto from = io_subject.data();
-		size_t size = 0;
-
-		size_t const dest_length = io_subject.length();
-		while (size < dest_length && i_predicate(io_subject[size]) )
-		{
-			size++;
-		}
-
-		io_subject.remove_prefix(size);
-		return BasicStringView<CHAR, CHAR_TRAITS>(from, size);
-	}
-
-
-	template <typename CHAR, typename CHAR_TRAITS>
-		BasicStringView<CHAR, CHAR_TRAITS> read_while_eq(BasicStringView<CHAR, CHAR_TRAITS> & io_subject, CHAR i_target)
-	{
-		auto from = io_subject.data();
-		size_t size = 0;
-
-		size_t const dest_length = io_subject.length();
-		while (size < dest_length && CHAR_TRAITS::eq( io_subject[size], i_target) )
-		{
-			size++;
-		}
-
-		io_subject.remove_prefix(size);
-		return BasicStringView<CHAR, CHAR_TRAITS>(from, size);
-	}
-
-	template <typename CHAR, typename CHAR_TRAITS>
-		inline size_t read_whitespaces(BasicStringView<CHAR, CHAR_TRAITS> & io_subject)
-	{
-		size_t space_count = 0;
-
-		size_t const dest_length = io_subject.length();
-		while (space_count < dest_length && isspace( io_subject[space_count]))
-		{
-			space_count++;
-		}
-
-		io_subject.remove_prefix(space_count);
-		return space_count;
-	}
-
-	template <typename CHAR, typename CHAR_TRAITS, typename PREDICATE>
-		inline void for_each_token(BasicStringView<CHAR, CHAR_TRAITS> i_subject, CHAR i_separator, PREDICATE && i_predicate)
-	{
-		auto remaining = i_subject;
-		auto has_more = remaining.length() > 0;
-		while (has_more)
-		{			
-			auto curr_token = read_until_eq(remaining, i_separator);
-			has_more = remaining.length() > 0;
-
-			if (has_more)
-			{
-				remaining.remove_prefix(1);
-			}			
-			i_predicate(curr_token);
-		}
+		i_dest.write(i_string.data(), i_string.length());
+		return i_dest;
 	}
 }

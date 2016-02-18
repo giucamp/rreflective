@@ -105,20 +105,20 @@ namespace reflective
 
 		// sint_from_string - converts a string to an unsigned
 		template <typename INT_TYPE>
-			inline bool sint_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_buffer, INT_TYPE & o_value)
+			inline bool sint_from_string(StringView & i_source, OutStringBuffer & i_error_buffer, INT_TYPE & o_value)
 		{
 			static_assert(std::numeric_limits<INT_TYPE>::is_signed, "sint_from_string is for signed ints");
 
-			i_source.accept_whitespaces();
+			i_source.remove_prefix_writespaces();
 
-			const bool negative = i_source.accept_char('-');
+			const bool negative = i_source.remove_prefix_char('-');
 
-			i_source.accept_whitespaces();
+			i_source.remove_prefix_writespaces();
 
-			const bool hex = i_source.accept_literal("0x") || i_source.accept_literal("0X");
+			const bool hex = i_source.remove_prefix_literal("0x") || i_source.remove_prefix_literal("0X");
 			
-			const char * curr_digit = i_source.next_char();
-			const char * const end_of_buffer = i_source.end_of_buffer();
+			const char * curr_digit = i_source.data();
+			const char * const end_of_buffer = curr_digit + i_source.length();
 			INT_TYPE result = 0;
 			if (hex)
 			{
@@ -163,13 +163,13 @@ namespace reflective
 				}
 			}
 
-			const size_t accepted_digits = curr_digit - i_source.next_char();
+			const size_t accepted_digits = curr_digit - i_source.data();
 			if (accepted_digits == 0)
 			{
 				i_error_buffer << "missing digits";
 			}
 
-			i_source.manual_advance(accepted_digits);
+			i_source.remove_prefix(accepted_digits);
 
 			if (negative)
 			{
@@ -182,16 +182,16 @@ namespace reflective
 
 		// uint_from_string - converts a string to an unsigned
 		template <typename INT_TYPE>
-			inline bool uint_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_buffer, INT_TYPE & o_value)
+			inline bool uint_from_string(StringView & i_source, OutStringBuffer & i_error_buffer, INT_TYPE & o_value)
 		{
 			static_assert(!std::numeric_limits<INT_TYPE>::is_signed, "uint_from_string is for unsigned ints");
 
-			i_source.accept_whitespaces();			
+			i_source.remove_prefix_writespaces();			
 
-			const bool hex = i_source.accept_literal_case_ins("0x");
+			const bool hex = i_source.remove_prefix_literal("0x") || i_source.remove_prefix_literal("0X");
 			
-			const char * curr_digit = i_source.next_char();
-			const char * const end_of_buffer = i_source.end_of_buffer();
+			const char * curr_digit = i_source.data();
+			const char * const end_of_buffer = curr_digit + i_source.length();
 			INT_TYPE result = 0;
 			if (hex)
 			{
@@ -236,13 +236,13 @@ namespace reflective
 				}
 			}
 
-			const size_t accepted_digits = curr_digit - i_source.next_char();
+			const size_t accepted_digits = curr_digit - i_source.data();
 			if (accepted_digits == 0)
 			{
 				i_error_buffer << "missing digits";
 			}
 
-			i_source.manual_advance(accepted_digits);
+			i_source.remove_prefix(accepted_digits);
 
 			o_value = result;
 			return accepted_digits > 0;
@@ -327,22 +327,22 @@ namespace reflective
 
 		// signed integers assign_from_string
 
-	bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest, int8_t & o_dest)
+	bool assign_from_string(StringView & i_source, OutStringBuffer & i_error_dest, int8_t & o_dest)
 	{
 		return details::sint_from_string(i_source, i_error_dest, o_dest);
 	}
 
-	bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest, int16_t & o_dest)
+	bool assign_from_string(StringView & i_source, OutStringBuffer & i_error_dest, int16_t & o_dest)
 	{
 		return details::sint_from_string(i_source, i_error_dest, o_dest);
 	}
 
-	bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest, int32_t & o_dest)
+	bool assign_from_string(StringView & i_source, OutStringBuffer & i_error_dest, int32_t & o_dest)
 	{
 		return details::sint_from_string(i_source, i_error_dest, o_dest);
 	}
 
-	bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest, int64_t & o_dest)
+	bool assign_from_string(StringView & i_source, OutStringBuffer & i_error_dest, int64_t & o_dest)
 	{
 		return details::sint_from_string(i_source, i_error_dest, o_dest);
 	}
@@ -350,30 +350,31 @@ namespace reflective
 
 			// unsigned integers assign_from_string
 
-	bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest, uint8_t & o_dest)
+	bool assign_from_string(StringView & i_source, OutStringBuffer & i_error_dest, uint8_t & o_dest)
 	{
 		return details::uint_from_string(i_source, i_error_dest, o_dest);
 	}
 
-	bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest, uint16_t & o_dest)
+	bool assign_from_string(StringView & i_source, OutStringBuffer & i_error_dest, uint16_t & o_dest)
 	{
 		return details::uint_from_string(i_source, i_error_dest, o_dest);
 	}
 
-	bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest, uint32_t & o_dest)
+	bool assign_from_string(StringView & i_source, OutStringBuffer & i_error_dest, uint32_t & o_dest)
 	{
 		return details::uint_from_string(i_source, i_error_dest, o_dest);
 	}
 
-	bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest, uint64_t & o_dest)
+	bool assign_from_string(StringView & i_source, OutStringBuffer & i_error_dest, uint64_t & o_dest)
 	{
 		return details::uint_from_string(i_source, i_error_dest, o_dest);
 	}
 
 		// floating point
 
-	bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest, float & o_dest);
+	bool assign_from_string(StringView & i_source, OutStringBuffer & i_error_dest, float & o_dest);
 	
-	bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest, double & o_dest);
-	bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest, long double & o_dest);
+	bool assign_from_string(StringView & i_source, OutStringBuffer & i_error_dest, double & o_dest);
+	bool assign_from_string(StringView & i_source, OutStringBuffer & i_error_dest, long double & o_dest);
+
 }

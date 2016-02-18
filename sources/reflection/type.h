@@ -73,9 +73,6 @@ namespace reflective
 								
 		void full_name_to_string(OutStringBuffer & i_dest) const;
 		
-		static const Type * accept_full_name(InStringBuffer & i_source, OutStringBuffer & i_error_dest);
-
-
 					// flags
 		
 		void set_implicit_reflection(bool i_value)

@@ -45,6 +45,10 @@ namespace reflective
 
 		static GlobalRegistry & instance();
 
+		const Namespace & global_namespace() const { return m_global_namespace; }
+
+		Namespace & edit_global_namespace()  { return m_global_namespace; }
+
 		/** Finds a type from a full name ("reflective::Property", or "::reflective::Enum<int>")
 			@return pointer to the type if it has been found, false otherwise.
 			Implementation note: currently the complexity of this method is the same of std::unordered_map::find. */
@@ -71,5 +75,6 @@ namespace reflective
 	private: // data members
 		std::unordered_multimap<SymbolName, const NamespaceMember *, SymbolNameHasher > m_registry;
 		std::unordered_map<const std::type_info *, const Type * > m_types;
+		Namespace m_global_namespace;
 	};
 }

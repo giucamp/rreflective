@@ -13,29 +13,29 @@ public:
 
 		virtual bool append_string(Rand & i_rand, reflective::OutStringBuffer & i_dest) = 0;		
 
-		virtual void check_string(reflective::InStringBuffer & i_source) = 0;
+		virtual void check_string(reflective::StringView & i_source) = 0;
 
-		static void accept_char(reflective::InStringBuffer & i_source, char i_char)
+		static void remove_prefix_char(reflective::StringView & i_source, char i_char)
 		{
-			const bool result = i_source.accept_char(i_char);
+			const bool result = i_source.remove_prefix_char(i_char);
 			REFLECTIVE_ASSERT(result, "SingleTest failed");
 		}
 
-		static void accept_cstr(reflective::InStringBuffer & i_source, const char * i_str)
+		static void remove_prefix_string(reflective::StringView & i_source, const char * i_str)
 		{
-			const bool result = i_source.accept_cstr(i_str);
+			const bool result = i_source.remove_prefix_string(i_str);
 			REFLECTIVE_ASSERT(result, "SingleTest failed");
 		}
 
 		template <size_t ARRAY_SIZE>
-		static void accept_literal(reflective::InStringBuffer & i_source, const char(&i_string)[ARRAY_SIZE])
+		static void remove_prefix_literal(reflective::StringView & i_source, const char(&i_string)[ARRAY_SIZE])
 		{
-			const bool result = i_source.accept_literal(i_string);
+			const bool result = i_source.remove_prefix_literal(i_string);
 			REFLECTIVE_ASSERT(result, "SingleTest failed");
 		}
 
 		template <typename ANY>
-		static void read(reflective::InStringBuffer & i_source, ANY && i_any)
+		static void read(reflective::StringView & i_source, ANY && i_any)
 		{
 			const bool result = i_source.read(i_any);
 			REFLECTIVE_ASSERT(result, "SingleTest failed");
@@ -75,13 +75,13 @@ public:
 			}
 		}
 
-		void check_string(reflective::InStringBuffer & i_source) override
+		void check_string(reflective::StringView & i_source) override
 		{
 			INT_TYPE val;
-			accept_literal( i_source, "i:");
+			remove_prefix_literal( i_source, "i:");
 			read(i_source, val);
 			REFLECTIVE_ASSERT(val == m_value, "test failed");
-			accept_literal( i_source, ":e");			
+			remove_prefix_literal( i_source, ":e");			
 		}
 	};
 
@@ -121,7 +121,7 @@ public:
 				break;
 		}
 
-		InStringBuffer in_stream(buffer);
+		StringView in_stream(buffer);
 		for (size_t read_test_index = 0; read_test_index < write_test_index; read_test_index++)
 		{
 			m_tests[read_test_index]->check_string(in_stream);
@@ -148,7 +148,7 @@ void Stream_test_oneshot()
 	memset(buffer, check_char, sizeof(buffer));
 	size_t buff_size = rand.generate_uint32(buffer_capacity);
 	OutStringBuffer out_stream(buffer, buff_size);
-	InStringBuffer in_stream(buffer);
+	StringView in_stream(buffer);
 	
 	out_stream = OutStringBuffer(buffer, buff_size);
 	for(size_t i = 0; i + 1 < buff_size; i++)
@@ -180,7 +180,7 @@ void Stream_test_rnd()
 	size_t buff_size = rand.generate_uint32(buffer_capacity);
 	OutStringBuffer out_stream(buffer, buff_size);
 	OutStringBuffer small_stream(small_buff);
-	InStringBuffer in_stream(buffer);
+	StringView in_stream(buffer);
 	string check_string;
 
 	// some random strings
@@ -204,25 +204,25 @@ void Stream_test_rnd()
 	};
 	vector<function<bool()>> checks = {
 		
-		[&] { return in_stream.accept_char('a'); },
-		[&] { return in_stream.accept_literal("b"); },
-		[&] { return in_stream.accept_char('c'); },
+		[&] { return in_stream.remove_prefix_char('a'); },
+		[&] { return in_stream.remove_prefix_literal("b"); },
+		[&] { return in_stream.remove_prefix_char('c'); },
 
 		[&] { bool r = true;
-				r = r && in_stream.accept_char('a'); 
-				r = r && in_stream.accept_char('a');
-				r = r && in_stream.accept_literal("ab");
-				r = r && in_stream.accept_char('b');
-				r = r && in_stream.accept_literal("bb");
+				r = r && in_stream.remove_prefix_char('a'); 
+				r = r && in_stream.remove_prefix_char('a');
+				r = r && in_stream.remove_prefix_literal("ab");
+				r = r && in_stream.remove_prefix_char('b');
+				r = r && in_stream.remove_prefix_literal("bb");
 				return r; },
 
-		[&] { return in_stream.accept_literal("str"); },
-		[&] { return in_stream.accept_literal("str22"); },
-		[&] { return in_stream.accept_literal("str333"); },
+		[&] { return in_stream.remove_prefix_literal("str"); },
+		[&] { return in_stream.remove_prefix_literal("str22"); },
+		[&] { return in_stream.remove_prefix_literal("str333"); },
 
-		[&] { return in_stream.accept_cstr(strings[0].c_str()); },
-		[&] { return in_stream.accept_cstr(strings[1].c_str()); },
-		[&] { return in_stream.accept_cstr(strings[2].c_str()); },
+		[&] { return in_stream.remove_prefix_string(strings[0].c_str()); },
+		[&] { return in_stream.remove_prefix_string(strings[1].c_str()); },
+		[&] { return in_stream.remove_prefix_string(strings[2].c_str()); },
 	};
 
 
@@ -232,7 +232,7 @@ void Stream_test_rnd()
 	check_string.clear();
 	for (auto it = action_indices.begin(); it != action_indices.end(); it++ )
 	{
-		InStringBuffer in_stream_copy = in_stream;
+		StringView in_stream_copy = in_stream;
 		OutStringBuffer out_stream_copy = out_stream;
 
 		in_stream = in_stream_copy;
@@ -265,14 +265,14 @@ void Stream_test_rnd()
 		}
 	}
 
-	in_stream = InStringBuffer(buffer);
+	in_stream = StringView(buffer);
 	check_string.clear();
 	for (auto action_index : action_indices)
 	{
-		bool res = in_stream.accept_literal("__");
+		bool res = in_stream.remove_prefix_literal("__");
 		REFLECTIVE_ASSERT(!res, "test failed");
 
-		res = in_stream.accept_char('_');
+		res = in_stream.remove_prefix_char('_');
 		REFLECTIVE_ASSERT(!res, "test failed");
 
 		res = checks[action_index]();
@@ -340,8 +340,8 @@ void Stream_test()
 		reflective::to_string(out, myInt);
 		std::cout << dest;
 
-		reflective::InStringBuffer buff(dest);
-		buff.accept_literal("ss");
+		reflective::StringView buff(dest);
+		buff.remove_prefix_literal("ss");
 	}
 
 	static Rand rand;

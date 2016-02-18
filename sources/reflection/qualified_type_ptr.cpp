@@ -56,10 +56,10 @@ namespace reflective
 
 	namespace details
 	{
-		const Type * accept_naked_type(InStringBuffer & i_source, OutStringBuffer & /*i_error_dest*/)
+		const Type * accept_naked_type(StringView & i_source, OutStringBuffer & /*i_error_dest*/)
 		{
 			// to do: handle template arguments
-			auto name = i_source.accept_until([](char i_char){ return isalnum(i_char) == 0; });
+			auto name = i_source.remove_prefix_while([](char i_char){ return isalnum(i_char) != 0; });
 			return GlobalRegistry::instance().find_type(name);
 		}
 
@@ -108,9 +108,9 @@ namespace reflective
 		return i_dest;
 	}	
 
-	bool QualifiedTypePtr::assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest)
+	bool QualifiedTypePtr::assign_from_string(StringView & i_source, OutStringBuffer & i_error_dest)
 	{
-		InStringBuffer source = i_source;
+		StringView source = i_source;
 
 		bool successful = true;
 		size_t constness_word = 0, volatileness_word = 0;
@@ -119,17 +119,17 @@ namespace reflective
 
 		for (;;)
 		{
-			source.accept_whitespaces();
+			source.remove_prefix_writespaces();
 
-			if (source.accept_literal("const")) // accept "const"
+			if (source.remove_prefix_literal("const")) // accept "const"
 			{				
 				constness_word |= 1;
 			}
-			else if (source.accept_literal("volatile")) // accept "volatile"
+			else if (source.remove_prefix_literal("volatile")) // accept "volatile"
 			{
 				volatileness_word |= 1;
 			}
-			else if (source.accept_literal("*"))
+			else if (source.remove_prefix_literal("*"))
 			{
 				constness_word <<= 1;
 				volatileness_word <<= 1;
@@ -141,7 +141,7 @@ namespace reflective
 					break;
 				}
 			}
-			else if (source.accept_literal("&") || source.accept_literal("&&"))
+			else if (source.remove_prefix_literal("&") || source.remove_prefix_literal("&&"))
 			{
 				constness_word <<= 1;
 				constness_word |= 1;
@@ -269,7 +269,7 @@ namespace reflective
 
 		QualifiedTypePtr qualified_type_from_string(const char * i_string)
 		{
-			InStringBuffer source(i_string);
+			StringView source(i_string);
 			char err_buff[32];
 			OutStringBuffer err(err_buff);
 			QualifiedTypePtr q_type_ptr;

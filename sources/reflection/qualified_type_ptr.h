@@ -176,7 +176,7 @@ namespace reflective
 		/** Returns false whether two QualifiedTypePtrs are indistinguishable */
 		bool operator != (const QualifiedTypePtr & i_source) const		{ return !operator == (i_source); }
 
-		bool assign_from_string(InStringBuffer & i_source, OutStringBuffer & i_error_dest);
+		bool assign_from_string(StringView & i_source, OutStringBuffer & i_error_dest);
 
 		#if REFLECTIVE_ENABLE_TESTING
 			/** Runs an unit test for this class */

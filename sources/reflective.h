@@ -62,12 +62,18 @@ namespace reflective
 	class ObjPtr;
 	class QualifiedTypePtr;
 	
+	template <typename CHAR, typename CHAR_TRAITS = std::char_traits<CHAR> >
+		class BasicStringView;
+	using StringView = BasicStringView < char > ;
+	using WStringView = BasicStringView < wchar_t > ;
+	using u16StringView = BasicStringView < char16_t > ;
+	using u32StringView = BasicStringView < char32_t > ;
 
 	template < typename UINT>
 		class StringHasher;
 
 	class OutStringBuffer;
-	class InStringBuffer;
+	
 	class PtrString;
 	
 	enum class InheritanceSupport

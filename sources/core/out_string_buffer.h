@@ -32,7 +32,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	/** This class implements an output text stream to write formatted text to an user-provided character buffer.
+	/** This class implements an output text stream to write formatted text to an user-provided character buffer. It is a lightweight objects, and
+		doesn't have virtual functions.
 
 		OutStringBuffer does not participate to the ownership of the buffer. The buffer must be valid when any non-const
 		method is called on OutStringBuffer. The destination buffer must be specified to the constructor by passing

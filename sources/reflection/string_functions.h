@@ -38,7 +38,7 @@ namespace reflective
 
 		using ToString = void(*)(const void * i_object, OutStringBuffer & i_dest);
 		using ToStdStream = void(*)(const void * i_object, std::ostream & i_dest);
-		using AssignFromString = bool (*)(void * i_object, InStringBuffer & i_source, OutStringBuffer & i_error_dest);
+		using AssignFromString = bool (*)(void * i_object, StringView & i_source, OutStringBuffer & i_error_dest);
 
 		StringFunctions()
 			: m_to_string(nullptr), m_assign_from_string_function(nullptr)
@@ -73,7 +73,7 @@ namespace reflective
 			i_dest << obj;
 		}
 
-		template <typename TYPE> bool assign_from_string_method_adater(void * i_object, InStringBuffer & i_source, OutStringBuffer & i_error_dest)
+		template <typename TYPE> bool assign_from_string_method_adater(void * i_object, StringView & i_source, OutStringBuffer & i_error_dest)
 		{
 			TYPE & obj = static_cast<TYPE*>(i_object);
 			dbg_object_validate(obj);

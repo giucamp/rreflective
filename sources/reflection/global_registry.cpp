@@ -2,6 +2,7 @@
 namespace reflective
 {
 	GlobalRegistry::GlobalRegistry()
+		: m_global_namespace("global")
 	{
 		m_registry.reserve(s_global_registry_reserve);
 	}

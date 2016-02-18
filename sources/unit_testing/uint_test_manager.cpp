@@ -120,7 +120,7 @@ namespace reflective
 		Node * find_entry(StringView i_path)
 		{
 			Node * node = &m_root;
-			for_each_token(i_path, '/', [&node](StringView i_token) {
+			i_path.for_each_token('/', [&node](StringView i_token) {
 
 				if (node != nullptr)
 				{
@@ -134,7 +134,7 @@ namespace reflective
 		Node & find_or_add_entry(StringView i_path)
 		{
 			Node * node = &m_root;
-			for_each_token(i_path, '/', [&node](StringView i_token) {
+			i_path.for_each_token('/', [&node](StringView i_token) {
 
 				Node * child = node->find_child(i_token);
 

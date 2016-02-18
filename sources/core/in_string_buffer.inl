@@ -32,8 +32,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
+/*
 	template <typename UNARY_FUNC>
-		inline StringView InStringBuffer::accept_until(const UNARY_FUNC & i_unary_func)
+		inline StringView StringView::accept_until(const UNARY_FUNC & i_unary_func)
 	{			
 		const char * const start = m_next_char;		
 		const char * curr = start;
@@ -43,5 +44,5 @@ namespace reflective
 		}
 		m_next_char = curr;
 		return StringView(start, curr - start);
-	}
+	}*/
 }
