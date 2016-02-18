@@ -32,7 +32,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	/** Non-owning range of contiguous char - see http://en.cppreference.com/w/cpp/experimental/basic_string_view */
+	/** Non-owning range of contiguous char - see http://en.cppreference.com/w/cpp/experimental/basic_string_view.
+		This class represent a contiguous range of characters, whose storage is managed by the user. Accessing the
+		content of the string view when the storage is no more valid, leads to undefined behavior.
+		This implementation extends the one described in the standard with some methods useful for parsing (like 
+		remove_prefix_char and remove_prefix_string).
+	*/
 	template <typename CHAR, typename CHAR_TRAITS >
 		class BasicStringView
 	{
