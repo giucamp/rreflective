@@ -13,14 +13,19 @@ namespace reflective
 		return s_instance;
 	}
 
-	void GlobalRegistry::register_type_info(const Type & i_type, const std::type_info & i_type_info)
+	void GlobalRegistry::register_type(const Type & i_type, const std::type_info & i_type_info)
 	{		
 		auto res = m_types.insert(std::make_pair(&i_type_info, &i_type));
 		REFLECTIVE_ASSERT(res.second, "A type with the same std::type_info has already been registered");
+
+		register_member(i_type);
 	}
 
-	void GlobalRegistry::unregister_type_info(const Type & i_type, const std::type_info & i_type_info)
-	{		
+	void GlobalRegistry::unregister_type(const Type & i_type, const std::type_info & i_type_info)
+	{	
+		unregister_member(i_type);
+
+		REFLECTIVE_ASSERT(m_types[&i_type_info] == &i_type, "Invalid paramters");
 		const auto removed_count = m_types.erase(&i_type_info);
 		REFLECTIVE_ASSERT(removed_count == 1, "Type not unregistered");
 	}

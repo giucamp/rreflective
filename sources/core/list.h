@@ -32,23 +32,16 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	/**
-		This class is moveable but not copyable.
-	*/
-	template <typename SYMBOL>
-		class List
-	{
-	public:
+	#if defined(_MSC_VER) && _MSC_VER < 1900 // Visual Studio 2013 and below
+	
+		template <typename ELEMENT>
+			using List = std::vector< std::shared_ptr<const ELEMENT> >;
 
-		List() {}
+	#else
 
-		List(std::initializer_list< std::shared_ptr<const SYMBOL> > i_symbols)
-			: m_symbols(std::move(i_symbols))
-		{
-		}		
+		template <typename ELEMENT>
+			using List = std::vector< std::unique_ptr<const ELEMENT> >;
 
-	private:
-		std::vector< std::shared_ptr<const SYMBOL> > m_symbols;
-	};
+	#endif
 }
 

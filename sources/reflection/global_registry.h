@@ -54,13 +54,9 @@ namespace reflective
 			Implementation note: currently the complexity of this method is the same of std::unordered_map::find. */
 		const Type * find_type(StringView i_full_name);
 
-		void register_member(const NamespaceMember & i_member);
+		void register_type(const Type & i_type, const std::type_info & i_type_info);
 
-		void unregister_member(const NamespaceMember & i_member);
-		
-		void register_type_info(const Type & i_type, const std::type_info & i_type_info);
-
-		void unregister_type_info(const Type & i_type, const std::type_info & i_type_info);
+		void unregister_type(const Type & i_type, const std::type_info & i_type_info);
 							
 		GlobalRegistry(const GlobalRegistry &) = delete;
 
@@ -71,6 +67,10 @@ namespace reflective
 		GlobalRegistry();
 		
 		~GlobalRegistry() = default;
+
+		void register_member(const NamespaceMember & i_member);
+
+		void unregister_member(const NamespaceMember & i_member);
 
 	private: // data members
 		std::unordered_multimap<SymbolName, const NamespaceMember *, SymbolNameHasher > m_registry;

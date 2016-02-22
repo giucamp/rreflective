@@ -56,11 +56,7 @@ namespace reflective
 
 		ResultType operator() (const char * i_string, size_t i_length) const
 		{
-			/*	djb2 - http://www.cse.yorku.ca/~oz/hash.html
-			"this algorithm (k=33) was first reported by dan bernstein many years ago in comp.lang.c. another version of
-			this algorithm (now favored by bernstein) uses xor: hash(i) = hash(i - 1) * 33 ^ str[i]; the magic of number
-			33 (why it works better than many other constants, prime or not) has never been adequately explained." */
-
+			/*	djb2 - http://www.cse.yorku.ca/~oz/hash.html Bernstein hash function */
 			/*Hash hash = 5381;
 			int c;
 			while (c = *str++)
