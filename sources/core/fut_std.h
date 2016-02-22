@@ -41,7 +41,6 @@ namespace reflective
 		are all camel case or inside the static class reflective::Ext, so that in the future they may become
 		aliases of the standard names. */
 
-
 	template <typename TYPE>
 		class ArrayView
 	{

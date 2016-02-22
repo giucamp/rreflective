@@ -247,6 +247,17 @@ namespace reflective
 			o_value = result;
 			return accepted_digits > 0;
 		}
+
+		inline double double_from_string(StringView & i_source)
+		{
+			char temp[256];
+			i_source.copy_to_cstr(temp);
+			char * end = nullptr;
+			const double result = strtod(temp, &end);
+			REFLECTIVE_INTERNAL_ASSERT(end != nullptr && end >= temp);
+			i_source.remove_prefix(end - temp);
+			return result;
+		}
 	}
 
 				// signed integers to_string
@@ -372,9 +383,22 @@ namespace reflective
 
 		// floating point
 
-	bool assign_from_string(StringView & i_source, OutStringBuffer & i_error_dest, float & o_dest);
+	bool assign_from_string(StringView & i_source, OutStringBuffer & /*i_error_dest*/, float & o_dest)
+	{
+		o_dest = static_cast<float>(details::double_from_string(i_source));
+		return true;
+	}
 	
-	bool assign_from_string(StringView & i_source, OutStringBuffer & i_error_dest, double & o_dest);
-	bool assign_from_string(StringView & i_source, OutStringBuffer & i_error_dest, long double & o_dest);
+	bool assign_from_string(StringView & i_source, OutStringBuffer & /*i_error_dest*/, double & o_dest)
+	{
+		o_dest = details::double_from_string(i_source);
+		return true;
+	}
+
+	bool assign_from_string(StringView & i_source, OutStringBuffer & /*i_error_dest*/, long double & o_dest)
+	{
+		o_dest = static_cast<long double>(details::double_from_string(i_source));
+		return true;
+	}
 
 }

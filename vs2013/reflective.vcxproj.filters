@@ -24,9 +24,6 @@
     <ClInclude Include="..\sources\core\identifier.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="..\sources\core\in_string_buffer.h">
-      <Filter>core</Filter>
-    </ClInclude>
     <ClInclude Include="..\sources\core\out_string_buffer.h">
       <Filter>core</Filter>
     </ClInclude>
@@ -111,12 +108,12 @@
     <ClInclude Include="..\sources\reflection\base_type.h">
       <Filter>reflection</Filter>
     </ClInclude>
+    <ClInclude Include="..\sources\core\string_view.h">
+      <Filter>core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\sources\reflective.cpp" />
-    <ClCompile Include="..\sources\core\in_string_buffer.cpp">
-      <Filter>core</Filter>
-    </ClCompile>
     <ClCompile Include="..\sources\core\out_string_buffer.cpp">
       <Filter>core</Filter>
     </ClCompile>
@@ -165,6 +162,9 @@
     <ClCompile Include="..\sources\reflection\type_inheritance_test.cpp">
       <Filter>reflection</Filter>
     </ClCompile>
+    <ClCompile Include="..\sources\core\string_view.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\sources\reflection\qualified_type_ptr.inl">
@@ -185,7 +185,7 @@
     <None Include="..\sources\reflection\namespace.inl">
       <Filter>reflection</Filter>
     </None>
-    <None Include="..\sources\core\in_string_buffer.inl">
+    <None Include="..\sources\core\string_view.inl">
       <Filter>core</Filter>
     </None>
   </ItemGroup>

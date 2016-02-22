@@ -137,7 +137,7 @@
     <ClInclude Include="..\sources\core\fut_std.h" />
     <ClInclude Include="..\sources\core\ptr_string.h" />
     <ClInclude Include="..\sources\core\identifier.h" />
-    <ClInclude Include="..\sources\core\in_string_buffer.h" />
+    <ClInclude Include="..\sources\core\string_view.h" />
     <ClInclude Include="..\sources\core\out_string_buffer.h" />
     <ClInclude Include="..\sources\core\string_hash.h" />
     <ClInclude Include="..\sources\core\list.h" />
@@ -170,7 +170,7 @@
     <ClInclude Include="..\sources\unit_testing\unit_testing.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\sources\core\in_string_buffer.cpp">
+    <ClCompile Include="..\sources\core\string_view.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -270,7 +270,7 @@
     <ClCompile Include="..\sources\unit_testing\unit_testing.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\sources\core\in_string_buffer.inl" />
+    <None Include="..\sources\core\string_view.inl" />
     <None Include="..\sources\reflection\enum.inl" />
     <None Include="..\sources\reflection\get_naked_type.inl" />
     <None Include="..\sources\reflection\namespace.inl" />

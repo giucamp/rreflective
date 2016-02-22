@@ -281,7 +281,7 @@ namespace reflective
 			return m_size >= 1 && OTHER_CHAR_TRAITS::eq(*m_chars, i_char);
 		}
 
-			bool operator == (BasicStringView i_other) const
+		bool operator == (BasicStringView i_other) const
 		{
 			return compare(i_other) == 0;
 		}
@@ -309,6 +309,22 @@ namespace reflective
 		bool operator <= (const BasicStringView i_other) const
 		{
 			return compare(i_other) <= 0;
+		}
+
+
+		void copy_to_cstr(CHAR * i_dest, size_t i_buffer_size, size_t i_start_index = 0)
+		{
+			REFLECTIVE_ASSERT(i_buffer_size > 0, "reflective::BasicStringView::copy_to_cstr called with an empty buffer");
+
+			size_t length_to_copy = std::min(i_buffer_size - 1, m_size >= i_start_index ? m_size - i_start_index : 0);
+			CHAR_TRAITS::copy(i_dest, m_chars, length_to_copy);
+			i_dest[length_to_copy] = 0;
+		}
+
+		template <size_t BUFFER_SIZE>
+			void copy_to_cstr(CHAR(&i_dest)[BUFFER_SIZE], size_t i_start_index = 0)
+		{
+			copy_to_cstr(i_dest, BUFFER_SIZE, i_start_index);
 		}
 
 

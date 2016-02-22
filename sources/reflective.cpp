@@ -8,7 +8,7 @@
 
 #include "reflective.h"
 
-#include "core\in_string_buffer.cpp"
+#include "core\string_view.cpp"
 #include "core\out_string_buffer.cpp"
 
 #include "reflection\special_functions.cpp"

@@ -92,7 +92,7 @@ namespace reflective
 
 // core headers
 #include "core\traits.h"
-#include "core\in_string_buffer.h"
+#include "core\string_view.h"
 #include "core\out_string_buffer.h"
 #include "core\ptr_string.h"
 #include "core\identifier.h"
@@ -122,7 +122,7 @@ namespace reflective
 #include "reflection\global_registry.h"
 
 // inlines
-#include "core\in_string_buffer.inl"
+#include "core\string_view.inl"
 #include "reflection\qualified_type_ptr.inl"
 #include "reflection\special_functions.inl"
 #include "reflection\type.inl"
