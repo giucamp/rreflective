@@ -32,12 +32,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
+	/** This struct can be used as hasher for a standard unordered container that use SymbolName as key */
 	struct SymbolNameHasher
 	{
 		uint32_t operator () (const SymbolName & i_source) const
-		{
-			return i_source.hash();
-		}
+			{ return i_source.hash(); }
 	};
 
 	class Attribute
@@ -54,33 +53,72 @@ namespace reflective
 		const Class & m_type;
 	};
 
-	/** A symbol is a named object. It may be a type (a class, an enum), a parameter, a property, etc.
-		Many classes of reflective derive (directky or indirecty) from Symbol. */
+	/** A symbol is a named object. It may be a type (a class, an enum), a parameter, a property, etc. Many classes of 
+		reflective derive (directly or indirectly) from Symbol.
+		The name of a Symbol is an object of type SymbolName, and it does not include scope specifiers. For example,
+		the name of a class A in the namespace B is "A", not "B::A". 
+		The name of a symbol is immutable (can be specified only to the constructor), and can't be empty. Furthermore,
+		it follows the syntax of identifiers in C++: the first character must be alphabetic or an underscore, and the characters
+		from the second on must be alphanumeric or underscores. No spaces or special symbols are allowed. */
 	class Symbol
 	{
 	protected:
 		
+		/** Constructs a Symbol, providing a name*/
 		Symbol(SymbolName i_name)
-			: m_name(std::move(i_name)) { }
+			: m_name(std::move(i_name))
+		{
+			// check the character of the name, if REFLECTIVE_ASSERT_ENABLED is non-zero and SymbolName includes the string
+			#if REFLECTIVE_ASSERT_ENABLED
+				check_name(i_name);
+			#endif
+		}
 
 	public:
 
-		Symbol(const Symbol &) = delete;
+		Symbol(const Symbol &) = delete; // copy construction not allowed
+		Symbol & operator = (const Symbol &) = delete; // copy assignment not allowed
 
-		Symbol & operator = (const Symbol &) = delete;
+		/** Returns the name of the symbol, as a SymbolName. */
+		const SymbolName & name() const			{ return m_name; }
 
-		const SymbolName & name() const
-		{
-			return m_name;
-		}
-
+		/** Retrieves a read-only list of the attributes associated to this symbol */
 		const List<Attribute> & attributes() const	{ return m_attributes; }
 
+		/** Sets the attributes associated to this type
+		@param i_attributes list of attributes to assign. Since this parameter is an r-value reference, 
+			the list must be a temporary object or the result of a std::move. */
 		void set_attributes(List<Attribute> && i_attributes) { m_attributes = std::move(i_attributes); }
 
 	private:
 		const SymbolName m_name;
 		List<Attribute> m_attributes;
+
+	private:
+
+		#if REFLECTIVE_ASSERT_ENABLED
+
+			template < typename HASHER, typename STRING >
+				static void check_name(const Identifier<HASHER, STRING> & i_name)
+			{
+				const STRING & string = i_name.string();
+				const size_t length = string.length();
+				REFLECTIVE_ASSERT(length > 0, "empty symbol name");
+				REFLECTIVE_ASSERT(isalpha(string[0]) != 0 || string[0] == '_', "the first character in a symbol name must be alphabetic or an underscore");
+				
+				for (size_t index = 1; index < length; index++)
+				{
+					REFLECTIVE_ASSERT(isalnum(string[index]) != 0 || string[index] == '_', "invalid character on a reflective::SymbolName");
+				}
+			}
+
+			template < typename HASHER >
+				static void check_name(const Identifier<HASHER, void> & /*i_name*/)
+			{
+			}
+
+		#endif
+
 	};
 }
 

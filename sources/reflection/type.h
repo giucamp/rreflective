@@ -63,10 +63,15 @@ namespace reflective
 		static const size_t s_max_size = (1 << 24) - 1;
 		static const size_t s_max_alignment = (1 << 8) - 11;
 
+		/** Constructs a type, assigning name, size and alignment (which are all immutable). 
+			@param i_name name of the type
+			@param i_name i_size of the type
+		*/
 		Type(SymbolName i_name, size_t i_size, size_t i_alignment );
 
 		virtual ~Type() {}
 
+		/** Returns the size of the type in bytes. Usually the size*/
 		size_t size() const							{ return m_size; }
 
 		size_t alignment() const					{ return m_alignment; }

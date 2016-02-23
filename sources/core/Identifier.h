@@ -136,12 +136,12 @@ namespace reflective
 		}
 
 		Identifier(const char * i_null_terminated_string)
-			: m_hash(Hasher()(i_string))
+			: m_hash(Hasher()(i_null_terminated_string))
 		{
 
 		}
 
-		Identifier(const char * i_null_terminated_string, size_t i_length)
+		Identifier(const char * i_string, size_t i_length)
 			: m_hash(Hasher()(i_string, i_length))
 		{
 
