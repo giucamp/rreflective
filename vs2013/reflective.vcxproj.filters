@@ -165,6 +165,9 @@
     <ClCompile Include="..\sources\core\string_view.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="..\sources\reflection\symbol.cpp">
+      <Filter>reflection</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\sources\reflection\qualified_type_ptr.inl">

@@ -137,6 +137,27 @@ namespace reflective
 
 	namespace details
 	{
+		template <bool HAS_SETUP_CLASS_FUNC, typename TYPE>
+		struct InternalSetupType;
+
+		template <typename TYPE>
+			struct InternalSetupType< false, TYPE >
+		{
+			static void setup(TypeSetupContext<TYPE> & i_context)
+			{
+				reflective::setup_type(i_context);
+			}
+		};
+
+		template <typename TYPE>
+			struct InternalSetupType< true, TYPE >
+		{
+			static void setup(TypeSetupContext<TYPE> & i_context)
+			{
+				TYPE::setup_class(*static_cast<Class*>(i_context.type()));
+			}
+		};
+
 		// SymbolTraits::create for primitive types
 		template <typename TYPE>
 			inline const Type * SymbolTraits< TYPE, SymbolTypeId::is_type>::create()
@@ -144,7 +165,7 @@ namespace reflective
 			Type * new_type = new Type(get_type_full_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value);
 			new_type->set_special_functions(SpecialFunctions::from_type<TYPE>());
 			TypeSetupContext<TYPE> context(new_type);
-			setup_type(context);
+			InternalSetupType<HasSetupClassStaticFunc< TYPE >::value, TYPE>::setup(context);
 			return new_type;
 		}
 
@@ -155,18 +176,18 @@ namespace reflective
 			Class * class_obj = new Class(get_type_full_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value);
 			class_obj->set_special_functions(SpecialFunctions::from_type<TYPE>());
 			TypeSetupContext<TYPE> context(class_obj);
-			setup_type(context);
+			InternalSetupType<HasSetupClassStaticFunc< TYPE >::value, TYPE>::setup(context);
 			return class_obj;
 		}
 
-		// SymbolTraits::create for class enums
+		// SymbolTraits::create for enum types
 		template <typename TYPE>
 			inline const typename reflective::Enum<std::underlying_type<TYPE>> * SymbolTraits< TYPE, SymbolTypeId::is_enum >::create()
 		{
 			Enum< std::underlying_type<TYPE> > * enum_obj = new Enum< std::underlying_type<TYPE> >(get_type_full_name<TYPE>());
 			enum_obj->set_special_functions(SpecialFunctions::from_type<TYPE>());
 			TypeSetupContext<TYPE> context(enum_obj);
-			setup_type(context);
+			InternalSetupType<HasSetupClassStaticFunc< TYPE >::value, TYPE>::setup(context);
 			return enum_obj;
 		}
 	}

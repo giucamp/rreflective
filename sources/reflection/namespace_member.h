@@ -37,15 +37,22 @@ namespace reflective
 		class NamespaceMembersList;
 	}
 
+	/** A NamespaceMember is a symbol tht can be added to a reflective::Namespace. The namespace membership is
+		implemented with an intrusive linked list. A namespace member can be added to only one reflective::Namespace.
+		NamespaceMember allows to access the parent namespace with a pointer (see NamespaceMember::parent_namespace).
+		NamespaceMember is the base class for Type, Namespace, and ClassTemplate. 
+		This class is polymorphic. */
 	class NamespaceMember : public Symbol
 	{
 	protected:
 
+		/** Constructs a namespace member, providing the name, which is accessible with the getter method Symbol::name. */
 		NamespaceMember(SymbolName i_name)
 			: Symbol(std::move(i_name)), m_parent(nullptr), m_next_member(nullptr)
 		{
 		}
 
+		/** Virtual destructor, to allow polymorphism. */
 		virtual ~NamespaceMember() = default;
 
 	public:
