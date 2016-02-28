@@ -69,6 +69,8 @@ namespace reflective
 		*/
 		Type(SymbolName i_name, size_t i_size, size_t i_alignment );
 
+		Type(Type &&) = default;
+
 		virtual ~Type() {}
 
 		/** Returns the size of the type in bytes. Usually the size*/

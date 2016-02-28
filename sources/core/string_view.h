@@ -68,7 +68,7 @@ namespace reflective
 
 		/** Copy-constructs a string view. The new view will share the character buffer with the source, but each of them
 			has its own begin-end markers. */
-		REFLECTIVE_CONSTEXPR BasicStringView(const BasicStringView & i_source) = default REFLECTIVE_NOEXCEPT;
+		REFLECTIVE_CONSTEXPR BasicStringView(const BasicStringView & i_source) REFLECTIVE_NOEXCEPT = default;
 
 		/** Constructs a string view from a std::basic_string (that is a std::string, a std::wstring, etc.). If the source string gets reallocated, 
 			truncated or destroyed, accessing the content of the string view will lead to undefined behavior. */
@@ -89,7 +89,7 @@ namespace reflective
 
 		/** Copy-assigns a string view. this view will share the character buffer with the source, but each of them
 			has its own begin-end markers. */
-		BasicStringView & operator = (const BasicStringView & i_source) = default REFLECTIVE_NOEXCEPT;
+		BasicStringView & operator = (const BasicStringView & i_source) REFLECTIVE_NOEXCEPT = default;
 		
 
 
@@ -173,7 +173,7 @@ namespace reflective
 		/** Lexicographically compares the content of two string view, using the specified char traits instead of the one of this string view.
 			@return 0 if the string views have the same content, a negative value if the first is less that the second, or a positive value otherwise. */
 		template <typename OTHER_CHAR_TRAITS>
-			REFLECTIVE_CONSTEXPR int ot_compare(BasicStringView i_other) const REFLECTIVE_NOEXCEPT
+			int ot_compare(BasicStringView i_other) const REFLECTIVE_NOEXCEPT
 		{
 			auto result = OTHER_CHAR_TRAITS::compare(m_chars, i_other.m_chars, std::min(m_size, i_other.m_size));
 			if (result != 0)
@@ -263,7 +263,7 @@ namespace reflective
 			return curr_start - m_chars;
 		}
 
-		REFLECTIVE_CONSTEXPR bool starts_with(BasicStringView<CHAR, CHAR_TRAITS> i_string) const REFLECTIVE_NOEXCEPT
+		bool starts_with(BasicStringView<CHAR, CHAR_TRAITS> i_string) const REFLECTIVE_NOEXCEPT
 		{
 			auto const string_len = i_string.length();
 			return m_size >= string_len &&
@@ -330,14 +330,14 @@ namespace reflective
 
 			/***  ***/
 
-		REFLECTIVE_CONSTEXPR void remove_prefix(size_t i_char_count)
+		void remove_prefix(size_t i_char_count) REFLECTIVE_NOEXCEPT
 		{
 			REFLECTIVE_ASSERT(i_char_count <= m_size, "reflective::BasicStringView::remove_prefix called with invalid param");
 			m_chars += i_char_count;
 			m_size -= i_char_count;
 		}
 
-		REFLECTIVE_CONSTEXPR bool remove_prefix_char(CHAR i_char) REFLECTIVE_NOEXCEPT
+		bool remove_prefix_char(CHAR i_char) REFLECTIVE_NOEXCEPT
 		{
 			if (starts_with(i_char))
 			{
@@ -351,7 +351,7 @@ namespace reflective
 			}
 		}
 
-		REFLECTIVE_CONSTEXPR bool remove_prefix_string(BasicStringView i_string) REFLECTIVE_NOEXCEPT
+		bool remove_prefix_string(BasicStringView i_string) REFLECTIVE_NOEXCEPT
 		{
 			if (starts_with(i_string))
 			{
@@ -365,13 +365,13 @@ namespace reflective
 		}
 
 		template <size_t ARRAY_SIZE>
-			REFLECTIVE_CONSTEXPR bool remove_prefix_literal(const CHAR(&i_array)[ARRAY_SIZE]) REFLECTIVE_NOEXCEPT
+			bool remove_prefix_literal(const CHAR(&i_array)[ARRAY_SIZE]) REFLECTIVE_NOEXCEPT
 		{
 			REFLECTIVE_ASSERT(i_array[ARRAY_SIZE - 1] == 0, "the array must be null-terminated");
 			return remove_prefix_string(StringView( i_array, ARRAY_SIZE - 1));
 		}
 
-		REFLECTIVE_CONSTEXPR bool remove_prefix_writespaces() REFLECTIVE_NOEXCEPT
+		bool remove_prefix_writespaces() REFLECTIVE_NOEXCEPT
 		{
 			bool some_space_removed = false;
 			while (m_size > 0 && isspace(CHAR_TRAITS::to_int_type(*m_chars)) != 0)
@@ -384,7 +384,7 @@ namespace reflective
 		}
 
 		template <typename PREDICATE>
-			REFLECTIVE_CONSTEXPR BasicStringView remove_prefix_while(PREDICATE && i_predicate) REFLECTIVE_NOEXCEPT
+			BasicStringView remove_prefix_while(PREDICATE && i_predicate) REFLECTIVE_NOEXCEPT
 		{
 			const CHAR * const original_chars = m_chars;
 			while (m_size > 0 && i_predicate(*m_chars) )
@@ -395,13 +395,13 @@ namespace reflective
 			return BasicStringView(original_chars, m_chars - original_chars);
 		}
 
-		REFLECTIVE_CONSTEXPR void remove_suffix(size_t i_char_count) REFLECTIVE_NOEXCEPT
+		void remove_suffix(size_t i_char_count) REFLECTIVE_NOEXCEPT
 		{
 			REFLECTIVE_ASSERT(i_char_count <= m_size, "reflective::BasicStringView::remove_suffix called with invalid param");
 			m_size -= i_char_count;
 		}
 
-		REFLECTIVE_CONSTEXPR void swap(BasicStringView i_other) REFLECTIVE_NOEXCEPT
+		void swap(BasicStringView i_other) REFLECTIVE_NOEXCEPT
 		{
 			std::swap(m_chars, i_other.m_chars);
 			std::swap(m_size, i_other.m_size);

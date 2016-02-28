@@ -70,7 +70,6 @@ namespace reflective
 		{
 		}
 
-		BaseTypeContainer(const BaseTypeContainer &) = delete;
 		BaseTypeContainer & operator = (const BaseTypeContainer &) = delete;
 		
 		#if REFLECTIVE_ENABLE_MULTIPLE_INHERITANCE

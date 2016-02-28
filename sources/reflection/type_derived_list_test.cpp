@@ -25,32 +25,32 @@ namespace reflective
 					REFLECTIVE_TEST_ASSERT(test_vector_copy.size() == 0);
 				};
 
-				std::array<Type, 6> types = {
-					Type{ "t1", 16, 4 },
-					Type{ "t2", 16, 4 },
-					Type{ "t3", 16, 4 },
-					Type{ "t4", 16, 4 },
-					Type{ "t5", 16, 4 },
-					Type{ "t6", 16, 4 } };
+				std::array<std::unique_ptr<Type>, 6> types = {
+					std::make_unique<Type>( "t1", 16, 4 ),
+					std::make_unique<Type>( "t2", 16, 4 ),
+					std::make_unique<Type>( "t3", 16, 4 ),
+					std::make_unique<Type>( "t4", 16, 4 ),
+					std::make_unique<Type>( "t5", 16, 4 ),
+					std::make_unique<Type>( "t6", 16, 4 ) };
 
 				test_equal();
 
 				// add types
 				for (auto & type : types)
 				{
-					test_type.add(type);
-					test_vector.push_back(&type);
+					test_type.add(*type);
+					test_vector.push_back(type.get());
 					test_equal();
 				}
 
 				// remove types
 				for (size_t index_to_remove : remove_order)
 				{
-					auto it = find(test_vector.begin(), test_vector.end(), &types[index_to_remove]);
+					auto it = find(test_vector.begin(), test_vector.end(), types[index_to_remove].get());
 					REFLECTIVE_TEST_ASSERT(it != test_vector.end());
 					test_vector.erase(it);
 
-					test_type.remove(types[index_to_remove]);
+					test_type.remove(*types[index_to_remove]);
 
 					test_equal();
 				}

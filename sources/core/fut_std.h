@@ -32,9 +32,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	#define REFLECTIVE_CONSTEXPR
-
-	#define REFLECTIVE_NOEXCEPT
+	#if defined(_MSC_VER) && _MSC_VER < 1900 // Visual Studio 2013 and below
+		#define REFLECTIVE_CONSTEXPR
+		#define REFLECTIVE_NOEXCEPT
+	#else
+		#define REFLECTIVE_CONSTEXPR		constexpr
+		#define REFLECTIVE_NOEXCEPT			noexcept
+	#endif
+	
 	
 	/** This header provides a temporary, not fully not compliant implementation of some classes which are not 
 		in C++14, but should be included in the C++17. To avoid confusion with the standard, the names defined
