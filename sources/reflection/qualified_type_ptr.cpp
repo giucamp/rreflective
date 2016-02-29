@@ -232,7 +232,7 @@ namespace reflective
 			{ const auto q_type_ptr = get_type<const TYPE &>();
 			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_empty());
 			REFLECTIVE_TEST_ASSERT(q_type_ptr.final_type() == &get_naked_type<TYPE>());
-			REFLECTIVE_TEST_ASSERT(q_type_ptr.primary_type() == &get_naked_type<void*>());
+			REFLECTIVE_TEST_ASSERT(q_type_ptr.primary_type() == &get_naked_type<Pointer>());
 			REFLECTIVE_TEST_ASSERT(q_type_ptr.indirection_levels() == 1);
 			REFLECTIVE_TEST_ASSERT(q_type_ptr.is_const(0));
 			REFLECTIVE_TEST_ASSERT(q_type_ptr.is_const(1));
@@ -247,7 +247,7 @@ namespace reflective
 			{ const auto q_type_ptr = get_type<TYPE*const*volatile**&>();
 			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_empty());
 			REFLECTIVE_TEST_ASSERT(q_type_ptr.final_type() == &get_naked_type<TYPE>());
-			REFLECTIVE_TEST_ASSERT(q_type_ptr.primary_type() == &get_naked_type<void*>());
+			REFLECTIVE_TEST_ASSERT(q_type_ptr.primary_type() == &get_naked_type<Pointer>());
 			REFLECTIVE_TEST_ASSERT(q_type_ptr.indirection_levels() == 5);
 			REFLECTIVE_TEST_ASSERT(q_type_ptr.is_const(0));
 			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_const(1));
@@ -303,7 +303,7 @@ namespace reflective
 			QualifiedTypePtr q_type_ptr(get_naked_type<float>(), { CV_Flags::Const | CV_Flags::Volatile, CV_Flags::None, CV_Flags::Volatile });
 			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_empty());
 			REFLECTIVE_TEST_ASSERT(q_type_ptr.final_type() == &get_naked_type<float>());
-			REFLECTIVE_TEST_ASSERT(q_type_ptr.primary_type() == &get_naked_type<void*>());
+			REFLECTIVE_TEST_ASSERT(q_type_ptr.primary_type() == &get_naked_type<Pointer>());
 			REFLECTIVE_TEST_ASSERT(q_type_ptr.is_const(0));
 			REFLECTIVE_TEST_ASSERT(q_type_ptr.is_volatile(0));
 			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_const(1));
@@ -326,7 +326,7 @@ namespace reflective
 			QualifiedTypePtr q_type_ptr(get_naked_type<void>(), { CV_Flags::Const | CV_Flags::Volatile, CV_Flags::None, CV_Flags::Volatile });
 			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_empty());
 			REFLECTIVE_TEST_ASSERT(q_type_ptr.final_type() == &get_naked_type<void>());
-			REFLECTIVE_TEST_ASSERT(q_type_ptr.primary_type() == &get_naked_type<void*>());
+			REFLECTIVE_TEST_ASSERT(q_type_ptr.primary_type() == &get_naked_type<Pointer>());
 			REFLECTIVE_TEST_ASSERT(q_type_ptr.is_const(0));
 			REFLECTIVE_TEST_ASSERT(q_type_ptr.is_volatile(0));
 			REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_const(1));
@@ -346,7 +346,7 @@ namespace reflective
 		{ const auto q_type_ptr = get_type<void*const*volatile**&>();
 		REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_empty());
 		REFLECTIVE_TEST_ASSERT(q_type_ptr.final_type() == &get_naked_type<void>());
-		REFLECTIVE_TEST_ASSERT(q_type_ptr.primary_type() == &get_naked_type<void*>());
+		REFLECTIVE_TEST_ASSERT(q_type_ptr.primary_type() == &get_naked_type<Pointer>());
 		REFLECTIVE_TEST_ASSERT(q_type_ptr.indirection_levels() == 5);
 		REFLECTIVE_TEST_ASSERT(q_type_ptr.is_const(0));
 		REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_const(1));
@@ -367,7 +367,7 @@ namespace reflective
 		{ const auto q_type_ptr = get_type<const void *>();
 		REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_empty());
 		REFLECTIVE_TEST_ASSERT(q_type_ptr.final_type() == &get_naked_type<void>());
-		REFLECTIVE_TEST_ASSERT(q_type_ptr.primary_type() == &get_naked_type<void*>());
+		REFLECTIVE_TEST_ASSERT(q_type_ptr.primary_type() == &get_naked_type<Pointer>());
 		REFLECTIVE_TEST_ASSERT(q_type_ptr.indirection_levels() == 1);
 		REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_const(0));
 		REFLECTIVE_TEST_ASSERT(q_type_ptr.is_const(1));
@@ -380,7 +380,7 @@ namespace reflective
 		{ const auto q_type_ptr = get_type<void * const>();
 		REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_empty());
 		REFLECTIVE_TEST_ASSERT(q_type_ptr.final_type() == &get_naked_type<void>());
-		REFLECTIVE_TEST_ASSERT(q_type_ptr.primary_type() == &get_naked_type<void*>());
+		REFLECTIVE_TEST_ASSERT(q_type_ptr.primary_type() == &get_naked_type<Pointer>());
 		REFLECTIVE_TEST_ASSERT(q_type_ptr.indirection_levels() == 1);
 		REFLECTIVE_TEST_ASSERT(q_type_ptr.is_const(0));
 		REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_const(1));
@@ -393,7 +393,7 @@ namespace reflective
 		{ const auto q_type_ptr = get_type<void *>();
 		REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_empty());
 		REFLECTIVE_TEST_ASSERT(q_type_ptr.final_type() == &get_naked_type<void>());
-		REFLECTIVE_TEST_ASSERT(q_type_ptr.primary_type() == &get_naked_type<void*>());
+		REFLECTIVE_TEST_ASSERT(q_type_ptr.primary_type() == &get_naked_type<Pointer>());
 		REFLECTIVE_TEST_ASSERT(q_type_ptr.indirection_levels() == 1);
 		REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_const(0));
 		REFLECTIVE_TEST_ASSERT(!q_type_ptr.is_const(1));

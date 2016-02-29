@@ -395,6 +395,24 @@ namespace reflective
 			return BasicStringView(original_chars, m_chars - original_chars);
 		}
 
+		template <typename PREDICATE>
+			BasicStringView remove_prefix_identifier()
+		{
+			const CHAR * const original_chars = m_chars;
+			if (m_size > 0 && isalpha(CHAR_TRAITS::to_int_type(*m_chars)))
+			{
+				m_chars++;
+				m_size--;
+
+				while (m_size > 0 && isalnum(CHAR_TRAITS::to_int_type(*m_chars)))
+				{
+					m_chars++;
+					m_size--;
+				}
+			}
+			return BasicStringView(original_chars, m_chars - original_chars);
+		}
+
 		void remove_suffix(size_t i_char_count) REFLECTIVE_NOEXCEPT
 		{
 			REFLECTIVE_ASSERT(i_char_count <= m_size, "reflective::BasicStringView::remove_suffix called with invalid param");

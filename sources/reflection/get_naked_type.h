@@ -32,10 +32,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	const Namespace & root_namespace();
-
-	Namespace & edit_root_namespace();
-
 	namespace details
 	{
 		enum class SymbolTypeId
@@ -138,7 +134,7 @@ namespace reflective
 	namespace details
 	{
 		template <bool HAS_SETUP_CLASS_FUNC, typename TYPE>
-		struct InternalSetupType;
+			struct InternalSetupType;
 
 		template <typename TYPE>
 			struct InternalSetupType< false, TYPE >
@@ -157,6 +153,19 @@ namespace reflective
 				TYPE::setup_class(*static_cast<Class*>(i_context.type()));
 			}
 		};
+
+		template <typename REFLECTING_TYPE>
+		REFLECTING_TYPE * __create_builtin_type(StringView i_complete_name, size_t i_size, size_t i_alignment)
+		{
+			static_assert(std::is_base_of<REFLECTING_TYPE, Type>::value, "REFLECTING_TYPE must derive from reflective::Type");
+
+			i_complete_name.remove_prefix_literal("class ");
+			i_complete_name.remove_prefix_literal("::");
+
+			auto identifier = i_complete_name.remove_prefix_identifier();
+
+				// todo
+		}
 
 		// SymbolTraits::create for primitive types
 		template <typename TYPE>

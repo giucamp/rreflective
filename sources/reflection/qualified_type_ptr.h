@@ -58,13 +58,18 @@ namespace reflective
 		return static_cast<CV_Flags>(static_cast<underlying_type>(i_first) & static_cast<underlying_type>(i_seconds));
 	}
 
+	class Pointer
+	{
+
+	};
+
 	/** Lightweight value-class holding a pointer to a reflective::Type, a number of indirection levels, and the cv-qualification
 		(is it \c const? is it \c volatile?) for each indirection level. A QualifiedTypePtr can tell:
 			- The **number of indirection levels**, that is is the nuber of '*' or '&' or '&&' appearing in the C++ declaration of
 			   the type. A non-pointer types has zero indirection levels, while a pointer to a pointer has 2 indirection levels.
 			   References are considered like const pointer (that is \c get_type<float&>() == get_type<float*const>() ).
 			- The **primary type**, that is is the type of the first indirection level. For non-pointer types it is the same of the
-			   final type. For pointer types is always equal to the result of \c get_naked_type<void*>(). If an object of has to be 
+			   final type. For pointer types is always equal to the result of \c get_naked_type<Pointer>(). If an object of has to be 
 			   constructed, copied, or assigned, the primary type is what matters.
 			- The **final type**, that is the type of the last indirection level. The final type is the type remaining after stripping away 
 			  all the cv-qualification, pointer and reference parts from the C++ declaration. The final type can be thought as the type of 
