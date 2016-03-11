@@ -102,6 +102,12 @@ namespace reflective
 		bool contains(NamespaceMember & i_member) const 
 			{ return i_member.parent_namespace() == this; }
 
+		template <typename MEMBER_TYPE>
+			MEMBER_TYPE * find_member(const SymbolName & i_name);
+
+		template <typename MEMBER_TYPE>
+			const MEMBER_TYPE * find_member(const SymbolName & i_name) const;
+
 		#if REFLECTIVE_ENABLE_TESTING
 		
 			/** Runs an unit test for this class */

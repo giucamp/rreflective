@@ -30,6 +30,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	#error "cant't include this header directly, include reflective.h instead"
 #endif
 
+#include <vector>
+#include <unordered_map>
+
 namespace reflective
 {
 				// address functions
@@ -95,4 +98,28 @@ namespace reflective
 	{
 
 	}
+				
+	template <typename TYPE>
+		using unique_ptr = std::unique_ptr< TYPE >;
+
+	using std::make_unique;
+	
+	/*template <typename TYPE, typename... PARAMS>
+		inline typename std::enable_if<!std::is_array<TYPE>::value, unique_ptr<TYPE> >::type make_unique(PARAMS&&... i_params)
+	{
+		return unique_ptr<TYPE>(new TYPE(std::forward(i_params)...));
+	}
+
+	template <typename TYPE>
+		inline typename std::enable_if<std::is_array<TYPE>::value, unique_ptr<TYPE> >::type make_unique(size_t i_size)
+	{
+		using NakedType = std::remove_extent<TYPE>::type;
+		return unique_ptr<NakedType>(new NakedType[i_size]);
+	}*/
+
+	template <typename TYPE>
+		using vector = std::vector< TYPE > ;
+
+	template <typename KEY, typename TYPE, typename HASHER = std::hash<KEY>, typename KEY_EQUAL_PRED = std::equal_to<KEY> >
+		using unordered_map = std::unordered_map< KEY, TYPE, HASHER, KEY_EQUAL_PRED >;
 }

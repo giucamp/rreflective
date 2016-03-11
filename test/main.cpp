@@ -30,6 +30,7 @@ int main()
 	{
 		using namespace reflective;
 		using namespace std;
+		using std::vector;
 		
 		struct
 		{

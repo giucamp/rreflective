@@ -179,7 +179,7 @@ namespace reflective
 	}
 	
 	UnitTesingManager::UnitTesingManager()
-		: m_impl( std::make_unique<Impl>() )
+		: m_impl( make_unique<Impl>() )
 	{
 	}
 

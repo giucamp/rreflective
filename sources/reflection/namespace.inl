@@ -90,5 +90,41 @@ namespace reflective
 		{
 			return ConstIterator(nullptr);
 		}
+
 	} // details
+
+	template <typename MEMBER_TYPE>
+		MEMBER_TYPE * Namespace::find_member(const SymbolName & i_name)
+	{
+			static_cast(std::is_base_of<NamespaceMember, MEMBER_TYPE>::value);
+		for (auto & member : m_members)
+		{
+			if (member.m_name == i_name)
+			{
+				MEMBER_TYPE * const name_match = dynamic_cast<MEMBER_TYPE*>(&member);
+				if (name_match != nullptr)
+				{
+					return name_match;
+				}
+			}
+		}
+		return nullptr;
+	}
+
+	template <typename MEMBER_TYPE>
+		const MEMBER_TYPE * Namespace::find_member(const SymbolName & i_name) const
+	{
+		for (const auto & member : m_members)
+		{
+			if (member.m_name == i_name)
+			{
+				const MEMBER_TYPE * const name_match = dynamic_cast<const MEMBER_TYPE*>(&member);
+				if (name_match != nullptr)
+				{
+					return name_match;
+				}
+			}
+		}
+		return nullptr;
+	}
 }

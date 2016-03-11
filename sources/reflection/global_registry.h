@@ -47,16 +47,23 @@ namespace reflective
 
 		const Namespace & global_namespace() const { return m_global_namespace; }
 
-		Namespace & edit_global_namespace()  { return m_global_namespace; }
+		Class * add_class(StringView i_full_name, size_t i_size, size_t i_alignment, const std::type_info & i_type_info);
+
+		Type * add_primitive_type(StringView i_full_name, size_t i_size, size_t i_alignment, const std::type_info & i_type_info);
+
+		template <typename UNDERLYING_TYPE>
+			Enum<UNDERLYING_TYPE> * add_enum(StringView i_full_name, size_t i_size, size_t i_alignment, const std::type_info & i_type_info);
 
 		/** Finds a type from a full name ("reflective::Property", or "::reflective::Enum<int>")
 			@return pointer to the type if it has been found, false otherwise.
 			Implementation note: currently the complexity of this method is the same of std::unordered_map::find. */
 		const Type * find_type(StringView i_full_name);
 
+		const Namespace * find_namespace(StringView i_full_path) const;
+
 		void register_type(const Type & i_type, const std::type_info & i_type_info);
 
-		void unregister_type(const Type & i_type, const std::type_info & i_type_info);
+		void unregister_type(Type & i_type, const std::type_info & i_type_info);
 							
 		GlobalRegistry(const GlobalRegistry &) = delete;
 
@@ -64,17 +71,40 @@ namespace reflective
 
 	private:
 
+		Namespace * parse_type_full_name(StringView i_full_name, StringView * o_type_name, StringView * o_template_argument_list);
+
 		GlobalRegistry();
 		
 		~GlobalRegistry() = default;
 
-		void register_member(const NamespaceMember & i_member);
+		void register_member(NamespaceMember & i_member);
 
-		void unregister_member(const NamespaceMember & i_member);
+		void unregister_member(NamespaceMember & i_member);
 
 	private: // data members
-		std::unordered_multimap<SymbolName, const NamespaceMember *, SymbolNameHasher > m_registry;
-		std::unordered_map<const std::type_info *, const Type * > m_types;
+		//std::unordered_multimap<SymbolName, NamespaceMember *, SymbolNameHasher > m_registry;
+
+		unordered_map<SymbolName, unique_ptr<Namespace>, SymbolNameHasher > m_namespaces;
+		unordered_map<const std::type_info *, unique_ptr<Type> > m_types;
 		Namespace m_global_namespace;
 	};
+
+	template <typename UNDERLYING_TYPE>
+		Enum<UNDERLYING_TYPE> * GlobalRegistry::add_enum(StringView i_full_name, size_t i_size, size_t i_alignment, const std::type_info & i_type_info)
+	{
+		StringView type_name, template_argument_list;
+		auto parent_namespace = parse_type_full_name(i_full_name, &type_name, &template_argument_list);
+
+		// create the type
+		auto enum_type = reflective::make_unique<Enum<UNDERLYING_TYPE>>(type_name, i_size, i_alignment);
+
+		// add the type to m_types
+		Class * result = enum_type.get();
+		m_types.emplace(std::make_pair(&i_type_info, std::move(enum_type)));
+
+		// add the enum to the namespace
+		parent_namespace->register_member(*result);
+
+		return result;
+	}
 }

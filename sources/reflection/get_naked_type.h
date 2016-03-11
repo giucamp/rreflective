@@ -155,16 +155,29 @@ namespace reflective
 		};
 
 		template <typename REFLECTING_TYPE>
-		REFLECTING_TYPE * __create_builtin_type(StringView i_complete_name, size_t i_size, size_t i_alignment)
+			REFLECTING_TYPE * __create_builtin_type(StringView i_complete_name, size_t i_size, size_t i_alignment)
 		{
 			static_assert(std::is_base_of<REFLECTING_TYPE, Type>::value, "REFLECTING_TYPE must derive from reflective::Type");
 
 			i_complete_name.remove_prefix_literal("class ");
 			i_complete_name.remove_prefix_literal("::");
 
-			auto identifier = i_complete_name.remove_prefix_identifier();
+			Namespace * curr_namespace = GlobalRegistry::edit_global_namespace().edit_global_namespace();
+			for (;;)
+			{
+				auto identifier = i_complete_name.remove_prefix_identifier();
+				i_complete_name.remove_prefix_writespaces();
 
-				// todo
+				StringView template_parameters;
+				if (i_complete_name.remove_prefix_char('<'))
+				{
+					i_complete_name.remove_prefix_while([](char i_char)->bool { return i_char != '>'; });
+				}
+
+				curr_namespace->register_member
+			}		
+
+			
 		}
 
 		// SymbolTraits::create for primitive types

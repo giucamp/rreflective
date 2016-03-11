@@ -270,9 +270,21 @@ namespace reflective
 				CHAR_TRAITS::compare(m_chars, i_string.data(), string_len) == 0;
 		}
 
+		bool ends_with(BasicStringView<CHAR, CHAR_TRAITS> i_string) const REFLECTIVE_NOEXCEPT
+		{
+			auto const string_len = i_string.length();
+			return m_size >= string_len &&
+				CHAR_TRAITS::compare(m_chars + m_size - string_len, i_string.data(), string_len) == 0;
+		}
+
 		REFLECTIVE_CONSTEXPR bool starts_with(CHAR i_char) const REFLECTIVE_NOEXCEPT
 		{
-			return ot_starts_with<CHAR_TRAITS>(i_char);
+			return m_size >= 1 && CHAR_TRAITS::eq(m_chars[0], i_char);
+		}
+
+		REFLECTIVE_CONSTEXPR bool ends_with(CHAR i_char) const REFLECTIVE_NOEXCEPT
+		{
+			return m_size > 0 && CHAR_TRAITS::eq(m_chars[m_size - 1], i_char);
 		}
 
 		template <typename OTHER_CHAR_TRAITS>
@@ -368,7 +380,14 @@ namespace reflective
 			bool remove_prefix_literal(const CHAR(&i_array)[ARRAY_SIZE]) REFLECTIVE_NOEXCEPT
 		{
 			REFLECTIVE_ASSERT(i_array[ARRAY_SIZE - 1] == 0, "the array must be null-terminated");
-			return remove_prefix_string(StringView( i_array, ARRAY_SIZE - 1));
+			return remove_prefix_string(StringView(i_array, ARRAY_SIZE - 1));
+		}
+
+		template <size_t ARRAY_SIZE>
+			bool remove_suffix_literal(const CHAR(&i_array)[ARRAY_SIZE]) REFLECTIVE_NOEXCEPT
+		{
+			REFLECTIVE_ASSERT(i_array[ARRAY_SIZE - 1] == 0, "the array must be null-terminated");
+			return remove_suffix_string(StringView(i_array, ARRAY_SIZE - 1));
 		}
 
 		bool remove_prefix_writespaces() REFLECTIVE_NOEXCEPT
@@ -395,8 +414,7 @@ namespace reflective
 			return BasicStringView(original_chars, m_chars - original_chars);
 		}
 
-		template <typename PREDICATE>
-			BasicStringView remove_prefix_identifier()
+		BasicStringView remove_prefix_identifier()
 		{
 			const CHAR * const original_chars = m_chars;
 			if (m_size > 0 && isalpha(CHAR_TRAITS::to_int_type(*m_chars)))
@@ -417,6 +435,35 @@ namespace reflective
 		{
 			REFLECTIVE_ASSERT(i_char_count <= m_size, "reflective::BasicStringView::remove_suffix called with invalid param");
 			m_size -= i_char_count;
+		}
+
+		BasicStringView remove_suffix_identifier()
+		{
+			const auto prev_length = m_size;
+			while (m_size > 0 && isalnum(m_chars + m_size - 1))
+			{
+				m_size--;
+			}
+
+			const auto suffix_length = prev_length - m_size;
+
+			REFLECTIVE_INTERNAL_ASSERT(m_size >= suffix_length);
+			m_size -= suffix_length;
+
+			return BasicStringView(m_chars + m_size, suffix_length);
+		}
+
+		bool remove_suffix_string(BasicStringView i_string) REFLECTIVE_NOEXCEPT
+		{
+			if (dd starts_with(i_string))
+			{
+				remove_prefix(i_string.length());
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 
 		void swap(BasicStringView i_other) REFLECTIVE_NOEXCEPT

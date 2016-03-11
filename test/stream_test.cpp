@@ -313,6 +313,7 @@ void Stream_test()
 			// example of OutStringBuffer
 			using namespace reflective;
 			using namespace std;
+			using std::vector;
 
 			vector<char> buffer(10);
 			

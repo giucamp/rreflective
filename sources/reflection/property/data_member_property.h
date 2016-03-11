@@ -114,13 +114,13 @@ namespace reflective
 		inline std::shared_ptr<DataMemberProperty<OWNER_CLASS, PROPERTY_TYPE>> make_property(SymbolName i_name, PROPERTY_TYPE (OWNER_CLASS::*i_member),
 			ClassMember::Flags i_flags = ClassMember::Flags::none)
 	{
-		return std::make_unique<DataMemberProperty<OWNER_CLASS, PROPERTY_TYPE>>(i_name, i_member, i_flags);
+		return make_unique<DataMemberProperty<OWNER_CLASS, PROPERTY_TYPE>>(i_name, i_member, i_flags);
 	}
 
 	template <typename OWNER_CLASS, typename PROPERTY_TYPE>
 		inline std::shared_ptr<ConstDataMemberProperty<OWNER_CLASS, PROPERTY_TYPE>> make_property(SymbolName i_name, const PROPERTY_TYPE(OWNER_CLASS::*i_member),
 			ClassMember::Flags i_flags = ClassMember::Flags::none)
 	{
-		return std::make_unique<ConstDataMemberProperty<OWNER_CLASS, PROPERTY_TYPE>>(i_name, i_member, i_flags);
+		return make_unique<ConstDataMemberProperty<OWNER_CLASS, PROPERTY_TYPE>>(i_name, i_member, i_flags);
 	}
 }
