@@ -57,14 +57,12 @@ namespace reflective
 		/** Finds a type from a full name ("reflective::Property", or "::reflective::Enum<int>")
 			@return pointer to the type if it has been found, false otherwise.
 			Implementation note: currently the complexity of this method is the same of std::unordered_map::find. */
-		const Type * find_type(StringView i_full_name);
+		const Type * find_type_by_full_name(StringView i_full_name) const;
+
+		const Type * find_type_by_rtti(const std::type_info & i_type_info) const;
 
 		const Namespace * find_namespace(StringView i_full_path) const;
-
-		void register_type(const Type & i_type, const std::type_info & i_type_info);
-
-		void unregister_type(Type & i_type, const std::type_info & i_type_info);
-							
+						
 		GlobalRegistry(const GlobalRegistry &) = delete;
 
 		GlobalRegistry & operator = (const GlobalRegistry &) = delete;
@@ -85,26 +83,33 @@ namespace reflective
 		//std::unordered_multimap<SymbolName, NamespaceMember *, SymbolNameHasher > m_registry;
 
 		unordered_map<SymbolName, unique_ptr<Namespace>, SymbolNameHasher > m_namespaces;
-		unordered_map<const std::type_info *, unique_ptr<Type> > m_types;
+		unordered_map<std::type_index, unique_ptr<Type> > m_types_by_rtti;
+		unordered_map<SymbolName, const Type*, SymbolNameHasher > m_types_by_full_name;
 		Namespace m_global_namespace;
 	};
 
 	template <typename UNDERLYING_TYPE>
 		Enum<UNDERLYING_TYPE> * GlobalRegistry::add_enum(StringView i_full_name, size_t i_size, size_t i_alignment, const std::type_info & i_type_info)
 	{
+		i_full_name.remove_prefix_literal("::");
+		i_full_name.remove_prefix_literal("enum ");
+
 		StringView type_name, template_argument_list;
 		auto parent_namespace = parse_type_full_name(i_full_name, &type_name, &template_argument_list);
 
 		// create the type
 		auto enum_type = reflective::make_unique<Enum<UNDERLYING_TYPE>>(type_name, i_size, i_alignment);
 
-		// add the type to m_types
-		Class * result = enum_type.get();
-		m_types.emplace(std::make_pair(&i_type_info, std::move(enum_type)));
+		// add the type to m_types_by_rtti
+		auto const enum_raw_ptr = enum_type.get();
+		m_types_by_rtti.emplace(std::make_pair(std::type_index(i_type_info), std::move(enum_type)));
+
+		// add the type to m_types_by_full_name		
+		m_types_by_full_name.emplace(std::make_pair(i_full_name, enum_raw_ptr));
 
 		// add the enum to the namespace
-		parent_namespace->register_member(*result);
+		parent_namespace->register_member(*enum_raw_ptr);
 
-		return result;
+		return enum_raw_ptr;
 	}
 }

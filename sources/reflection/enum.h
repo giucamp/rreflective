@@ -47,7 +47,7 @@ namespace reflective
 
 		using Member = EnumMember<UNDERLYING_TYPE>;
 
-		Enum(SymbolName i_name);
+		Enum(SymbolName i_name, size_t i_size, size_t i_alignment);
 		
 		const List<Member> & members() const			{ return m_members; }
 

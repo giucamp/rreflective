@@ -63,8 +63,7 @@ namespace reflective
 
 			static const Type * create()
 			{
-				Type * new_type = new Type("void", 0, 1 );
-				return new_type;
+				return GlobalRegistry::instance().add_primitive_type("void", 0, 1, typeid(void));
 			}
 		};
 
@@ -154,37 +153,11 @@ namespace reflective
 			}
 		};
 
-		template <typename REFLECTING_TYPE>
-			REFLECTING_TYPE * __create_builtin_type(StringView i_complete_name, size_t i_size, size_t i_alignment)
-		{
-			static_assert(std::is_base_of<REFLECTING_TYPE, Type>::value, "REFLECTING_TYPE must derive from reflective::Type");
-
-			i_complete_name.remove_prefix_literal("class ");
-			i_complete_name.remove_prefix_literal("::");
-
-			Namespace * curr_namespace = GlobalRegistry::edit_global_namespace().edit_global_namespace();
-			for (;;)
-			{
-				auto identifier = i_complete_name.remove_prefix_identifier();
-				i_complete_name.remove_prefix_writespaces();
-
-				StringView template_parameters;
-				if (i_complete_name.remove_prefix_char('<'))
-				{
-					i_complete_name.remove_prefix_while([](char i_char)->bool { return i_char != '>'; });
-				}
-
-				curr_namespace->register_member
-			}		
-
-			
-		}
-
 		// SymbolTraits::create for primitive types
 		template <typename TYPE>
 			inline const Type * SymbolTraits< TYPE, SymbolTypeId::is_type>::create()
 		{
-			Type * new_type = new Type(get_type_full_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value);
+			Type * new_type = GlobalRegistry::instance().add_primitive_type(get_type_full_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value, typeid(TYPE));
 			new_type->set_special_functions(SpecialFunctions::from_type<TYPE>());
 			TypeSetupContext<TYPE> context(new_type);
 			InternalSetupType<HasSetupClassStaticFunc< TYPE >::value, TYPE>::setup(context);
@@ -195,7 +168,7 @@ namespace reflective
 		template <typename TYPE>
 			inline const Class * SymbolTraits< TYPE, SymbolTypeId::is_class>::create()
 		{
-			Class * class_obj = new Class(get_type_full_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value);
+			Class * class_obj = GlobalRegistry::instance().add_class(get_type_full_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value, typeid(TYPE));
 			class_obj->set_special_functions(SpecialFunctions::from_type<TYPE>());
 			TypeSetupContext<TYPE> context(class_obj);
 			InternalSetupType<HasSetupClassStaticFunc< TYPE >::value, TYPE>::setup(context);
@@ -206,7 +179,7 @@ namespace reflective
 		template <typename TYPE>
 			inline const typename reflective::Enum<std::underlying_type<TYPE>> * SymbolTraits< TYPE, SymbolTypeId::is_enum >::create()
 		{
-			Enum< std::underlying_type<TYPE> > * enum_obj = new Enum< std::underlying_type<TYPE> >(get_type_full_name<TYPE>());
+			auto enum_obj = GlobalRegistry::instance().add_enum<std::underlying_type<TYPE>>(get_type_full_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value, typeid(TYPE));
 			enum_obj->set_special_functions(SpecialFunctions::from_type<TYPE>());
 			TypeSetupContext<TYPE> context(enum_obj);
 			InternalSetupType<HasSetupClassStaticFunc< TYPE >::value, TYPE>::setup(context);

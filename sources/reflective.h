@@ -114,12 +114,12 @@ namespace reflective
 #include "reflection\property\property.h"
 #include "reflection\property\data_member_property.h"
 #include "reflection\class.h"
-#include "reflection\get_naked_type.h"
 #include "reflection\obj_ptr.h"
 #include "reflection\parameter.h"
 #include "reflection\class_template.h"
 #include "reflection\namespace.h"
 #include "reflection\global_registry.h"
+#include "reflection\get_naked_type.h"
 
 // inlines
 #include "core\string_view.inl"

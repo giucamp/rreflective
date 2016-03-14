@@ -60,7 +60,7 @@ namespace reflective
 		{
 			// to do: handle template arguments
 			auto name = i_source.remove_prefix_while([](char i_char){ return isalnum(i_char) != 0; });
-			return GlobalRegistry::instance().find_type(name);
+			return GlobalRegistry::instance().find_type_by_full_name(name);
 		}
 
 		template <typename OUT_STREAM>

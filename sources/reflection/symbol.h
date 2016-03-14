@@ -73,9 +73,11 @@ namespace reflective
 			: m_name(std::move(i_name))
 		{
 			// check the character of the name, if REFLECTIVE_ASSERT_ENABLED is non-zero and SymbolName includes the string
-			#if REFLECTIVE_ASSERT_ENABLED
+			/* Disabled: full names contain other chars
+			
+			#if REFLECTIVE_ASSERT_ENABLED 
 				check_name(i_name);
-			#endif
+			#endif*/
 		}
 
 	public:
@@ -104,6 +106,7 @@ namespace reflective
 
 	private:
 
+/*
 		#if REFLECTIVE_ASSERT_ENABLED
 
 			template < typename HASHER, typename STRING >
@@ -121,11 +124,11 @@ namespace reflective
 			}
 
 			template < typename HASHER >
-				static void check_name(const Identifier<HASHER, void> & /*i_name*/)
+				static void check_name(const Identifier<HASHER, void> & / *i_name* /)
 			{
 			}
 
-		#endif
+		#endif*/
 	};
 }
 

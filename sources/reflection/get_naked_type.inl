@@ -4,7 +4,7 @@ namespace reflective
 	namespace details
 	{
 		template <typename TYPE>
-			SymbolName get_type_full_name()
+			StringView get_type_full_name()
 		{
 			return typeid(TYPE).name();
 		}
@@ -14,7 +14,6 @@ namespace reflective
 		const ReflectingType<TYPE> * create_type()
 	{
 		const ReflectingType<TYPE> * result = details::SymbolTraits<TYPE, details::GetSymbolTypeId<TYPE>::s_type_id >::create();
-		GlobalRegistry::instance().register_type(*result, typeid(TYPE));
 		return result;
 	}
 		

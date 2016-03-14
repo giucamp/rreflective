@@ -32,6 +32,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <vector>
 #include <unordered_map>
+#include <typeinfo>
+#include <typeindex>
 
 namespace reflective
 {

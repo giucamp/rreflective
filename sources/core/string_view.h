@@ -417,12 +417,12 @@ namespace reflective
 		BasicStringView remove_prefix_identifier()
 		{
 			const CHAR * const original_chars = m_chars;
-			if (m_size > 0 && isalpha(CHAR_TRAITS::to_int_type(*m_chars)))
+			if (m_size > 0 && (isalpha(CHAR_TRAITS::to_int_type(*m_chars)) || CHAR_TRAITS::eq(*m_chars, '_')) )
 			{
 				m_chars++;
 				m_size--;
 
-				while (m_size > 0 && isalnum(CHAR_TRAITS::to_int_type(*m_chars)))
+				while (m_size > 0 && (isalnum(CHAR_TRAITS::to_int_type(*m_chars)) || CHAR_TRAITS::eq(*m_chars, '_')))
 				{
 					m_chars++;
 					m_size--;
@@ -437,21 +437,21 @@ namespace reflective
 			m_size -= i_char_count;
 		}
 
-		BasicStringView remove_suffix_identifier()
+		/*BasicStringView remove_suffix_identifier()
 		{
-			const auto prev_length = m_size;
-			while (m_size > 0 && isalnum(m_chars + m_size - 1))
+			auto new_size = m_size;
+			while (new_size > 0 && (isalnum(CHAR_TRAITS::to_int_type(m_chars[new_size - 1])) || CHAR_TRAITS::eq(m_chars[new_size - 1], '_')))
 			{
-				m_size--;
+				new_size--;
 			}
 
-			const auto suffix_length = prev_length - m_size;
+			const auto suffix_length = m_size - new_size;
 
 			REFLECTIVE_INTERNAL_ASSERT(m_size >= suffix_length);
 			m_size -= suffix_length;
 
 			return BasicStringView(m_chars + m_size, suffix_length);
-		}
+		}*/
 
 		bool remove_suffix_string(BasicStringView i_string) REFLECTIVE_NOEXCEPT
 		{
