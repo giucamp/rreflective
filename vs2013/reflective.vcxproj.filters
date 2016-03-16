@@ -111,6 +111,9 @@
     <ClInclude Include="..\sources\core\string_view.h">
       <Filter>core</Filter>
     </ClInclude>
+    <ClInclude Include="..\sources\core\bulk_list.h">
+      <Filter>core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\sources\reflective.cpp" />

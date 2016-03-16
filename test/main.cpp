@@ -25,6 +25,7 @@ namespace reflective
 
 int main()
 {
+	bulk_list__test();
 	reflective::details::hier::test_hier();
 	
 	{

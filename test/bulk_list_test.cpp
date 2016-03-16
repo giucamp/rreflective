@@ -5,8 +5,9 @@
 #include "..\sources\reflective.h"
 #include <cstdlib>
 #include <tuple>
+#include "..\sources\core\bulk_list.h"
 
-namespace reflective
+/*namespace reflective
 {
 	template <typename OTHER_TYPE, typename... CONSTR_PARAMS>
 	static OTHER_TYPE * linear_alloc(void * & io_address, CONSTR_PARAMS && ...i_params)
@@ -108,8 +109,7 @@ namespace reflective
 	private:
 		void * m_bulk;
 	};
-}
-
+}*/
 
 namespace Test1
 {
