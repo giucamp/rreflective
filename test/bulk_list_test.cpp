@@ -116,6 +116,7 @@ namespace Test1
 	struct P
 	{
 		int x, y;
+		P() : x(10), y(20) {}
 	};
 
 	struct P1 : public P
@@ -178,5 +179,9 @@ void bulk_list__test()
 
 	//BulkList<P>::make(make_p(1));
 
-	BulkList<P>::make(make_p("s"), make_p(4), make_p(4.3), make_p("s"));
+	BulkList<P> l = BulkList<P>::make(make_p("s"), make_p(4), make_p(4.3), make_p("s"));
+	for (const auto & el : l)
+	{
+		std::cout << el.x << "  " << el.y;
+	}
 }

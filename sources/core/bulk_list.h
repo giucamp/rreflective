@@ -8,14 +8,6 @@ namespace reflective
 		return reinterpret_cast<TYPE*>((reinterpret_cast<uintptr_t>(i_address) + alignmentMask) & ~alignmentMask);
 	}
 
-	/*template <typename OTHER_TYPE, typename... CONSTR_PARAMS>
-		inline OTHER_TYPE * linear_alloc(void * & io_address, CONSTR_PARAMS && ...i_params)
-	{
-		OTHER_TYPE * result = new(address_upper_align<OTHER_TYPE>(io_address)) OTHER_TYPE(std::forward<CONSTR_PARAMS>(i_params)...);
-		io_address = result + 1;
-		return result;
-	}*/
-
 	template <typename TYPE>
 		class DefaultTypeInfo
 	{
@@ -78,6 +70,8 @@ namespace reflective
 	template <typename TYPE, typename TYPE_INFO = DefaultTypeInfo<TYPE>, typename ALLOCATOR = std::allocator<TYPE> >
 		class BulkList : private ALLOCATOR
 	{
+		enum InternalConstructor { InternalConstructorMem };
+
 	public:
 
 		template <typename... TYPES>
@@ -87,58 +81,122 @@ namespace reflective
 			size_t const buffer_alignment = RecursiveHelper<TYPES...>::s_item_alignment;
 			size_t const item_count = RecursiveHelper<TYPES...>::s_item_count;
 
-			BulkList new_list(InternalConstructorMemb);
+			BulkList new_list(InternalConstructorMem);
 
 			TYPE_INFO * const types = new_list.alloc_type_info_array(item_count);
-			void * const items = new_list.Alloc(buffer_size, buffer_alignment);
-			RecursiveHelper<TYPES...>::construct(types, items, std::forward<TYPES>(i_tuple)...);
+			void * const elements = new_list.alloc_mem(buffer_size, buffer_alignment);
+			RecursiveHelper<TYPES...>::construct(types, elements, std::forward<TYPES>(i_tuple)...);
 
 			new_list.m_size = item_count;
-			new_list.m_items = static_cast<TYPE*>( items );
+			new_list.m_elements = static_cast<TYPE*>( elements );
 			new_list.m_types = types;
 
 			return std::move(new_list);
+		}
+
+		BulkList(const BulkList & i_source)
+		{
+
+		}
+
+		BulkList & operator = (const BulkList & i_source)
+		{
+			return *this;
+		}
+
+		~BulkList()
+		{
+			const auto end = this->end();
+			for (auto it = begin(); it != end; it++)
+			{
+				auto curr_type = it.curr_type();
+				curr_type->destroy(it.curr_element());
+				curr_type->TYPE_INFO::~TYPE_INFO();
+			}
+			free_mem(m_elements);
+			dealloc_type_info_array(m_types, m_size);
 		}
 
 		class iterator
 		{
 		public:
 
-			iterator(BulkList & i_source)
-				: m_curr_type(i_source.m_types), m_curr_item(i_source.m_items)
-			{
+			iterator()
+				: m_curr_element(nullptr), m_curr_type(nullptr), m_end_type(nullptr){}
 
+			iterator(InternalConstructor, TYPE * i_curr_element, TYPE_INFO * i_curr_type, TYPE_INFO * i_end_type)
+				: m_curr_element(i_curr_element), m_curr_type(i_curr_type), m_end_type(i_end_type)
+			{
 			}
 
 			iterator & operator ++ ()
 			{
-				/*size_t const curr_size = m_curr_type->size();
-				m_curr_type = reinterpret_cast<uintptr_t>(m_curr_type) + curr_size;
-				return reinterpret_cast<TYPE*>((reinterpret_cast<uintptr_t>(i_address) + alignmentMask) & ~alignmentMask);*/
+				// m_curr_element is advanced by the size of the current element, and upper aligned to the next element. m_curr_type is just incremented
+				auto const curr_element_size = m_curr_type->size();
+				m_curr_type++;
+				if (m_curr_type < m_end_type)
+				{
+					auto const next_element_alignment = m_curr_type->alignment();
+					assert( (next_element_alignment & (next_element_alignment >> 1)) == 0); // internal check: the alignment must be a power of 2
+					auto const alignment_mask = next_element_alignment - 1;
+					m_curr_element = reinterpret_cast<TYPE*>((reinterpret_cast<uintptr_t>(m_curr_element)+curr_element_size + alignment_mask) & ~alignment_mask);
+				}
+				else
+				{
+					m_curr_element = nullptr;
+				}
 				return *this;
 			}
 
-		private:
+			iterator operator++ ( int)
+			{
+				iterator copy(*this);
+				operator ++ ();
+				return copy;
+			}
+
+			bool operator == (const iterator & i_other) const
+			{
+				assert((m_curr_element == i_other.m_curr_element) == (m_curr_type == i_other.m_curr_type)); // internal check: m_curr_type and m_curr_element must be consistent
+				return m_curr_element == i_other.m_curr_element;
+			}
+
+			bool operator != (const iterator & i_other) const
+			{
+				assert((m_curr_element == i_other.m_curr_element) == (m_curr_type == i_other.m_curr_type) ); // internal check: m_curr_type and m_curr_element must be consistent
+				return m_curr_element != i_other.m_curr_element;
+			}
+
+			TYPE & operator * () const	{ return *m_curr_element; }
+			TYPE * operator -> () const	{ return m_curr_element; }
+
+			TYPE * curr_element() const { return m_curr_element; }
+			TYPE_INFO * curr_type() const { return m_curr_type; }
+
+		private:			
+			TYPE * m_curr_element;
 			TYPE_INFO * m_curr_type;
-			TYPE * m_curr_item;
+			TYPE_INFO * m_end_type;
 		};
+
+		iterator begin()	{ return iterator(InternalConstructorMem, m_elements, m_types, m_types + m_size); }
+		iterator end()		{ return iterator(InternalConstructorMem, nullptr, m_types + m_size, m_types + m_size); }
 
 	private:
 
-		TYPE * get_items()
+		TYPE * get_elements()
 		{
-			return m_items;
+			return m_elements;
 		}
 
-
-		static void * Alloc(size_t i_size, size_t i_alignment)
+		void * alloc_mem(size_t i_size, size_t i_alignment)
 		{
 			return _aligned_malloc(i_size, i_alignment);
 		}
 
-		static void * Free(void * i_block)
+		void free_mem(void * i_block)
 		{
-			return _aligned_free(i_block);
+			_aligned_free(i_block);
 		}
 
 		TYPE_INFO * alloc_type_info_array(size_t i_count)
@@ -149,16 +207,15 @@ namespace reflective
 			return new_array;
 		}
 
-		void * delete_type_info_array(TYPE_INFO * i_array)
+		void dealloc_type_info_array(TYPE_INFO * i_array, size_t i_count)
 		{
 			using Allocator = typename std::allocator_traits<ALLOCATOR>::rebind_alloc<TYPE_INFO>;
 			Allocator alloc( *static_cast<const ALLOCATOR*>(this) );
-			alloc.deallocate(i_array);
+			alloc.deallocate(i_array, i_count);
 		}
 
 	private:
-
-		enum InternalConstructor { InternalConstructorMemb };
+		
 
 		BulkList(InternalConstructor)
 		{
@@ -192,10 +249,10 @@ namespace reflective
 			static const size_t s_item_alignment = std::alignment_of<FIRST_TYPE>::value > RecursiveHelper<OTHER_TYPES...>::s_item_alignment ?
 				std::alignment_of<FIRST_TYPE>::value : RecursiveHelper<OTHER_TYPES...>::s_item_alignment;
 
-			inline static void construct(TYPE_INFO * i_types, void * i_items, FIRST_TYPE && i_source, OTHER_TYPES && ... i_s1)
+			inline static void construct(TYPE_INFO * i_types, void * i_elements, FIRST_TYPE && i_source, OTHER_TYPES && ... i_s1)
 			{
 				new(i_types) TYPE_INFO( TYPE_INFO::make<FIRST_TYPE>() );
-				FIRST_TYPE * const new_item = new(address_upper_align<FIRST_TYPE>(i_items)) FIRST_TYPE(std::forward<FIRST_TYPE>(i_source));
+				FIRST_TYPE * const new_item = new(address_upper_align<FIRST_TYPE>(i_elements)) FIRST_TYPE(std::forward<FIRST_TYPE>(i_source));
 				RecursiveHelper<OTHER_TYPES...>::construct(
 					i_types + 1, new_item + 1, std::forward<OTHER_TYPES>(i_s1)...);
 			}
@@ -207,16 +264,16 @@ namespace reflective
 			static const size_t s_item_count = 1;
 			static const size_t s_item_alignment = std::alignment_of<LAST_TYPE>::value;
 
-			inline static void construct(TYPE_INFO * i_types, void * i_items, LAST_TYPE && i_source)
+			inline static void construct(TYPE_INFO * i_types, void * i_elements, LAST_TYPE && i_source)
 			{
 				new(i_types) TYPE_INFO(TYPE_INFO::make<LAST_TYPE>());
-				new(address_upper_align<LAST_TYPE>(i_items)) LAST_TYPE(std::forward<LAST_TYPE>(i_source));
+				new(address_upper_align<LAST_TYPE>(i_elements)) LAST_TYPE(std::forward<LAST_TYPE>(i_source));
 			}
 		};
 
 	private:
 		size_t m_size;
-		TYPE * m_items;
+		TYPE * m_elements;
 		TYPE_INFO * m_types;
 	};
 }
