@@ -1,11 +1,14 @@
 
 namespace reflective
 {
-	template <typename TYPE>
-		TYPE * address_upper_align(void * i_address)
+	namespace details
 	{
-		const size_t alignmentMask = std::alignment_of<TYPE>::value - 1;
-		return reinterpret_cast<TYPE*>((reinterpret_cast<uintptr_t>(i_address) + alignmentMask) & ~alignmentMask);
+		template <typename TYPE>
+			TYPE * address_upper_align(void * i_address) noexcept
+		{
+			const size_t alignmentMask = std::alignment_of<TYPE>::value - 1;
+			return reinterpret_cast<TYPE*>((reinterpret_cast<uintptr_t>(i_address) + alignmentMask) & ~alignmentMask);
+		}
 	}
 
 	template <typename TYPE>
@@ -14,15 +17,18 @@ namespace reflective
 	public:
 
 		DefaultTypeInfo() = delete;
-		DefaultTypeInfo(const DefaultTypeInfo &) = delete;
+		DefaultTypeInfo(const DefaultTypeInfo &)= delete;
 		DefaultTypeInfo & operator = (const DefaultTypeInfo &) = delete;
 		DefaultTypeInfo & operator = (DefaultTypeInfo &&) = delete;
 
-		DefaultTypeInfo(DefaultTypeInfo && i_source)
-			: m_size(i_source.m_size), m_alignment(i_source.m_alignment), m_mover_destructor(i_source.m_mover_destructor)
-		{
-
-		}		
+		#if _MSC_VER >= 1900
+			DefaultTypeInfo(DefaultTypeInfo && i_source) noexcept = default;
+		#else
+			DefaultTypeInfo(DefaultTypeInfo && i_source) noexcept // visua studio 2013 doesnt seems to support defauted move constructors
+				: m_size(i_source.m_size), m_alignment(i_source.m_alignment), m_mover_destructor(i_source.m_mover_destructor)
+			{
+			}		
+		#endif
 
 		template <typename COMPLETE_TYPE>
 			static DefaultTypeInfo make()
@@ -34,12 +40,12 @@ namespace reflective
 		
 		size_t alignment() const { return m_alignment; }
 		
-		void destroy(TYPE * i_element)
+		void destroy(TYPE * i_element) const
 		{
 			(*m_mover_destructor)(nullptr, i_element);
 		}
 
-		void move_and_destroy(void * i_destination, TYPE * i_source_element)
+		void move_and_destroy(void * i_destination, TYPE * i_source_element) const
 		{
 			(*m_mover_destructor)(i_destination, i_source_element);
 		}
@@ -72,10 +78,33 @@ namespace reflective
 	{
 		enum InternalConstructor { InternalConstructorMem };
 
+		void destroy_impl() noexcept
+		{
+			const auto end = this->end();
+			for (auto it = begin(); it != end; it++)
+			{
+				auto curr_type = it.curr_type();
+				curr_type->destroy(it.curr_element());
+				curr_type->TYPE_INFO::~TYPE_INFO();
+			}
+			free_mem(m_elements);
+			dealloc_type_info_array(m_types, m_size);
+		}
+
+		void move_impl(BulkList && i_source) noexcept
+		{
+			m_elements = i_source.m_elements;
+			m_types = i_source.m_types;
+			m_size = i_source.m_size;
+			i_source.m_elements = nullptr;
+			i_source.m_types = nullptr;
+			i_source.m_size = 0;
+		}
+
 	public:
 
 		template <typename... TYPES>
-			inline static BulkList make(TYPES... i_tuple)
+			inline static BulkList make(TYPES &&... i_tuple)
 		{
 			size_t const buffer_size = RecursiveSize<0, TYPES...>::s_buffer_size;
 			size_t const buffer_alignment = RecursiveHelper<TYPES...>::s_item_alignment;
@@ -94,27 +123,30 @@ namespace reflective
 			return std::move(new_list);
 		}
 
-		BulkList(const BulkList & i_source)
-		{
+		BulkList() 
+			: m_size(0), m_elements(nullptr), m_types(nullptr)
+				{ }
 
+		BulkList(BulkList && i_source) noexcept
+		{
+			move_impl(std::move(i_source));
 		}
 
-		BulkList & operator = (const BulkList & i_source)
+		BulkList & operator = (BulkList && i_source) noexcept
 		{
+			assert(this != &i_source); // self move asignment gives undefined behaviour
+			destroy_impl();
+			move_impl(std::move(i_source));
 			return *this;
 		}
 
-		~BulkList()
+		// copy not supported by now
+		BulkList(const BulkList & i_source) = delete;
+		BulkList & operator = (const BulkList & i_source) = delete;
+
+		~BulkList() noexcept
 		{
-			const auto end = this->end();
-			for (auto it = begin(); it != end; it++)
-			{
-				auto curr_type = it.curr_type();
-				curr_type->destroy(it.curr_element());
-				curr_type->TYPE_INFO::~TYPE_INFO();
-			}
-			free_mem(m_elements);
-			dealloc_type_info_array(m_types, m_size);
+			destroy_impl();
 		}
 
 		class iterator
@@ -194,7 +226,7 @@ namespace reflective
 			return _aligned_malloc(i_size, i_alignment);
 		}
 
-		void free_mem(void * i_block)
+		void free_mem(void * i_block) noexcept
 		{
 			_aligned_free(i_block);
 		}
@@ -207,7 +239,7 @@ namespace reflective
 			return new_array;
 		}
 
-		void dealloc_type_info_array(TYPE_INFO * i_array, size_t i_count)
+		void dealloc_type_info_array(TYPE_INFO * i_array, size_t i_count) noexcept
 		{
 			using Allocator = typename std::allocator_traits<ALLOCATOR>::rebind_alloc<TYPE_INFO>;
 			Allocator alloc( *static_cast<const ALLOCATOR*>(this) );
@@ -252,7 +284,7 @@ namespace reflective
 			inline static void construct(TYPE_INFO * i_types, void * i_elements, FIRST_TYPE && i_source, OTHER_TYPES && ... i_s1)
 			{
 				new(i_types) TYPE_INFO( TYPE_INFO::make<FIRST_TYPE>() );
-				FIRST_TYPE * const new_item = new(address_upper_align<FIRST_TYPE>(i_elements)) FIRST_TYPE(std::forward<FIRST_TYPE>(i_source));
+				FIRST_TYPE * const new_item = new(details::address_upper_align<FIRST_TYPE>(i_elements)) FIRST_TYPE(std::forward<FIRST_TYPE>(i_source));
 				RecursiveHelper<OTHER_TYPES...>::construct(
 					i_types + 1, new_item + 1, std::forward<OTHER_TYPES>(i_s1)...);
 			}
@@ -267,7 +299,7 @@ namespace reflective
 			inline static void construct(TYPE_INFO * i_types, void * i_elements, LAST_TYPE && i_source)
 			{
 				new(i_types) TYPE_INFO(TYPE_INFO::make<LAST_TYPE>());
-				new(address_upper_align<LAST_TYPE>(i_elements)) LAST_TYPE(std::forward<LAST_TYPE>(i_source));
+				new(details::address_upper_align<LAST_TYPE>(i_elements)) LAST_TYPE(std::forward<LAST_TYPE>(i_source));
 			}
 		};
 
