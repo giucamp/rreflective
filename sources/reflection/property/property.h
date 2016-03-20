@@ -52,7 +52,7 @@ namespace reflective
 		/** Retrieves the type of the property. This information is very important to use the getter and the 
 			setters methods. To construct, destroy, get the size and alignment of values of the property use 
 			type().primary_type(). */
-		const QualifiedTypePtr & type() const	{ return m_type; }
+		const QualifiedTypePtr & type() const REFLECTIVE_NOEXCEPT	{ return m_type; }
 
 		/** Retrieves the value of the property for a given owner object, using copy semantics. On success the value 
 				is copy-constructed in the specified buffer. The owner object is not atered in any way.

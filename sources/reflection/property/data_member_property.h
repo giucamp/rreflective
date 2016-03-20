@@ -36,6 +36,7 @@ namespace reflective
 				i_dest = i_source;
 				return true;
 			}
+			static const ClassMember::Flags s_can = ClassMember::Flags::can_set_value_by_copy;
 		};
 		template <typename TYPE>
 			struct DataMemberCopyAssign<TYPE,false>
@@ -56,6 +57,7 @@ namespace reflective
 				new(i_dest) TYPE(std::move(i_source));
 				return true;
 			}
+			static const ClassMember::Flags s_can = ClassMember::Flags::can_get_value_by_move;
 		};
 		template <typename TYPE>
 			struct DataMemberMoveConstruct<TYPE,false>
@@ -75,6 +77,7 @@ namespace reflective
 				i_dest = std::move(i_source);
 				return true;
 			}
+			static const ClassMember::Flags s_can = ClassMember::Flags::can_set_value_by_move;
 		};
 		template <typename TYPE>
 			struct DataMemberMoveAssign<TYPE,false>
@@ -91,9 +94,10 @@ namespace reflective
 
 			using MemberPtr = PROPERTY_TYPE(OWNER_CLASS::*);
 
-			DataMemberProperty(SymbolName i_name, MemberPtr i_member_ptr, ClassMember::Flags i_flags)
+			DataMemberProperty(SymbolName i_name, MemberPtr i_member_ptr, ClassMember::Flags i_flags) REFLECTIVE_NOEXCEPT
 				: Property(std::move(i_name), get_type<PROPERTY_TYPE>(), 
-					i_flags ),
+					i_flags | DataMemberCopyConstruct<PROPERTY_TYPE>::s_can | DataMemberMoveConstruct<PROPERTY_TYPE>::s_can |
+						DataMemberCopyAssign<PROPERTY_TYPE>::s_can | DataMemberMoveAssign<PROPERTY_TYPE>::s_can ),
 				m_member_ptr(i_member_ptr)
 			{
 			}
@@ -222,9 +226,9 @@ namespace reflective
 
 			using MemberPtr = const PROPERTY_TYPE(OWNER_CLASS::*);
 
-			ConstDataMemberProperty(SymbolName i_name, MemberPtr i_member_ptr, ClassMember::Flags i_flags)
+			ConstDataMemberProperty(SymbolName i_name, MemberPtr i_member_ptr, ClassMember::Flags i_flags) REFLECTIVE_NOEXCEPT
 				: Property(std::move(i_name), get_type<PROPERTY_TYPE>(), 
-					i_flags ),  
+					i_flags | ClassMember::Flags::can_get_value_by_copy ),
 					m_member_ptr(i_member_ptr) { }
 
 			#if defined(_MSC_VER) && _MSC_VER < 1900 // Visual Studio 2013 and below
@@ -298,14 +302,14 @@ namespace reflective
 
 	template <typename OWNER_CLASS, typename PROPERTY_TYPE>
 		inline details::DataMemberProperty<OWNER_CLASS, PROPERTY_TYPE> make_property(SymbolName i_name, PROPERTY_TYPE (OWNER_CLASS::*i_member_ptr),
-			ClassMember::Flags i_flags = ClassMember::Flags::none)
+			ClassMember::Flags i_flags = ClassMember::Flags::none) REFLECTIVE_NOEXCEPT
 	{
 		return details::DataMemberProperty<OWNER_CLASS, PROPERTY_TYPE>(i_name, i_member_ptr, i_flags);
 	}
 
 	template <typename OWNER_CLASS, typename PROPERTY_TYPE>
 		inline details::ConstDataMemberProperty<OWNER_CLASS, PROPERTY_TYPE> make_property(SymbolName i_name, const PROPERTY_TYPE (OWNER_CLASS::*i_member_ptr),
-			ClassMember::Flags i_flags = ClassMember::Flags::none)
+			ClassMember::Flags i_flags = ClassMember::Flags::none) REFLECTIVE_NOEXCEPT
 	{
 		return details::ConstDataMemberProperty<OWNER_CLASS, PROPERTY_TYPE>(i_name, i_member_ptr, i_flags);
 	}
