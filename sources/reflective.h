@@ -85,7 +85,7 @@ namespace reflective
 }
 
 #include "core\fut_std.h"
-
+#include "core\bulk_list.h"
 
 #include "reflective_settings.h"
 #include "reflective_common.h"

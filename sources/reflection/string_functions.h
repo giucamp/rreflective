@@ -41,7 +41,7 @@ namespace reflective
 		using AssignFromString = bool (*)(void * i_object, StringView & i_source, OutStringBuffer & i_error_dest);
 
 		StringFunctions()
-			: m_to_string(nullptr), m_assign_from_string_function(nullptr)
+			: m_to_string(nullptr), m_to_std_stream(nullptr), m_assign_from_string_function(nullptr)
 		{
 		}
 

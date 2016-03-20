@@ -41,13 +41,19 @@ namespace reflective
 			none = 0,
 			private_member = 1 << 0,
 			protected_member = 1 << 1,
-			can_get_value = 1 << 2,
-			can_get_value_inplace = 1 << 3,
-			can_set_value = 1 << 5,
-			can_set_value_inplace = 1 << 5,
+			can_get_value_by_copy = 1 << 2,
+			can_get_value_by_move = 1 << 3,
+			can_inspect_value_inplace = 1 << 4,
+			can_set_value_by_copy = 1 << 5,
+			can_set_value_by_move = 1 << 6,
+			can_edit_value_inplace = 1 << 7,
 		};
 		
 		ClassMember(SymbolName i_name, Flags i_flags);
+
+		#if defined(_MSC_VER) && _MSC_VER < 1900 // Visual Studio 2013 and below
+			ClassMember(const ClassMember&) = delete;
+		#endif
 
 		bool has_flags(Flags i_flags) const;
 

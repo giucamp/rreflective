@@ -1,10 +1,12 @@
 
+#pragma once
+
 namespace reflective
 {
 	namespace details
 	{
 		template <typename TYPE>
-			TYPE * address_upper_align(void * i_address) noexcept
+			TYPE * address_upper_align(void * i_address) REFLECTIVE_NOEXCEPT
 		{
 			const size_t alignmentMask = std::alignment_of<TYPE>::value - 1;
 			return reinterpret_cast<TYPE*>((reinterpret_cast<uintptr_t>(i_address) + alignmentMask) & ~alignmentMask);
@@ -21,19 +23,19 @@ namespace reflective
 		DefaultTypeInfo & operator = (const DefaultTypeInfo &) = delete;
 		DefaultTypeInfo & operator = (DefaultTypeInfo &&) = delete;
 
-		#if _MSC_VER >= 1900
-			DefaultTypeInfo(DefaultTypeInfo && i_source) noexcept = default;
-		#else
-			DefaultTypeInfo(DefaultTypeInfo && i_source) noexcept // visua studio 2013 doesnt seems to support defauted move constructors
+		#if defined(_MSC_VER) && _MSC_VER < 1900
+			DefaultTypeInfo(DefaultTypeInfo && i_source) REFLECTIVE_NOEXCEPT // visual studio 2013 doesnt seems to support defauted move constructors
 				: m_size(i_source.m_size), m_alignment(i_source.m_alignment), m_mover_destructor(i_source.m_mover_destructor)
-			{
-			}		
+					{ }			
+		#else
+			DefaultTypeInfo(DefaultTypeInfo && i_source) REFLECTIVE_NOEXCEPT = default;
 		#endif
 
 		template <typename COMPLETE_TYPE>
 			static DefaultTypeInfo make()
 		{
-			return DefaultTypeInfo(sizeof(COMPLETE_TYPE), std::alignment_of<COMPLETE_TYPE>::value, &MoverDestructorImpl < COMPLETE_TYPE >);
+			return DefaultTypeInfo(sizeof(COMPLETE_TYPE), std::alignment_of<COMPLETE_TYPE>::value, 
+				&CopyConstructImpl< COMPLETE_TYPE >, &MoverDestructorImpl< COMPLETE_TYPE >);
 		}
 
 		size_t size() const { return m_size; }
@@ -45,6 +47,11 @@ namespace reflective
 			(*m_mover_destructor)(nullptr, i_element);
 		}
 
+		void copy(void * i_destination, const TYPE & i_source_element) const
+		{
+			(*m_copy_constructor)(i_destination, i_source_element);
+		}
+
 		void move_and_destroy(void * i_destination, TYPE * i_source_element) const
 		{
 			(*m_mover_destructor)(i_destination, i_source_element);
@@ -52,12 +59,20 @@ namespace reflective
 
 	private:
 
+		using CopyConstructorPtr = void(*)(void * i_dest_element, const TYPE & i_source_element);
 		using MoverDestructorPtr = void (*)(void * i_dest_element, TYPE * i_source_element);
 
-		DefaultTypeInfo(size_t i_size, size_t i_alignment, MoverDestructorPtr i_mover_destructor)
-			: m_size(i_size), m_alignment(i_alignment), m_mover_destructor(i_mover_destructor)
+		DefaultTypeInfo(size_t i_size, size_t i_alignment, CopyConstructorPtr i_copy_constructor, MoverDestructorPtr i_mover_destructor)
+			: m_size(i_size), m_alignment(i_alignment), m_copy_constructor(i_copy_constructor), m_mover_destructor(i_mover_destructor)
 				{ }
-		
+
+		template <typename COMPLETE_TYPE>
+			static void CopyConstructImpl(void * /*i_destination*/, const TYPE & /*i_source_element*/)
+		{
+			// TO DO: detect if the type is copyable
+			//new (i_destination) COMPLETE_TYPE(static_cast<const COMPLETE_TYPE&>(i_source_element));
+		}
+
 		template <typename COMPLETE_TYPE>
 			static void MoverDestructorImpl(void * i_destination, TYPE * i_source_element)
 		{
@@ -70,6 +85,7 @@ namespace reflective
 
 	private:
 		size_t const m_size, m_alignment;
+		CopyConstructorPtr const m_copy_constructor;
 		MoverDestructorPtr const m_mover_destructor;
 	};
 
@@ -78,7 +94,7 @@ namespace reflective
 	{
 		enum InternalConstructor { InternalConstructorMem };
 
-		void destroy_impl() noexcept
+		void destroy_impl() REFLECTIVE_NOEXCEPT
 		{
 			const auto end = this->end();
 			for (auto it = begin(); it != end; it++)
@@ -91,7 +107,7 @@ namespace reflective
 			dealloc_type_info_array(m_types, m_size);
 		}
 
-		void move_impl(BulkList && i_source) noexcept
+		void move_impl(BulkList && i_source) REFLECTIVE_NOEXCEPT
 		{
 			m_elements = i_source.m_elements;
 			m_types = i_source.m_types;
@@ -127,12 +143,12 @@ namespace reflective
 			: m_size(0), m_elements(nullptr), m_types(nullptr)
 				{ }
 
-		BulkList(BulkList && i_source) noexcept
+		BulkList(BulkList && i_source) REFLECTIVE_NOEXCEPT
 		{
 			move_impl(std::move(i_source));
 		}
 
-		BulkList & operator = (BulkList && i_source) noexcept
+		BulkList & operator = (BulkList && i_source) REFLECTIVE_NOEXCEPT
 		{
 			assert(this != &i_source); // self move asignment gives undefined behaviour
 			destroy_impl();
@@ -140,11 +156,18 @@ namespace reflective
 			return *this;
 		}
 
-		// copy not supported by now
-		BulkList(const BulkList & i_source) = delete;
-		BulkList & operator = (const BulkList & i_source) = delete;
+		/*BulkList(const BulkList & i_source)
+			: m_size()
+		{
+			
+		}
 
-		~BulkList() noexcept
+		BulkList & operator = (const BulkList & i_source)
+		{
+			return *this;
+		}*/
+
+		~BulkList() REFLECTIVE_NOEXCEPT
 		{
 			destroy_impl();
 		}
@@ -226,7 +249,7 @@ namespace reflective
 			return _aligned_malloc(i_size, i_alignment);
 		}
 
-		void free_mem(void * i_block) noexcept
+		void free_mem(void * i_block) REFLECTIVE_NOEXCEPT
 		{
 			_aligned_free(i_block);
 		}
@@ -239,7 +262,7 @@ namespace reflective
 			return new_array;
 		}
 
-		void dealloc_type_info_array(TYPE_INFO * i_array, size_t i_count) noexcept
+		void dealloc_type_info_array(TYPE_INFO * i_array, size_t i_count) REFLECTIVE_NOEXCEPT
 		{
 			using Allocator = typename std::allocator_traits<ALLOCATOR>::rebind_alloc<TYPE_INFO>;
 			Allocator alloc( *static_cast<const ALLOCATOR*>(this) );

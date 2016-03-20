@@ -44,6 +44,13 @@ namespace reflective
 	static const InheritanceSupport s_inheritance_support = InheritanceSupport::Functions;
 
 	#define REFLECTIVE_ENABLE_MULTIPLE_INHERITANCE		1
+
+	/** This function is called when the user requests an operation which is documented to be invalid,
+		like quering the value of a property specifiing an owner object of the wrong type. */
+	inline void on_invaid_operation(const char * i_error_message)
+	{
+		throw std::exception(i_error_message);
+	}
 }
 	
 #define REFLECTIVE_DEBUG 1
@@ -52,4 +59,5 @@ namespace reflective
 
 #define REFLECTIVE_ASSERT(i_value, i_error_message)				if(!(i_value)) {__debugbreak();}
 #define REFLECTIVE_TEST_ASSERT(i_value)							if(!(i_value)) {__debugbreak();}
+#define REFLECTIVE_RUNTIME_CHECK(i_value, ...)					if(!(i_value)) {__debugbreak();}
 #define REFLECTIVE_INTERNAL_ASSERT(i_value)						if(!(i_value)) {__debugbreak();}

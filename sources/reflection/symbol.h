@@ -65,8 +65,8 @@ namespace reflective
 		type (that is whether it is a reflective::Class, reflective::Namespace, or whatever. */
 	class Symbol
 	{
-	protected:		
-		
+	protected:
+
 		/** Constructs a Symbol, providing a name. If REFLECTIVE_ASSERT_ENABLED is defined as non-zero, the name is checked
 			to detect an invalid format. This is just a debug check: the caller is responsible to specify a valid string. */
 		Symbol(SymbolName i_name)
@@ -74,8 +74,8 @@ namespace reflective
 		{
 			// check the character of the name, if REFLECTIVE_ASSERT_ENABLED is non-zero and SymbolName includes the string
 			/* Disabled: full names contain other chars
-			
-			#if REFLECTIVE_ASSERT_ENABLED 
+
+			#if REFLECTIVE_ASSERT_ENABLED
 				check_name(i_name);
 			#endif*/
 		}
@@ -86,8 +86,15 @@ namespace reflective
 		using ThisClass = Symbol;
 		static void setup_class(Class & i_class);
 
-		Symbol(const Symbol &) = delete; // copy construction not allowed
-		Symbol & operator = (const Symbol &) = delete; // copy assignment not allowed
+		// deleted operations
+		Symbol(const Symbol &) = delete;
+		Symbol & operator = (const Symbol &) = delete;
+		Symbol & operator = (Symbol &&) = delete;
+
+		// move constructor
+		Symbol(Symbol && i_source) REFLECTIVE_NOEXCEPT
+			: m_name(std::move(i_source.m_name)), m_attributes(std::move(i_source.m_attributes))
+				{ }
 
 		/** Returns the name of the symbol, as a SymbolName. */
 		const SymbolName & name() const			{ return m_name; }

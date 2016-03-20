@@ -45,12 +45,12 @@ namespace reflective
 			BaseType::from_types<ThisClass, MyNamespace::OtherNamespace::MyBaseClass>(),
 			BaseType::from_types<ThisClass, MyNamespace::OtherNamespace::MyBaseClass1>() });
 		
-		List<Property> empty = { 
+		auto properties = List<Property>::make(
 			make_property<ThisClass>("IntVar", &ThisClass::m_int_var),
 			make_property<ThisClass>("FloatVar", &ThisClass::m_float_var),
-			make_property<ThisClass>("ConstFloatVar", &ThisClass::m_const_float_var),
-		};
-		i_context.type()->set_properites(std::move(empty));
+			make_property<ThisClass>("ConstFloatVar", &ThisClass::m_const_float_var)
+		);
+		i_context.type()->set_properites(std::move(properties));
 	}
 }
 
