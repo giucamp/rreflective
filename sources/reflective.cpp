@@ -13,6 +13,7 @@
 
 #include "reflection\symbol.cpp"
 #include "reflection\special_functions.cpp"
+#include "reflection\string_functions.cpp"
 #include "reflection\primitive_types.cpp"
 #include "reflection\namespace_member.cpp"
 #include "reflection\type.cpp"

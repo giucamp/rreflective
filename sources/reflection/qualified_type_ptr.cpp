@@ -10,14 +10,6 @@ namespace reflective
 		REFLECTIVE_INTERNAL_ASSERT( (i_volatileness_word & ~((2 << i_indirection_levels) - 1)) == 0);
 	}
 
-	bool impl(bool i_first, bool i_second)
-	{
-		if (i_first)
-			return i_second;
-		else
-			return true;
-	}
-
 	QualifiedTypePtr::QualifiedTypePtr(const Type & i_final_type, ArrayView<const CV_Flags> i_cv_flags)
 		: m_final_type(&i_final_type)
 	{

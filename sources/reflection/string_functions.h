@@ -32,9 +32,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	template <typename TYPE, typename = VoidT<>> struct HasStringizer : std::false_type { };
-	template <typename TYPE> struct HasStringizer<TYPE, VoidT<decltype(   TYPE::method6    )>> : std::true_type { };
-
 	// http://stackoverflow.com/questions/18570285/using-sfinae-to-detect-a-member-function
 
 	/** Checks at compile time if a type has member function with this name and signature:
@@ -72,6 +69,28 @@ namespace reflective
 	public:
 		static bool const value = sizeof(Test<TYPE>(0)) == sizeof(Yes);
 	};
+
+	namespace details
+	{
+		namespace sfinae
+		{
+			struct NoSupport {};
+			OutStringBuffer & dummy_get_OutStringBuffer();
+			std::ostream & dummy_get_std_ostream();
+			template<typename TYPE> const TYPE & dummy_get_Any();
+
+			// falldowns
+			template<typename T> NoSupport operator << (OutStringBuffer &, const T &);
+			template<typename T> NoSupport operator << (std::ostream &, const T &);
+
+			template <class TYPE>
+			struct has_stringizers {
+				TYPE t;
+				static const bool has_out_to_OutStringBuffer = !std::is_same< NoSupport, decltype(dummy_get_OutStringBuffer() << dummy_get_Any<TYPE>()) >::value;
+				static const bool has_out_to_std_ostream = !std::is_same< NoSupport, decltype(dummy_get_std_ostream() << dummy_get_Any<TYPE>()) >::value;
+			};
+		}
+	}
 
 	class StringFunctions final
 	{

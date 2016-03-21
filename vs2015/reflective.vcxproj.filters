@@ -171,6 +171,9 @@
     <ClCompile Include="..\sources\reflection\symbol.cpp">
       <Filter>reflection</Filter>
     </ClCompile>
+    <ClCompile Include="..\sources\reflection\string_functions.cpp">
+      <Filter>reflection</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\sources\reflection\qualified_type_ptr.inl">
