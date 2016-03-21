@@ -94,6 +94,7 @@ namespace reflective
 #include "core\traits.h"
 #include "core\string_view.h"
 #include "core\out_string_buffer.h"
+#include "core\in_string_buffer.h"
 #include "core\ptr_string.h"
 #include "core\identifier.h"
 #include "core\string_hash.h"

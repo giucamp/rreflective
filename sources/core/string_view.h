@@ -39,7 +39,7 @@ namespace reflective
 		remove_prefix_char and remove_prefix_string).
 	*/
 	template <typename CHAR, typename CHAR_TRAITS >
-		class BasicStringView
+		class BasicStringView final
 	{
 	public:
 
@@ -494,17 +494,17 @@ namespace reflective
 
 		template <typename TYPE>
 			bool read(TYPE & o_object, OutStringBuffer i_error)
-		{
-			return ReadAny<TYPE, has_assign_from_string<TYPE>::value>::read(*this, i_error, o_object);
-		}
+			{
+				return ReadAny<TYPE, has_assign_from_string<TYPE>::value>::read(*this, i_error, o_object);
+			}
 
 		template <typename TYPE>
 			bool read(TYPE & o_object)
-		{
-			CHAR small_buffer[sizeof(int)];
-			OutStringBuffer small_error_buffer(small_buffer);
-			return ReadAny<TYPE, has_assign_from_string<TYPE>::value>::read(*this, small_error_buffer, o_object);
-		}
+			{
+				CHAR small_buffer[sizeof(int)];
+				OutStringBuffer small_error_buffer(small_buffer);
+				return ReadAny<TYPE, has_assign_from_string<TYPE>::value>::read(*this, small_error_buffer, o_object);
+			}
 
 	private:
 

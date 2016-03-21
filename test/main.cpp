@@ -22,9 +22,27 @@ namespace reflective
 	}
 }
 
+struct Constr
+{
+	Constr() { std::cout << "start" << std::endl; }
+	~Constr() { std::cout << "end" << std::endl; }
+};
+
 
 int main()
 {
+	try
+	{
+		Constr g;
+		std::exception_ptr exc = std::make_exception_ptr(42);
+		rethrow_exception(exc);
+	}
+	catch (int d)
+	{
+		std::cout << d;
+	}
+
+
 	bulk_list__test();
 	reflective::details::hier::test_hier();
 	

@@ -74,7 +74,7 @@ namespace reflective
 		\endcode
 		
 	*/
-	class OutStringBuffer
+	class OutStringBuffer final
 	{
 	public:
 		

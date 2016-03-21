@@ -173,7 +173,7 @@ namespace Test1
 
 	struct TD
 	{
-		~TD() noexcept(false)
+		~TD() REFLECTIVE_NOEXCEPT_V(false)
 		{
 			throw 0;
 		}

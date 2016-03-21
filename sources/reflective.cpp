@@ -10,6 +10,7 @@
 
 #include "core\string_view.cpp"
 #include "core\out_string_buffer.cpp"
+#include "core\in_string_buffer.cpp"
 
 #include "reflection\symbol.cpp"
 #include "reflection\special_functions.cpp"

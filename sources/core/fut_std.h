@@ -35,9 +35,11 @@ namespace reflective
 	#if defined(_MSC_VER) && _MSC_VER < 1900 // Visual Studio 2013 and below
 		#define REFLECTIVE_CONSTEXPR
 		#define REFLECTIVE_NOEXCEPT
+		#define REFLECTIVE_NOEXCEPT_V(value)
 	#else
-		#define REFLECTIVE_CONSTEXPR		constexpr
-		#define REFLECTIVE_NOEXCEPT			noexcept
+		#define REFLECTIVE_CONSTEXPR			constexpr
+		#define REFLECTIVE_NOEXCEPT				noexcept
+		#define REFLECTIVE_NOEXCEPT_V(value)	noexcept(value)
 	#endif
 	
 	
