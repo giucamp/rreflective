@@ -87,7 +87,11 @@ namespace reflective
 		static void setup_class(Class & i_class);
 
 		// deleted operations
-		Symbol(const Symbol &) = delete;
+		#if defined(_MSC_VER) && _MSC_VER < 1900 // Visual Studio 2013 and below
+			Symbol(const Symbol &) = default; 
+		#else
+			Symbol(const Symbol &) = delete;
+		#endif
 		Symbol & operator = (const Symbol &) = delete;
 		Symbol & operator = (Symbol &&) = delete;
 

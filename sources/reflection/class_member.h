@@ -51,10 +51,6 @@ namespace reflective
 		
 		ClassMember(SymbolName i_name, Flags i_flags);
 
-		#if defined(_MSC_VER) && _MSC_VER < 1900 // Visual Studio 2013 and below
-			ClassMember(const ClassMember&) = delete;
-		#endif
-
 		bool has_flags(Flags i_flags) const;
 
 	private:

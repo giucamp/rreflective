@@ -45,10 +45,6 @@ namespace reflective
 	{
 	public:
 
-		#if defined(_MSC_VER) && _MSC_VER < 1900 // Visual Studio 2013 and below
-			Property(const Property &) = delete;
-		#endif
-
 		/** Retrieves the type of the property. This information is very important to use the getter and the 
 			setters methods. To construct, destroy, get the size and alignment of values of the property use 
 			type().primary_type(). */

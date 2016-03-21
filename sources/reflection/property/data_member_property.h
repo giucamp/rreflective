@@ -102,10 +102,6 @@ namespace reflective
 			{
 			}
 
-			#if defined(_MSC_VER) && _MSC_VER < 1900 // Visual Studio 2013 and below
-				DataMemberProperty(const DataMemberProperty &) = delete;
-			#endif
-
 		private:
 
 			void * get_value_inplace_impl(ObjPtr i_owner_object) const override
@@ -230,10 +226,6 @@ namespace reflective
 				: Property(std::move(i_name), get_type<PROPERTY_TYPE>(), 
 					i_flags | ClassMember::Flags::can_get_value_by_copy ),
 					m_member_ptr(i_member_ptr) { }
-
-			#if defined(_MSC_VER) && _MSC_VER < 1900 // Visual Studio 2013 and below
-				ConstDataMemberProperty(const ConstDataMemberProperty &) = delete;
-			#endif
 
 		private:
 

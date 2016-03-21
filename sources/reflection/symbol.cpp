@@ -6,7 +6,7 @@ namespace reflective
 	{
 		make_property<ThisClass>("name", &ThisClass::m_name);
 
-		auto properties = List<Property>::make(
+		auto properties = make_list<Property>(
 			make_property<ThisClass>("name", &ThisClass::m_name),
 			make_property<ThisClass>("attributes", &ThisClass::m_attributes)
 		);

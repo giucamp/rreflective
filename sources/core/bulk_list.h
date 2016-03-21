@@ -3,6 +3,17 @@
 
 namespace reflective
 {
+	template <typename TYPE>
+		class DefaultTypeInfo;
+	template <typename TYPE, typename TYPE_INFO = DefaultTypeInfo<TYPE>, typename ALLOCATOR = std::allocator<TYPE> >
+		class BulkList;
+
+	template <typename ELEMENT, typename... TYPES>
+		inline BulkList<ELEMENT> make_list(TYPES &&... i_parameters)
+	{
+		return BulkList<ELEMENT>::make( std::forward<TYPES>(i_parameters)... );
+	}
+
 	namespace details
 	{
 		template <typename TYPE>
@@ -89,7 +100,7 @@ namespace reflective
 		MoverDestructorPtr const m_mover_destructor;
 	};
 
-	template <typename TYPE, typename TYPE_INFO = DefaultTypeInfo<TYPE>, typename ALLOCATOR = std::allocator<TYPE> >
+	template <typename TYPE, typename TYPE_INFO, typename ALLOCATOR >
 		class BulkList : private ALLOCATOR
 	{
 		enum InternalConstructor { InternalConstructorMem };

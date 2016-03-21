@@ -106,19 +106,6 @@ namespace reflective
 
 	using std::make_unique;
 	
-	/*template <typename TYPE, typename... PARAMS>
-		inline typename std::enable_if<!std::is_array<TYPE>::value, unique_ptr<TYPE> >::type make_unique(PARAMS&&... i_params)
-	{
-		return unique_ptr<TYPE>(new TYPE(std::forward(i_params)...));
-	}
-
-	template <typename TYPE>
-		inline typename std::enable_if<std::is_array<TYPE>::value, unique_ptr<TYPE> >::type make_unique(size_t i_size)
-	{
-		using NakedType = std::remove_extent<TYPE>::type;
-		return unique_ptr<NakedType>(new NakedType[i_size]);
-	}*/
-
 	template <typename TYPE>
 		using vector = std::vector< TYPE > ;
 
