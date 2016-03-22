@@ -22,26 +22,22 @@ namespace reflective
 	}
 }
 
-struct Constr
+struct GGGG
 {
-	Constr() { std::cout << "start" << std::endl; }
-	~Constr() { std::cout << "end" << std::endl; }
-};
 
+};
 
 int main()
 {
-	try
-	{
-		Constr g;
-		std::exception_ptr exc = std::make_exception_ptr(42);
-		rethrow_exception(exc);
-	}
-	catch (int d)
-	{
-		std::cout << d;
-	}
-
+	using namespace reflective;
+	OutTextStream<std::ostream> out_stream(std::cout);
+	InTextStream<std::istream> in_stream(std::cin);
+	out_stream << 43;
+	out_stream << std::string("dcsd");
+	out_stream << "dcsd";
+	out_stream << 243.234;
+	int h = 0;
+	in_stream >> h;
 
 	bulk_list__test();
 	reflective::details::hier::test_hier();

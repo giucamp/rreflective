@@ -32,6 +32,94 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
+	template <typename UNDERLYING_STREAM, typename CHAR = UNDERLYING_STREAM::char_type, typename CHAR_TRAITS = std::char_traits<CHAR> >
+		class OutTextStream;
+	template <typename UNDERLYING_STREAM, typename CHAR = UNDERLYING_STREAM::char_type, typename CHAR_TRAITS = std::char_traits<CHAR> >
+		class InTextStream;
+
+	namespace details
+	{
+		namespace sfinae
+		{
+			struct NoSupport {};
+
+			template<typename TYPE> TYPE & dummy_get_any();
+
+			// dummy streaming operators, not implemented - we use SFINAE to check if the result is NoSupport
+			template <typename TYPE, typename CHAR, typename CHAR_TRAITS>
+				NoSupport operator << (std::basic_ostream<CHAR, CHAR_TRAITS> &, const TYPE &);
+			template <typename TYPE, typename CHAR, typename CHAR_TRAITS>
+				NoSupport operator >> (std::basic_istream<CHAR, CHAR_TRAITS> &, TYPE &);
+				
+			template <typename TYPE, typename CHAR, typename CHAR_TRAITS>
+				struct HasStdStreamingOperators
+			{
+				static const bool has_out = !std::is_same< NoSupport, decltype(dummy_get_any<std::basic_ostream<CHAR, CHAR_TRAITS>>() << dummy_get_any<TYPE>()) >::value;
+				static const bool has_in = !std::is_same< NoSupport, decltype(dummy_get_any<std::basic_istream<CHAR, CHAR_TRAITS>>() >> dummy_get_any<TYPE>()) >::value;
+			};
+		}
+	}
+
+	template <typename CHAR, typename CHAR_TRAITS>
+		class OutTextStream< std::basic_ostream<CHAR, CHAR_TRAITS>, CHAR, CHAR_TRAITS >
+	{
+	public:
+
+		OutTextStream(std::basic_ostream<CHAR, CHAR_TRAITS> & i_underlying_stream)
+			: m_underlying_stream(i_underlying_stream) { }
+
+		template <typename TYPE>
+			typename std::enable_if< details::sfinae::HasStdStreamingOperators<TYPE, CHAR, CHAR_TRAITS>::has_out, OutTextStream & >::type operator << (TYPE && i_value)
+		{
+			m_underlying_stream << std::forward<TYPE>(i_value);
+			return *this;
+		}
+
+		OutTextStream & operator << (const char * i_null_terminated_string)
+		{
+			m_underlying_stream << i_null_terminated_string;
+			return *this;
+		}
+
+		OutTextStream(const OutTextStream &) = delete;
+		OutTextStream(OutTextStream &&) = delete;
+		OutTextStream & operator = (const OutTextStream &) = delete;
+		OutTextStream & operator = (OutTextStream &&) = delete;
+
+	private:
+		std::basic_ostream<CHAR, CHAR_TRAITS> & m_underlying_stream;
+	};
+
+	template <typename CHAR, typename CHAR_TRAITS>
+		class InTextStream< std::basic_istream<CHAR, CHAR_TRAITS>, CHAR, CHAR_TRAITS >
+	{
+	public:
+
+		InTextStream(std::basic_istream<CHAR, CHAR_TRAITS> & i_underlying_stream)
+			: m_underlying_stream(i_underlying_stream) { }
+
+		template <typename TYPE>
+			typename std::enable_if< details::sfinae::HasStdStreamingOperators<TYPE, CHAR, CHAR_TRAITS>::has_in, InTextStream & >::type operator >> (TYPE && i_value)
+		{
+			m_underlying_stream >> std::forward<TYPE>(i_value);
+			return *this;
+		}
+
+		InTextStream & operator << (const char * i_null_terminated_string)
+		{
+			m_underlying_stream << i_null_terminated_string;
+			return *this;
+		}
+
+		InTextStream(const InTextStream &) = delete;
+		InTextStream(InTextStream &&) = delete;
+		InTextStream & operator = (const InTextStream &) = delete;
+		InTextStream & operator = (InTextStream &&) = delete;
+
+	private:
+		std::basic_istream<CHAR, CHAR_TRAITS> & m_underlying_stream;
+	};
+
 	/** This class implements an output text stream to write formatted text to an user-provided character buffer. It is a lightweight objects, and
 		doesn't have virtual functions.
 
@@ -158,7 +246,7 @@ namespace reflective
 
 		char * next_char() const									{ return m_next_char; }
 
-		void manual_advance( size_t i_required_length, size_t i_actual_written_length );
+		//void manual_advance( size_t i_required_length, size_t i_actual_written_length );
 
 	private:
 
@@ -174,10 +262,6 @@ namespace reflective
 		char * m_end_of_buffer; /**< first char out of the buffer*/
 		size_t m_written_chars; /**< chars written to the stream, interdependently from the actual buffer length */
 		size_t m_buffer_size;
-		#ifdef _DEBUG
-			char * m_dbg_buffer; /**< pointer to the beginning of the buffer (which can be nullptr). The stream does not need
-									 this, so it is provided only in debug.*/
-		#endif
 	};
 
 	inline OutStringBuffer & operator << (OutStringBuffer & i_dest, const StringView & i_string)

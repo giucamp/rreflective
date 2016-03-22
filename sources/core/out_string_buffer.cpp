@@ -11,10 +11,6 @@ namespace reflective
 		*m_next_char = 0;
 		 
 		m_written_chars = 0;
-
-		#ifdef _DEBUG
-			m_dbg_buffer = i_buffer;
-		#endif
 	}
 
 	void OutStringBuffer::write_char(char i_char)
@@ -45,12 +41,12 @@ namespace reflective
 		*m_next_char = 0;
 	}
 
-	void OutStringBuffer::manual_advance(size_t i_required_length, size_t i_actual_written_length)
+	/*void OutStringBuffer::manual_advance(size_t i_required_length, size_t i_actual_written_length)
 	{
 		REFLECTIVE_ASSERT(i_actual_written_length <= remaining_buffer_length(), "OVERFOWING THE BUFFER!!!" );
 		m_written_chars += i_required_length;
 		m_next_char += i_actual_written_length;
 		*m_next_char = 0;
-	}
+	}*/
 }
 

@@ -70,11 +70,10 @@ namespace reflective
 		static bool const value = sizeof(Test<TYPE>(0)) == sizeof(Yes);
 	};
 
-	namespace details
+	/*namespace details
 	{
 		namespace sfinae
 		{
-			struct NoSupport {};
 			OutStringBuffer & dummy_get_OutStringBuffer();
 			std::ostream & dummy_get_std_ostream();
 			template<typename TYPE> const TYPE & dummy_get_Any();
@@ -85,12 +84,11 @@ namespace reflective
 
 			template <class TYPE>
 			struct has_stringizers {
-				TYPE t;
 				static const bool has_out_to_OutStringBuffer = !std::is_same< NoSupport, decltype(dummy_get_OutStringBuffer() << dummy_get_Any<TYPE>()) >::value;
 				static const bool has_out_to_std_ostream = !std::is_same< NoSupport, decltype(dummy_get_std_ostream() << dummy_get_Any<TYPE>()) >::value;
 			};
 		}
-	}
+	}*/
 
 	class StringFunctions final
 	{
