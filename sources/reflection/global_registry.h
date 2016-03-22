@@ -79,6 +79,8 @@ namespace reflective
 
 		void unregister_member(NamespaceMember & i_member);
 
+		static StringView parse_template_arguments(StringView & io_input);
+
 	private: // data members
 		//std::unordered_multimap<SymbolName, NamespaceMember *, SymbolNameHasher > m_registry;
 

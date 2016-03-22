@@ -169,15 +169,6 @@ namespace Test1
 	P make_p(int) { return P{}; }
 	P1 make_p(double) { return P1{}; }
 	P2 make_p(std::string) { return P2{}; }
-
-
-	struct TD
-	{
-		~TD() REFLECTIVE_NOEXCEPT_V(false)
-		{
-			throw 0;
-		}
-	};
 }
 
 
@@ -186,12 +177,6 @@ void bulk_list__test()
 	using namespace reflective;
 	using namespace Test1;
 
-	//BulkList<P>::make(make_p(1));
-	{
-		std::vector<TD> fff;
-		fff.resize(2);
-		fff.resize(200);
-	}
 
 	BulkList<P> l = BulkList<P>::make(make_p("s"), make_p(4), make_p(4.3), make_p("s"));
 	for (const auto & el : l)

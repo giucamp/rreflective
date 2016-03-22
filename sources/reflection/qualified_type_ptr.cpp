@@ -107,7 +107,7 @@ namespace reflective
 		bool successful = true;
 		size_t constness_word = 0, volatileness_word = 0;
 		const Type * final_type = nullptr;
-		size_t indirection_levels = 0; // this variable is not the index of the current i.l., but the number of i.l.
+		size_t indirection_levels = 0; // this variable is not the index of the current i.l., but the number of i.l.'s
 
 		for (;;)
 		{

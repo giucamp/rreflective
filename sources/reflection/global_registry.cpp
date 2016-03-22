@@ -12,6 +12,34 @@ namespace reflective
 		return s_instance;
 	}
 
+	StringView GlobalRegistry::parse_template_arguments(StringView & io_input)
+	{
+		uint32_t bracket_depth = 1;		
+		size_t curr_pos = 0;
+		for (;  curr_pos < io_input.size(); curr_pos++)
+		{
+			if (io_input[curr_pos] == '<')
+			{
+				bracket_depth++;
+			}
+			else if (io_input[curr_pos] == '>')
+			{
+				REFLECTIVE_ASSERT(bracket_depth > 0, "wrong angular brackets in template argument list");
+				bracket_depth--;
+				if (bracket_depth == 0)
+				{
+					break;
+				}
+			}
+		}
+		const auto arguments = io_input.substr(0, curr_pos);
+		io_input.remove_prefix(curr_pos);
+
+		bool res = io_input.remove_prefix_char('>');
+		REFLECTIVE_INTERNAL_ASSERT(res);
+		return arguments;
+	}
+
 	Namespace * GlobalRegistry::parse_type_full_name(StringView i_full_name, StringView * o_type_name, StringView * o_template_argument_list)
 	{
 		struct PathEntry
@@ -34,11 +62,8 @@ namespace reflective
 				break;
 
 			if (remaining_path.remove_prefix_char('<'))
-			{
-				// temp: this is a big simplification
-				curr_entry.m_template_argument_list = remaining_path.remove_prefix_while([](char i_char){ return i_char != '>'; });
-				bool res = remaining_path.remove_prefix_char('>');
-				REFLECTIVE_INTERNAL_ASSERT(res);
+			{				
+				curr_entry.m_template_argument_list = parse_template_arguments(remaining_path);
 			}
 
 			REFLECTIVE_INTERNAL_ASSERT(prev_remaining_path_len > remaining_path.length());
