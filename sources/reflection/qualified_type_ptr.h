@@ -181,8 +181,6 @@ namespace reflective
 		/** Returns false whether two QualifiedTypePtrs are indistinguishable */
 		bool operator != (const QualifiedTypePtr & i_source) const		{ return !operator == (i_source); }
 
-		bool assign_from_string(StringView & i_source, OutStringBuffer & i_error_dest);
-
 		#if REFLECTIVE_ENABLE_TESTING
 			/** Runs an unit test for this class */
 			static void unit_test();
@@ -202,7 +200,9 @@ namespace reflective
 		uintptr_t m_volatileness_word : s_max_indirection_levels;
 	};
 	
-	OutStringBuffer & operator << (OutStringBuffer & i_dest, const QualifiedTypePtr & i_qualified_type);
+	template <typename UNDERLYING_STREAM>
+		OutTxtStreamAdapt<UNDERLYING_STREAM, char> & operator << (OutTxtStreamAdapt<UNDERLYING_STREAM, char> & i_dest, const QualifiedTypePtr & i_qualified_type);
 
-	std::ostream & operator << (std::ostream & i_dest, const QualifiedTypePtr & i_qualified_type);
+	template <typename UNDERLYING_STREAM>
+		InTxtStreamAdapt<UNDERLYING_STREAM, char> & operator >> (InTxtStreamAdapt<UNDERLYING_STREAM, char> & i_dest, QualifiedTypePtr & o_qualified_type);
 }

@@ -72,17 +72,10 @@ namespace reflective
 	class ObjPtr;
 	class QualifiedTypePtr;
 	
-	template <typename CHAR, typename CHAR_TRAITS = std::char_traits<CHAR> >
-		class BasicStringView;
-	using StringView = BasicStringView < char > ;
-	using WStringView = BasicStringView < wchar_t > ;
-	using u16StringView = BasicStringView < char16_t > ;
-	using u32StringView = BasicStringView < char32_t > ;
+
 
 	template < typename UINT>
 		class StringHasher;
-
-	class OutStringBuffer;
 	
 	class PtrString;
 	
@@ -103,8 +96,8 @@ namespace reflective
 // core headers
 #include "core\traits.h"
 #include "core\string_view.h"
-#include "core\out_string_buffer.h"
-#include "core\in_string_buffer.h"
+#include "core\out_buffer_text_stream.h"
+#include "core\in_buffer_text_stream.h"
 #include "core\stream_adapters.h"
 #include "core\ptr_string.h"
 #include "core\identifier.h"

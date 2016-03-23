@@ -117,7 +117,7 @@ namespace reflective
 				return &property_value;
 			}
 
-			bool get_value_by_copy_impl(ObjPtr i_owner_object, void * i_dest, OutStringBuffer & o_fail_reason) const override
+			bool get_value_by_copy_impl(ObjPtr i_owner_object, void * i_dest, OutBufferTextStream & o_fail_reason) const override
 			{
 				REFLECTIVE_RUNTIME_CHECK(i_owner_object.type().primary_type() == &get_naked_type<OWNER_CLASS>());
 
@@ -139,7 +139,7 @@ namespace reflective
 				return result;
 			}
 
-			bool get_value_by_move_impl(ObjPtr i_owner_object, void * i_dest, OutStringBuffer & o_fail_reason) const override
+			bool get_value_by_move_impl(ObjPtr i_owner_object, void * i_dest, OutBufferTextStream & o_fail_reason) const override
 			{
 				REFLECTIVE_RUNTIME_CHECK(i_owner_object.type().primary_type() == &get_naked_type<OWNER_CLASS>());
 
@@ -161,7 +161,7 @@ namespace reflective
 				return result;
 			}
 
-			bool set_value_by_copy_impl(ObjPtr i_owner_object, const void * i_source, OutStringBuffer & o_fail_reason) const override
+			bool set_value_by_copy_impl(ObjPtr i_owner_object, const void * i_source, OutBufferTextStream & o_fail_reason) const override
 			{
 				REFLECTIVE_RUNTIME_CHECK(i_owner_object.type().primary_type() == &get_naked_type<OWNER_CLASS>());
 
@@ -186,7 +186,7 @@ namespace reflective
 				return result;
 			}
 
-			bool set_value_by_move_impl(ObjPtr i_owner_object, void * i_source, OutStringBuffer & o_fail_reason) const override
+			bool set_value_by_move_impl(ObjPtr i_owner_object, void * i_source, OutBufferTextStream & o_fail_reason) const override
 			{
 				REFLECTIVE_RUNTIME_CHECK(i_owner_object.type().primary_type() == &get_naked_type<OWNER_CLASS>());
 
@@ -240,7 +240,7 @@ namespace reflective
 				return const_cast<PROPERTY_TYPE*>(&property_value);
 			}
 
-			bool get_value_by_copy_impl(ObjPtr i_owner_object, void * i_dest, OutStringBuffer & o_fail_reason) const override
+			bool get_value_by_copy_impl(ObjPtr i_owner_object, void * i_dest, OutBufferTextStream & o_fail_reason) const override
 			{
 				REFLECTIVE_RUNTIME_CHECK(i_owner_object.type().primary_type() == &get_naked_type<OWNER_CLASS>());
 
@@ -262,7 +262,7 @@ namespace reflective
 				return result;
 			}
 
-			bool get_value_by_move_impl(ObjPtr i_owner_object, void * /*i_dest*/, OutStringBuffer & o_fail_reason) const override
+			bool get_value_by_move_impl(ObjPtr i_owner_object, void * /*i_dest*/, OutBufferTextStream & o_fail_reason) const override
 			{
 				(void)&i_owner_object; // possibly unreferenced parameter
 				REFLECTIVE_RUNTIME_CHECK(i_owner_object.type().primary_type() == &get_naked_type<OWNER_CLASS>());
@@ -270,7 +270,7 @@ namespace reflective
 				return false;
 			}
 
-			bool set_value_by_copy_impl(ObjPtr i_owner_object, const void * /*i_source*/, OutStringBuffer & o_fail_reason) const override
+			bool set_value_by_copy_impl(ObjPtr i_owner_object, const void * /*i_source*/, OutBufferTextStream & o_fail_reason) const override
 			{
 				(void)&i_owner_object; // possibly unreferenced parameter
 				REFLECTIVE_RUNTIME_CHECK(i_owner_object.type().primary_type() == &get_naked_type<OWNER_CLASS>());
@@ -278,7 +278,7 @@ namespace reflective
 				return false;
 			}
 
-			bool set_value_by_move_impl(ObjPtr i_owner_object, void * /*i_source*/, OutStringBuffer & o_fail_reason) const override
+			bool set_value_by_move_impl(ObjPtr i_owner_object, void * /*i_source*/, OutBufferTextStream & o_fail_reason) const override
 			{
 				(void)&i_owner_object; // possibly unreferenced parameter
 				REFLECTIVE_RUNTIME_CHECK(i_owner_object.type().primary_type() == &get_naked_type<OWNER_CLASS>());

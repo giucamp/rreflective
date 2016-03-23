@@ -32,6 +32,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
+	template <typename CHAR, typename CHAR_TRAITS = std::char_traits<CHAR> > class BasicStringView;
+	using StringView = BasicStringView < char > ;
+	using WStringView = BasicStringView < wchar_t > ;
+	using u16StringView = BasicStringView < char16_t > ;
+	using u32StringView = BasicStringView < char32_t > ;
+
 	/** Non-owning range of contiguous char - see http://en.cppreference.com/w/cpp/experimental/basic_string_view.
 		This class represent a contiguous range of characters, whose storage is managed by the user. Accessing the
 		content of the string view when the storage is no more valid, leads to undefined behavior.
@@ -455,7 +461,7 @@ namespace reflective
 
 		bool remove_suffix_string(BasicStringView i_string) REFLECTIVE_NOEXCEPT
 		{
-			if (dd starts_with(i_string))
+			if (starts_with(i_string))
 			{
 				remove_prefix(i_string.length());
 				return true;
@@ -490,46 +496,18 @@ namespace reflective
 			}
 		}
 
-
-
-		template <typename TYPE>
-			bool read(TYPE & o_object, OutStringBuffer i_error)
-			{
-				return ReadAny<TYPE, has_assign_from_string<TYPE>::value>::read(*this, i_error, o_object);
-			}
-
-		template <typename TYPE>
-			bool read(TYPE & o_object)
-			{
-				CHAR small_buffer[sizeof(int)];
-				OutStringBuffer small_error_buffer(small_buffer);
-				return ReadAny<TYPE, has_assign_from_string<TYPE>::value>::read(*this, small_error_buffer, o_object);
-			}
-
-	private:
-
-		template <typename TYPE, bool HAS_ASSIGN_FROM_STRING_METHOD> struct ReadAny;
-		template <typename TYPE> struct ReadAny < TYPE, true >
-		{
-			static bool read(BasicStringView & i_source, OutStringBuffer & i_error_dest, TYPE & o_object)
-			{
-				return o_object.assign_from_string(i_source, i_error_dest);
-			}
-		};
-		template <typename TYPE> struct ReadAny < TYPE, false >
-		{
-			static bool read(BasicStringView & i_source, OutStringBuffer & i_error_dest, TYPE & o_object)
-			{
-				return assign_from_string(i_source, i_error_dest, o_object);
-			}
-		};
-
 	private:
 		const CHAR * m_chars;
 		size_t m_size;
 	};
 
-	inline std::ostream & operator << (std::ostream & i_dest, const StringView & i_string)
+	template BasicStringView< char >;
+	template BasicStringView< wchar_t >;
+	template BasicStringView< char16_t >;
+	template BasicStringView< char32_t >;
+
+	template <typename CHAR, typename CHAR_TRAITS >
+		inline std::basic_ostream<CHAR, CHAR_TRAITS> & operator << (std::ostream & i_dest, const BasicStringView<CHAR, CHAR_TRAITS> & i_string)
 	{
 		i_dest.write(i_string.data(), i_string.length());
 		return i_dest;

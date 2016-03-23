@@ -35,7 +35,7 @@ namespace reflective
 	// http://stackoverflow.com/questions/18570285/using-sfinae-to-detect-a-member-function
 
 	/** Checks at compile time if a type has member function with this name and signature:
-			void to_string(OutStringBuffer & i_dest) const;
+			void to_string(OutBufferTextStream & i_dest) const;
 		Usage: const bool has = has_to_string<MyClass>::value; */
 	template <typename TYPE> class has_to_string
 	{
@@ -45,7 +45,7 @@ namespace reflective
 
 		template <typename U, U> struct really_has;
 
-		template<typename C> static Yes& Test(really_has <void (C::*)(OutStringBuffer & i_dest) const, &C::to_string>*);
+		template<typename C> static Yes& Test(really_has <void (C::*)(OutBufferTextStream & i_dest) const, &C::to_string>*);
 		template<typename> static No& Test(...);
 
 	public:
@@ -53,7 +53,7 @@ namespace reflective
 	};
 
 	/** Checks at compile time if a type has member function with this name and signature:
-			bool assign_from_string(StringView & i_source, OutStringBuffer & i_error_dest);
+			bool assign_from_string(StringView & i_source, OutBufferTextStream & i_error_dest);
 		Usage: const bool has = has_assign_from_string<MyClass>::value; */
 	template <typename TYPE> class has_assign_from_string
 	{
@@ -63,7 +63,7 @@ namespace reflective
 
 		template <typename U, U> struct really_has;
 
-		template<typename C> static Yes& Test(really_has <bool (C::*)(StringView & i_source, OutStringBuffer & i_error_dest), &C::assign_from_string>*);
+		template<typename C> static Yes& Test(really_has <bool (C::*)(StringView & i_source, OutBufferTextStream & i_error_dest), &C::assign_from_string>*);
 		template<typename> static No& Test(...);
 
 	public:
@@ -74,12 +74,12 @@ namespace reflective
 	{
 		namespace sfinae
 		{
-			OutStringBuffer & dummy_get_OutStringBuffer();
+			OutBufferTextStream & dummy_get_OutStringBuffer();
 			std::ostream & dummy_get_std_ostream();
 			template<typename TYPE> const TYPE & dummy_get_Any();
 
 			// falldowns
-			template<typename T> NoSupport operator << (OutStringBuffer &, const T &);
+			template<typename T> NoSupport operator << (OutBufferTextStream &, const T &);
 			template<typename T> NoSupport operator << (std::ostream &, const T &);
 
 			template <class TYPE>
@@ -94,9 +94,9 @@ namespace reflective
 	{
 	public:
 
-		using ToString = void(*)(const void * i_object, OutStringBuffer & i_dest);
+		using ToString = void(*)(const void * i_object, OutBufferTextStream & i_dest);
 		using ToStdStream = void(*)(const void * i_object, std::ostream & i_dest);
-		using AssignFromString = bool (*)(void * i_object, StringView & i_source, OutStringBuffer & i_error_dest);
+		using AssignFromString = bool (*)(void * i_object, StringView & i_source, OutBufferTextStream & i_error_dest);
 
 		StringFunctions()
 			: m_to_string(nullptr), m_to_std_stream(nullptr), m_assign_from_string_function(nullptr)
@@ -117,7 +117,7 @@ namespace reflective
 			
 	private:
 		
-		template <typename TYPE> void to_string_method_adater(const void * i_object, OutStringBuffer & i_dest)
+		template <typename TYPE> void to_string_method_adater(const void * i_object, OutBufferTextStream & i_dest)
 		{
 			const TYPE & obj = static_cast<const TYPE*>(i_object);
 			dbg_object_validate(obj);
@@ -131,7 +131,7 @@ namespace reflective
 			i_dest << obj;
 		}
 
-		template <typename TYPE> bool assign_from_string_method_adater(void * i_object, StringView & i_source, OutStringBuffer & i_error_dest)
+		template <typename TYPE> bool assign_from_string_method_adater(void * i_object, StringView & i_source, OutBufferTextStream & i_error_dest)
 		{
 			TYPE & obj = static_cast<TYPE*>(i_object);
 			dbg_object_validate(obj);

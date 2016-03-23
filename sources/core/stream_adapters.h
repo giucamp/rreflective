@@ -62,7 +62,7 @@ namespace reflective
 	}
 
 	template <typename CHAR, typename CHAR_TRAITS>
-	class OutTxtStreamAdapt< std::basic_ostream<CHAR, CHAR_TRAITS>, CHAR, CHAR_TRAITS > final
+		class OutTxtStreamAdapt< std::basic_ostream<CHAR, CHAR_TRAITS>, CHAR, CHAR_TRAITS > final
 	{
 	public:
 
@@ -93,15 +93,28 @@ namespace reflective
 	};
 
 	template <typename CHAR, typename CHAR_TRAITS>
-	class InTxtStreamAdapt< std::basic_istream<CHAR, CHAR_TRAITS>, CHAR, CHAR_TRAITS > final
+		class InTxtStreamAdapt< std::basic_istream<CHAR, CHAR_TRAITS>, CHAR, CHAR_TRAITS > final
 	{
 	public:
 
 		InTxtStreamAdapt(std::basic_istream<CHAR, CHAR_TRAITS> & i_underlying_stream)
 			: m_underlying_stream(i_underlying_stream) { }
 
+		InTxtStreamAdapt(const InTxtStreamAdapt &) = delete;
+		InTxtStreamAdapt(InTxtStreamAdapt &&) = delete;
+		InTxtStreamAdapt & operator = (const InTxtStreamAdapt &) = delete;
+		InTxtStreamAdapt & operator = (InTxtStreamAdapt &&) = delete;
+
 		template <typename TYPE>
-		typename std::enable_if< details::sfinae::HasStdStreamingOperators<TYPE, CHAR, CHAR_TRAITS>::has_in, InTxtStreamAdapt & >::type operator >> (TYPE && i_value)
+			TYPE read()
+		{
+			TYPE result;
+			m_underlying_stream >> result;
+			return result;
+		}
+
+		template <typename TYPE>
+			typename std::enable_if< details::sfinae::HasStdStreamingOperators<TYPE, CHAR, CHAR_TRAITS>::has_in, InTxtStreamAdapt & >::type operator >> (TYPE && i_value)
 		{
 			m_underlying_stream >> std::forward<TYPE>(i_value);
 			return *this;
@@ -112,11 +125,6 @@ namespace reflective
 			m_underlying_stream << i_null_terminated_string;
 			return *this;
 		}
-
-		InTxtStreamAdapt(const InTxtStreamAdapt &) = delete;
-		InTxtStreamAdapt(InTxtStreamAdapt &&) = delete;
-		InTxtStreamAdapt & operator = (const InTxtStreamAdapt &) = delete;
-		InTxtStreamAdapt & operator = (InTxtStreamAdapt &&) = delete;
 
 		void apend_error(const char * i_string)
 		{

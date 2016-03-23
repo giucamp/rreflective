@@ -11,9 +11,9 @@ namespace reflective
 		struct NoSupport {};
 
 		template<typename T>  // used if T doesn't have "operator <" associated
-			NoSupport operator << (OutStringBuffer &, const T &);
+			NoSupport operator << (OutBufferTextStream &, const T &);
 
-		OutStringBuffer & get_ou();
+		OutBufferTextStream & get_ou();
 
 		template<typename T>
 		const T & get_T();
@@ -41,7 +41,7 @@ namespace reflective
 			return i_stream;
 		}
 
-		OutStringBuffer & operator << (OutStringBuffer & i_stream, B)
+		OutBufferTextStream & operator << (OutBufferTextStream & i_stream, B)
 			{ return i_stream; }
 
 		void string_functions_test()

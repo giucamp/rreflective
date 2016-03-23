@@ -76,7 +76,7 @@ namespace reflective
 
 		size_t alignment() const					{ return m_alignment; }
 								
-		void full_name_to_string(OutStringBuffer & i_dest) const;
+		void full_name_to_string(OutBufferTextStream & i_dest) const;
 		
 					// flags
 		

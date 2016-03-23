@@ -32,31 +32,31 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	void to_string(OutStringBuffer & i_dest, int8_t i_value );
-	void to_string(OutStringBuffer & i_dest, int16_t i_value);
-	void to_string(OutStringBuffer & i_dest, int32_t i_value);
-	void to_string(OutStringBuffer & i_dest, int64_t i_value);
+	void to_string(OutBufferTextStream & i_dest, int8_t i_value );
+	void to_string(OutBufferTextStream & i_dest, int16_t i_value);
+	void to_string(OutBufferTextStream & i_dest, int32_t i_value);
+	void to_string(OutBufferTextStream & i_dest, int64_t i_value);
 
-	void to_string(OutStringBuffer & i_dest, uint8_t i_value);
-	void to_string(OutStringBuffer & i_dest, uint16_t i_value);
-	void to_string(OutStringBuffer & i_dest, uint32_t i_value);
-	void to_string(OutStringBuffer & i_dest, uint64_t i_value);
+	void to_string(OutBufferTextStream & i_dest, uint8_t i_value);
+	void to_string(OutBufferTextStream & i_dest, uint16_t i_value);
+	void to_string(OutBufferTextStream & i_dest, uint32_t i_value);
+	void to_string(OutBufferTextStream & i_dest, uint64_t i_value);
 
-	void to_string(OutStringBuffer & i_dest, float i_value);
-	void to_string(OutStringBuffer & i_dest, double i_value);
-	void to_string(OutStringBuffer & i_dest, long double i_value);
+	void to_string(OutBufferTextStream & i_dest, float i_value);
+	void to_string(OutBufferTextStream & i_dest, double i_value);
+	void to_string(OutBufferTextStream & i_dest, long double i_value);
 
-	bool assign_from_string(StringView & i_source, OutStringBuffer & i_error_dest, int8_t & o_dest);
-	bool assign_from_string(StringView & i_source, OutStringBuffer & i_error_dest, int16_t & o_dest);
-	bool assign_from_string(StringView & i_source, OutStringBuffer & i_error_dest, int32_t & o_dest);
-	bool assign_from_string(StringView & i_source, OutStringBuffer & i_error_dest, int64_t & o_dest);
+	bool assign_from_string(StringView & i_source, OutBufferTextStream & i_error_dest, int8_t & o_dest);
+	bool assign_from_string(StringView & i_source, OutBufferTextStream & i_error_dest, int16_t & o_dest);
+	bool assign_from_string(StringView & i_source, OutBufferTextStream & i_error_dest, int32_t & o_dest);
+	bool assign_from_string(StringView & i_source, OutBufferTextStream & i_error_dest, int64_t & o_dest);
 
-	bool assign_from_string(StringView & i_source, OutStringBuffer & i_error_dest, uint8_t & o_dest);
-	bool assign_from_string(StringView & i_source, OutStringBuffer & i_error_dest, uint16_t & o_dest);
-	bool assign_from_string(StringView & i_source, OutStringBuffer & i_error_dest, uint32_t & o_dest);
-	bool assign_from_string(StringView & i_source, OutStringBuffer & i_error_dest, uint64_t & o_dest);
+	bool assign_from_string(StringView & i_source, OutBufferTextStream & i_error_dest, uint8_t & o_dest);
+	bool assign_from_string(StringView & i_source, OutBufferTextStream & i_error_dest, uint16_t & o_dest);
+	bool assign_from_string(StringView & i_source, OutBufferTextStream & i_error_dest, uint32_t & o_dest);
+	bool assign_from_string(StringView & i_source, OutBufferTextStream & i_error_dest, uint64_t & o_dest);
 
-	bool assign_from_string(StringView & i_source, OutStringBuffer & i_error_dest, float & o_dest);
-	bool assign_from_string(StringView & i_source, OutStringBuffer & i_error_dest, double & o_dest);
-	bool assign_from_string(StringView & i_source, OutStringBuffer & i_error_dest, long double & o_dest);
+	bool assign_from_string(StringView & i_source, OutBufferTextStream & i_error_dest, float & o_dest);
+	bool assign_from_string(StringView & i_source, OutBufferTextStream & i_error_dest, double & o_dest);
+	bool assign_from_string(StringView & i_source, OutBufferTextStream & i_error_dest, long double & o_dest);
 }

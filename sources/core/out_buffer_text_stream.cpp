@@ -25,40 +25,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ***********************************************************************************/
 
-#pragma once
-#ifndef INCLUDING_REFLECTIVE
-	#error "cant't include this header directly, include reflective.h instead"
-#endif
-
 namespace reflective
 {
-	template <typename CHAR, typename CHAR_TRAITS > class BasicStringView;
-	using SymbolName = Identifier< StringHasher<uint32_t>, BasicStringView<char, std::char_traits<char>> >;
 
-	template <typename TYPE>
-		using Allocator = std::allocator<TYPE>;
+} // namespace reflective
 
-	static const size_t s_global_registry_reserve = 512;
-
-	#define REFLECTIVE_ENABLE_TESTING					1
-
-	static const InheritanceSupport s_inheritance_support = InheritanceSupport::Functions;
-
-	#define REFLECTIVE_ENABLE_MULTIPLE_INHERITANCE		1
-
-	/** This function is called when the user requests an operation which is documented to be invalid,
-		like quering the value of a property specifiing an owner object of the wrong type. */
-	inline void on_invaid_operation(const char * i_error_message)
-	{
-		throw std::exception(i_error_message);
-	}
-}
-	
-#define REFLECTIVE_DEBUG 1
-
-#define REFLECTIVE_ASSERT_ENABLED 1
-
-#define REFLECTIVE_ASSERT(i_value, i_error_message)				if(!(i_value)) {__debugbreak();}
-#define REFLECTIVE_TEST_ASSERT(i_value)							if(!(i_value)) {__debugbreak();}
-#define REFLECTIVE_RUNTIME_CHECK(i_value, ...)					if(!(i_value)) {__debugbreak();}
-#define REFLECTIVE_INTERNAL_ASSERT(i_value)						if(!(i_value)) {__debugbreak();}

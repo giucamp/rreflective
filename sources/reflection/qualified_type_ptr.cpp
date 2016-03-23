@@ -48,7 +48,7 @@ namespace reflective
 
 	namespace details
 	{
-		const Type * accept_naked_type(StringView & i_source, OutStringBuffer & /*i_error_dest*/)
+		const Type * accept_naked_type(StringView & i_source, OutBufferTextStream & /*i_error_dest*/)
 		{
 			// to do: handle template arguments
 			auto name = i_source.remove_prefix_while([](char i_char){ return isalnum(i_char) != 0; });
@@ -88,7 +88,7 @@ namespace reflective
 		}
 	}
 
-	OutStringBuffer & operator << (OutStringBuffer & i_dest, const QualifiedTypePtr & i_qualified_type)
+	OutBufferTextStream & operator << (OutBufferTextStream & i_dest, const QualifiedTypePtr & i_qualified_type)
 	{
 		details::generic_to_string(i_dest, i_qualified_type);
 		return i_dest;
@@ -100,7 +100,7 @@ namespace reflective
 		return i_dest;
 	}	
 
-	bool QualifiedTypePtr::assign_from_string(StringView & i_source, OutStringBuffer & i_error_dest)
+	bool QualifiedTypePtr::assign_from_string(StringView & i_source, OutBufferTextStream & i_error_dest)
 	{
 		StringView source = i_source;
 
@@ -263,7 +263,7 @@ namespace reflective
 		{
 			StringView source(i_string);
 			char err_buff[32];
-			OutStringBuffer err(err_buff);
+			OutBufferTextStream err(err_buff);
 			QualifiedTypePtr q_type_ptr;
 			bool res = source.read(q_type_ptr);
 			REFLECTIVE_TEST_ASSERT(res);

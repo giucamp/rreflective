@@ -11,7 +11,7 @@ public:
 
 		virtual ~SingleTest() {}
 
-		virtual bool append_string(Rand & i_rand, reflective::OutStringBuffer & i_dest) = 0;		
+		virtual bool append_string(Rand & i_rand, reflective::OutBufferTextStream & i_dest) = 0;		
 
 		virtual void check_string(reflective::StringView & i_source) = 0;
 
@@ -50,9 +50,9 @@ public:
 		INT_TYPE m_value;
 
 	public:
-		bool append_string(Rand & i_rand, reflective::OutStringBuffer & i_dest) override
+		bool append_string(Rand & i_rand, reflective::OutBufferTextStream & i_dest) override
 		{
-			reflective::OutStringBuffer initial = i_dest;
+			reflective::OutBufferTextStream initial = i_dest;
 
 			bool is_signed = std::numeric_limits<INT_TYPE>::is_signed;
 			if (is_signed)
@@ -112,7 +112,7 @@ public:
 
 		shuffle(m_tests.begin(), m_tests.end(), i_rand.get_generator());
 				
-		OutStringBuffer out_stream(buffer, buff_size);		
+		OutBufferTextStream out_stream(buffer, buff_size);		
 
 		size_t write_test_index = 0;
 		for (; write_test_index < m_tests.size(); write_test_index++ )
@@ -147,10 +147,10 @@ void Stream_test_oneshot()
 	char buffer[buffer_capacity];
 	memset(buffer, check_char, sizeof(buffer));
 	size_t buff_size = rand.generate_uint32(buffer_capacity);
-	OutStringBuffer out_stream(buffer, buff_size);
+	OutBufferTextStream out_stream(buffer, buff_size);
 	StringView in_stream(buffer);
 	
-	out_stream = OutStringBuffer(buffer, buff_size);
+	out_stream = OutBufferTextStream(buffer, buff_size);
 	for(size_t i = 0; i + 1 < buff_size; i++)
 	{
 		out_stream.write_char('A' + (i % 20) );
@@ -178,8 +178,8 @@ void Stream_test_rnd()
 	char small_buff[1];
 	memset(buffer, check_char, sizeof(buffer));
 	size_t buff_size = rand.generate_uint32(buffer_capacity);
-	OutStringBuffer out_stream(buffer, buff_size);
-	OutStringBuffer small_stream(small_buff);
+	OutBufferTextStream out_stream(buffer, buff_size);
+	OutBufferTextStream small_stream(small_buff);
 	StringView in_stream(buffer);
 	string check_string;
 
@@ -233,7 +233,7 @@ void Stream_test_rnd()
 	for (auto it = action_indices.begin(); it != action_indices.end(); it++ )
 	{
 		StringView in_stream_copy = in_stream;
-		OutStringBuffer out_stream_copy = out_stream;
+		OutBufferTextStream out_stream_copy = out_stream;
 
 		in_stream = in_stream_copy;
 		out_stream = out_stream_copy;
@@ -290,7 +290,7 @@ void Stream_test_rnd()
 
 namespace reflective
 {
-	void to_string(OutStringBuffer & i_dest, const std::string & i_str)
+	void to_string(OutBufferTextStream & i_dest, const std::string & i_str)
 	{
 		i_dest.write_cstr(i_str.c_str());
 	}
@@ -299,31 +299,31 @@ namespace reflective
 void Stream_test()
 {
 	{
-		// example of OutStringBuffer
+		// example of OutBufferTextStream
 		using namespace reflective;
 		using namespace std;
 		char dest[128];
-		OutStringBuffer out(dest);
+		OutBufferTextStream out(dest);
 		out << "This is an int: " << 40 + 2;
 		out << " and this is a string: " << string("str");
 		std::cout << dest << endl;
 	}
 
 		{
-			// example of OutStringBuffer
+			// example of OutBufferTextStream
 			using namespace reflective;
 			using namespace std;
 			using std::vector;
 
 			vector<char> buffer(10);
 			
-			OutStringBuffer out(buffer.data(), buffer.size());
+			OutBufferTextStream out(buffer.data(), buffer.size());
 			out << "This string is too long, and this is a number " << 40 + 2;
 
 			if (out.is_truncated())
 			{
 				buffer.resize(out.needed_buffer_length());
-				out = OutStringBuffer(buffer.data(), buffer.size());
+				out = OutBufferTextStream(buffer.data(), buffer.size());
 				out << "This string is too long, and this is a number " << 40 + 2;
 
 				REFLECTIVE_ASSERT(!out.is_truncated(), "");
@@ -336,7 +336,7 @@ void Stream_test()
 	{
 		int8_t myInt = -128;
 		char dest[64];
-		reflective::OutStringBuffer out(dest);
+		reflective::OutBufferTextStream out(dest);
 		out << 40 + 2;
 		reflective::to_string(out, myInt);
 		std::cout << dest;

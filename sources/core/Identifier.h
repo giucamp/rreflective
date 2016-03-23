@@ -202,7 +202,7 @@ namespace reflective
 	}
 
 	template < typename HASHER, typename STRING >
-		inline OutStringBuffer & operator << (OutStringBuffer & i_dest, const Identifier<HASHER, STRING> & i_identifier)
+		inline OutBufferTextStream & operator << (OutBufferTextStream & i_dest, const Identifier<HASHER, STRING> & i_identifier)
 	{
 		const auto & string = i_identifier.string();
 		i_dest.write_nstr(string.data(), string.length());
@@ -217,7 +217,7 @@ namespace reflective
 	}
 
 	template < typename HASHER >
-		inline OutStringBuffer & operator << (OutStringBuffer & i_dest, const Identifier<HASHER, void> & i_identifier)
+		inline OutBufferTextStream & operator << (OutBufferTextStream & i_dest, const Identifier<HASHER, void> & i_identifier)
 	{
 		i_dest << '%' << i_identifier.hash();
 		return i_dest;

@@ -68,7 +68,7 @@ namespace reflective
 		return i_dest;
 	}
 
-	inline OutStringBuffer & operator << (OutStringBuffer & i_dest, const PtrString & i_string)
+	inline OutBufferTextStream & operator << (OutBufferTextStream & i_dest, const PtrString & i_string)
 	{
 		i_dest.write_nstr(i_string.data(), i_string.length());
 		return i_dest;

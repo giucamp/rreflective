@@ -65,7 +65,7 @@ namespace reflective
 			@return true if the value of property has been copy-constructed in the buffer, false otherwise. If the 
 				result is true, an object whose type is the type of the property has been constructed in the buffer,
 				and the caller is responsible of destroying it. If the result is false, the buffer is left unchanged.*/
-		bool get_value_by_copy(ObjPtr i_owner_object, void * i_dest, OutStringBuffer & o_fail_reason) const;
+		bool get_value_by_copy(ObjPtr i_owner_object, void * i_dest, OutBufferTextStream & o_fail_reason) const;
 
 		/** Moves the value of the property from a given owner object. On success the value is move-constructed in the specified 
 				buffer. This method alters the owner object, as the move constructor of the type of the value is invoked.
@@ -82,7 +82,7 @@ namespace reflective
 			@return true if the value of property has been move-constructed in the buffer, false otherwise. If the 
 				result is true, an object whose type is the type of the property has been constructed in the buffer,
 				and the caller is responsible of destroying it. If the result is false, the buffer is left unchanged.*/
-		bool get_value_by_move(ObjPtr i_owner_object, void * i_dest, OutStringBuffer & o_fail_reason) const;
+		bool get_value_by_move(ObjPtr i_owner_object, void * i_dest, OutBufferTextStream & o_fail_reason) const;
 		
 		/** Sets the value of the property for a given object using copy semantics. The source value is not altered 
 				in any way.
@@ -95,7 +95,7 @@ namespace reflective
 			@param i_fail_reason string buffer to which a human readable description of the error is appended in
 				case of failure (i.e. the function returns false). Otherwise is should remain unchanged.
 			@return true if the value of property has been set, false otherwise. */
-		bool set_value_by_copy(ObjPtr i_owner_object, const void * i_source, OutStringBuffer & o_fail_reason) const;
+		bool set_value_by_copy(ObjPtr i_owner_object, const void * i_source, OutBufferTextStream & o_fail_reason) const;
 
 		/** Sets the value of the property for a given object using move semantics. On success the source value is 
 			altered, as it is the destination of a move assignment.
@@ -108,7 +108,7 @@ namespace reflective
 			@param i_fail_reason string buffer to which a human readable description of the error is appended in
 				case of failure (i.e. the function returns false). Otherwise is should remain unchanged.
 			@return true if the value of property has been set, false otherwise. */
-		bool set_value_by_move(ObjPtr i_owner_object, void * i_source, OutStringBuffer & o_fail_reason) const;
+		bool set_value_by_move(ObjPtr i_owner_object, void * i_source, OutBufferTextStream & o_fail_reason) const;
 
 		/** Retrieves a read-only pointer to the value of the property. This method is more efficient than get_value,
 			because the value is not copied, but may fail in cases when get_value would succeed (for example in case
@@ -147,13 +147,13 @@ namespace reflective
 			should return nullptr. */
 		virtual void * get_value_inplace_impl(ObjPtr i_owner_object) const = 0;
 
-		virtual bool get_value_by_copy_impl(ObjPtr i_owner_object, void * i_dest, OutStringBuffer & o_fail_reason) const = 0;
+		virtual bool get_value_by_copy_impl(ObjPtr i_owner_object, void * i_dest, OutBufferTextStream & o_fail_reason) const = 0;
 
-		virtual bool get_value_by_move_impl(ObjPtr i_owner_object, void * i_dest, OutStringBuffer & o_fail_reason) const = 0;
+		virtual bool get_value_by_move_impl(ObjPtr i_owner_object, void * i_dest, OutBufferTextStream & o_fail_reason) const = 0;
 
-		virtual bool set_value_by_copy_impl(ObjPtr i_owner_object, const void * i_source, OutStringBuffer & o_fail_reason) const = 0;
+		virtual bool set_value_by_copy_impl(ObjPtr i_owner_object, const void * i_source, OutBufferTextStream & o_fail_reason) const = 0;
 		
-		virtual bool set_value_by_move_impl(ObjPtr i_owner_object, void * i_source, OutStringBuffer & o_fail_reason) const = 0;
+		virtual bool set_value_by_move_impl(ObjPtr i_owner_object, void * i_source, OutBufferTextStream & o_fail_reason) const = 0;
 
 	private:
 		const QualifiedTypePtr m_type;

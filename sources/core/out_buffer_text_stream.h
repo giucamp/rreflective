@@ -35,8 +35,8 @@ namespace reflective
 	/** This class implements an output text stream to write formatted text to an user-provided character buffer. It is a lightweight objects, and
 		doesn't have virtual functions.
 
-		OutStringBuffer does not participate to the ownership of the buffer. The buffer must be valid when any non-const
-		method is called on OutStringBuffer. The destination buffer must be specified to the constructor by passing
+		OutBufferTextStream does not participate to the ownership of the buffer. The buffer must be valid when any non-const
+		method is called on OutBufferTextStream. The destination buffer must be specified to the constructor by passing
 		a char* pointing to the beginning of the buffer and a size_t with the total length, or by specifying a 
 		fixed-size char array:
 		\code{.cpp}
@@ -44,14 +44,14 @@ namespace reflective
 		using namespace std;
 
 		char dest[128];
-		OutStringBuffer out(dest);
+		OutBufferTextStream out(dest);
 		out << "This is an int: " << 40 + 2;
 		out << " and this is a string: " << string("str");
 
 		std::cout << dest << endl;
 		\endcode
-		If a buffer is provided, OutStringBuffer store a null-terminating character at the end of the string after construction 
-		and after any write. In no cases OutStringBuffer will write outsize the destination buffer. If the buffer is not big enough 
+		If a buffer is provided, OutBufferTextStream store a null-terminating character at the end of the string after construction 
+		and after any write. In no cases OutBufferTextStream will write outsize the destination buffer. If the buffer is not big enough 
 		to store all the text that is written, the content is truncated. The user may check this with the member function is_truncated(). 
 		In this case the user may decide to allocate the required space, and rewrite the buffer from scratch:
 		\code{.cpp}
@@ -60,13 +60,13 @@ namespace reflective
 
 		vector<char> buffer(10);
 
-		OutStringBuffer out(buffer.data(), buffer.size());
+		OutBufferTextStream out(buffer.data(), buffer.size());
 		out << "This string is too long, and this is a number " << 40 + 2;
 
 		if (out.is_truncated())
 		{
 			buffer.resize(out.needed_buffer_length());
-			out = OutStringBuffer(buffer.data(), buffer.size());
+			out = OutBufferTextStream(buffer.data(), buffer.size());
 			out << "This string is too long, and this is a number " << 40 + 2;
 		}
 
@@ -74,8 +74,8 @@ namespace reflective
 		\endcode
 		
 	*/
-	template <typename CHAR, typename CHAR_TRAITS >
-		class BasicOutBufferStream final
+	template <typename CHAR, typename CHAR_TRAITS = std::char_traits<CHAR> >
+		class BasicOutBufferTextStream final
 	{
 	public:
 		
@@ -86,25 +86,26 @@ namespace reflective
 
 				// construction \ destruction
 		
-		/** Constructs a BasicOutBufferStream given a destination buffer. The size of the buffer can be 
+		/** Constructs a BasicOutBufferTextStream given a destination buffer. The size of the buffer can be 
 			zero if and only if the pointer is null.
 			@param i_dest_buffer pointer to the beginning of the destination buffer
 			@param i_buffer_size size of the destination buffer */
-		REFLECTIVE_CONSTEXPR BasicOutBufferStream(CHAR * i_dest_buffer, size_t i_buffer_size) REFLECTIVE_NOEXCEPT
-			: m_next_char(i_dest_buffer), m_end_of_buffer(i_dest_buffer + i_buffer_size - 1), m_written_chars(0)
+		REFLECTIVE_CONSTEXPR BasicOutBufferTextStream(CHAR * i_dest_buffer, size_t i_buffer_size) REFLECTIVE_NOEXCEPT
+			: m_next_char(i_dest_buffer), m_end_of_buffer(i_dest_buffer + i_buffer_size - 1), m_written_chars(0), m_buffer_size(i_buffer_size)
 		{
+			REFLECTIVE_ASSERT(i_buffer_size > 0, "the buffer cannot be empty");
 			*m_next_char = CHAR_TRAITS::to_char_type(0); // terminates the string
 		}
 
-		/** Constructs an OutStringBuffer given a character array. */
+		/** Constructs an OutBufferTextStream given a character array. */
 		template < size_t BUFFER_SIZE >
-			REFLECTIVE_CONSTEXPR BasicOutBufferStream( CHAR (&i_dest_buffer)[BUFFER_SIZE] ) REFLECTIVE_NOEXCEPT
-				: BasicOutBufferStream(i_dest_buffer, BUFFER_SIZE)
+			REFLECTIVE_CONSTEXPR BasicOutBufferTextStream( CHAR (&i_dest_buffer)[BUFFER_SIZE] ) REFLECTIVE_NOEXCEPT
+				: BasicOutBufferTextStream(i_dest_buffer, BUFFER_SIZE)
 					{  }
 			
 		/** Writes a character to the buffer 
 			@param i_char character to write. Can't be the null character. */
-		void write_char(CHAR i_char) REFLECTIVE_NOEXCEPT
+		bool write_char(CHAR i_char) REFLECTIVE_NOEXCEPT
 		{
 			m_written_chars++;
 
@@ -112,13 +113,18 @@ namespace reflective
 			{
 				CHAR_TRAITS::assign(*m_next_char++, i_char);
 				*m_next_char = CHAR_TRAITS::to_char_type(0); // terminates the string
+				return true;
+			}
+			else
+			{
+				return false;
 			}
 		}
 
 		/** Writes a C null-terminated string */
-		void write_cstr(const CHAR * i_null_terminated_string)
+		size_t write_cstr(const CHAR * i_null_terminated_string)
 		{
-			write_nstr(i_null_terminated_string, CHAR_TRAITS::length(i_null_terminated_string));
+			return write_nstr(i_null_terminated_string, CHAR_TRAITS::length(i_null_terminated_string));
 		}
 
 		/** Writes a C string, possibly not null-terminated. 
@@ -126,27 +132,29 @@ namespace reflective
 				up to i_string_length must be non-null. The character i_string[i_string_length] is
 				not read (so it may be a null char or not, or an invalid address).
 			@param i_string_length. May be zero. */
-		void write_nstr(const CHAR * i_string, size_t i_string_length)
+		size_t write_nstr(const CHAR * i_string, size_t i_string_length)
 		{
 			m_written_chars += i_string_length;
 
-			const auto remaining_length = m_end_of_buffer - m_next_char;
+			const size_t remaining_length = m_end_of_buffer - m_next_char;
 			const auto length_to_write = std::min(remaining_length, i_string_length);
 
 			CHAR_TRAITS::copy(m_next_char, i_string, length_to_write);
 			m_next_char += length_to_write;
 
 			*m_next_char = CHAR_TRAITS::to_char_type(0); // terminates the string
+
+			return length_to_write;
 		}
 
 		/** Writes an array of characters, presumably a string literal (like "a string").
 			@param i_array array of const chars. All the characters of this array, except the last,
 				must not be the null char. The last character must be the null-char. */
 		template <size_t ARRAY_SIZE>
-			void write_literal(const CHAR(&i_array)[ARRAY_SIZE])
+			size_t write_literal(const CHAR(&i_array)[ARRAY_SIZE])
 		{
 			REFLECTIVE_ASSERT(i_array[ARRAY_SIZE - 1] == 0, "the array must contain a null terminated string");
-			write_nstr(i_array, ARRAY_SIZE - 1); 
+			return write_nstr(i_array, ARRAY_SIZE - 1); 
 		}
 
 
@@ -163,15 +171,27 @@ namespace reflective
 
 		bool is_truncated() const									{ return m_written_chars + 1 > m_buffer_size; }		
 
-		char * next_char() const									{ return m_next_char; }
+		CHAR * next_char() const									{ return m_next_char; }
 		
 	private:
-		char * m_next_char;
-		char * m_end_of_buffer; /**< first char out of the buffer*/
+		CHAR * m_next_char;
+		CHAR * m_end_of_buffer; /**< first char out of the buffer*/
 		pos_type m_written_chars; /**< chars written to the stream, interdependently from the actual buffer length */
+		pos_type m_buffer_size;
 	};
 
-	inline OutStringBuffer & operator << (OutStringBuffer & i_dest, const StringView & i_string)
+	template class BasicOutBufferTextStream< char >;
+	template class BasicOutBufferTextStream< wchar_t >;
+	template class BasicOutBufferTextStream< char16_t >;
+	template class BasicOutBufferTextStream< char32_t >;
+
+	using OutBufferTextStream = BasicOutBufferTextStream< char >;
+	using WOutBufferTextStream = BasicOutBufferTextStream< wchar_t >;
+	using u16OutBufferTextStream = BasicOutBufferTextStream< char16_t >;
+	using u32OutBufferTextStream = BasicOutBufferTextStream< char32_t >;
+
+	template <typename CHAR, typename CHAR_TRAITS >
+		inline BasicOutBufferTextStream<CHAR, CHAR_TRAITS> & operator << (BasicOutBufferTextStream<CHAR, CHAR_TRAITS> & i_dest, const BasicStringView<CHAR, CHAR_TRAITS> & i_string)
 	{
 		i_dest.write_nstr(i_string.data(), i_string.length());
 		return i_dest;
@@ -189,7 +209,7 @@ namespace reflective
 		std::unique_ptr<char[]> dynamic_buffer;
 		for (;;)
 		{
-			OutStringBuffer out(buff, buffer_size);
+			OutBufferTextStream out(buff, buffer_size);
 			out << i_object;
 			if (!out.is_truncated())
 			{
