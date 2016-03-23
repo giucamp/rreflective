@@ -31,18 +31,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif
 
 namespace reflective
-{
-	#if defined(_MSC_VER) && _MSC_VER < 1900 // Visual Studio 2013 and below
-		#define REFLECTIVE_CONSTEXPR
-		#define REFLECTIVE_NOEXCEPT
-		#define REFLECTIVE_NOEXCEPT_V(value)
-	#else
-		#define REFLECTIVE_CONSTEXPR			constexpr
-		#define REFLECTIVE_NOEXCEPT				noexcept
-		#define REFLECTIVE_NOEXCEPT_V(value)	noexcept(value)
-	#endif
-	
-	
+{	
 	/** This header provides a temporary, not fully not compliant implementation of some classes which are not 
 		in C++14, but should be included in the C++17. To avoid confusion with the standard, the names defined
 		are all camel case or inside the static class reflective::Ext, so that in the future they may become

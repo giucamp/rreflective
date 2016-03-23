@@ -114,6 +114,12 @@
     <ClInclude Include="..\sources\core\bulk_list.h">
       <Filter>core</Filter>
     </ClInclude>
+    <ClInclude Include="..\sources\core\in_string_buffer.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sources\core\stream_adapters.h">
+      <Filter>core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\sources\reflective.cpp" />
@@ -173,6 +179,9 @@
     </ClCompile>
     <ClCompile Include="..\sources\reflection\string_functions.cpp">
       <Filter>reflection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sources\core\in_string_buffer.cpp">
+      <Filter>core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

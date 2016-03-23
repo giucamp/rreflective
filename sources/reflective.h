@@ -40,6 +40,16 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #define INCLUDING_REFLECTIVE
 
+#if defined(_MSC_VER) && _MSC_VER < 1900 // Visual Studio 2013 and below
+	#define REFLECTIVE_CONSTEXPR
+	#define REFLECTIVE_NOEXCEPT
+	#define REFLECTIVE_NOEXCEPT_V(value)
+#else
+	#define REFLECTIVE_CONSTEXPR			constexpr
+	#define REFLECTIVE_NOEXCEPT				noexcept
+	#define REFLECTIVE_NOEXCEPT_V(value)	noexcept(value)
+#endif
+
 // forward declarations
 namespace reflective
 {
@@ -95,6 +105,7 @@ namespace reflective
 #include "core\string_view.h"
 #include "core\out_string_buffer.h"
 #include "core\in_string_buffer.h"
+#include "core\stream_adapters.h"
 #include "core\ptr_string.h"
 #include "core\identifier.h"
 #include "core\string_hash.h"

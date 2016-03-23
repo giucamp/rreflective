@@ -32,94 +32,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	template <typename UNDERLYING_STREAM, typename CHAR = UNDERLYING_STREAM::char_type, typename CHAR_TRAITS = std::char_traits<CHAR> >
-		class OutTextStream;
-	template <typename UNDERLYING_STREAM, typename CHAR = UNDERLYING_STREAM::char_type, typename CHAR_TRAITS = std::char_traits<CHAR> >
-		class InTextStream;
-
-	namespace details
-	{
-		namespace sfinae
-		{
-			struct NoSupport {};
-
-			template<typename TYPE> TYPE & dummy_get_any();
-
-			// dummy streaming operators, not implemented - we use SFINAE to check if the result is NoSupport
-			template <typename TYPE, typename CHAR, typename CHAR_TRAITS>
-				NoSupport operator << (std::basic_ostream<CHAR, CHAR_TRAITS> &, const TYPE &);
-			template <typename TYPE, typename CHAR, typename CHAR_TRAITS>
-				NoSupport operator >> (std::basic_istream<CHAR, CHAR_TRAITS> &, TYPE &);
-				
-			template <typename TYPE, typename CHAR, typename CHAR_TRAITS>
-				struct HasStdStreamingOperators
-			{
-				static const bool has_out = !std::is_same< NoSupport, decltype(dummy_get_any<std::basic_ostream<CHAR, CHAR_TRAITS>>() << dummy_get_any<TYPE>()) >::value;
-				static const bool has_in = !std::is_same< NoSupport, decltype(dummy_get_any<std::basic_istream<CHAR, CHAR_TRAITS>>() >> dummy_get_any<TYPE>()) >::value;
-			};
-		}
-	}
-
-	template <typename CHAR, typename CHAR_TRAITS>
-		class OutTextStream< std::basic_ostream<CHAR, CHAR_TRAITS>, CHAR, CHAR_TRAITS >
-	{
-	public:
-
-		OutTextStream(std::basic_ostream<CHAR, CHAR_TRAITS> & i_underlying_stream)
-			: m_underlying_stream(i_underlying_stream) { }
-
-		template <typename TYPE>
-			typename std::enable_if< details::sfinae::HasStdStreamingOperators<TYPE, CHAR, CHAR_TRAITS>::has_out, OutTextStream & >::type operator << (TYPE && i_value)
-		{
-			m_underlying_stream << std::forward<TYPE>(i_value);
-			return *this;
-		}
-
-		OutTextStream & operator << (const char * i_null_terminated_string)
-		{
-			m_underlying_stream << i_null_terminated_string;
-			return *this;
-		}
-
-		OutTextStream(const OutTextStream &) = delete;
-		OutTextStream(OutTextStream &&) = delete;
-		OutTextStream & operator = (const OutTextStream &) = delete;
-		OutTextStream & operator = (OutTextStream &&) = delete;
-
-	private:
-		std::basic_ostream<CHAR, CHAR_TRAITS> & m_underlying_stream;
-	};
-
-	template <typename CHAR, typename CHAR_TRAITS>
-		class InTextStream< std::basic_istream<CHAR, CHAR_TRAITS>, CHAR, CHAR_TRAITS >
-	{
-	public:
-
-		InTextStream(std::basic_istream<CHAR, CHAR_TRAITS> & i_underlying_stream)
-			: m_underlying_stream(i_underlying_stream) { }
-
-		template <typename TYPE>
-			typename std::enable_if< details::sfinae::HasStdStreamingOperators<TYPE, CHAR, CHAR_TRAITS>::has_in, InTextStream & >::type operator >> (TYPE && i_value)
-		{
-			m_underlying_stream >> std::forward<TYPE>(i_value);
-			return *this;
-		}
-
-		InTextStream & operator << (const char * i_null_terminated_string)
-		{
-			m_underlying_stream << i_null_terminated_string;
-			return *this;
-		}
-
-		InTextStream(const InTextStream &) = delete;
-		InTextStream(InTextStream &&) = delete;
-		InTextStream & operator = (const InTextStream &) = delete;
-		InTextStream & operator = (InTextStream &&) = delete;
-
-	private:
-		std::basic_istream<CHAR, CHAR_TRAITS> & m_underlying_stream;
-	};
-
 	/** This class implements an output text stream to write formatted text to an user-provided character buffer. It is a lightweight objects, and
 		doesn't have virtual functions.
 
@@ -162,81 +74,88 @@ namespace reflective
 		\endcode
 		
 	*/
-	class OutStringBuffer final
+	template <typename CHAR, typename CHAR_TRAITS >
+		class BasicOutBufferStream final
 	{
 	public:
 		
+		using char_type = CHAR;
+		using traits_type = CHAR_TRAITS;
+		using pos_type = size_t;
+		using off_type = size_t;
 
 				// construction \ destruction
 		
-		/** Constructs an OutStringBuffer given a destination buffer. The size of the buffer can be 
+		/** Constructs a BasicOutBufferStream given a destination buffer. The size of the buffer can be 
 			zero if and only if the pointer is null.
 			@param i_dest_buffer pointer to the beginning of the destination buffer
 			@param i_buffer_size size of the destination buffer */
-		OutStringBuffer(char * i_dest_buffer, size_t i_buffer_size);
-
+		REFLECTIVE_CONSTEXPR BasicOutBufferStream(CHAR * i_dest_buffer, size_t i_buffer_size) REFLECTIVE_NOEXCEPT
+			: m_next_char(i_dest_buffer), m_end_of_buffer(i_dest_buffer + i_buffer_size - 1), m_written_chars(0)
+		{
+			*m_next_char = CHAR_TRAITS::to_char_type(0); // terminates the string
+		}
 
 		/** Constructs an OutStringBuffer given a character array. */
 		template < size_t BUFFER_SIZE >
-			OutStringBuffer( char (&i_dest_buffer)[BUFFER_SIZE] )
-				: OutStringBuffer(i_dest_buffer, BUFFER_SIZE)
+			REFLECTIVE_CONSTEXPR BasicOutBufferStream( CHAR (&i_dest_buffer)[BUFFER_SIZE] ) REFLECTIVE_NOEXCEPT
+				: BasicOutBufferStream(i_dest_buffer, BUFFER_SIZE)
 					{  }
 			
 		/** Writes a character to the buffer 
 			@param i_char character to write. Can't be the null character. */
-		void write_char(char i_char);
-		
+		void write_char(CHAR i_char) REFLECTIVE_NOEXCEPT
+		{
+			m_written_chars++;
+
+			if (m_next_char < m_end_of_buffer)
+			{
+				CHAR_TRAITS::assign(*m_next_char++, i_char);
+				*m_next_char = CHAR_TRAITS::to_char_type(0); // terminates the string
+			}
+		}
+
 		/** Writes a C null-terminated string */
-		void write_cstr(const char * i_null_terminated_string)			{ write_nstr(i_null_terminated_string, strlen(i_null_terminated_string)); }
+		void write_cstr(const CHAR * i_null_terminated_string)
+		{
+			write_nstr(i_null_terminated_string, CHAR_TRAITS::length(i_null_terminated_string));
+		}
 
 		/** Writes a C string, possibly not null-terminated. 
 			@param i_string pointer to the first character of the string. All the characters 
 				up to i_string_length must be non-null. The character i_string[i_string_length] is
 				not read (so it may be a null char or not, or an invalid address).
 			@param i_string_length. May be zero. */
-		void write_nstr(const char * i_string, const size_t i_string_length);
+		void write_nstr(const CHAR * i_string, size_t i_string_length)
+		{
+			m_written_chars += i_string_length;
+
+			const auto remaining_length = m_end_of_buffer - m_next_char;
+			const auto length_to_write = std::min(remaining_length, i_string_length);
+
+			CHAR_TRAITS::copy(m_next_char, i_string, length_to_write);
+			m_next_char += length_to_write;
+
+			*m_next_char = CHAR_TRAITS::to_char_type(0); // terminates the string
+		}
 
 		/** Writes an array of characters, presumably a string literal (like "a string").
 			@param i_array array of const chars. All the characters of this array, except the last,
 				must not be the null char. The last character must be the null-char. */
 		template <size_t ARRAY_SIZE>
-			void write_literal(const char(&i_array)[ARRAY_SIZE])
+			void write_literal(const CHAR(&i_array)[ARRAY_SIZE])
 		{
 			REFLECTIVE_ASSERT(i_array[ARRAY_SIZE - 1] == 0, "the array must contain a null terminated string");
 			write_nstr(i_array, ARRAY_SIZE - 1); 
 		}
 
-		template <typename TYPE>
-			void write_any(const TYPE & i_object)
-		{
-			AnyToString<TYPE, has_to_string<TYPE>::value>::to_string(*this, i_object);
-		}
-
-		OutStringBuffer & operator << (char i_char) { write_char(i_char); return *this; }
-
-		OutStringBuffer & operator << (const char * i_null_terminated_string) { write_cstr(i_null_terminated_string); return *this; }
-
-		template <size_t ARRAY_SIZE>
-			OutStringBuffer & operator << (const char(&i_array)[ARRAY_SIZE]) { write_literal(i_array); return *this; }
-
-		template <typename TYPE>
-			OutStringBuffer & operator << (const TYPE & i_object)
-		{
-			write_any(i_object); return *this;
-		}			
-
-		template <typename TYPE>
-			OutStringBuffer & operator << (TYPE && i_object)
-		{
-			write_any(std::forward<TYPE>(i_object)); return *this;
-		}
 
 		/** Retrieves the number of characters that would have been written so far, independently of the size of the 
 			buffer (and therefore of the truncation). */
 		size_t needed_char_count() const							{ return m_written_chars; }
 
 		/** Retrieves how big a buffer should be to contain all the chars written so far without incurring in truncation. */
-		size_t needed_buffer_length() const							{ return (m_written_chars + 1) * sizeof(char); }
+		size_t needed_buffer_length() const							{ return (m_written_chars + 1) * sizeof(CHAR); }
 
 		size_t remaining_buffer_length() const						{ return m_end_of_buffer - m_next_char; }
 
@@ -245,23 +164,11 @@ namespace reflective
 		bool is_truncated() const									{ return m_written_chars + 1 > m_buffer_size; }		
 
 		char * next_char() const									{ return m_next_char; }
-
-		//void manual_advance( size_t i_required_length, size_t i_actual_written_length );
-
-	private:
-
-		template <typename TYPE, bool HAS_TOSTRING_METHOD> struct AnyToString;
-		template <typename TYPE> struct AnyToString<TYPE,true>
-			{ static void to_string(OutStringBuffer & i_dest, const TYPE & i_object) { i_object.to_string(i_dest); } };
-
-		template <typename TYPE> struct AnyToString<TYPE, false>
-			{ static void to_string(OutStringBuffer & i_dest, const TYPE & i_object) { ::reflective::to_string(i_dest, i_object); } };
-
+		
 	private:
 		char * m_next_char;
 		char * m_end_of_buffer; /**< first char out of the buffer*/
-		size_t m_written_chars; /**< chars written to the stream, interdependently from the actual buffer length */
-		size_t m_buffer_size;
+		pos_type m_written_chars; /**< chars written to the stream, interdependently from the actual buffer length */
 	};
 
 	inline OutStringBuffer & operator << (OutStringBuffer & i_dest, const StringView & i_string)

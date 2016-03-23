@@ -30,11 +30,11 @@ struct GGGG
 int main()
 {
 	using namespace reflective;
-	OutTextStream<std::ostream> out_stream(std::cout);
-	InTextStream<std::istream> in_stream(std::cin);
+	OutTxtStreamAdapt<std::ostream> out_stream(std::cout);
+	InTxtStreamAdapt<std::istream> in_stream(std::cin);
 	out_stream << 43;
-	out_stream << std::string("dcsd");
-	out_stream << "dcsd";
+	out_stream << std::string("_dcsd");
+	out_stream << "_dcsd";
 	out_stream << 243.234;
 	int h = 0;
 	in_stream >> h;
