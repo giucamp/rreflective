@@ -37,6 +37,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <unordered_map>
 #include <assert.h>
 #include <algorithm>
+#include <iostream>
+#include <sstream>
 
 #define INCLUDING_REFLECTIVE
 

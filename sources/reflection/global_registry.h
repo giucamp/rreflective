@@ -114,4 +114,28 @@ namespace reflective
 
 		return enum_raw_ptr;
 	}
+
+	template <typename UNDERLYING_STREAM>
+		void parse_type_name(InTxtStreamAdapt<UNDERLYING_STREAM, char> & i_source, std::string & o_result)
+	{
+		do {
+			auto name = i_source.accept_identifier();
+			o_result += name;
+			if (i_source.accept_char('<'))
+			{
+				o_result += '<';
+				uint32_t depth = 1;
+				i_source.accept_while([&depth](char i_char)->bool {
+					if (i_char == '<')
+					{
+						depth++;
+					} else if (i_char == '>')
+					{
+						depth--;
+					}
+					return depth > 0;
+				});
+			}		 
+		} while (i_source.accept_literal("::"));
+	}
 }

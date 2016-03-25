@@ -58,10 +58,6 @@ namespace reflective
 		return static_cast<CV_Flags>(static_cast<underlying_type>(i_first) & static_cast<underlying_type>(i_seconds));
 	}
 
-	class Pointer
-	{
-
-	};
 
 	/** Lightweight value-class holding a pointer to a reflective::Type, a number of indirection levels, and the cv-qualification
 		(is it \c const? is it \c volatile?) for each indirection level. A QualifiedTypePtr can tell:
@@ -192,6 +188,9 @@ namespace reflective
 		
 		template <typename TYPE>
 			friend QualifiedTypePtr get_type();
+
+		template <typename UNDERLYING_STREAM>
+		friend InTxtStreamAdapt<UNDERLYING_STREAM, char> & operator >> (InTxtStreamAdapt<UNDERLYING_STREAM, char> & i_source, QualifiedTypePtr & o_dest_qualified_type);
 			
 	private: // data members (currently a QualifiedTypePtr is big as two pointers)
 		const Type * m_final_type;
@@ -200,9 +199,107 @@ namespace reflective
 		uintptr_t m_volatileness_word : s_max_indirection_levels;
 	};
 	
-	template <typename UNDERLYING_STREAM>
-		OutTxtStreamAdapt<UNDERLYING_STREAM, char> & operator << (OutTxtStreamAdapt<UNDERLYING_STREAM, char> & i_dest, const QualifiedTypePtr & i_qualified_type);
+	template <typename OUT_STREAM>
+		OUT_STREAM & operator << (OUT_STREAM & i_dest, const QualifiedTypePtr & i_qt)
+	{
+		if (!i_qt.is_empty())
+		{
+			i_dest << i_qt.final_type()->name();
+
+			uintptr_t level = 0;
+			const uintptr_t ind_levels = i_qt.indirection_levels();
+			do {
+
+				if (i_qt.is_const(level))
+				{
+					i_dest << " const";
+				}
+
+				if (i_qt.is_volatile(level))
+				{
+					i_dest << " volatile";
+				}
+
+				if (level < ind_levels)
+				{
+					i_dest << " *";
+				}
+
+				level++;
+
+			} while (level <= ind_levels);
+		}
+		return i_dest;
+	}
 
 	template <typename UNDERLYING_STREAM>
-		InTxtStreamAdapt<UNDERLYING_STREAM, char> & operator >> (InTxtStreamAdapt<UNDERLYING_STREAM, char> & i_dest, QualifiedTypePtr & o_qualified_type);
+		InTxtStreamAdapt<UNDERLYING_STREAM, char> & operator >> (InTxtStreamAdapt<UNDERLYING_STREAM, char> & i_source, QualifiedTypePtr & o_dest_qualified_type)
+	{
+		size_t constness_word = 0, volatileness_word = 0;
+		const Type * final_type = nullptr;
+		size_t indirection_levels = 0; // this variable is not the index of the current i.l., but the number of i.l.'s so far
+		
+		for (;;)
+		{
+			i_source.accept_whitespaces();
+
+			if (i_source.accept_literal("const")) // accept "const"
+			{
+				constness_word |= 1;
+			}
+			else if (i_source.accept_literal("volatile")) // accept "volatile"
+			{
+				volatileness_word |= 1;
+			}
+			else if (i_source.accept_char('*'))
+			{
+				constness_word <<= 1;
+				volatileness_word <<= 1;
+				indirection_levels++;
+				if (indirection_levels > QualifiedTypePtr::s_max_indirection_levels)
+				{
+					break;
+				}
+			}
+			else if (i_source.accept_char('&') || i_source.accept_literal("&&"))
+			{
+				constness_word <<= 1;
+				constness_word |= 1;
+				volatileness_word <<= 1;
+				indirection_levels++;
+				break;
+			}
+			else if (indirection_levels == 0 && final_type == nullptr) // only in the last indirection level (that is before any *, & or &&
+			{
+				// accept the final type
+				std::string type_name;
+				parse_type_name(i_source, type_name);
+				final_type = GlobalRegistry::instance().find_type_by_full_name(type_name);
+				if (final_type == nullptr)
+				{
+					i_source.error_stream() << "Unknwon type: '" << type_name << "'" << std::endl;
+					break;
+				}
+			}
+			else
+			{
+				break;
+			}
+		}
+
+		if (indirection_levels > QualifiedTypePtr::s_max_indirection_levels)
+		{
+			i_source.error_stream() << "Exceeded the maximum number of indirection levels (" << QualifiedTypePtr::s_max_indirection_levels << ")" << std::endl;
+		}
+		else if (final_type == nullptr)
+		{
+			i_source.error_stream() << "Missing final type" << std::endl;
+		}
+		else
+		{
+			o_dest_qualified_type = QualifiedTypePtr(final_type, indirection_levels, constness_word, volatileness_word);
+		}
+
+		return i_source;
+	}
 }

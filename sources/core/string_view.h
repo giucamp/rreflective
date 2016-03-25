@@ -214,7 +214,7 @@ namespace reflective
 			return BasicStringView(m_chars, std::min(i_count, m_size - i_pos));
 		}
 
-		REFLECTIVE_CONSTEXPR size_t find(CHAR i_target_char, size_t i_pos = 0) const REFLECTIVE_NOEXCEPT
+		size_t find(CHAR i_target_char, size_t i_pos = 0) const REFLECTIVE_NOEXCEPT
 		{
 			if (i_pos >= m_size)
 			{
@@ -232,7 +232,7 @@ namespace reflective
 			}
 		}
 
-		REFLECTIVE_CONSTEXPR size_t find(BasicStringView i_target_string, size_t i_pos = 0) const REFLECTIVE_NOEXCEPT
+		size_t find(BasicStringView i_target_string, size_t i_pos = 0) const REFLECTIVE_NOEXCEPT
 		{
 			if (i_target_string.size() == 0)
 			{
@@ -511,5 +511,22 @@ namespace reflective
 	{
 		i_dest.write(i_string.data(), i_string.length());
 		return i_dest;
+	}
+
+	template <typename CHAR, typename CHAR_TRAITS >
+		inline std::basic_string<CHAR, CHAR_TRAITS> & operator += (std::basic_string<CHAR, CHAR_TRAITS> & i_first, BasicStringView<CHAR, CHAR_TRAITS> & i_second)
+	{
+		i_first.append(i_second.data(), i_second.size());
+		return i_first;
+	}
+
+	template <typename CHAR, typename CHAR_TRAITS >
+		inline std::basic_string<CHAR, CHAR_TRAITS> operator + (const std::basic_string<CHAR, CHAR_TRAITS> & i_first, BasicStringView<CHAR, CHAR_TRAITS> & i_second)
+	{
+		std::basic_string<CHAR, CHAR_TRAITS> result;
+		result.reserve(i_first.size() + i_second.size());
+		result = i_first;
+		result.append(i_second.data(), i_second.size());
+		return result;
 	}
 }

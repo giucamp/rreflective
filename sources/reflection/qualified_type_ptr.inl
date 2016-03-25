@@ -145,7 +145,7 @@ namespace reflective
 		{
 			// the type is a pointer
 			REFLECTIVE_INTERNAL_ASSERT(m_final_type != nullptr);
-			return &get_naked_type<Pointer>();
+			return &get_naked_type<void*>();
 		}
 	}
 

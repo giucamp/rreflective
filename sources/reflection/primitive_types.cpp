@@ -319,21 +319,21 @@ namespace reflective
 	{
 		char tmp_buffer[128];
 		sprintf_s(tmp_buffer, "%f", i_value);
-		i_dest.write_cstr(tmp_buffer);
+		i_dest.write_string(tmp_buffer);
 	}
 
 	void to_string(OutBufferTextStream & i_dest, double i_value)
 	{
 		char tmp_buffer[128];
 		sprintf_s(tmp_buffer, "%lf", i_value);
-		i_dest.write_cstr(tmp_buffer);
+		i_dest.write_string(tmp_buffer);
 	}
 
 	void to_string(OutBufferTextStream & i_dest, long double i_value)
 	{
 		char tmp_buffer[128];
 		sprintf_s(tmp_buffer, "%Lf", i_value);
-		i_dest.write_cstr(tmp_buffer);
+		i_dest.write_string(tmp_buffer);
 	}
 
 		// signed integers assign_from_string

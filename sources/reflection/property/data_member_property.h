@@ -88,7 +88,7 @@ namespace reflective
 		};
 
 		template <typename OWNER_CLASS, typename PROPERTY_TYPE>
-			class DataMemberProperty : public Property
+			class DataMemberProperty final : public Property
 		{
 		public:
 
@@ -216,7 +216,7 @@ namespace reflective
 		};
 
 		template <typename OWNER_CLASS, typename PROPERTY_TYPE>
-			class ConstDataMemberProperty : public Property
+			class ConstDataMemberProperty final : public Property
 		{
 		public:
 
@@ -296,13 +296,13 @@ namespace reflective
 		inline details::DataMemberProperty<OWNER_CLASS, PROPERTY_TYPE> make_property(SymbolName i_name, PROPERTY_TYPE (OWNER_CLASS::*i_member_ptr),
 			ClassMember::Flags i_flags = ClassMember::Flags::none) REFLECTIVE_NOEXCEPT
 	{
-		return details::DataMemberProperty<OWNER_CLASS, PROPERTY_TYPE>(i_name, i_member_ptr, i_flags);
+		return details::DataMemberProperty<OWNER_CLASS, PROPERTY_TYPE>(std::move(i_name), i_member_ptr, i_flags);
 	}
 
 	template <typename OWNER_CLASS, typename PROPERTY_TYPE>
 		inline details::ConstDataMemberProperty<OWNER_CLASS, PROPERTY_TYPE> make_property(SymbolName i_name, const PROPERTY_TYPE (OWNER_CLASS::*i_member_ptr),
 			ClassMember::Flags i_flags = ClassMember::Flags::none) REFLECTIVE_NOEXCEPT
 	{
-		return details::ConstDataMemberProperty<OWNER_CLASS, PROPERTY_TYPE>(i_name, i_member_ptr, i_flags);
+		return details::ConstDataMemberProperty<OWNER_CLASS, PROPERTY_TYPE>(std::move(i_name), i_member_ptr, i_flags);
 	}
 }

@@ -8,7 +8,6 @@
 void Name_test();
 void SpecialFunctions_test();
 void Type_test();
-void Stream_test();
 void bulk_list__test();
 
 namespace reflective
@@ -30,7 +29,7 @@ struct GGGG
 int main()
 {
 	using namespace reflective;
-	OutTxtStreamAdapt<std::ostream> out_stream(std::cout);
+	std::ostream & out_stream = std::cout;
 	InTxtStreamAdapt<std::istream> in_stream(std::cin);
 	out_stream << 43;
 	out_stream << std::string("_dcsd");
@@ -98,9 +97,6 @@ int main()
 	Name_test();
 
 	bulk_list__test();
-
-	Stream_test();	
-		
 
 	SpecialFunctions_test();
 

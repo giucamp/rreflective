@@ -1,4 +1,6 @@
 
+#if 0
+
 #include "test_common.h"
 
 class StreamTest
@@ -35,7 +37,7 @@ public:
 		}
 
 		template <typename ANY>
-		static void read(reflective::StringView & i_source, ANY && i_any)
+			static void read(reflective::StringView & i_source, ANY && i_any)
 		{
 			const bool result = i_source.read(i_any);
 			REFLECTIVE_ASSERT(result, "SingleTest failed");
@@ -198,9 +200,9 @@ void Stream_test_rnd()
 		[&] { check_string += "str22"; out_stream.write_literal("str22"); small_stream.write_literal("str22"); },
 		[&] { check_string += "str333"; out_stream.write_literal("str333"); small_stream.write_literal("str333"); },
 
-		[&] { check_string += strings[0]; out_stream.write_cstr(strings[0].c_str()); small_stream.write_cstr(strings[0].c_str()); },
-		[&] { check_string += strings[1]; out_stream.write_cstr(strings[1].c_str()); small_stream.write_cstr(strings[1].c_str()); },
-		[&] { check_string += strings[2]; out_stream.write_cstr(strings[2].c_str()); small_stream.write_cstr(strings[2].c_str()); },
+		[&] { check_string += strings[0]; out_stream.write_string(strings[0].c_str()); small_stream.write_string(strings[0].c_str()); },
+		[&] { check_string += strings[1]; out_stream.write_string(strings[1].c_str()); small_stream.write_string(strings[1].c_str()); },
+		[&] { check_string += strings[2]; out_stream.write_string(strings[2].c_str()); small_stream.write_string(strings[2].c_str()); },
 	};
 	vector<function<bool()>> checks = {
 		
@@ -292,7 +294,7 @@ namespace reflective
 {
 	void to_string(OutBufferTextStream & i_dest, const std::string & i_str)
 	{
-		i_dest.write_cstr(i_str.c_str());
+		i_dest.write_string(i_str.c_str());
 	}
 }
 
@@ -359,3 +361,5 @@ void Stream_test()
 		Stream_test_rnd();
 	}*/
 }
+
+#endif

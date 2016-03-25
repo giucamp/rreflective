@@ -62,15 +62,4 @@ namespace reflective
 		size_t length() const { return std::strlen(m_chars); }
 	};
 
-	inline std::ostream & operator << (std::ostream & i_dest, const PtrString & i_string)
-	{
-		i_dest.write(i_string.data(), i_string.length());
-		return i_dest;
-	}
-
-	inline OutBufferTextStream & operator << (OutBufferTextStream & i_dest, const PtrString & i_string)
-	{
-		i_dest.write_nstr(i_string.data(), i_string.length());
-		return i_dest;
-	}
 }

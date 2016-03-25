@@ -45,8 +45,8 @@ namespace reflective
 	template <typename TYPE>
 		inline const ReflectingType<TYPE> & get_naked_type()
 	{
-		static_assert(!std::is_pointer<TYPE>::value && !std::is_reference<TYPE>::value && !std::is_rvalue_reference<TYPE>::value, 
-			"get_naked_type can't be used pointers or references. Use get_type instead");
+		static_assert( (!std::is_pointer<TYPE>::value && !std::is_reference<TYPE>::value && !std::is_rvalue_reference<TYPE>::value) || std::is_same<void*, TYPE>::value, 
+			"get_naked_type can't be used pointers or references but void*. Use get_type instead");
 		return details::TypeContainer< details::CleanType<TYPE> >::get();
 	}
 }

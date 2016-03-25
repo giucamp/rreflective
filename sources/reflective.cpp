@@ -5,7 +5,6 @@
 #include <map>
 #include <ctype.h>
 
-
 #include "reflective.h"
 
 #include "core\string_view.cpp"

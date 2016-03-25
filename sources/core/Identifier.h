@@ -204,8 +204,7 @@ namespace reflective
 	template < typename HASHER, typename STRING >
 		inline OutBufferTextStream & operator << (OutBufferTextStream & i_dest, const Identifier<HASHER, STRING> & i_identifier)
 	{
-		const auto & string = i_identifier.string();
-		i_dest.write_nstr(string.data(), string.length());
+		i_dest << i_identifier.string();
 		return i_dest;
 	}
 

@@ -99,7 +99,7 @@ namespace reflective
 
 		/** Constructs an OutBufferTextStream given a character array. */
 		template < size_t BUFFER_SIZE >
-			REFLECTIVE_CONSTEXPR BasicOutBufferTextStream( CHAR (&i_dest_buffer)[BUFFER_SIZE] ) REFLECTIVE_NOEXCEPT
+			BasicOutBufferTextStream( CHAR (&i_dest_buffer)[BUFFER_SIZE] ) REFLECTIVE_NOEXCEPT
 				: BasicOutBufferTextStream(i_dest_buffer, BUFFER_SIZE)
 					{  }
 			
@@ -121,32 +121,21 @@ namespace reflective
 			}
 		}
 
-		/** Writes a C null-terminated string */
-		size_t write_cstr(const CHAR * i_null_terminated_string)
+		size_t write_string(const BasicStringView<CHAR, CHAR_TRAITS> & i_string)
 		{
-			return write_nstr(i_null_terminated_string, CHAR_TRAITS::length(i_null_terminated_string));
-		}
-
-		/** Writes a C string, possibly not null-terminated. 
-			@param i_string pointer to the first character of the string. All the characters 
-				up to i_string_length must be non-null. The character i_string[i_string_length] is
-				not read (so it may be a null char or not, or an invalid address).
-			@param i_string_length. May be zero. */
-		size_t write_nstr(const CHAR * i_string, size_t i_string_length)
-		{
-			m_written_chars += i_string_length;
+			m_written_chars += i_string.size();
 
 			const size_t remaining_length = m_end_of_buffer - m_next_char;
-			const auto length_to_write = std::min(remaining_length, i_string_length);
+			const auto length_to_write = std::min(remaining_length, i_string.size());
 
-			CHAR_TRAITS::copy(m_next_char, i_string, length_to_write);
+			CHAR_TRAITS::copy(m_next_char, i_string.data(), length_to_write);
 			m_next_char += length_to_write;
 
 			*m_next_char = CHAR_TRAITS::to_char_type(0); // terminates the string
 
 			return length_to_write;
 		}
-
+		
 		/** Writes an array of characters, presumably a string literal (like "a string").
 			@param i_array array of const chars. All the characters of this array, except the last,
 				must not be the null char. The last character must be the null-char. */
@@ -154,7 +143,7 @@ namespace reflective
 			size_t write_literal(const CHAR(&i_array)[ARRAY_SIZE])
 		{
 			REFLECTIVE_ASSERT(i_array[ARRAY_SIZE - 1] == 0, "the array must contain a null terminated string");
-			return write_nstr(i_array, ARRAY_SIZE - 1); 
+			return write_string(BasicStringView<CHAR, CHAR_TRAITS>(i_array, ARRAY_SIZE - 1));
 		}
 
 
@@ -173,6 +162,18 @@ namespace reflective
 
 		CHAR * next_char() const									{ return m_next_char; }
 		
+		BasicOutBufferTextStream & operator << (const BasicStringView<CHAR, CHAR_TRAITS> & i_string)
+		{
+			write_string(i_string);
+			return *this;
+		}
+
+		BasicOutBufferTextStream & operator << (CHAR i_char)
+		{
+			write_char(i_char);
+			return *this;
+		}
+
 	private:
 		CHAR * m_next_char;
 		CHAR * m_end_of_buffer; /**< first char out of the buffer*/
@@ -200,7 +201,10 @@ namespace reflective
 	template <typename TYPE>
 		inline std::string to_std_string(TYPE && i_object)
 	{
-		const size_t fixed_size_buffer_size = 512;
+		std::ostringstream std_ostream;
+		std_ostream << i_object;
+		return std_ostream.str();
+		/*const size_t fixed_size_buffer_size = 512;
 		char fixed_size_buffer[fixed_size_buffer_size];
 		
 		char * buff = fixed_size_buffer;
@@ -221,7 +225,7 @@ namespace reflective
 			buffer_size = out.needed_buffer_length();
 			dynamic_buffer = std::make_unique<char[]>(buffer_size);
 			buff = dynamic_buffer.get();
-		}
+		}*/
 	}
 
 } // namespace reflective
