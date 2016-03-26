@@ -5,7 +5,7 @@ namespace reflective
 	{
 		void test_type_derived_list()
 		{
-			std::array<size_t, 6> remove_order = { 0, 1, 2, 3, 4, 5 };
+			std::array<size_t, 6> remove_order = { {0, 1, 2, 3, 4, 5} };
 			do {
 
 				details::DerivedTypesList test_type;
@@ -26,12 +26,12 @@ namespace reflective
 				};
 
 				std::array<std::unique_ptr<Type>, 6> types = {
-					std::make_unique<Type>( "t1", 16, 4 ),
-					std::make_unique<Type>( "t2", 16, 4 ),
-					std::make_unique<Type>( "t3", 16, 4 ),
-					std::make_unique<Type>( "t4", 16, 4 ),
-					std::make_unique<Type>( "t5", 16, 4 ),
-					std::make_unique<Type>( "t6", 16, 4 ) };
+					{ std::make_unique<Type>("t1", 16, 4),
+					std::make_unique<Type>("t2", 16, 4),
+					std::make_unique<Type>("t3", 16, 4),
+					std::make_unique<Type>("t4", 16, 4),
+					std::make_unique<Type>("t5", 16, 4),
+					std::make_unique<Type>("t6", 16, 4) } };
 
 				test_equal();
 

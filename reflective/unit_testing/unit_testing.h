@@ -30,7 +30,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	class UnitTesingManager;
+	class UnitTestingManager;
 }
 
 #include "correctness_test_context.h"

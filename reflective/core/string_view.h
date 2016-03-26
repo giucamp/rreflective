@@ -501,10 +501,10 @@ namespace reflective
 		size_t m_size;
 	};
 
-	template BasicStringView< char >;
-	template BasicStringView< wchar_t >;
-	template BasicStringView< char16_t >;
-	template BasicStringView< char32_t >;
+	template class BasicStringView< char >;
+	template class BasicStringView< wchar_t >;
+	template class BasicStringView< char16_t >;
+	template class BasicStringView< char32_t >;
 
 	template <typename CHAR, typename CHAR_TRAITS >
 		inline std::basic_ostream<CHAR, CHAR_TRAITS> & operator << (std::ostream & i_dest, const BasicStringView<CHAR, CHAR_TRAITS> & i_string)
@@ -529,4 +529,12 @@ namespace reflective
 		result.append(i_second.data(), i_second.size());
 		return result;
 	}
+
+	#if REFLECTIVE_ENABLE_TESTING
+
+		class CorrectnessTestContext;
+
+		template <typename CHAR, typename CHAR_TRAITS >
+			void unit_test(BasicStringView<CHAR, CHAR_TRAITS>**, CorrectnessTestContext & i_context);
+	#endif
 }

@@ -1,7 +1,7 @@
 
 namespace reflective
 {
-	class UnitTesingManager::Impl
+	class UnitTestingManager::Impl
 	{
 		class CorrectnessTest
 		{
@@ -171,28 +171,28 @@ namespace reflective
 		}
 	};
 
-	UnitTesingManager & UnitTesingManager::instance()
+	UnitTestingManager & UnitTestingManager::instance()
 	{
-		static UnitTesingManager instance;
+		static UnitTestingManager instance;
 		return instance;
 	}
 	
-	UnitTesingManager::UnitTesingManager()
+	UnitTestingManager::UnitTestingManager()
 		: m_impl( make_unique<Impl>() )
 	{
 	}
 
-	void UnitTesingManager::add_correctness_test(StringView i_path, CorrectnessTestFunction i_function)
+	void UnitTestingManager::add_correctness_test(StringView i_path, CorrectnessTestFunction i_function)
 	{
 		m_impl->add_correctness_test(i_path, i_function);
 	}
 
-	void UnitTesingManager::add_performance_test(StringView i_path, PerformanceTestFunction i_function, StringView i_version_label)
+	void UnitTestingManager::add_performance_test(StringView i_path, PerformanceTestFunction i_function, StringView i_version_label)
 	{
 		m_impl->add_performance_test(i_path, i_function, i_version_label);
 	}
 
-	void UnitTesingManager::run(StringView i_path)
+	void UnitTestingManager::run(StringView i_path)
 	{
 		m_impl->run(i_path);
 	}

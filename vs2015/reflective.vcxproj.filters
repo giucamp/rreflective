@@ -123,11 +123,11 @@
     <ClInclude Include="..\reflective\core\string_view.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="..\reflective\core\traits.h">
-      <Filter>core</Filter>
-    </ClInclude>
     <ClInclude Include="..\reflective\core\core.h">
       <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\reflective\reflection\get_naked_type_traits.h">
+      <Filter>reflection</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -189,9 +189,6 @@
     <ClCompile Include="..\reflective\core\testing\out_buffer_text_stream.cpp">
       <Filter>core\testing</Filter>
     </ClCompile>
-    <ClCompile Include="..\reflective\core\testing\string_view_test.cpp">
-      <Filter>core\testing</Filter>
-    </ClCompile>
     <ClCompile Include="..\reflective\core\core.cpp">
       <Filter>core</Filter>
     </ClCompile>
@@ -214,6 +211,12 @@
     </None>
     <None Include="..\reflective\reflection\namespace.inl">
       <Filter>reflection</Filter>
+    </None>
+    <None Include="..\reflective\core\core.inl">
+      <Filter>core</Filter>
+    </None>
+    <None Include="..\reflective\core\impl\string_view.inl">
+      <Filter>core\impl</Filter>
     </None>
   </ItemGroup>
 </Project>

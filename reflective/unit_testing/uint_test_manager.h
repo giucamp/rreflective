@@ -27,18 +27,18 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-	class UnitTesingManager
+	class UnitTestingManager
 	{
 	private:
-		UnitTesingManager();
+		UnitTestingManager();
 
 	public:
 
-		static UnitTesingManager & instance();
+		static UnitTestingManager & instance();
 
-		UnitTesingManager(const UnitTesingManager &) = delete;
+		UnitTestingManager(const UnitTestingManager &) = delete;
 
-		UnitTesingManager & operator = (const UnitTesingManager &) = delete;
+		UnitTestingManager & operator = (const UnitTestingManager &) = delete;
 
 		using PerformanceTestFunction = void (*)();
 		

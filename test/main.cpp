@@ -28,7 +28,14 @@ struct GGGG
 
 int main()
 {
+	reflective::UnitTestingManager::instance().run();
+
 	using namespace reflective;
+
+	std::cout << get_type<StringView>();
+
+	std::cout << details::HasUnitTestFunc<Class>::value << std::endl;
+	
 	std::ostream & out_stream = std::cout;
 	InTxtStreamAdapt<std::istream> in_stream(std::cin);
 	out_stream << 43;
@@ -71,11 +78,11 @@ int main()
 			REFLECTIVE_INTERNAL_ASSERT(copy==test.tokens);			
 		}
 
-		UnitTesingManager::instance().add_performance_test("abc", [] {}, "");
-		UnitTesingManager::instance().add_performance_test("abc/efg", [] {}, "");
-		UnitTesingManager::instance().add_performance_test("abc/efg/rre", [] {}, "");
-		UnitTesingManager::instance().run("abc");
-		UnitTesingManager::instance().run("abc/efg/rre");
+		UnitTestingManager::instance().add_performance_test("abc", [] {}, "");
+		UnitTestingManager::instance().add_performance_test("abc/efg", [] {}, "");
+		UnitTestingManager::instance().add_performance_test("abc/efg/rre", [] {}, "");
+		UnitTestingManager::instance().run("abc");
+		UnitTestingManager::instance().run("abc/efg/rre");
 	}
 
 	{

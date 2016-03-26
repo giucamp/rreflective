@@ -122,7 +122,7 @@ namespace reflective
 		static_assert(details::StaticQualification<TYPE>::s_indirection_levels <= QualifiedTypePtr::s_max_indirection_levels,
 			"Maximum indirection level exceeded");
 
-		return QualifiedTypePtr(&get_naked_type<details::StaticQualification<TYPE>::UnderlyingType>(),
+		return QualifiedTypePtr(&get_naked_type<typename details::StaticQualification<TYPE>::UnderlyingType>(),
 			details::StaticQualification<TYPE>::s_indirection_levels,
 			details::StaticQualification<TYPE>::s_constness_word,
 			details::StaticQualification<TYPE>::s_volatileness_word);

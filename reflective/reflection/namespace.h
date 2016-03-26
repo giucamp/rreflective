@@ -74,10 +74,6 @@ namespace reflective
 		/** \brief Constructs a namespace, assigning a name to it */
 		Namespace(SymbolName i_name);
 
-		Namespace(const Namespace &) = delete;
-
-		Namespace & operator = (const Namespace &) = delete;
-
 		/** \brief Returns a reference to the container of all the members of the namespace. The actual type of 
 			the container is an implementation detail. It support begin(), end(), cbegin() and cend(), so
 			it is suitable for range loops, but it should used only with auto and decltype. The type 

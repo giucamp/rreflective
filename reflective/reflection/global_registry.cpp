@@ -75,7 +75,7 @@ namespace reflective
 
 		} while (remaining_path.remove_prefix_literal("::"));
 
-		REFLECTIVE_ASSERT(remaining_path.empty(), "badformed full type name");
+		REFLECTIVE_RUNTIME_CHECK(remaining_path.empty(), "badformed full type name");
 
 		// loop all the path entries but the last to find or create the namespaces
 		Namespace * curr_namespace = &m_global_namespace;

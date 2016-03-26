@@ -115,9 +115,11 @@ namespace reflective
 #include "reflection\class_template.h"
 #include "reflection\namespace.h"
 #include "reflection\global_registry.h"
+#include "reflection\get_naked_type_traits.h"
 #include "reflection\get_naked_type.h"
 
 // inlines
+#include "core\core.inl"
 #include "reflection\qualified_type_ptr.inl"
 #include "reflection\special_functions.inl"
 #include "reflection\type.inl"

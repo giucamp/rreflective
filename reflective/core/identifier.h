@@ -37,8 +37,8 @@ namespace reflective
 	{
 	public:
 
-		using Hasher = typename HASHER;
-		using String = typename STRING;
+		using Hasher = HASHER;
+		using String = STRING;
 		using HashType = typename HASHER::ResultType;
 
 				// constructors
@@ -121,7 +121,7 @@ namespace reflective
 	{
 	public:
 
-		using Hasher = typename HASHER;
+		using Hasher = HASHER;
 		using String = void;
 		using HashType = typename HASHER::ResultType;
 

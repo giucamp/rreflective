@@ -1,16 +1,10 @@
 
 namespace reflective
 {
-	template <typename CHAR, typename CHAR_TRAITS >
-		void setup_type(TypeSetupContext<BasicStringView<CHAR, CHAR_TRAITS>> & i_context)
-	{
-
-	}
-
-	namespace testing
-	{
+	#if REFLECTIVE_ENABLE_TESTING
+		
 		template <typename CHAR, typename CHAR_TRAITS >
-			void string_view_test()
+			void unit_test(BasicStringView<CHAR, CHAR_TRAITS>**, CorrectnessTestContext & /*i_context*/)
 		{
 			using View = BasicStringView<CHAR, CHAR_TRAITS>;
 			using String = std::basic_string<CHAR, CHAR_TRAITS>;
@@ -20,6 +14,7 @@ namespace reflective
 
 			REFLECTIVE_TEST_ASSERT(view1.size() == 3);
 		}
-	}
+
+	#endif
 }
 

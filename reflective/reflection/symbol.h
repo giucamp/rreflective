@@ -49,6 +49,8 @@ namespace reflective
 
 		Attribute & operator = (const Attribute &) = delete;
 
+		const Class & type() const { return m_type; }
+
 	private:
 		const Class & m_type;
 	};

@@ -34,7 +34,7 @@ namespace reflective
 {
 	/*template <typename UNDERLYING_STREAM, typename CHAR = UNDERLYING_STREAM::char_type, typename CHAR_TRAITS = std::char_traits<CHAR> >
 		class OutTxtStreamAdapt;*/
-	template <typename UNDERLYING_STREAM, typename CHAR = UNDERLYING_STREAM::char_type, typename CHAR_TRAITS = std::char_traits<CHAR> >
+	template <typename UNDERLYING_STREAM, typename CHAR = typename UNDERLYING_STREAM::char_type, typename CHAR_TRAITS = typename std::char_traits<CHAR> >
 		class InTxtStreamAdapt;
 
 	namespace details

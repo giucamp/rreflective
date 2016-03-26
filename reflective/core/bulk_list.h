@@ -267,7 +267,7 @@ namespace reflective
 
 		TYPE_INFO * alloc_type_info_array(size_t i_count)
 		{
-			using Allocator = typename std::allocator_traits<ALLOCATOR>::rebind_alloc<TYPE_INFO>;
+			using Allocator = typename std::allocator_traits<ALLOCATOR>::template rebind_alloc<TYPE_INFO>;
 			Allocator alloc(*static_cast<const ALLOCATOR*>(this));
 			TYPE_INFO * new_array = alloc.allocate(i_count);
 			return new_array;
@@ -275,7 +275,7 @@ namespace reflective
 
 		void dealloc_type_info_array(TYPE_INFO * i_array, size_t i_count) REFLECTIVE_NOEXCEPT
 		{
-			using Allocator = typename std::allocator_traits<ALLOCATOR>::rebind_alloc<TYPE_INFO>;
+			using Allocator = typename std::allocator_traits<ALLOCATOR>::template rebind_alloc<TYPE_INFO>;
 			Allocator alloc( *static_cast<const ALLOCATOR*>(this) );
 			alloc.deallocate(i_array, i_count);
 		}
@@ -317,7 +317,7 @@ namespace reflective
 
 			inline static void construct(TYPE_INFO * i_types, void * i_elements, FIRST_TYPE && i_source, OTHER_TYPES && ... i_s1)
 			{
-				new(i_types) TYPE_INFO( TYPE_INFO::make<FIRST_TYPE>() );
+				new(i_types) TYPE_INFO( TYPE_INFO::template make<FIRST_TYPE>() );
 				FIRST_TYPE * const new_item = new(details::address_upper_align<FIRST_TYPE>(i_elements)) FIRST_TYPE(std::forward<FIRST_TYPE>(i_source));
 				RecursiveHelper<OTHER_TYPES...>::construct(
 					i_types + 1, new_item + 1, std::forward<OTHER_TYPES>(i_s1)...);
@@ -332,7 +332,7 @@ namespace reflective
 
 			inline static void construct(TYPE_INFO * i_types, void * i_elements, LAST_TYPE && i_source)
 			{
-				new(i_types) TYPE_INFO(TYPE_INFO::make<LAST_TYPE>());
+				new(i_types) TYPE_INFO(TYPE_INFO::template make<LAST_TYPE>());
 				new(details::address_upper_align<LAST_TYPE>(i_elements)) LAST_TYPE(std::forward<LAST_TYPE>(i_source));
 			}
 		};

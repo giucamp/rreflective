@@ -88,7 +88,7 @@ namespace reflective
 		
 		void Namespace::unit_test()
 		{
-			std::array<size_t, 6> remove_order = { 0, 1, 2, 3, 4, 5 };
+			std::array<size_t, 6> remove_order = { { 0, 1, 2, 3, 4, 5 } };
 			do {
 
 				Namespace test_namespace("test_namespace");
@@ -105,26 +105,32 @@ namespace reflective
 					REFLECTIVE_TEST_ASSERT(test_vector.size() == index);
 				};
 
-				std::array<Namespace, 6> members = { "m1", "m2", "m3", "m4", "m5", "m6" };
+				std::array<std::unique_ptr<Namespace>, 6> members{ 
+					{ std::make_unique<Namespace>("m1"),
+					std::make_unique<Namespace>("m2"),
+					std::make_unique<Namespace>("m3"),
+					std::make_unique<Namespace>("m4"),
+					std::make_unique<Namespace>("m5"),
+					std::make_unique<Namespace>("m6") } };
 
 				test_equal();
 
 				// add members
 				for (auto & member : members)
 				{
-					test_namespace.register_member(member);
-					test_vector.push_back(&member);
+					test_namespace.register_member(*member);
+					test_vector.push_back(member.get());
 					test_equal();
 				}
 
 				// remove members
 				for (size_t index_to_remove : remove_order)
 				{
-					auto it = find(test_vector.begin(), test_vector.end(), &members[index_to_remove]);
+					auto it = find(test_vector.begin(), test_vector.end(), members[index_to_remove].get());
 					REFLECTIVE_TEST_ASSERT(it != test_vector.end());
 					test_vector.erase(it);
 
-					test_namespace.unregister_member(members[index_to_remove]);
+					test_namespace.unregister_member(*members[index_to_remove]);
 
 					test_equal();
 				}

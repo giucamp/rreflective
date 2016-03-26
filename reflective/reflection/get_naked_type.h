@@ -25,104 +25,79 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ***********************************************************************************/
 
-#pragma once
 #ifndef INCLUDING_REFLECTIVE
 	#error "cant't include this header directly, include reflective.h instead"
 #endif
 
 namespace reflective
 {
-	namespace details
-	{
-		enum class SymbolTypeId
-		{
-			is_type,
-			is_class,
-			is_enum,
-		};
-
-		// defines s_type_id for TYPE
-		template <typename TYPE> struct GetSymbolTypeId
-		{
-			static_assert(std::is_class<TYPE>::value || std::is_enum<TYPE>::value ||
-				std::is_fundamental<TYPE>::value || std::is_pointer<TYPE>::value || std::is_reference<TYPE>::value ||
-				std::is_rvalue_reference<TYPE>::value, "Type not supported" );
-
-			static const SymbolTypeId s_type_id = std::is_class<TYPE>::value ? SymbolTypeId::is_class :
-				(std::is_enum<TYPE>::value ? SymbolTypeId::is_enum : SymbolTypeId::is_type );
-		};
-
-		// defines ReflectedType (that is Class, Type, Enum, etc..) and static const ReflectedType * create()
-		template <typename TYPE, SymbolTypeId TYPE_ID> struct SymbolTraits;
-
-		// SymbolTraits for void
-		template <>
-			struct SymbolTraits< void, SymbolTypeId::is_type>
-		{
-			using ReflectedType = reflective::Type;
-
-			static const Type * create()
-			{
-				return GlobalRegistry::instance().add_primitive_type("void", 0, 1, typeid(void));
-			}
-		};
-
-		// SymbolTraits for primitive types
-		template <typename TYPE> 
-			struct SymbolTraits< TYPE, SymbolTypeId::is_type>
-		{
-			using ReflectedType = reflective::Type;
-
-			static const Type * create();
-		};
-		
-		// SymbolTraits for classes
-		template <typename TYPE> 
-			struct SymbolTraits< TYPE, SymbolTypeId::is_class>
-		{
-			using ReflectedType = reflective::Class;
-
-			static const Class * create();
-		};
-
-		template <typename TYPE> 
-			struct SymbolTraits< TYPE, SymbolTypeId::is_enum >
-		{
-			using ReflectedType = reflective::Enum<std::underlying_type<TYPE>>;
-
-			static const reflective::Enum<std::underlying_type<TYPE>> * create();
-		};
-
-		template <typename TYPE>
-			using CleanType = std::conditional_t< std::is_pointer<TYPE>::value || std::is_reference<TYPE>::value,
-				void*, std::decay_t<TYPE > >;
-	}
-
-
 	template <typename TYPE>
 	using ReflectingType = typename details::SymbolTraits<
 		details::CleanType<TYPE>, details::GetSymbolTypeId< details::CleanType<TYPE> >::s_type_id >::ReflectedType;
 
 	template <typename TYPE>
-		const ReflectingType<TYPE> & get_naked_type();
-
+	const ReflectingType<TYPE> & get_naked_type();
 
 	template <typename TYPE>
-		class TypeSetupContext
+	class TypeSetupContext
 	{
 	public:
 
-		TypeSetupContext(typename ReflectingType<TYPE> * i_type)
+		TypeSetupContext(ReflectingType<TYPE> * i_type)
 			: m_type(i_type)
 		{
 
 		}
 
-		typename ReflectingType<TYPE> * type() const { return m_type; }
+		ReflectingType<TYPE> * type() const { return m_type; }
 
 	private:
-		typename ReflectingType<TYPE> * m_type;
+		ReflectingType<TYPE> * m_type;
 	};
+
+	namespace details
+	{
+		template <bool HAS_SETUP_CLASS_FUNC, typename TYPE>
+		struct InternalSetupType;
+		template <typename TYPE>
+		struct InternalSetupType< false, TYPE >
+		{
+			static void setup(TypeSetupContext<TYPE> & i_context)
+			{
+				reflective::setup_type(i_context);
+			}
+		};
+		template <typename TYPE>
+		struct InternalSetupType< true, TYPE >
+		{
+			static void setup(TypeSetupContext<TYPE> & i_context)
+			{
+				TYPE::setup_class(*static_cast<Class*>(i_context.type()));
+			}
+		};
+
+		template <bool HAS_UNIT_TEST_FUNC, typename TYPE>
+		struct InternalAddUnitTest;
+		template <typename TYPE>
+		struct InternalAddUnitTest< false, TYPE >
+		{
+			static void add_unit_test()
+			{
+			}
+		};
+		template <typename TYPE>
+		struct InternalAddUnitTest< true, TYPE >
+		{
+			static void add_unit_test()
+			{
+				UnitTestingManager::instance().add_correctness_test(get_type_full_name<TYPE>(), [](CorrectnessTestContext & i_context) {
+					unit_test(static_cast<TYPE**>(nullptr), i_context);
+				});
+			}
+		};
+	}
+
+
 
 	template <typename TYPE>
 		void setup_type(TypeSetupContext<TYPE> & i_context)
@@ -132,27 +107,6 @@ namespace reflective
 
 	namespace details
 	{
-		template <bool HAS_SETUP_CLASS_FUNC, typename TYPE>
-			struct InternalSetupType;
-
-		template <typename TYPE>
-			struct InternalSetupType< false, TYPE >
-		{
-			static void setup(TypeSetupContext<TYPE> & i_context)
-			{
-				reflective::setup_type(i_context);
-			}
-		};
-
-		template <typename TYPE>
-			struct InternalSetupType< true, TYPE >
-		{
-			static void setup(TypeSetupContext<TYPE> & i_context)
-			{
-				TYPE::setup_class(*static_cast<Class*>(i_context.type()));
-			}
-		};
-
 		// SymbolTraits::create for primitive types
 		template <typename TYPE>
 			inline const Type * SymbolTraits< TYPE, SymbolTypeId::is_type>::create()
@@ -171,7 +125,8 @@ namespace reflective
 			Class * class_obj = GlobalRegistry::instance().add_class(get_type_full_name<TYPE>(), sizeof(TYPE), std::alignment_of<TYPE>::value, typeid(TYPE));
 			class_obj->set_special_functions(SpecialFunctions::from_type<TYPE>());
 			TypeSetupContext<TYPE> context(class_obj);
-			InternalSetupType<HasSetupClassStaticFunc< TYPE >::value, TYPE>::setup(context);
+			InternalSetupType<HasSetupClassStaticFunc<TYPE>::value, TYPE>::setup(context);
+			InternalAddUnitTest<HasUnitTestFunc<TYPE>::value, TYPE>::add_unit_test();
 			return class_obj;
 		}
 
