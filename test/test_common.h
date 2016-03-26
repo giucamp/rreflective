@@ -6,7 +6,7 @@
 #include <random>
 #include <functional>
 #include <algorithm>
-#include "..\sources\reflective.h"
+#include "..\reflective\reflective.h"
 
 class Rand
 {

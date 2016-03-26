@@ -2,10 +2,10 @@
 #include <string>
 #include <iostream>
 #include <cstdlib>
-#include "..\sources\reflective.h"
+#include "..\reflective\reflective.h"
 #include <cstdlib>
 #include <tuple>
-#include "..\sources\core\bulk_list.h"
+#include "..\reflective\core\bulk_list.h"
 
 /*namespace reflective
 {

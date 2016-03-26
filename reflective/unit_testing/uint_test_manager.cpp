@@ -36,7 +36,6 @@ namespace reflective
 				(*m_function)();
 			}
 
-
 		private:
 			PerformanceTestFunction m_function;
 			std::string m_version_label;

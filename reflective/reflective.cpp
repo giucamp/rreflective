@@ -7,9 +7,7 @@
 
 #include "reflective.h"
 
-#include "core\string_view.cpp"
-#include "core\out_buffer_text_stream.cpp"
-#include "core\in_buffer_text_stream.cpp"
+#include "core\core.cpp"
 
 #include "reflection\symbol.cpp"
 #include "reflection\special_functions.cpp"

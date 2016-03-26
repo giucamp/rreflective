@@ -89,22 +89,11 @@ namespace reflective
 	};
 }
 
-#include "core\fut_std.h"
-#include "core\bulk_list.h"
-
 #include "reflective_settings.h"
 #include "reflective_common.h"
 
 // core headers
-#include "core\traits.h"
-#include "core\string_view.h"
-#include "core\out_buffer_text_stream.h"
-#include "core\in_buffer_text_stream.h"
-#include "core\stream_adapters.h"
-#include "core\ptr_string.h"
-#include "core\identifier.h"
-#include "core\string_hash.h"
-#include "core\list.h"
+#include "core\core.h"
 
 // type headers
 #include "reflection\symbol.h"
@@ -129,7 +118,6 @@ namespace reflective
 #include "reflection\get_naked_type.h"
 
 // inlines
-#include "core\string_view.inl"
 #include "reflection\qualified_type_ptr.inl"
 #include "reflection\special_functions.inl"
 #include "reflection\type.inl"

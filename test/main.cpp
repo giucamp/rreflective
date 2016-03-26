@@ -1,7 +1,7 @@
 
 
-#include "..\sources\reflective.h"
-#include "..\sources\unit_testing\unit_testing.h"
+#include "..\reflective\reflective.h"
+#include "..\reflective\unit_testing\unit_testing.h"
 #include <sstream>
 #include <iostream>
 
