@@ -19,6 +19,12 @@
     <Filter Include="core\impl">
       <UniqueIdentifier>{e8c8a74a-63dc-427b-9d80-fdfbb813abd4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="reflection\impl">
+      <UniqueIdentifier>{34e6ebe8-cbd4-4b53-9b2f-e57d81de1bd4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="reflection\testing">
+      <UniqueIdentifier>{20c07bcf-570d-429e-b287-ca1e1d17903e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\reflective\reflective_common.h" />
@@ -132,36 +138,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\reflective\reflective.cpp" />
-    <ClCompile Include="..\reflective\reflection\qualified_type_ptr.cpp">
-      <Filter>reflection</Filter>
-    </ClCompile>
-    <ClCompile Include="..\reflective\reflection\special_functions.cpp">
-      <Filter>reflection</Filter>
-    </ClCompile>
-    <ClCompile Include="..\reflective\reflection\type.cpp">
-      <Filter>reflection</Filter>
-    </ClCompile>
-    <ClCompile Include="..\reflective\reflection\namespace.cpp">
-      <Filter>reflection</Filter>
-    </ClCompile>
-    <ClCompile Include="..\reflective\reflection\obj_ptr.cpp">
-      <Filter>reflection</Filter>
-    </ClCompile>
-    <ClCompile Include="..\reflective\reflection\primitive_types.cpp">
-      <Filter>reflection</Filter>
-    </ClCompile>
-    <ClCompile Include="..\reflective\reflection\global_registry.cpp">
-      <Filter>reflection</Filter>
-    </ClCompile>
-    <ClCompile Include="..\reflective\reflection\namespace_member.cpp">
-      <Filter>reflection</Filter>
-    </ClCompile>
-    <ClCompile Include="..\reflective\reflection\class.cpp">
-      <Filter>reflection</Filter>
-    </ClCompile>
-    <ClCompile Include="..\reflective\reflection\class_member.cpp">
-      <Filter>reflection</Filter>
-    </ClCompile>
     <ClCompile Include="..\reflective\reflection\property\property.cpp">
       <Filter>reflection\property</Filter>
     </ClCompile>
@@ -171,18 +147,6 @@
     <ClCompile Include="..\reflective\unit_testing\uint_test_manager.cpp">
       <Filter>unit_testing</Filter>
     </ClCompile>
-    <ClCompile Include="..\reflective\reflection\type_derived_list_test.cpp">
-      <Filter>reflection</Filter>
-    </ClCompile>
-    <ClCompile Include="..\reflective\reflection\type_inheritance_test.cpp">
-      <Filter>reflection</Filter>
-    </ClCompile>
-    <ClCompile Include="..\reflective\reflection\symbol.cpp">
-      <Filter>reflection</Filter>
-    </ClCompile>
-    <ClCompile Include="..\reflective\reflection\string_functions.cpp">
-      <Filter>reflection</Filter>
-    </ClCompile>
     <ClCompile Include="..\reflective\core\testing\in_buffer_text_stream.cpp">
       <Filter>core\testing</Filter>
     </ClCompile>
@@ -191,6 +155,51 @@
     </ClCompile>
     <ClCompile Include="..\reflective\core\core.cpp">
       <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\reflective\reflection\testing\type_derived_list_test.cpp">
+      <Filter>reflection\testing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\reflective\reflection\testing\type_inheritance_test.cpp">
+      <Filter>reflection\testing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\reflective\reflection\impl\class_member.cpp">
+      <Filter>reflection\impl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\reflective\reflection\impl\global_registry.cpp">
+      <Filter>reflection\impl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\reflective\reflection\impl\namespace.cpp">
+      <Filter>reflection\impl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\reflective\reflection\impl\namespace_member.cpp">
+      <Filter>reflection\impl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\reflective\reflection\impl\obj_ptr.cpp">
+      <Filter>reflection\impl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\reflective\reflection\impl\primitive_types.cpp">
+      <Filter>reflection\impl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\reflective\reflection\impl\qualified_type_ptr.cpp">
+      <Filter>reflection\impl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\reflective\reflection\impl\special_functions.cpp">
+      <Filter>reflection\impl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\reflective\reflection\impl\string_functions.cpp">
+      <Filter>reflection\impl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\reflective\reflection\impl\symbol.cpp">
+      <Filter>reflection\impl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\reflective\reflection\impl\type.cpp">
+      <Filter>reflection\impl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\reflective\reflection\impl\class.cpp">
+      <Filter>reflection\impl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\reflective\reflection\testing\qualified_type_ptr_test.cpp">
+      <Filter>reflection\testing</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

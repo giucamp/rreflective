@@ -88,6 +88,8 @@ namespace reflective
 					child.run(i_context);
 				}
 
+				std::cout << "testing " << m_name << "...";
+
 				for (auto & test : m_correctness_tests)
 				{
 					test.run(i_context);
@@ -97,6 +99,8 @@ namespace reflective
 				{
 					test.run();
 				}
+
+				std::cout << "done" << std::endl;
 			}
 
 		private:

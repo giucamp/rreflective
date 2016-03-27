@@ -38,7 +38,7 @@ namespace reflective
 	using u16StringView = BasicStringView < char16_t > ;
 	using u32StringView = BasicStringView < char32_t > ;
 
-	/** Non-owning range of contiguous char - see http://en.cppreference.com/w/cpp/experimental/basic_string_view.
+	/** Range of contiguous char - see http://en.cppreference.com/w/cpp/experimental/basic_string_view.
 		This class represent a contiguous range of characters, whose storage is managed by the user. Accessing the
 		content of the string view when the storage is no more valid, leads to undefined behavior.
 		This implementation extends the one described in the standard with some methods useful for parsing (like 
@@ -211,7 +211,7 @@ namespace reflective
 				throw std::out_of_range("index out of range to reflective::BasicStringView::at");
 			}
 
-			return BasicStringView(m_chars, std::min(i_count, m_size - i_pos));
+			return BasicStringView(m_chars + i_pos, std::min(i_count, m_size - i_pos));
 		}
 
 		size_t find(CHAR i_target_char, size_t i_pos = 0) const REFLECTIVE_NOEXCEPT
@@ -234,9 +234,9 @@ namespace reflective
 
 		size_t find(BasicStringView i_target_string, size_t i_pos = 0) const REFLECTIVE_NOEXCEPT
 		{
-			if (i_target_string.size() == 0)
+			if (i_target_string.size() == 0 && i_pos <= m_size)
 			{
-				return 0; // the empty string is present in any string, even in another empty string
+				return i_pos; // the empty string is present in any string, even in another empty string
 			}
 
 			if (m_size <= i_pos)
@@ -245,7 +245,7 @@ namespace reflective
 			}
 
 			auto curr_start = m_chars + i_pos;
-			auto remaing_length = m_size;
+			auto remaing_length = m_size - i_pos;
 			auto const first_target_char = i_target_string[0];
 			auto compare_result = 0; // probably the optimizer will remove this initialization
 			do {
@@ -263,6 +263,11 @@ namespace reflective
 				}
 
 				compare_result = CHAR_TRAITS::compare(curr_start, i_target_string.data(), i_target_string.length());
+				
+				if (compare_result != 0)
+				{
+					curr_start++;
+				}				
 
 			} while (compare_result != 0);
 

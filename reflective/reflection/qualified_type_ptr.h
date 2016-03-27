@@ -25,7 +25,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ***********************************************************************************/
 
-#pragma once
 #ifndef INCLUDING_REFLECTIVE
 	#error "cant't include this header directly, include reflective.h instead"
 #endif
@@ -155,10 +154,13 @@ namespace reflective
 		QualifiedTypePtr();
 
 		/** Constructs a non-empty QualifiedTypePtr from a final type and an array of CV_Flags's that specifies the cv-qualifiers of the indirection levels.
-			The size of the array of CV_Flags's determines the number of indirection levels
+			The size of the array of CV_Flags's determines the number of indirection levels.
+			In the the following code <tt>q_type_ptr_1 == q_type_ptr_2</tt>:<br>
+			<tt>QualifiedTypePtr q_type_ptr_1(get_naked_type<void>(), { CV_Flags::Const | CV_Flags::Volatile, CV_Flags::None, CV_Flags::Volatile });<br>
+			QualifiedTypePtr q_type_ptr_2 = get_type<void volatile * * volatile const >();</tt><br>
 			@param i_final_type final type. May be get_naked_type<void>().
 			@param i_cv_flags cv-qualification for each indirection level. The n-th element of this array specifies a combination of cv flags for the n-th indirection 
-				level.The number of indirection levels of the type is the size of this array, minus 1. So, to construct a pointer to a pointer, specify an array
+				level. The number of indirection levels of the type is the size of this array, minus 1. So, to construct a pointer to a pointer, specify an array
 				of 3 elements. If the array is empty, the number of indirection levels is zero. */
 		QualifiedTypePtr(const Type & i_final_type, ArrayView<const CV_Flags> i_cv_flags);
 
@@ -176,12 +178,7 @@ namespace reflective
 
 		/** Returns false whether two QualifiedTypePtrs are indistinguishable */
 		bool operator != (const QualifiedTypePtr & i_source) const		{ return !operator == (i_source); }
-
-		#if REFLECTIVE_ENABLE_TESTING
-			/** Runs an unit test for this class */
-			static void unit_test();
-		#endif
-
+		
 	private:
 		
 		QualifiedTypePtr(const Type * i_final_type, size_t i_indirection_levels, size_t i_constness_word, size_t i_volatileness_word);
@@ -190,7 +187,7 @@ namespace reflective
 			friend QualifiedTypePtr get_type();
 
 		template <typename UNDERLYING_STREAM>
-		friend InTxtStreamAdapt<UNDERLYING_STREAM, char> & operator >> (InTxtStreamAdapt<UNDERLYING_STREAM, char> & i_source, QualifiedTypePtr & o_dest_qualified_type);
+			friend InTxtStreamAdapt<UNDERLYING_STREAM, char> & operator >> (InTxtStreamAdapt<UNDERLYING_STREAM, char> & i_source, QualifiedTypePtr & o_dest_qualified_type);
 			
 	private: // data members (currently a QualifiedTypePtr is big as two pointers)
 		const Type * m_final_type;
@@ -198,6 +195,10 @@ namespace reflective
 		uintptr_t m_constness_word : s_max_indirection_levels;
 		uintptr_t m_volatileness_word : s_max_indirection_levels;
 	};
+
+	#if REFLECTIVE_ENABLE_TESTING
+		void unit_test(QualifiedTypePtr**, CorrectnessTestContext & i_context);
+	#endif
 	
 	template <typename OUT_STREAM>
 		OUT_STREAM & operator << (OUT_STREAM & i_dest, const QualifiedTypePtr & i_qt)

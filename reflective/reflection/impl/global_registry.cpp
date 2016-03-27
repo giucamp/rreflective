@@ -55,16 +55,19 @@ namespace reflective
 		do
 		{
 			const auto prev_remaining_path_len = remaining_path.length();
+			const char * const start_of_name = remaining_path.data();
 
 			PathEntry curr_entry;
-			curr_entry.m_name = remaining_path.remove_prefix_identifier();
-			if (curr_entry.m_name.empty())
+			auto name = remaining_path.remove_prefix_identifier();
+			if (name.empty())
 				break;
-
+			
 			if (remaining_path.remove_prefix_char('<'))
 			{				
 				curr_entry.m_template_argument_list = parse_template_arguments(remaining_path);
 			}
+
+			curr_entry.m_name = StringView(start_of_name, remaining_path.data() - start_of_name);
 
 			REFLECTIVE_INTERNAL_ASSERT(prev_remaining_path_len > remaining_path.length());
 			full_path_length += prev_remaining_path_len - remaining_path.length();

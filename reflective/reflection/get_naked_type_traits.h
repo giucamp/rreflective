@@ -33,12 +33,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {
-
-
 	namespace details
 	{
-		/** HasSetupClassStaticFunc< TYPE >::value static void setup_class( reflective::Class & class_obj );
-			implementation - SFINAE - see http://en.wikipedia.org/wiki/Substitution_failure_is_not_an_error */
+		// HasSetupClassStaticFunc< TYPE >::value: true wheter exists static void TYPE::setup_class( reflective::Class & class_obj );
 		struct HasSetupClassStaticFunc_Base
 		{
 			template <class TYPE>
@@ -53,10 +50,8 @@ namespace reflective
 			typedef decltype(func<TYPE>(0)) B;
 			static const bool value = B::value;
 		};
-
-
-
-		/** HasUnitTestFunc< TYPE >::value */
+					
+		// HasSetupClassStaticFunc< TYPE >::value: true wheter exists static void unit_test();
 		struct HasUnitTestFunc_Base
 		{
 			template <class TYPE>

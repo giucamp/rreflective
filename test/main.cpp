@@ -28,12 +28,16 @@ struct GGGG
 
 int main()
 {
-	reflective::UnitTestingManager::instance().run();
-
 	using namespace reflective;
+	
+	UnitTestingManager::instance().run();
 
-	std::cout << get_type<StringView>();
-
+	std::cout << get_type<QualifiedTypePtr>() << std::endl;
+	std::cout << get_type<StringView>() << std::endl;
+	std::cout << get_type<WStringView>() << std::endl;
+	std::cout << get_type<u16StringView>() << std::endl;
+	std::cout << get_type<u32StringView>() << std::endl;
+	
 	std::cout << details::HasUnitTestFunc<Class>::value << std::endl;
 	
 	std::ostream & out_stream = std::cout;
@@ -99,7 +103,6 @@ int main()
 
 	reflective::Type::unit_test();
 	reflective::Namespace::unit_test();
-	reflective::QualifiedTypePtr::unit_test();
 
 	Name_test();
 
