@@ -17,11 +17,11 @@ namespace reflective
 	{
 		return BulkList<ELEMENT, std::allocator<ELEMENT>, DefaultTypeInfo<ELEMENT>>::make( std::forward<TYPES>(i_parameters)... );
 	}
-	/*template <typename ELEMENT, typename ALLOCATOR = std::allocator<ELEMENT>, typename TYPE_INFO = DefaultTypeInfo<ELEMENT>, typename... TYPES>
-		inline BulkList<ELEMENT, ALLOCATOR, TYPE_INFO> allocate_bulk_list(ALLOCATOR && i_allocator, TYPES &&... i_parameters)
+	template <typename ELEMENT, typename ALLOCATOR, typename... TYPES>
+		inline BulkList<ELEMENT, ALLOCATOR, DefaultTypeInfo<ELEMENT>> alloc_bulk_list(const ALLOCATOR & i_allocator, TYPES &&... i_parameters)
 	{
-		return BulkList<ELEMENT, ALLOCATOR, TYPE_INFO>::make_alloc(i_allocator, std::forward<TYPES>(i_parameters)...);
-	}*/
+		return BulkList<ELEMENT, ALLOCATOR, DefaultTypeInfo<ELEMENT>>::make_with_alloc(i_allocator, std::forward<TYPES>(i_parameters)... );
+	}
 
 	namespace details
 	{
@@ -177,79 +177,6 @@ namespace reflective
 	{
 		enum InternalConstructor { InternalConstructorMem };
 
-		void destroy_impl() REFLECTIVE_NOEXCEPT
-		{
-			size_t bulk_alignment = std::alignment_of<TYPE_INFO>::value;
-			const auto end_it = end();
-			for (auto it = begin(); it != end_it; it++)
-			{
-				auto curr_type = it.curr_type();
-				bulk_alignment = std::max(bulk_alignment, curr_type->alignment() );
-				curr_type->destroy(it.curr_element());
-				curr_type->TYPE_INFO::~TYPE_INFO();
-			}
-			free_mem(m_bulk, bulk_alignment);
-		}
-
-		void compute_buffer_size_and_alignment(size_t * o_buffer_size, size_t * o_buffer_alignment) const REFLECTIVE_NOEXCEPT
-		{
-			size_t buffer_size = size() * sizeof(TYPE_INFO);
-			size_t buffer_alignment = std::alignment_of<TYPE_INFO>::value;
-			auto const end_it = cend();
-			for (auto it = cbegin(); it != end_it; it++)
-			{
-				const size_t curr_size = it.curr_type()->size();
-				const size_t curr_alignment = it.curr_type()->alignment();
-				assert(curr_alignment > 0 && (curr_alignment & (curr_alignment - 1)) == 0); // the alignment must be a power of 2
-				buffer_size = (buffer_size + (curr_alignment - 1)) & ~(curr_alignment - 1);
-				buffer_size += curr_size;
-
-				buffer_alignment = std::max(buffer_alignment, curr_alignment);
-			}
-
-			*o_buffer_size = buffer_size;
-			*o_buffer_alignment = buffer_alignment;
-		}
-
-		void copy_impl(const BulkList & i_source)
-		{
-			// allocate the buffer
-			size_t buffer_size = 0, buffer_alignment = 0;
-			i_source.compute_buffer_size_and_alignment(&buffer_size, &buffer_alignment);
-			void * const buffer = alloc_mem(buffer_size, buffer_alignment);
-			TYPE_INFO * const types = static_cast<TYPE_INFO*>(buffer);
-			
-			auto curr_element = reinterpret_cast<uintptr_t>( types + i_source.size());
-			TYPE_INFO * curr_type = types;
-			auto const end_it = i_source.cend();
-			for (auto it = i_source.cbegin(); it != end_it; it++)
-			{
-				new (curr_type) TYPE_INFO( *(it.curr_type()) );
-				
-				// upper align curr_element to curr_type->alignment()
-				const uintptr_t element_alignment = curr_type->alignment();
-				assert(element_alignment > 0 && (element_alignment & (element_alignment >> 1)) == 0); // internal check: the alignment must be a power of 2
-				auto const alignment_mask = element_alignment - 1;
-				curr_element = (curr_element + alignment_mask) & ~alignment_mask;
-
-				curr_type->copy_construct(reinterpret_cast<void*>(curr_element), *it);
-				
-				curr_element += curr_type->size();
-				curr_type++;
-			}
-
-			m_size = i_source.size();
-			m_bulk = types;
-		}
-
-		void move_impl(BulkList && i_source) REFLECTIVE_NOEXCEPT
-		{
-			m_bulk = i_source.m_bulk;
-			m_size = i_source.m_size;
-			i_source.m_bulk = nullptr;
-			i_source.m_size = 0;
-		}
-
 	public:
 
 		using allocator_type = ALLOCATOR;
@@ -262,27 +189,18 @@ namespace reflective
 		using size_type = size_t;
 
 		template <typename... TYPES>
-			inline static BulkList make(TYPES &&... i_tuple)
+			inline static BulkList make(TYPES &&... i_args)
 		{
-			size_t const buffer_size = RecursiveSize<RecursiveHelper<TYPES...>::s_element_count * sizeof(TYPE_INFO), TYPES...>::s_buffer_size;
-			size_t const buffer_alignment = std::max( RecursiveHelper<TYPES...>::s_element_alignment, std::alignment_of<TYPE_INFO>::value );
-			size_t const element_count = RecursiveHelper<TYPES...>::s_element_count;
-
 			BulkList new_list(InternalConstructorMem);
-			void * const buffer = new_list.alloc_mem(buffer_size, buffer_alignment);
-			TYPE_INFO * const types = static_cast<TYPE_INFO*>(buffer);
-			void * const elements = types + element_count;
+			make_impl(new_list, std::forward<TYPES>(i_args)...);
+			return std::move(new_list);
+		}
 
-			RecursiveHelper<TYPES...>::construct(types, elements, std::forward<TYPES>(i_tuple)...);
-			new_list.m_size = element_count;
-			new_list.m_bulk = types;
-
-			#ifndef NDEBUG
-				size_t dbg_buffer_size = 0, dbg_buffer_alignment = 0;
-				new_list.compute_buffer_size_and_alignment(&dbg_buffer_size, &dbg_buffer_alignment);
-				assert(dbg_buffer_size == buffer_size);
-				assert(dbg_buffer_alignment == buffer_alignment);
-			#endif
+		template <typename... TYPES>
+			inline static BulkList make_with_alloc(const ALLOCATOR & i_allocator, TYPES &&... i_args)
+		{
+			BulkList new_list(InternalConstructorMem, i_allocator);
+			make_impl(new_list, std::forward<TYPES>(i_args)...);
 			return std::move(new_list);
 		}
 
@@ -435,6 +353,68 @@ namespace reflective
 
 		bool operator != (const BulkList & i_source) const		{ return !operator == (i_source); }
 
+
+		template <typename ELEMENT_COMPLETE_TYPE>
+			iterator insert(const_iterator i_position, size_t i_count, const ELEMENT_COMPLETE_TYPE & i_source)
+		{
+			size_t buffer_size = 0, buffer_alignment = 0;
+			compute_buffer_size_and_alignment_for_insert(&buffer_size, &buffer_alignment, i_position, i_count,
+				sizeof(ELEMENT_COMPLETE_TYPE), std::alignment_of<ELEMENT_COMPLETE_TYPE>::value );
+
+			BulkList new_list;
+			
+			void * const buffer = alloc_mem(buffer_size, buffer_alignment);
+			TYPE_INFO * const types = static_cast<TYPE_INFO*>(buffer);
+			
+			size_t count_to_insert = i_count;
+
+			auto curr_element = reinterpret_cast<uintptr_t>(types + size() + i_count);
+			TYPE_INFO * curr_type = types;
+			auto const end_it = cend();
+			for (auto it = cbegin(); ; )
+			{
+				const ELEMENT * copy_source;
+				if (it == i_position && count_to_insert > 0)
+				{
+					new(curr_type) TYPE_INFO(TYPE_INFO::template make<ELEMENT_COMPLETE_TYPE>());
+
+					copy_source = &i_source;
+
+					count_to_insert--;
+				}
+				else
+				{
+					if (it == end_it)
+					{
+						break;
+					}
+
+					new (curr_type) TYPE_INFO(*(it.curr_type()));
+					
+					copy_source = &*it;
+
+					it++;
+				}
+				
+				// upper align curr_element to curr_type->alignment()
+				const uintptr_t element_alignment = curr_type->alignment();
+				assert(element_alignment > 0 && (element_alignment & (element_alignment >> 1)) == 0); // internal check: the alignment must be a power of 2
+				auto const alignment_mask = element_alignment - 1;
+				curr_element = (curr_element + alignment_mask) & ~alignment_mask;
+
+				curr_type->copy_construct(reinterpret_cast<void*>(curr_element), *copy_source);
+
+				curr_element += curr_type->size();
+				curr_type++;
+			}
+
+			destroy_impl();
+			m_size = m_size + i_count;
+			m_bulk = types;
+
+			return end(); // temp - this is wrong
+		}
+
 	private:
 
 		void * alloc_mem(size_t i_size, size_t i_alignment)
@@ -449,14 +429,139 @@ namespace reflective
 
 	private:
 		
-
-		BulkList(InternalConstructor)
+		void destroy_impl() REFLECTIVE_NOEXCEPT
 		{
-
+			size_t bulk_alignment = std::alignment_of<TYPE_INFO>::value;
+			const auto end_it = end();
+			for (auto it = begin(); it != end_it; it++)
+			{
+				auto curr_type = it.curr_type();
+				bulk_alignment = std::max(bulk_alignment, curr_type->alignment() );
+				curr_type->destroy(it.curr_element());
+				curr_type->TYPE_INFO::~TYPE_INFO();
+			}
+			free_mem(m_bulk, bulk_alignment);
 		}
 
-		BulkList(InternalConstructor, const ALLOCATOR & i_allocator)
-			: ALLOCATOR(i_allocator)
+		void copy_impl(const BulkList & i_source)
+		{
+			// allocate the buffer
+			size_t buffer_size = 0, buffer_alignment = 0;
+			i_source.compute_buffer_size_and_alignment(&buffer_size, &buffer_alignment);
+			void * const buffer = alloc_mem(buffer_size, buffer_alignment);
+			TYPE_INFO * const types = static_cast<TYPE_INFO*>(buffer);
+			
+			auto curr_element = reinterpret_cast<uintptr_t>( types + i_source.size());
+			TYPE_INFO * curr_type = types;
+			auto const end_it = i_source.cend();
+			for (auto it = i_source.cbegin(); it != end_it; it++)
+			{
+				new (curr_type) TYPE_INFO( *(it.curr_type()) );
+				
+				// upper align curr_element to curr_type->alignment()
+				const uintptr_t element_alignment = curr_type->alignment();
+				assert(element_alignment > 0 && (element_alignment & (element_alignment >> 1)) == 0); // internal check: the alignment must be a power of 2
+				auto const alignment_mask = element_alignment - 1;
+				curr_element = (curr_element + alignment_mask) & ~alignment_mask;
+
+				curr_type->copy_construct(reinterpret_cast<void*>(curr_element), *it);
+				
+				curr_element += curr_type->size();
+				curr_type++;
+			}
+
+			m_size = i_source.size();
+			m_bulk = types;
+		}
+
+		void move_impl(BulkList && i_source) REFLECTIVE_NOEXCEPT
+		{
+			m_bulk = i_source.m_bulk;
+			m_size = i_source.m_size;
+			i_source.m_bulk = nullptr;
+			i_source.m_size = 0;
+		}
+
+		template <typename... TYPES>
+			static void make_impl(BulkList & o_dest_list, TYPES &&... i_args)
+		{
+			size_t const buffer_size = RecursiveSize<RecursiveHelper<TYPES...>::s_element_count * sizeof(TYPE_INFO), TYPES...>::s_buffer_size;
+			size_t const buffer_alignment = std::max( RecursiveHelper<TYPES...>::s_element_alignment, std::alignment_of<TYPE_INFO>::value );
+			size_t const element_count = RecursiveHelper<TYPES...>::s_element_count;
+
+			void * const buffer = o_dest_list.alloc_mem(buffer_size, buffer_alignment);
+			TYPE_INFO * const types = static_cast<TYPE_INFO*>(buffer);
+			void * const elements = types + element_count;
+
+			RecursiveHelper<TYPES...>::construct(types, elements, std::forward<TYPES>(i_args)...);
+			o_dest_list.m_size = element_count;
+			o_dest_list.m_bulk = types;
+
+			#ifndef NDEBUG
+				size_t dbg_buffer_size = 0, dbg_buffer_alignment = 0;
+				o_dest_list.compute_buffer_size_and_alignment(&dbg_buffer_size, &dbg_buffer_alignment);
+				assert(dbg_buffer_size == buffer_size);
+				assert(dbg_buffer_alignment == buffer_alignment);
+			#endif
+		}
+
+		void compute_buffer_size_and_alignment(size_t * o_buffer_size, size_t * o_buffer_alignment) const REFLECTIVE_NOEXCEPT
+		{
+			size_t buffer_size = size() * sizeof(TYPE_INFO);
+			size_t buffer_alignment = std::alignment_of<TYPE_INFO>::value;
+			auto const end_it = cend();
+			for (auto it = cbegin(); it != end_it; it++)
+			{
+				const size_t curr_size = it.curr_type()->size();
+				const size_t curr_alignment = it.curr_type()->alignment();
+				assert(curr_alignment > 0 && (curr_alignment & (curr_alignment - 1)) == 0); // the alignment must be a power of 2
+				buffer_size = (buffer_size + (curr_alignment - 1)) & ~(curr_alignment - 1);
+				buffer_size += curr_size;
+
+				buffer_alignment = std::max(buffer_alignment, curr_alignment);
+			}
+
+			*o_buffer_size = buffer_size;
+			*o_buffer_alignment = buffer_alignment;
+		}
+
+		void compute_buffer_size_and_alignment_for_insert(size_t * o_buffer_size, size_t * o_buffer_alignment,
+			const const_iterator & i_insert_at, size_t i_new_element_count,
+			size_t i_new_element_size, size_t i_new_element_alignment ) const REFLECTIVE_NOEXCEPT
+		{
+			size_t buffer_size = (size() + i_new_element_count) * sizeof(TYPE_INFO);
+			size_t buffer_alignment = std::max(std::alignment_of<TYPE_INFO>::value, i_new_element_alignment);
+			auto const end_it = cend();
+			for (auto it = cbegin(); ; it++)
+			{
+				if (it == i_insert_at)
+				{
+					assert(i_new_element_size > 0 && i_new_element_alignment > 0 && (i_new_element_alignment & (i_new_element_alignment - 1)) == 0); // the size must be non-zero, the alignment must be a non-zero power of 2
+					buffer_size = (buffer_size + (i_new_element_alignment - 1)) & ~(i_new_element_alignment - 1);
+					buffer_size += i_new_element_size * i_new_element_count;
+				}
+
+				if (it == end_it)
+				{
+					break;
+				}
+
+				const size_t curr_size = it.curr_type()->size();
+				const size_t curr_alignment = it.curr_type()->alignment();
+				assert(curr_size > 0 && curr_alignment > 0 && (curr_alignment & (curr_alignment - 1)) == 0); // the size must be non-zero, the alignment must be a non-zero power of 2
+				buffer_size = (buffer_size + (curr_alignment - 1)) & ~(curr_alignment - 1);
+				buffer_size += curr_size;
+				buffer_alignment = std::max(buffer_alignment, curr_alignment);
+			}
+
+			*o_buffer_size = buffer_size;
+			*o_buffer_alignment = buffer_alignment;
+		}
+		
+
+		BulkList(InternalConstructor)	{ 	}
+
+		BulkList(InternalConstructor, const ALLOCATOR & i_allocator) : ALLOCATOR(i_allocator)
 		{
 
 		}
