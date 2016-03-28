@@ -30,6 +30,9 @@ int main()
 {
 	using namespace reflective;
 	
+	
+
+	UnitTestingManager::instance().add_correctness_test("bulk_list_test", bulk_list_test);
 	UnitTestingManager::instance().run();
 
 	std::cout << get_type<QualifiedTypePtr>() << std::endl;

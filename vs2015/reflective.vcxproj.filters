@@ -201,6 +201,9 @@
     <ClCompile Include="..\reflective\reflection\testing\qualified_type_ptr_test.cpp">
       <Filter>reflection\testing</Filter>
     </ClCompile>
+    <ClCompile Include="..\reflective\core\testing\bulk_list_test.cpp">
+      <Filter>core\testing</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\reflective\reflection\qualified_type_ptr.inl">

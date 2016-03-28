@@ -32,11 +32,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace reflective
 {	
-	/** This header provides a temporary, not fully not compliant implementation of some classes which are not 
-		in C++14, but should be included in the C++17. To avoid confusion with the standard, the names defined
-		are all camel case or inside the static class reflective::Ext, so that in the future they may become
-		aliases of the standard names. */
-
 	template <typename TYPE>
 		class ArrayView
 	{
@@ -89,42 +84,5 @@ namespace reflective
 	private:
 		TYPE * m_objects;
 		size_t m_size;
-	};
-
-	// void_t invented by Walter E. Brown - it will be available is std from C++17 on
-	// comented out: Visual Studio does not support void_t until 2015 with Update 1
-	/*namespace details
-	{
-		template<typename... Ts> struct MakeVoid { typedef void type; };
-	}	
-	template<typename... Ts> using VoidT = typename details::MakeVoid<Ts...>::type;*/
-
-	class Ext
-	{
-	public:
-		
-		template <typename CONTAINER, typename ELEMENT>
-			static auto find(CONTAINER & i_container, ELEMENT && i_value) -> decltype(std::find(i_container.begin(), i_container.end(), i_value))
-		{
-			return std::find(i_container.begin(), i_container.end(), i_value);
-		}
-
-		template <typename CONTAINER, typename PREDICATE>
-			static auto find_if(CONTAINER & i_container, PREDICATE && i_predicate) -> decltype(std::find_if(i_container.begin(), i_container.end(), i_predicate))
-		{
-			return std::find_if(i_container.begin(), i_container.end(), i_predicate);
-		}
-
-		template <typename CONTAINER, typename ELEMENT>
-			static bool contains(CONTAINER & i_container, ELEMENT && i_value)
-		{
-			return std::find(i_container.begin(), i_container.end(), i_value) != i_container.end();
-		}
-
-		template <typename CONTAINER, typename PREDICATE>
-			static bool contains_if(CONTAINER & i_container, PREDICATE && i_predicate)
-		{
-			return std::find_if(i_container.begin(), i_container.end(), i_predicate) != i_container.end();
-		}
 	};
 }

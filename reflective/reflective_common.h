@@ -111,4 +111,34 @@ namespace reflective
 
 	template <typename KEY, typename TYPE, typename HASHER = std::hash<KEY>, typename KEY_EQUAL_PRED = std::equal_to<KEY> >
 		using unordered_map = std::unordered_map< KEY, TYPE, HASHER, KEY_EQUAL_PRED >;
+
+
+	class Ext
+	{
+	public:
+		
+		template <typename CONTAINER, typename ELEMENT>
+			static auto find(CONTAINER & i_container, ELEMENT && i_value) -> decltype(std::find(i_container.begin(), i_container.end(), i_value))
+		{
+			return std::find(i_container.begin(), i_container.end(), i_value);
+		}
+
+		template <typename CONTAINER, typename PREDICATE>
+			static auto find_if(CONTAINER & i_container, PREDICATE && i_predicate) -> decltype(std::find_if(i_container.begin(), i_container.end(), i_predicate))
+		{
+			return std::find_if(i_container.begin(), i_container.end(), i_predicate);
+		}
+
+		template <typename CONTAINER, typename ELEMENT>
+			static bool contains(CONTAINER & i_container, ELEMENT && i_value)
+		{
+			return std::find(i_container.begin(), i_container.end(), i_value) != i_container.end();
+		}
+
+		template <typename CONTAINER, typename PREDICATE>
+			static bool contains_if(CONTAINER & i_container, PREDICATE && i_predicate)
+		{
+			return std::find_if(i_container.begin(), i_container.end(), i_predicate) != i_container.end();
+		}
+	};
 }

@@ -45,7 +45,7 @@ namespace reflective
 			BaseType::from_types<ThisClass, MyNamespace::OtherNamespace::MyBaseClass>(),
 			BaseType::from_types<ThisClass, MyNamespace::OtherNamespace::MyBaseClass1>() });
 		
-		auto properties = make_list<Property>(
+		auto properties = make_bulk_list<Property>(
 			make_property<ThisClass>("IntVar", &ThisClass::m_int_var),
 			make_property<ThisClass>("FloatVar", &ThisClass::m_float_var),
 			make_property<ThisClass>("ConstFloatVar", &ThisClass::m_const_float_var)
