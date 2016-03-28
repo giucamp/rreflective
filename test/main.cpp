@@ -33,7 +33,7 @@ int main()
 	
 
 	UnitTestingManager::instance().add_correctness_test("bulk_list_test", bulk_list_test);
-	UnitTestingManager::instance().run();
+	UnitTestingManager::instance().run("bulk_list_test");
 
 	std::cout << get_type<QualifiedTypePtr>() << std::endl;
 	std::cout << get_type<StringView>() << std::endl;

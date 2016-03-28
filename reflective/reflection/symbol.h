@@ -69,8 +69,7 @@ namespace reflective
 	{
 	protected:
 
-		/** Constructs a Symbol, providing a name. If REFLECTIVE_ASSERT_ENABLED is defined as non-zero, the name is checked
-			to detect an invalid format. This is just a debug check: the caller is responsible to specify a valid string. */
+		/** Constructs a Symbol, providing a name */
 		Symbol(SymbolName i_name) : m_name(std::move(i_name)) { }
 
 	public:

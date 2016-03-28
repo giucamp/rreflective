@@ -77,12 +77,7 @@ namespace reflective
 	inline ClassMember::ClassMember(SymbolName i_name, Flags i_flags)
 		: Symbol(i_name), m_flags(i_flags) 
 	{
-		#if REFLECTIVE_ASSERT_ENABLED
-			if (has_flags(Flags::private_member))
-			{
-				REFLECTIVE_ASSERT(!has_flags(Flags::protected_member), "ClassMember::Flags: private_member and protected_member are incompatible");
-			}
-		#endif
+		REFLECTIVE_ASSERT(!has_flags(Flags::private_member) || !has_flags(Flags::protected_member), "ClassMember::Flags: private_member and protected_member are incompatible");
 	}
 }
 
