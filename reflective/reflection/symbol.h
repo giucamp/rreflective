@@ -71,16 +71,7 @@ namespace reflective
 
 		/** Constructs a Symbol, providing a name. If REFLECTIVE_ASSERT_ENABLED is defined as non-zero, the name is checked
 			to detect an invalid format. This is just a debug check: the caller is responsible to specify a valid string. */
-		Symbol(SymbolName i_name)
-			: m_name(std::move(i_name))
-		{
-			// check the character of the name, if REFLECTIVE_ASSERT_ENABLED is non-zero and SymbolName includes the string
-			/* Disabled: full names contain other chars
-
-			#if REFLECTIVE_ASSERT_ENABLED
-				check_name(i_name);
-			#endif*/
-		}
+		Symbol(SymbolName i_name) : m_name(std::move(i_name)) { }
 
 	public:
 
@@ -116,32 +107,6 @@ namespace reflective
 	private:
 		const SymbolName m_name;
 		List<Attribute> m_attributes;
-
-	private:
-
-/*
-		#if REFLECTIVE_ASSERT_ENABLED
-
-			template < typename HASHER, typename STRING >
-				static void check_name(const Identifier<HASHER, STRING> & i_name)
-			{
-				const STRING & string = i_name.string();
-				const size_t length = string.length();
-				REFLECTIVE_ASSERT(length > 0, "empty symbol name");
-				REFLECTIVE_ASSERT(isalpha(string[0]) != 0 || string[0] == '_', "the first character in a symbol name must be alphabetic or an underscore");
-				
-				for (size_t index = 1; index < length; index++)
-				{
-					REFLECTIVE_ASSERT(isalnum(string[index]) != 0 || string[index] == '_', "invalid character on a reflective::SymbolName");
-				}
-			}
-
-			template < typename HASHER >
-				static void check_name(const Identifier<HASHER, void> & / *i_name* /)
-			{
-			}
-
-		#endif*/
 	};
 }
 

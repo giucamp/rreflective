@@ -17,8 +17,7 @@ namespace reflective
 			const View view1(str1);
 
 			REFLECTIVE_TEST_ASSERT(view1.size() == 3);
-
-			
+						
 			vector<String> random_strings;
 			const size_t string_count = 500;
 			random_strings.resize(string_count);

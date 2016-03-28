@@ -3,7 +3,10 @@
 
 namespace reflective
 {
-	template <typename ELEMENT> class DefaultTypeInfo;
+	template <typename ELEMENT> class CopyableTypeInfo;
+	template <typename ELEMENT> class MovableTypeInfo;
+	template <typename ELEMENT> using DefaultTypeInfo = typename std::conditional< std::is_copy_constructible<ELEMENT>::value,
+		CopyableTypeInfo<ELEMENT>, MovableTypeInfo<ELEMENT> >::type;
 	template <typename ELEMENT, typename ALLOCATOR = std::allocator<ELEMENT>, typename TYPE_INFO = DefaultTypeInfo<ELEMENT> > class BulkList;
 
 	/** Creates and returns by value a BulkList, whose element base type is ELEMENT. The specified parameters
@@ -31,47 +34,48 @@ namespace reflective
 	}
 
 	template <typename ELEMENT>
-		class DefaultTypeInfo
+		class CopyableTypeInfo
 	{
 	public:
 
-		DefaultTypeInfo() = delete;
-		DefaultTypeInfo(const DefaultTypeInfo &)= delete;
-		DefaultTypeInfo & operator = (const DefaultTypeInfo &) = delete;
-		DefaultTypeInfo & operator = (DefaultTypeInfo &&) = delete;
+		CopyableTypeInfo() = delete;
+		CopyableTypeInfo & operator = (const CopyableTypeInfo &) = delete;
+		CopyableTypeInfo & operator = (CopyableTypeInfo &&) = delete;
+
+		CopyableTypeInfo(const CopyableTypeInfo &) REFLECTIVE_NOEXCEPT = default;
 
 		#if defined(_MSC_VER) && _MSC_VER < 1900
-			DefaultTypeInfo(DefaultTypeInfo && i_source) REFLECTIVE_NOEXCEPT // visual studio 2013 doesnt seems to support defauted move constructors
+			CopyableTypeInfo(CopyableTypeInfo && i_source) REFLECTIVE_NOEXCEPT // visual studio 2013 doesnt seems to support defauted move constructors
 				: m_size(i_source.m_size), m_alignment(i_source.m_alignment), m_mover_destructor(i_source.m_mover_destructor)
 					{ }			
 		#else
-			DefaultTypeInfo(DefaultTypeInfo && i_source) REFLECTIVE_NOEXCEPT = default;
+			CopyableTypeInfo(CopyableTypeInfo && i_source) REFLECTIVE_NOEXCEPT = default;
 		#endif
 
 		template <typename COMPLETE_TYPE>
-			static DefaultTypeInfo make()
+			static CopyableTypeInfo make()
 		{
-			return DefaultTypeInfo(sizeof(COMPLETE_TYPE), std::alignment_of<COMPLETE_TYPE>::value, 
+			return CopyableTypeInfo(sizeof(COMPLETE_TYPE), std::alignment_of<COMPLETE_TYPE>::value, 
 				&CopyConstructImpl< COMPLETE_TYPE >, &MoverDestructorImpl< COMPLETE_TYPE >);
 		}
 
-		size_t size() const { return m_size; }
+		size_t size() const REFLECTIVE_NOEXCEPT { return m_size; }
 		
-		size_t alignment() const { return m_alignment; }
+		size_t alignment() const REFLECTIVE_NOEXCEPT { return m_alignment; }
 		
-		void destroy(ELEMENT * i_element) const
-		{
-			(*m_mover_destructor)(nullptr, i_element);
-		}
-
-		void copy(void * i_destination, const ELEMENT & i_source_element) const
+		void copy_construct(void * i_destination, const ELEMENT & i_source_element) const
 		{
 			(*m_copy_constructor)(i_destination, i_source_element);
 		}
 
-		void move_and_destroy(void * i_destination, ELEMENT * i_source_element) const
+		void move_construct(void * i_destination, ELEMENT * i_source_element) const REFLECTIVE_NOEXCEPT
 		{
 			(*m_mover_destructor)(i_destination, i_source_element);
+		}
+
+		void destroy(ELEMENT * i_element) const REFLECTIVE_NOEXCEPT
+		{
+			(*m_mover_destructor)(nullptr, i_element);
 		}
 
 	private:
@@ -79,15 +83,14 @@ namespace reflective
 		using CopyConstructorPtr = void(*)(void * i_dest_element, const ELEMENT & i_source_element);
 		using MoverDestructorPtr = void (*)(void * i_dest_element, ELEMENT * i_source_element);
 
-		DefaultTypeInfo(size_t i_size, size_t i_alignment, CopyConstructorPtr i_copy_constructor, MoverDestructorPtr i_mover_destructor)
+		CopyableTypeInfo(size_t i_size, size_t i_alignment, CopyConstructorPtr i_copy_constructor, MoverDestructorPtr i_mover_destructor)
 			: m_size(i_size), m_alignment(i_alignment), m_copy_constructor(i_copy_constructor), m_mover_destructor(i_mover_destructor)
 				{ }
 
 		template <typename COMPLETE_TYPE>
-			static void CopyConstructImpl(void * /*i_destination*/, const ELEMENT & /*i_source_element*/)
+			static void CopyConstructImpl(void * i_destination, const ELEMENT & i_source_element)
 		{
-			// TO DO: detect if the type is copyable
-			//new (i_destination) COMPLETE_TYPE(static_cast<const COMPLETE_TYPE&>(i_source_element));
+			new (i_destination) COMPLETE_TYPE(static_cast<const COMPLETE_TYPE&>(i_source_element));
 		}
 
 		template <typename COMPLETE_TYPE>
@@ -103,6 +106,68 @@ namespace reflective
 	private:
 		size_t const m_size, m_alignment;
 		CopyConstructorPtr const m_copy_constructor;
+		MoverDestructorPtr const m_mover_destructor;
+	};
+
+	template <typename ELEMENT>
+		class MovableTypeInfo
+	{
+	public:
+
+		MovableTypeInfo() = delete;
+		MovableTypeInfo & operator = (const MovableTypeInfo &) = delete;
+		MovableTypeInfo & operator = (MovableTypeInfo &&) = delete;
+
+		MovableTypeInfo(const MovableTypeInfo &) REFLECTIVE_NOEXCEPT = default;
+
+		#if defined(_MSC_VER) && _MSC_VER < 1900
+			MovableTypeInfo(MovableTypeInfo && i_source) REFLECTIVE_NOEXCEPT // visual studio 2013 doesnt seems to support defauted move constructors
+				: m_size(i_source.m_size), m_alignment(i_source.m_alignment), m_mover_destructor(i_source.m_mover_destructor)
+					{ }			
+		#else
+			MovableTypeInfo(MovableTypeInfo && i_source) REFLECTIVE_NOEXCEPT = default;
+		#endif
+
+		template <typename COMPLETE_TYPE>
+			static MovableTypeInfo make()
+		{
+			return MovableTypeInfo(sizeof(COMPLETE_TYPE), std::alignment_of<COMPLETE_TYPE>::value, &MoverDestructorImpl< COMPLETE_TYPE >);
+		}
+
+		size_t size() const REFLECTIVE_NOEXCEPT { return m_size; }
+		
+		size_t alignment() const REFLECTIVE_NOEXCEPT { return m_alignment; }
+		
+		void move_construct(void * i_destination, ELEMENT * i_source_element) const REFLECTIVE_NOEXCEPT
+		{
+			(*m_mover_destructor)(i_destination, i_source_element);
+		}
+
+		void destroy(ELEMENT * i_element) const REFLECTIVE_NOEXCEPT
+		{
+			(*m_mover_destructor)(nullptr, i_element);
+		}
+
+	private:
+
+		using MoverDestructorPtr = void (*)(void * i_dest_element, ELEMENT * i_source_element);
+
+		MovableTypeInfo(size_t i_size, size_t i_alignment, MoverDestructorPtr i_mover_destructor)
+			: m_size(i_size), m_alignment(i_alignment), m_mover_destructor(i_mover_destructor)
+				{ }
+		
+		template <typename COMPLETE_TYPE>
+			static void MoverDestructorImpl(void * i_destination, ELEMENT * i_source_element)
+		{
+			if (i_destination != nullptr)
+			{
+				new (i_destination) COMPLETE_TYPE(std::move(*static_cast<COMPLETE_TYPE*>(i_source_element)));
+			}
+			static_cast<COMPLETE_TYPE*>(i_source_element)->COMPLETE_TYPE::~COMPLETE_TYPE();
+		}
+
+	private:
+		size_t const m_size, m_alignment;
 		MoverDestructorPtr const m_mover_destructor;
 	};
 
@@ -124,6 +189,57 @@ namespace reflective
 				curr_type->TYPE_INFO::~TYPE_INFO();
 			}
 			free_mem(m_bulk, bulk_alignment);
+		}
+
+		void compute_buffer_size_and_alignment(size_t * o_buffer_size, size_t * o_buffer_alignment) const REFLECTIVE_NOEXCEPT
+		{
+			size_t buffer_size = size() * sizeof(TYPE_INFO);
+			size_t buffer_alignment = std::alignment_of<TYPE_INFO>::value;
+			auto const end_it = cend();
+			for (auto it = cbegin(); it != end_it; it++)
+			{
+				const size_t curr_size = it.curr_type()->size();
+				const size_t curr_alignment = it.curr_type()->alignment();
+				assert(curr_alignment > 0 && (curr_alignment & (curr_alignment - 1)) == 0); // the alignment must be a power of 2
+				buffer_size = (buffer_size + (curr_alignment - 1)) & ~(curr_alignment - 1);
+				buffer_size += curr_size;
+
+				buffer_alignment = std::max(buffer_alignment, curr_alignment);
+			}
+
+			*o_buffer_size = buffer_size;
+			*o_buffer_alignment = buffer_alignment;
+		}
+
+		void copy_impl(const BulkList & i_source)
+		{
+			// allocate the buffer
+			size_t buffer_size = 0, buffer_alignment = 0;
+			i_source.compute_buffer_size_and_alignment(&buffer_size, &buffer_alignment);
+			void * const buffer = alloc_mem(buffer_size, buffer_alignment);
+			TYPE_INFO * const types = static_cast<TYPE_INFO*>(buffer);
+			
+			auto curr_element = reinterpret_cast<uintptr_t>( types + i_source.size());
+			TYPE_INFO * curr_type = types;
+			auto const end_it = i_source.cend();
+			for (auto it = i_source.cbegin(); it != end_it; it++)
+			{
+				new (curr_type) TYPE_INFO( *(it.curr_type()) );
+				
+				// upper align curr_element to curr_type->alignment()
+				const uintptr_t element_alignment = curr_type->alignment();
+				assert(element_alignment > 0 && (element_alignment & (element_alignment >> 1)) == 0); // internal check: the alignment must be a power of 2
+				auto const alignment_mask = element_alignment - 1;
+				curr_element = (curr_element + alignment_mask) & ~alignment_mask;
+
+				curr_type->copy_construct(reinterpret_cast<void*>(curr_element), *it);
+				
+				curr_element += curr_type->size();
+				curr_type++;
+			}
+
+			m_size = i_source.size();
+			m_bulk = types;
 		}
 
 		void move_impl(BulkList && i_source) REFLECTIVE_NOEXCEPT
@@ -158,9 +274,15 @@ namespace reflective
 			void * const elements = types + element_count;
 
 			RecursiveHelper<TYPES...>::construct(types, elements, std::forward<TYPES>(i_tuple)...);
-
 			new_list.m_size = element_count;
 			new_list.m_bulk = types;
+
+			#ifndef NDEBUG
+				size_t dbg_buffer_size = 0, dbg_buffer_alignment = 0;
+				new_list.compute_buffer_size_and_alignment(&dbg_buffer_size, &dbg_buffer_alignment);
+				assert(dbg_buffer_size == buffer_size);
+				assert(dbg_buffer_alignment == buffer_alignment);
+			#endif
 			return std::move(new_list);
 		}
 
@@ -175,22 +297,24 @@ namespace reflective
 
 		BulkList & operator = (BulkList && i_source) REFLECTIVE_NOEXCEPT
 		{
-			assert(this != &i_source); // self move asignment gives undefined behaviour
+			assert(this != &i_source); // self assignment not supported
 			destroy_impl();
 			move_impl(std::move(i_source));
 			return *this;
 		}
 
-		/*BulkList(const BulkList & i_source)
-			: m_size()
+		BulkList(const BulkList & i_source)
 		{
-			
+			copy_impl(i_source);
 		}
 
 		BulkList & operator = (const BulkList & i_source)
 		{
+			assert(this != &i_source); // self assignment not supported
+			destroy_impl();
+			copy_impl(i_source);
 			return *this;
-		}*/
+		}
 
 		~BulkList() REFLECTIVE_NOEXCEPT
 		{
@@ -199,28 +323,29 @@ namespace reflective
 
 		size_t size() const { return m_size; }
 
-		class iterator
+		template <typename ELEMENT_TYPE>
+			class gen_iterator
 		{
 		public:
 
 			using iterator_category = std::forward_iterator_tag;
-			using value_type = ELEMENT;
-			using reference = ELEMENT &;
-			using const_reference = const ELEMENT &;
+			using value_type = ELEMENT_TYPE;
+			using reference = ELEMENT_TYPE &;
+			using const_reference = const ELEMENT_TYPE &;
 			using pointer = typename std::allocator_traits<allocator_type>::pointer;
 			using const_pointer = typename std::allocator_traits<allocator_type>::const_pointer;
 			using difference_type = ptrdiff_t;
 			using size_type = size_t;
 
-			iterator() REFLECTIVE_NOEXCEPT
+			gen_iterator() REFLECTIVE_NOEXCEPT
 				: m_curr_element(nullptr), m_curr_type(nullptr), m_end_type(nullptr){}
 
-			iterator(InternalConstructor, ELEMENT * i_curr_element, TYPE_INFO * i_curr_type, TYPE_INFO * i_end_type) REFLECTIVE_NOEXCEPT
+			gen_iterator(InternalConstructor, ELEMENT_TYPE * i_curr_element, TYPE_INFO * i_curr_type, TYPE_INFO * i_end_type) REFLECTIVE_NOEXCEPT
 				: m_curr_element(i_curr_element), m_curr_type(i_curr_type), m_end_type(i_end_type)
 			{
 			}
 
-			iterator & operator ++ () REFLECTIVE_NOEXCEPT
+			gen_iterator & operator ++ () REFLECTIVE_NOEXCEPT
 			{
 				// m_curr_element is advanced by the size of the current element, and upper aligned to the next element. m_curr_type is just incremented
 				auto const curr_element_size = m_curr_type->size();
@@ -230,7 +355,7 @@ namespace reflective
 					auto const next_element_alignment = m_curr_type->alignment();
 					assert( (next_element_alignment & (next_element_alignment >> 1)) == 0); // internal check: the alignment must be a power of 2
 					auto const alignment_mask = next_element_alignment - 1;
-					m_curr_element = reinterpret_cast<ELEMENT*>((reinterpret_cast<uintptr_t>(m_curr_element)+curr_element_size + alignment_mask) & ~alignment_mask);
+					m_curr_element = reinterpret_cast<ELEMENT_TYPE*>((reinterpret_cast<uintptr_t>(m_curr_element)+curr_element_size + alignment_mask) & ~alignment_mask);
 				}
 				else
 				{
@@ -239,39 +364,76 @@ namespace reflective
 				return *this;
 			}
 
-			iterator operator++ ( int ) REFLECTIVE_NOEXCEPT
+			gen_iterator operator++ ( int ) REFLECTIVE_NOEXCEPT
 			{
-				iterator copy(*this);
+				gen_iterator copy(*this);
 				operator ++ ();
 				return copy;
 			}
 
-			bool operator == (const iterator & i_other) const REFLECTIVE_NOEXCEPT
+			bool operator == (const gen_iterator & i_other) const REFLECTIVE_NOEXCEPT
 			{
 				assert((m_curr_element == i_other.m_curr_element) == (m_curr_type == i_other.m_curr_type)); // internal check: m_curr_type and m_curr_element must be consistent
 				return m_curr_element == i_other.m_curr_element;
 			}
 
-			bool operator != (const iterator & i_other) const REFLECTIVE_NOEXCEPT
+			bool operator != (const gen_iterator & i_other) const REFLECTIVE_NOEXCEPT
 			{
 				assert((m_curr_element == i_other.m_curr_element) == (m_curr_type == i_other.m_curr_type) ); // internal check: m_curr_type and m_curr_element must be consistent
 				return m_curr_element != i_other.m_curr_element;
 			}
 
-			ELEMENT & operator * () const	REFLECTIVE_NOEXCEPT { return *m_curr_element; }
-			ELEMENT * operator -> () const	REFLECTIVE_NOEXCEPT { return m_curr_element; }
+			ELEMENT_TYPE & operator * () const	REFLECTIVE_NOEXCEPT { return *m_curr_element; }
+			ELEMENT_TYPE * operator -> () const	REFLECTIVE_NOEXCEPT { return m_curr_element; }
 
-			ELEMENT * curr_element() const REFLECTIVE_NOEXCEPT { return m_curr_element; }
+			ELEMENT_TYPE * curr_element() const REFLECTIVE_NOEXCEPT { return m_curr_element; }
 			TYPE_INFO * curr_type() const REFLECTIVE_NOEXCEPT { return m_curr_type; }
 
 		private:			
-			ELEMENT * m_curr_element;
+			ELEMENT_TYPE * m_curr_element;
 			TYPE_INFO * m_curr_type;
 			TYPE_INFO * m_end_type;
 		};
 
-		iterator begin() REFLECTIVE_NOEXCEPT { return iterator(InternalConstructorMem, reinterpret_cast<ELEMENT*>(m_bulk + m_size), m_bulk, m_bulk + m_size); }
+		using iterator = gen_iterator<ELEMENT>;
+		using const_iterator = gen_iterator<const ELEMENT>;
+
+		iterator begin() REFLECTIVE_NOEXCEPT { return iterator(InternalConstructorMem, 
+			m_size > 0 ? reinterpret_cast<ELEMENT*>(m_bulk + m_size) : nullptr, m_bulk, m_bulk + m_size); }
 		iterator end() REFLECTIVE_NOEXCEPT { return iterator(InternalConstructorMem, nullptr, m_bulk + m_size, m_bulk + m_size); }
+
+		const_iterator begin() const REFLECTIVE_NOEXCEPT { return const_iterator(InternalConstructorMem,
+				m_size > 0 ? reinterpret_cast<const ELEMENT*>(m_bulk + m_size) : nullptr, m_bulk, m_bulk + m_size); }
+
+		const_iterator end() const REFLECTIVE_NOEXCEPT { return const_iterator(InternalConstructorMem, nullptr, m_bulk + m_size, m_bulk + m_size); }
+
+		const_iterator cbegin() const REFLECTIVE_NOEXCEPT { return const_iterator(InternalConstructorMem,
+				m_size > 0 ? reinterpret_cast<const ELEMENT*>(m_bulk + m_size) : nullptr, m_bulk, m_bulk + m_size); }
+
+		const_iterator cend() const REFLECTIVE_NOEXCEPT { return const_iterator(InternalConstructorMem, nullptr, m_bulk + m_size, m_bulk + m_size); }
+
+		bool operator == (const BulkList & i_source) const
+		{
+			//return (m_size == i_source.m_size) && std::equal(cbegin(), cend(), i_source.cbegin());
+			if (m_size != i_source.m_size)
+			{
+				return false;
+			}
+			else
+			{
+				const auto end_1 = cend();
+				for (auto it_1 = cbegin(), it_2 = i_source.cbegin(); it_1 != end_1; ++it_1, ++it_2)
+				{
+					if (*it_1 != *it_2)
+					{
+						return false;
+					}
+				}
+				return true;
+			}
+		}
+
+		bool operator != (const BulkList & i_source) const		{ return !operator == (i_source); }
 
 	private:
 
@@ -299,48 +461,40 @@ namespace reflective
 
 		}
 
-		// RecursiveSize< PREV_ELEMENTS_SIZE, OTHER_TYPES...>::s_buffer_size - space required to layout the specified types, respecting the alignemnt
+		template <size_t PREV_ELEMENTS_SIZE, typename...> struct RecursiveSize
+		{
+			static const size_t s_buffer_size = PREV_ELEMENTS_SIZE;
+		};
 		template <size_t PREV_ELEMENTS_SIZE, typename FIRST_TYPE, typename... OTHER_TYPES>
-			struct RecursiveSize
+			struct RecursiveSize<PREV_ELEMENTS_SIZE, FIRST_TYPE, OTHER_TYPES...>
 		{
-			// s_this_size = sizeof(FIRST_TYPE) + upper_align(PREV_ELEMENTS_SIZE, alignof(FIRST_TYPE))
-			static const size_t s_this_size = sizeof(FIRST_TYPE) + (PREV_ELEMENTS_SIZE + std::alignment_of<FIRST_TYPE>::value - 1)
-				- (((PREV_ELEMENTS_SIZE + std::alignment_of<FIRST_TYPE>::value - 1)) % std::alignment_of<FIRST_TYPE>::value);
-			static const size_t s_buffer_size = s_this_size + RecursiveSize<PREV_ELEMENTS_SIZE + s_this_size, OTHER_TYPES...>::s_buffer_size;
-		};
-		template <size_t PREV_ELEMENTS_SIZE, typename LAST_TYPE>
-			struct RecursiveSize<PREV_ELEMENTS_SIZE, LAST_TYPE>
-		{
-			static const size_t s_buffer_size = (std::alignment_of<LAST_TYPE>::value - (PREV_ELEMENTS_SIZE % std::alignment_of<LAST_TYPE>::value)) + sizeof(LAST_TYPE);
+			static const size_t s_aligned_prev_size = ( PREV_ELEMENTS_SIZE + (std::alignment_of<FIRST_TYPE>::value - 1) ) & ~(std::alignment_of<FIRST_TYPE>::value - 1);
+			static const size_t s_buffer_size = RecursiveSize<s_aligned_prev_size + sizeof(FIRST_TYPE), OTHER_TYPES...>::s_buffer_size;
 		};
 
-
-		template <typename FIRST_TYPE, typename... OTHER_TYPES>
+		template <typename... TYPES>
 			struct RecursiveHelper
 		{
+			static const size_t s_element_count = 0;
+			static const size_t s_element_alignment = 1;
+			static void construct(TYPE_INFO * /*i_types*/, void * /*i_elements*/, TYPES &&...) { }
+		};
+		template <typename FIRST_TYPE, typename... OTHER_TYPES>
+			struct RecursiveHelper<FIRST_TYPE, OTHER_TYPES...>
+		{
+			static_assert(std::alignment_of<FIRST_TYPE>::value > 0 && (std::alignment_of<FIRST_TYPE>::value & (std::alignment_of<FIRST_TYPE>::value - 1)) == 0,
+				"the alignment must be a non-zero integer power of 2" );
+
 			static const size_t s_element_count = 1 + RecursiveHelper<OTHER_TYPES...>::s_element_count;
 			static const size_t s_element_alignment = std::alignment_of<FIRST_TYPE>::value > RecursiveHelper<OTHER_TYPES...>::s_element_alignment ?
 				std::alignment_of<FIRST_TYPE>::value : RecursiveHelper<OTHER_TYPES...>::s_element_alignment;
 
 			inline static void construct(TYPE_INFO * i_types, void * i_elements, FIRST_TYPE && i_source, OTHER_TYPES && ... i_s1)
 			{
-				new(i_types) TYPE_INFO( TYPE_INFO::template make<FIRST_TYPE>() );
+				new(i_types) TYPE_INFO(TYPE_INFO::template make<FIRST_TYPE>());
 				FIRST_TYPE * const new_element = new(details::address_upper_align<FIRST_TYPE>(i_elements)) FIRST_TYPE(std::forward<FIRST_TYPE>(i_source));
 				RecursiveHelper<OTHER_TYPES...>::construct(
 					i_types + 1, new_element + 1, std::forward<OTHER_TYPES>(i_s1)...);
-			}
-		};
-
-		template <typename LAST_TYPE>
-			struct RecursiveHelper<LAST_TYPE>
-		{
-			static const size_t s_element_count = 1;
-			static const size_t s_element_alignment = std::alignment_of<LAST_TYPE>::value;
-
-			inline static void construct(TYPE_INFO * i_types, void * i_elements, LAST_TYPE && i_source)
-			{
-				new(i_types) TYPE_INFO(TYPE_INFO::template make<LAST_TYPE>());
-				new(details::address_upper_align<LAST_TYPE>(i_elements)) LAST_TYPE(std::forward<LAST_TYPE>(i_source));
 			}
 		};
 
