@@ -97,18 +97,19 @@ namespace reflective
 
 				std::vector<TestString> vec(i_list.begin(), i_list.end());
 
-				i_list.insert(std::next(i_list.cbegin(), i_at), i_count, TestString("42"));
-				vec.insert(std::next(vec.cbegin(), i_at), i_count, TestString("42"));
-
+				auto const res1 = i_list.insert(std::next(i_list.cbegin(), i_at), i_count, TestString("42"));
+				auto const res2 = vec.insert(std::next(vec.cbegin(), i_at), i_count, TestString("42"));
 				std::vector<TestString> vec_1(i_list.begin(), i_list.end());
-
 				REFLECTIVE_TEST_ASSERT(vec == vec_1);
+
+				auto const dist1 = std::distance(i_list.begin(), res1);
+				auto const dist2 = std::distance(vec.begin(), res2);
+				REFLECTIVE_TEST_ASSERT(dist1 == dist2);
 			}
 
 			#ifdef _MSC_VER
 				#pragma warning(push)
 				#pragma warning(disable: 4324) // structure was padded due to alignment specifier
-				#pragma warning(disable: 4359) // alignment specifier is less than actual alignment (#), and will be ignored
 			#endif
 
 			struct alignas(1) StructB_1 { char m_member = 42; };
@@ -121,15 +122,19 @@ namespace reflective
 			struct alignas(128) StructB_128 { int m_member = 42; };
 			struct alignas(256) StructB_256 { int m_member = 42; };
 
-			template <typename BASE> struct alignas(1) StructA_1 : BASE { };
-			template <typename BASE> struct alignas(2) StructA_2 : BASE { };
-			template <typename BASE> struct alignas(4) StructA_4 : BASE { };
-			template <typename BASE> struct alignas(8) StructA_8 : BASE { };
-			template <typename BASE> struct alignas(16) StructA_16 : BASE { };
-			template <typename BASE> struct alignas(32) StructA_32 : BASE { };
-			template <typename BASE> struct alignas(64) StructA_64 : BASE { };
-			template <typename BASE> struct alignas(128) StructA_128 : BASE { };
-			template <typename BASE> struct alignas(256) StructA_256 : BASE { };
+			template <size_t VALUE, typename BASE> struct AlignHelper {
+				static const size_t value = VALUE > std::alignment_of<BASE>::value ? VALUE : std::alignment_of<BASE>::value;
+			};
+
+			template <typename BASE> struct alignas(AlignHelper<1, BASE>::value) StructA_1 : BASE { };
+			template <typename BASE> struct alignas(AlignHelper<2, BASE>::value) StructA_2 : BASE { };
+			template <typename BASE> struct alignas(AlignHelper<4, BASE>::value) StructA_4 : BASE { };
+			template <typename BASE> struct alignas(AlignHelper<8, BASE>::value) StructA_8 : BASE { };
+			template <typename BASE> struct alignas(AlignHelper<16, BASE>::value) StructA_16 : BASE { };
+			template <typename BASE> struct alignas(AlignHelper<32, BASE>::value) StructA_32 : BASE { };
+			template <typename BASE> struct alignas(AlignHelper<64, BASE>::value) StructA_64 : BASE { };
+			template <typename BASE> struct alignas(AlignHelper<128, BASE>::value) StructA_128 : BASE { };
+			template <typename BASE> struct alignas(AlignHelper<256, BASE>::value) StructA_256 : BASE { };
 
 			#ifdef _MSC_VER
 				#pragma warning(pop)
@@ -199,14 +204,8 @@ namespace reflective
 			template <typename BASE_CLASS>
 				void typed_alignment_test()
 			{
-				using List = typename BulkList< BASE_CLASS, TestAllocator<BASE_CLASS> >;
-
-				auto l = List::make(StructA_16<BASE_CLASS>());
-				for (const auto & element : l)
-				{
-					REFLECTIVE_TEST_ASSERT(element.m_member == 42);
-				}
-
+				using List = BulkList< BASE_CLASS, TestAllocator<BASE_CLASS> >;
+				
 				std::vector<List> lists = {
 					List::make(),
 					List::make(StructA_16<BASE_CLASS>()),
@@ -220,6 +219,36 @@ namespace reflective
 						StructA_16<BASE_CLASS>(),
 						StructA_1<BASE_CLASS>(),
 						StructA_2<BASE_CLASS>(),
+						StructA_32<BASE_CLASS>()),
+					List::make(
+						StructA_16<BASE_CLASS>(),
+						StructA_8<BASE_CLASS>(),
+						StructA_256<BASE_CLASS>(),
+						StructA_8<BASE_CLASS>(),
+						StructA_64<BASE_CLASS>(),
+						StructA_4<BASE_CLASS>(),
+						StructA_16<BASE_CLASS>(),
+						StructA_16<BASE_CLASS>(),
+						StructA_16<BASE_CLASS>(),
+						StructA_16<BASE_CLASS>(),
+						StructA_16<BASE_CLASS>(),
+						StructA_1<BASE_CLASS>(),
+						StructA_1<BASE_CLASS>(),
+						StructA_1<BASE_CLASS>(),
+						StructA_2<BASE_CLASS>(),
+						StructA_16<BASE_CLASS>(),
+						StructA_64<BASE_CLASS>(),
+						StructA_4<BASE_CLASS>(),
+						StructA_16<BASE_CLASS>(),
+						StructA_16<BASE_CLASS>(),
+						StructA_16<BASE_CLASS>(),
+						StructA_16<BASE_CLASS>(),
+						StructA_16<BASE_CLASS>(),
+						StructA_1<BASE_CLASS>(),
+						StructA_1<BASE_CLASS>(),
+						StructA_1<BASE_CLASS>(),
+						StructA_2<BASE_CLASS>(),
+						StructA_16<BASE_CLASS>(),
 						StructA_32<BASE_CLASS>()) };
 
 				lists.insert(lists.begin() + lists.size()/2, 20, List::make(StructA_256<BASE_CLASS>(), StructA_32<BASE_CLASS>()) );

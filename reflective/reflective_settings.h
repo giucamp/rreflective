@@ -58,6 +58,8 @@ namespace reflective
 
 #define REFLECTIVE_RUNTIME_CHECK(i_value, ...)					if(!(i_value)) {::reflective::on_invaid_operation("");}
 
+/* Note: this assert does not allow lambda expressions inside the bool expression, as 
+	the standard forbids lambda-expression in unevaluated expressions. */
 #ifdef NDEBUG
 	#define REFLECTIVE_INTERNAL_ASSERT(i_value)						(void)sizeof(i_value);
 #else
