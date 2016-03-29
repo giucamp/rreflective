@@ -23,16 +23,6 @@ namespace reflective
 		return BulkList<ELEMENT, ALLOCATOR, DefaultTypeInfo<ELEMENT>>::make_with_alloc(i_allocator, std::forward<TYPES>(i_parameters)... );
 	}
 
-	namespace details
-	{
-		template <typename ELEMENT>
-			ELEMENT * address_upper_align(void * i_address) REFLECTIVE_NOEXCEPT
-		{
-			const size_t alignment_mask = std::alignment_of<ELEMENT>::value - 1;
-			return reinterpret_cast<ELEMENT*>((reinterpret_cast<uintptr_t>(i_address) + alignment_mask) & ~alignment_mask);
-		}
-	}
-
 	template <typename ELEMENT>
 		class CopyableTypeInfo
 	{
@@ -171,6 +161,76 @@ namespace reflective
 		MoverDestructorPtr const m_mover_destructor;
 	};
 
+	namespace details
+	{
+		template <typename ELEMENT>
+			inline ELEMENT * address_upper_align(void * i_address) REFLECTIVE_NOEXCEPT
+		{
+			const size_t alignment_mask = std::alignment_of<ELEMENT>::value - 1;
+			return reinterpret_cast<ELEMENT*>((reinterpret_cast<uintptr_t>(i_address) + alignment_mask) & ~alignment_mask);
+		}
+
+		inline bool is_valid_alignment(size_t i_alignment) { return i_alignment > 0 && (i_alignment & (i_alignment - 1)) == 0; }
+
+		struct AlignmentHeader
+		{
+			void * m_block;
+		};
+
+		template <typename ALLOCATOR>
+			void * aligned_alloc(ALLOCATOR & i_allocator, size_t i_size, size_t i_alignment)
+		{
+			assert(is_valid_alignment(i_alignment));
+
+			if (i_alignment <= std::alignment_of<void*>::value)
+			{
+				typename std::allocator_traits<ALLOCATOR>::template rebind_alloc<void *> other_alloc(i_allocator);
+				return other_alloc.allocate((i_size + sizeof(void*) - 1) / sizeof(void*));
+			}
+			else
+			{
+				const size_t extra_size = (i_alignment >= sizeof(AlignmentHeader) ? i_alignment : sizeof(AlignmentHeader));
+				const size_t actual_size = i_size + extra_size;
+
+				typename std::allocator_traits<ALLOCATOR>::template rebind_alloc<char> char_alloc(i_allocator);
+				void * complete_block = char_alloc.allocate(actual_size);
+				auto uint_address = reinterpret_cast<uintptr_t>(complete_block);
+
+				uint_address += extra_size;
+				uint_address = uint_address & ~(i_alignment - 1);
+
+				AlignmentHeader * header = reinterpret_cast<AlignmentHeader*>(uint_address) - 1;
+				header->m_block = complete_block;
+
+				return reinterpret_cast<void*>(uint_address);
+			}
+		}
+
+		template <typename ALLOCATOR>
+			void aligned_free(ALLOCATOR & i_allocator, void * i_block, size_t i_size, size_t i_alignment) REFLECTIVE_NOEXCEPT
+		{
+			if (i_block != nullptr)
+			{
+				if (i_alignment <= std::alignment_of<void*>::value)
+				{
+					typename std::allocator_traits<ALLOCATOR>::template rebind_alloc<void *> other_alloc(i_allocator);
+					other_alloc.deallocate(static_cast<void**>(i_block), (i_size + sizeof(void*) - 1) / sizeof(void*));
+				}
+				else
+				{
+					const size_t extra_size = (i_alignment >= sizeof(AlignmentHeader) ? i_alignment : sizeof(AlignmentHeader));
+					const size_t actual_size = i_size + extra_size;
+
+					AlignmentHeader * header = static_cast<AlignmentHeader*>(i_block) - 1;
+
+					typename std::allocator_traits<ALLOCATOR>::template rebind_alloc<char> char_alloc(i_allocator);
+					char_alloc.deallocate(static_cast<char*>(header->m_block), actual_size);
+				}
+			}
+		}
+			
+	} // namespace details
+
 	/** A bulk-list is a sequence container of heterogeneous elements. */
 	template <typename ELEMENT, typename ALLOCATOR, typename TYPE_INFO >
 		class BulkList : private ALLOCATOR
@@ -239,7 +299,9 @@ namespace reflective
 			destroy_impl();
 		}
 
-		size_t size() const { return m_size; }
+		size_t size() const REFLECTIVE_NOEXCEPT { return m_size; }
+
+		bool empty() const REFLECTIVE_NOEXCEPT  { return m_size == 0; }
 
 		template <typename ELEMENT_TYPE>
 			class gen_iterator
@@ -271,7 +333,7 @@ namespace reflective
 				if (m_curr_type < m_end_type)
 				{
 					auto const next_element_alignment = m_curr_type->alignment();
-					assert( (next_element_alignment & (next_element_alignment >> 1)) == 0); // internal check: the alignment must be a power of 2
+					assert( details::is_valid_alignment( next_element_alignment ) ); // internal check: the alignment must be a power of 2
 					auto const alignment_mask = next_element_alignment - 1;
 					m_curr_element = reinterpret_cast<ELEMENT_TYPE*>((reinterpret_cast<uintptr_t>(m_curr_element)+curr_element_size + alignment_mask) & ~alignment_mask);
 				}
@@ -316,18 +378,13 @@ namespace reflective
 		using iterator = gen_iterator<ELEMENT>;
 		using const_iterator = gen_iterator<const ELEMENT>;
 
-		iterator begin() REFLECTIVE_NOEXCEPT { return iterator(InternalConstructorMem, 
-			m_size > 0 ? reinterpret_cast<ELEMENT*>(m_bulk + m_size) : nullptr, m_bulk, m_bulk + m_size); }
+		iterator begin() REFLECTIVE_NOEXCEPT { return iterator(InternalConstructorMem, get_elements(), m_bulk, m_bulk + m_size); }
 		iterator end() REFLECTIVE_NOEXCEPT { return iterator(InternalConstructorMem, nullptr, m_bulk + m_size, m_bulk + m_size); }
 
-		const_iterator begin() const REFLECTIVE_NOEXCEPT { return const_iterator(InternalConstructorMem,
-				m_size > 0 ? reinterpret_cast<const ELEMENT*>(m_bulk + m_size) : nullptr, m_bulk, m_bulk + m_size); }
-
+		const_iterator begin() const REFLECTIVE_NOEXCEPT { return const_iterator(InternalConstructorMem, get_elements(), m_bulk, m_bulk + m_size); }
 		const_iterator end() const REFLECTIVE_NOEXCEPT { return const_iterator(InternalConstructorMem, nullptr, m_bulk + m_size, m_bulk + m_size); }
 
-		const_iterator cbegin() const REFLECTIVE_NOEXCEPT { return const_iterator(InternalConstructorMem,
-				m_size > 0 ? reinterpret_cast<const ELEMENT*>(m_bulk + m_size) : nullptr, m_bulk, m_bulk + m_size); }
-
+		const_iterator cbegin() const REFLECTIVE_NOEXCEPT { return const_iterator(InternalConstructorMem, get_elements(), m_bulk, m_bulk + m_size); }
 		const_iterator cend() const REFLECTIVE_NOEXCEPT { return const_iterator(InternalConstructorMem, nullptr, m_bulk + m_size, m_bulk + m_size); }
 
 		bool operator == (const BulkList & i_source) const
@@ -352,8 +409,7 @@ namespace reflective
 		}
 
 		bool operator != (const BulkList & i_source) const		{ return !operator == (i_source); }
-
-
+		
 		template <typename ELEMENT_COMPLETE_TYPE>
 			iterator insert(const_iterator i_position, size_t i_count, const ELEMENT_COMPLETE_TYPE & i_source)
 		{
@@ -363,7 +419,7 @@ namespace reflective
 
 			BulkList new_list;
 			
-			void * const buffer = alloc_mem(buffer_size, buffer_alignment);
+			void * const buffer = details::aligned_alloc(*static_cast<ALLOCATOR*>(this), buffer_size, buffer_alignment);
 			TYPE_INFO * const types = static_cast<TYPE_INFO*>(buffer);
 			
 			size_t count_to_insert = i_count;
@@ -398,7 +454,7 @@ namespace reflective
 				
 				// upper align curr_element to curr_type->alignment()
 				const uintptr_t element_alignment = curr_type->alignment();
-				assert(element_alignment > 0 && (element_alignment & (element_alignment >> 1)) == 0); // internal check: the alignment must be a power of 2
+				assert(details::is_valid_alignment(element_alignment) ); // internal check: the alignment must be a power of 2
 				auto const alignment_mask = element_alignment - 1;
 				curr_element = (curr_element + alignment_mask) & ~alignment_mask;
 
@@ -417,22 +473,27 @@ namespace reflective
 
 	private:
 
-		void * alloc_mem(size_t i_size, size_t i_alignment)
+		ELEMENT * get_elements() const // this function gives a non-const element from a const container, but this avoids duplicating the function
 		{
-			return _aligned_malloc(i_size, i_alignment);
+			if (m_size > 0)
+			{
+				assert(details::is_valid_alignment(m_bulk[0].alignment()));
+				const auto first_element_align_mask = m_bulk[0].alignment() - 1;
+				auto ptr = reinterpret_cast<uintptr_t>(m_bulk + m_size);
+				ptr = (ptr + first_element_align_mask) & ~first_element_align_mask;
+				return reinterpret_cast<ELEMENT *>(ptr);
+			}
+			else
+			{
+				return nullptr;
+			}
 		}
-
-		void free_mem(void * i_block, size_t /*i_alignment*/) REFLECTIVE_NOEXCEPT
-		{
-			_aligned_free(i_block);
-		}
-
-	private:
-		
+				
 		void destroy_impl() REFLECTIVE_NOEXCEPT
 		{
 			size_t bulk_alignment = std::alignment_of<TYPE_INFO>::value;
 			const auto end_it = end();
+			const size_t bulk_size = m_size * sizeof(TYPE_INFO);
 			for (auto it = begin(); it != end_it; it++)
 			{
 				auto curr_type = it.curr_type();
@@ -440,7 +501,7 @@ namespace reflective
 				curr_type->destroy(it.curr_element());
 				curr_type->TYPE_INFO::~TYPE_INFO();
 			}
-			free_mem(m_bulk, bulk_alignment);
+			details::aligned_free( *static_cast<ALLOCATOR*>(this), m_bulk, bulk_size, bulk_alignment);
 		}
 
 		void copy_impl(const BulkList & i_source)
@@ -448,7 +509,7 @@ namespace reflective
 			// allocate the buffer
 			size_t buffer_size = 0, buffer_alignment = 0;
 			i_source.compute_buffer_size_and_alignment(&buffer_size, &buffer_alignment);
-			void * const buffer = alloc_mem(buffer_size, buffer_alignment);
+			void * const buffer = details::aligned_alloc(*static_cast<ALLOCATOR*>(this), buffer_size, buffer_alignment);
 			TYPE_INFO * const types = static_cast<TYPE_INFO*>(buffer);
 			
 			auto curr_element = reinterpret_cast<uintptr_t>( types + i_source.size());
@@ -460,7 +521,7 @@ namespace reflective
 				
 				// upper align curr_element to curr_type->alignment()
 				const uintptr_t element_alignment = curr_type->alignment();
-				assert(element_alignment > 0 && (element_alignment & (element_alignment >> 1)) == 0); // internal check: the alignment must be a power of 2
+				assert(details::is_valid_alignment(element_alignment) ); // internal check: the alignment must be a power of 2
 				auto const alignment_mask = element_alignment - 1;
 				curr_element = (curr_element + alignment_mask) & ~alignment_mask;
 
@@ -489,7 +550,7 @@ namespace reflective
 			size_t const buffer_alignment = std::max( RecursiveHelper<TYPES...>::s_element_alignment, std::alignment_of<TYPE_INFO>::value );
 			size_t const element_count = RecursiveHelper<TYPES...>::s_element_count;
 
-			void * const buffer = o_dest_list.alloc_mem(buffer_size, buffer_alignment);
+			void * const buffer = details::aligned_alloc(static_cast<ALLOCATOR&>(o_dest_list), buffer_size, buffer_alignment);
 			TYPE_INFO * const types = static_cast<TYPE_INFO*>(buffer);
 			void * const elements = types + element_count;
 
@@ -514,7 +575,7 @@ namespace reflective
 			{
 				const size_t curr_size = it.curr_type()->size();
 				const size_t curr_alignment = it.curr_type()->alignment();
-				assert(curr_alignment > 0 && (curr_alignment & (curr_alignment - 1)) == 0); // the alignment must be a power of 2
+				assert(details::is_valid_alignment(curr_alignment)); // the alignment must be a power of 2
 				buffer_size = (buffer_size + (curr_alignment - 1)) & ~(curr_alignment - 1);
 				buffer_size += curr_size;
 
@@ -529,14 +590,15 @@ namespace reflective
 			const const_iterator & i_insert_at, size_t i_new_element_count,
 			size_t i_new_element_size, size_t i_new_element_alignment ) const REFLECTIVE_NOEXCEPT
 		{
+			assert(i_new_element_size > 0 && details::is_valid_alignment(i_new_element_alignment)); // the size must be non-zero, the alignment must be a non-zero power of 2
+
 			size_t buffer_size = (size() + i_new_element_count) * sizeof(TYPE_INFO);
 			size_t buffer_alignment = std::max(std::alignment_of<TYPE_INFO>::value, i_new_element_alignment);
 			auto const end_it = cend();
 			for (auto it = cbegin(); ; it++)
 			{
-				if (it == i_insert_at)
-				{
-					assert(i_new_element_size > 0 && i_new_element_alignment > 0 && (i_new_element_alignment & (i_new_element_alignment - 1)) == 0); // the size must be non-zero, the alignment must be a non-zero power of 2
+				if (it == i_insert_at && i_new_element_count > 0)
+				{					
 					buffer_size = (buffer_size + (i_new_element_alignment - 1)) & ~(i_new_element_alignment - 1);
 					buffer_size += i_new_element_size * i_new_element_count;
 				}
@@ -548,7 +610,7 @@ namespace reflective
 
 				const size_t curr_size = it.curr_type()->size();
 				const size_t curr_alignment = it.curr_type()->alignment();
-				assert(curr_size > 0 && curr_alignment > 0 && (curr_alignment & (curr_alignment - 1)) == 0); // the size must be non-zero, the alignment must be a non-zero power of 2
+				assert(curr_size > 0 && details::is_valid_alignment(curr_alignment)); // the size must be non-zero, the alignment must be a non-zero power of 2
 				buffer_size = (buffer_size + (curr_alignment - 1)) & ~(curr_alignment - 1);
 				buffer_size += curr_size;
 				buffer_alignment = std::max(buffer_alignment, curr_alignment);
@@ -561,10 +623,7 @@ namespace reflective
 
 		BulkList(InternalConstructor)	{ 	}
 
-		BulkList(InternalConstructor, const ALLOCATOR & i_allocator) : ALLOCATOR(i_allocator)
-		{
-
-		}
+		BulkList(InternalConstructor, const ALLOCATOR & i_allocator) : ALLOCATOR(i_allocator) {}
 
 		template <size_t PREV_ELEMENTS_SIZE, typename...> struct RecursiveSize
 		{
@@ -573,7 +632,7 @@ namespace reflective
 		template <size_t PREV_ELEMENTS_SIZE, typename FIRST_TYPE, typename... OTHER_TYPES>
 			struct RecursiveSize<PREV_ELEMENTS_SIZE, FIRST_TYPE, OTHER_TYPES...>
 		{
-			static const size_t s_aligned_prev_size = ( PREV_ELEMENTS_SIZE + (std::alignment_of<FIRST_TYPE>::value - 1) ) & ~(std::alignment_of<FIRST_TYPE>::value - 1);
+			static const size_t s_aligned_prev_size = (PREV_ELEMENTS_SIZE + (std::alignment_of<FIRST_TYPE>::value - 1)) & ~(std::alignment_of<FIRST_TYPE>::value - 1);
 			static const size_t s_buffer_size = RecursiveSize<s_aligned_prev_size + sizeof(FIRST_TYPE), OTHER_TYPES...>::s_buffer_size;
 		};
 
@@ -589,6 +648,8 @@ namespace reflective
 		{
 			static_assert(std::alignment_of<FIRST_TYPE>::value > 0 && (std::alignment_of<FIRST_TYPE>::value & (std::alignment_of<FIRST_TYPE>::value - 1)) == 0,
 				"the alignment must be a non-zero integer power of 2" );
+
+			static_assert(std::is_base_of<ELEMENT, FIRST_TYPE >::value, "Trying to initiaize a bulk list with an object whose type is not a subtype of the base element type");
 
 			static const size_t s_element_count = 1 + RecursiveHelper<OTHER_TYPES...>::s_element_count;
 			static const size_t s_element_alignment = std::alignment_of<FIRST_TYPE>::value > RecursiveHelper<OTHER_TYPES...>::s_element_alignment ?
