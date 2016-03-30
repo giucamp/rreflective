@@ -7,20 +7,21 @@ namespace reflective
 	template <typename ELEMENT> class MovableTypeInfo;
 	template <typename ELEMENT> using DefaultTypeInfo = typename std::conditional< std::is_copy_constructible<ELEMENT>::value,
 		CopyableTypeInfo<ELEMENT>, MovableTypeInfo<ELEMENT> >::type;
-	template <typename ELEMENT, typename ALLOCATOR = std::allocator<ELEMENT>, typename TYPE_INFO = DefaultTypeInfo<ELEMENT> > class BulkList;
+	template <typename ELEMENT, typename ALLOCATOR = std::allocator<ELEMENT>, 
+		template<typename> typename TYPE_INFO = DefaultTypeInfo > class DenseList;
 
-	/** Creates and returns by value a BulkList, whose element base type is ELEMENT. The specified parameters
+	/** Creates and returns by value a DenseList, whose element base type is ELEMENT. The specified parameters
 		are added to the list<br>
-		Example: auto int_list = make_bulk_list<int>( 1, 2 * 2, 3 * 3 ); */
+		Example: auto int_list = make_dense_list<int>( 1, 2 * 2, 3 * 3 ); */
 	template <typename ELEMENT, typename... TYPES>
-		inline BulkList<ELEMENT, std::allocator<ELEMENT>, DefaultTypeInfo<ELEMENT>> make_bulk_list(TYPES &&... i_parameters)
+		inline DenseList<ELEMENT, std::allocator<ELEMENT>, DefaultTypeInfo> make_dense_list(TYPES &&... i_parameters)
 	{
-		return BulkList<ELEMENT, std::allocator<ELEMENT>, DefaultTypeInfo<ELEMENT>>::make( std::forward<TYPES>(i_parameters)... );
+		return DenseList<ELEMENT, std::allocator<ELEMENT>, DefaultTypeInfo>::make( std::forward<TYPES>(i_parameters)... );
 	}
 	template <typename ELEMENT, typename ALLOCATOR, typename... TYPES>
-		inline BulkList<ELEMENT, ALLOCATOR, DefaultTypeInfo<ELEMENT>> alloc_bulk_list(const ALLOCATOR & i_allocator, TYPES &&... i_parameters)
+		inline DenseList<ELEMENT, ALLOCATOR, DefaultTypeInfo<ELEMENT>> alloc_dense_list(const ALLOCATOR & i_allocator, TYPES &&... i_parameters)
 	{
-		return BulkList<ELEMENT, ALLOCATOR, DefaultTypeInfo<ELEMENT>>::make_with_alloc(i_allocator, std::forward<TYPES>(i_parameters)... );
+		return DenseList<ELEMENT, ALLOCATOR, DefaultTypeInfo<ELEMENT>>::make_with_alloc(i_allocator, std::forward<TYPES>(i_parameters)... );
 	}
 
 	template <typename ELEMENT>
@@ -231,13 +232,15 @@ namespace reflective
 			
 	} // namespace details
 
-	/** A bulk-list is a sequence container of heterogeneous elements. */
-	template <typename ELEMENT, typename ALLOCATOR, typename TYPE_INFO >
-		class BulkList : private ALLOCATOR
+	/** A dense-list is a sequence container of heterogeneous elements. */
+	template <typename ELEMENT, typename ALLOCATOR, template<typename> typename TYPE_INFO >
+		class DenseList : private ALLOCATOR
 	{
 		enum InternalConstructor { InternalConstructorMem };
 
 	public:
+
+		using TypeInfo = TYPE_INFO<ELEMENT>;
 
 		using allocator_type = ALLOCATOR;
 		using value_type = ELEMENT;
@@ -249,31 +252,31 @@ namespace reflective
 		using size_type = size_t;
 
 		template <typename... TYPES>
-			inline static BulkList make(TYPES &&... i_args)
+			inline static DenseList make(TYPES &&... i_args)
 		{
-			BulkList new_list(InternalConstructorMem);
+			DenseList new_list(InternalConstructorMem);
 			make_impl(new_list, std::forward<TYPES>(i_args)...);
 			return std::move(new_list);
 		}
 
 		template <typename... TYPES>
-			inline static BulkList make_with_alloc(const ALLOCATOR & i_allocator, TYPES &&... i_args)
+			inline static DenseList make_with_alloc(const ALLOCATOR & i_allocator, TYPES &&... i_args)
 		{
-			BulkList new_list(InternalConstructorMem, i_allocator);
+			DenseList new_list(InternalConstructorMem, i_allocator);
 			make_impl(new_list, std::forward<TYPES>(i_args)...);
 			return std::move(new_list);
 		}
 
-		BulkList() REFLECTIVE_NOEXCEPT
-			: m_bulk(nullptr), m_size(0)
+		DenseList() REFLECTIVE_NOEXCEPT
+			: m_dense(nullptr), m_size(0)
 				{ }
 
-		BulkList(BulkList && i_source) REFLECTIVE_NOEXCEPT
+		DenseList(DenseList && i_source) REFLECTIVE_NOEXCEPT
 		{
 			move_impl(std::move(i_source));
 		}
 
-		BulkList & operator = (BulkList && i_source) REFLECTIVE_NOEXCEPT
+		DenseList & operator = (DenseList && i_source) REFLECTIVE_NOEXCEPT
 		{
 			assert(this != &i_source); // self assignment not supported
 			destroy_impl();
@@ -281,12 +284,12 @@ namespace reflective
 			return *this;
 		}
 
-		BulkList(const BulkList & i_source)
+		DenseList(const DenseList & i_source)
 		{
 			copy_impl(i_source);
 		}
 
-		BulkList & operator = (const BulkList & i_source)
+		DenseList & operator = (const DenseList & i_source)
 		{
 			assert(this != &i_source); // self assignment not supported
 			destroy_impl();
@@ -294,7 +297,7 @@ namespace reflective
 			return *this;
 		}
 
-		~BulkList() REFLECTIVE_NOEXCEPT
+		~DenseList() REFLECTIVE_NOEXCEPT
 		{
 			destroy_impl();
 		}
@@ -303,7 +306,7 @@ namespace reflective
 
 		bool empty() const REFLECTIVE_NOEXCEPT  { return m_size == 0; }
 
-
+		class iterator;
 		class const_iterator;
 
 		class iterator
@@ -324,7 +327,7 @@ namespace reflective
 			iterator() REFLECTIVE_NOEXCEPT
 				: m_curr_element(nullptr), m_curr_type(nullptr) { }
 
-			iterator(InternalConstructor, VoidPtr i_curr_element, const TYPE_INFO * i_curr_type) REFLECTIVE_NOEXCEPT
+			iterator(InternalConstructor, VoidPtr i_curr_element, const TypeInfo * i_curr_type) REFLECTIVE_NOEXCEPT
 				: m_curr_element(i_curr_element), m_curr_type(i_curr_type)
 			{
 			}
@@ -376,12 +379,12 @@ namespace reflective
 					(reinterpret_cast<uintptr_t>(m_curr_element) + (curr_element_alignment - 1)) & ~(curr_element_alignment - 1) );
 			}
 
-			const TYPE_INFO * curr_type() const REFLECTIVE_NOEXCEPT { return m_curr_type; }
+			const TypeInfo * curr_type() const REFLECTIVE_NOEXCEPT { return m_curr_type; }
 
 		private:
 			VoidPtr m_curr_element;
-			const TYPE_INFO * m_curr_type;
-			friend class BulkList;
+			const TypeInfo * m_curr_type;
+			friend class DenseList;
 		};
 
 		class const_iterator
@@ -402,7 +405,12 @@ namespace reflective
 			const_iterator() REFLECTIVE_NOEXCEPT
 				: m_curr_element(nullptr), m_curr_type(nullptr) { }
 
-			const_iterator(InternalConstructor, VoidPtr i_curr_element, const TYPE_INFO * i_curr_type) REFLECTIVE_NOEXCEPT
+			const_iterator(const iterator & i_iterator)
+				: m_curr_element(i_iterator.m_curr_element), m_curr_type(i_iterator.m_curr_type)
+			{
+			}
+
+			const_iterator(InternalConstructor, VoidPtr i_curr_element, const TypeInfo * i_curr_type) REFLECTIVE_NOEXCEPT
 				: m_curr_element(i_curr_element), m_curr_type(i_curr_type)
 			{
 			}
@@ -454,24 +462,24 @@ namespace reflective
 					(reinterpret_cast<uintptr_t>(m_curr_element) + (curr_element_alignment - 1)) & ~(curr_element_alignment - 1) );
 			}
 
-			const TYPE_INFO * curr_type() const REFLECTIVE_NOEXCEPT { return m_curr_type; }
+			const TypeInfo * curr_type() const REFLECTIVE_NOEXCEPT { return m_curr_type; }
 
 		private:
 			VoidPtr m_curr_element;
-			const TYPE_INFO * m_curr_type;
-			friend class BulkList;
+			const TypeInfo * m_curr_type;
+			friend class DenseList;
 		};
 
-		iterator begin() REFLECTIVE_NOEXCEPT { return iterator(InternalConstructorMem, get_elements(), m_bulk ); }
-		iterator end() REFLECTIVE_NOEXCEPT { return iterator(InternalConstructorMem, nullptr, m_bulk + m_size); }
+		iterator begin() REFLECTIVE_NOEXCEPT { return iterator(InternalConstructorMem, get_elements(), m_dense ); }
+		iterator end() REFLECTIVE_NOEXCEPT { return iterator(InternalConstructorMem, nullptr, m_dense + m_size); }
 
-		const_iterator begin() const REFLECTIVE_NOEXCEPT { return const_iterator(InternalConstructorMem, get_elements(), m_bulk ); }
-		const_iterator end() const REFLECTIVE_NOEXCEPT { return const_iterator(InternalConstructorMem, nullptr, m_bulk + m_size); }
+		const_iterator begin() const REFLECTIVE_NOEXCEPT { return const_iterator(InternalConstructorMem, get_elements(), m_dense ); }
+		const_iterator end() const REFLECTIVE_NOEXCEPT { return const_iterator(InternalConstructorMem, nullptr, m_dense + m_size); }
 
-		const_iterator cbegin() const REFLECTIVE_NOEXCEPT { return const_iterator(InternalConstructorMem, get_elements(), m_bulk ); }
-		const_iterator cend() const REFLECTIVE_NOEXCEPT { return const_iterator(InternalConstructorMem, nullptr, m_bulk + m_size); }
+		const_iterator cbegin() const REFLECTIVE_NOEXCEPT { return const_iterator(InternalConstructorMem, get_elements(), m_dense ); }
+		const_iterator cend() const REFLECTIVE_NOEXCEPT { return const_iterator(InternalConstructorMem, nullptr, m_dense + m_size); }
 
-		bool operator == (const BulkList & i_source) const
+		bool operator == (const DenseList & i_source) const
 		{
 			//return (m_size == i_source.m_size) && std::equal(cbegin(), cend(), i_source.cbegin());
 			if (m_size != i_source.m_size)
@@ -492,24 +500,24 @@ namespace reflective
 			}
 		}
 
-		bool operator != (const BulkList & i_source) const		{ return !operator == (i_source); }
+		bool operator != (const DenseList & i_source) const		{ return !operator == (i_source); }
 
 		template <typename ELEMENT_COMPLETE_TYPE>
 			iterator insert(const_iterator i_position, const ELEMENT_COMPLETE_TYPE & i_source)
 		{
-			return insert_n_impl(i_position, 1, TYPE_INFO::template make<ELEMENT_COMPLETE_TYPE>(), i_source);
+			return insert_n_impl(i_position, 1, TypeInfo::template make<ELEMENT_COMPLETE_TYPE>(), i_source);
 		}
 
 		template <typename ELEMENT_COMPLETE_TYPE>
 			iterator insert(const_iterator i_position, size_t i_count, const ELEMENT_COMPLETE_TYPE & i_source)
 		{
-			return insert_n_impl(i_position, i_count, TYPE_INFO::template make<ELEMENT_COMPLETE_TYPE>(), i_source);
+			return insert_n_impl(i_position, i_count, TypeInfo::template make<ELEMENT_COMPLETE_TYPE>(), i_source);
 		}
 
 		template <typename ELEMENT_COMPLETE_TYPE>
 			iterator push_back(const ELEMENT_COMPLETE_TYPE & i_source)
 		{
-			return insert_n_impl(cend(), 1, TYPE_INFO::template make<ELEMENT_COMPLETE_TYPE>(), i_source);
+			return insert_n_impl(cend(), 1, TypeInfo::template make<ELEMENT_COMPLETE_TYPE>(), i_source);
 		}
 
 		iterator erase(const_iterator i_position)
@@ -534,15 +542,15 @@ namespace reflective
 			}
 			else
 			{
-				BulkList new_list;
+				DenseList new_list;
 
 				void * const buffer = details::aligned_alloc(*static_cast<ALLOCATOR*>(this), buffer_size, buffer_alignment);
-				TYPE_INFO * const types = static_cast<TYPE_INFO*>(buffer);
+				TypeInfo * const types = static_cast<TypeInfo*>(buffer);
 				const size_t new_size = m_size - size_to_remove;
 
 				auto curr_element = reinterpret_cast<uintptr_t>(types + new_size);
-				TYPE_INFO * curr_type = types;
-				TYPE_INFO * return_type_info = nullptr;
+				TypeInfo * curr_type = types;
+				TypeInfo * return_type_info = nullptr;
 				void * return_element = nullptr;
 
 				const auto end_it = cend();
@@ -582,7 +590,7 @@ namespace reflective
 
 					if (!is_range)
 					{
-						new(curr_type) TYPE_INFO(*it.m_curr_type);
+						new(curr_type) TypeInfo(*it.m_curr_type);
 																		
 						curr_type->copy_construct(reinterpret_cast<void*>(curr_element), *it);
 						
@@ -594,7 +602,7 @@ namespace reflective
 				// from now on, no exception can be thrown
 				destroy_impl();
 				m_size = new_size;
-				m_bulk = types;
+				m_dense = types;
 
 				return iterator(InternalConstructorMem, return_element, return_type_info);
 			}
@@ -603,7 +611,7 @@ namespace reflective
 		void clear()
 		{
 			destroy_impl();
-			m_bulk = nullptr;
+			m_dense = nullptr;
 			m_size = 0;
 		}
 
@@ -613,9 +621,9 @@ namespace reflective
 		{
 			if (m_size > 0)
 			{
-				assert(details::is_valid_alignment(m_bulk[0].alignment()));
-				const auto first_element_align_mask = m_bulk[0].alignment() - 1;
-				auto ptr = reinterpret_cast<uintptr_t>(m_bulk + m_size);
+				assert(details::is_valid_alignment(m_dense[0].alignment()));
+				const auto first_element_align_mask = m_dense[0].alignment() - 1;
+				auto ptr = reinterpret_cast<uintptr_t>(m_dense + m_size);
 				ptr = (ptr + first_element_align_mask) & ~first_element_align_mask;
 				return reinterpret_cast<ELEMENT *>(ptr);
 			}
@@ -627,33 +635,33 @@ namespace reflective
 				
 		void destroy_impl() REFLECTIVE_NOEXCEPT
 		{
-			size_t bulk_alignment = std::alignment_of<TYPE_INFO>::value;
+			size_t dense_alignment = std::alignment_of<TypeInfo>::value;
 			const auto end_it = end();
-			const size_t bulk_size = m_size * sizeof(TYPE_INFO);
+			const size_t dense_size = m_size * sizeof(TypeInfo);
 			for (auto it = begin(); it != end_it; ++it)
 			{
 				auto curr_type = it.curr_type();
-				bulk_alignment = std::max(bulk_alignment, curr_type->alignment() );
+				dense_alignment = std::max(dense_alignment, curr_type->alignment() );
 				curr_type->destroy(it.curr_element());
-				curr_type->TYPE_INFO::~TYPE_INFO();
+				curr_type->TypeInfo::~TypeInfo();
 			}
-			details::aligned_free( *static_cast<ALLOCATOR*>(this), m_bulk, bulk_size, bulk_alignment);
+			details::aligned_free( *static_cast<ALLOCATOR*>(this), m_dense, dense_size, dense_alignment);
 		}
 
-		void copy_impl(const BulkList & i_source)
+		void copy_impl(const DenseList & i_source)
 		{
 			// allocate the buffer
 			size_t buffer_size = 0, buffer_alignment = 0;
 			i_source.compute_buffer_size_and_alignment(&buffer_size, &buffer_alignment);
 			void * const buffer = details::aligned_alloc(*static_cast<ALLOCATOR*>(this), buffer_size, buffer_alignment);
-			TYPE_INFO * const types = static_cast<TYPE_INFO*>(buffer);
+			TypeInfo * const types = static_cast<TypeInfo*>(buffer);
 			
 			auto curr_element = reinterpret_cast<uintptr_t>( types + i_source.size());
-			TYPE_INFO * curr_type = types;
+			TypeInfo * curr_type = types;
 			auto const end_it = i_source.cend();
 			for (auto it = i_source.cbegin(); it != end_it; ++it)
 			{
-				new (curr_type) TYPE_INFO( *(it.curr_type()) );
+				new (curr_type) TypeInfo( *(it.curr_type()) );
 				
 				// upper align curr_element to curr_type->alignment()
 				const uintptr_t element_alignment = curr_type->alignment();
@@ -668,31 +676,31 @@ namespace reflective
 			}
 
 			m_size = i_source.size();
-			m_bulk = types;
+			m_dense = types;
 		}
 
-		void move_impl(BulkList && i_source) REFLECTIVE_NOEXCEPT
+		void move_impl(DenseList && i_source) REFLECTIVE_NOEXCEPT
 		{
-			m_bulk = i_source.m_bulk;
+			m_dense = i_source.m_dense;
 			m_size = i_source.m_size;
-			i_source.m_bulk = nullptr;
+			i_source.m_dense = nullptr;
 			i_source.m_size = 0;
 		}
 
 		template <typename... TYPES>
-			static void make_impl(BulkList & o_dest_list, TYPES &&... i_args)
+			static void make_impl(DenseList & o_dest_list, TYPES &&... i_args)
 		{
-			size_t const buffer_size = RecursiveSize<RecursiveHelper<TYPES...>::s_element_count * sizeof(TYPE_INFO), TYPES...>::s_buffer_size;
-			size_t const buffer_alignment = std::max( RecursiveHelper<TYPES...>::s_element_alignment, std::alignment_of<TYPE_INFO>::value );
+			size_t const buffer_size = RecursiveSize<RecursiveHelper<TYPES...>::s_element_count * sizeof(TypeInfo), TYPES...>::s_buffer_size;
+			size_t const buffer_alignment = std::max( RecursiveHelper<TYPES...>::s_element_alignment, std::alignment_of<TypeInfo>::value );
 			size_t const element_count = RecursiveHelper<TYPES...>::s_element_count;
 
 			void * const buffer = details::aligned_alloc(static_cast<ALLOCATOR&>(o_dest_list), buffer_size, buffer_alignment);
-			TYPE_INFO * const types = static_cast<TYPE_INFO*>(buffer);
+			TypeInfo * const types = static_cast<TypeInfo*>(buffer);
 			void * const elements = types + element_count;
 
 			RecursiveHelper<TYPES...>::construct(types, elements, std::forward<TYPES>(i_args)...);
 			o_dest_list.m_size = element_count;
-			o_dest_list.m_bulk = types;
+			o_dest_list.m_dense = types;
 
 			#ifndef NDEBUG
 				size_t dbg_buffer_size = 0, dbg_buffer_alignment = 0;
@@ -704,8 +712,8 @@ namespace reflective
 
 		void compute_buffer_size_and_alignment(size_t * o_buffer_size, size_t * o_buffer_alignment) const REFLECTIVE_NOEXCEPT
 		{
-			size_t buffer_size = size() * sizeof(TYPE_INFO);
-			size_t buffer_alignment = std::alignment_of<TYPE_INFO>::value;
+			size_t buffer_size = size() * sizeof(TypeInfo);
+			size_t buffer_alignment = std::alignment_of<TypeInfo>::value;
 			auto const end_it = cend();
 			for (auto it = cbegin(); it != end_it; ++it)
 			{
@@ -723,12 +731,12 @@ namespace reflective
 		}
 
 		void compute_buffer_size_and_alignment_for_insert(size_t * o_buffer_size, size_t * o_buffer_alignment,
-			const const_iterator & i_insert_at, size_t i_new_element_count, const TYPE_INFO & i_new_type ) const REFLECTIVE_NOEXCEPT
+			const const_iterator & i_insert_at, size_t i_new_element_count, const TypeInfo & i_new_type ) const REFLECTIVE_NOEXCEPT
 		{
 			assert(i_new_type.size() > 0 && details::is_valid_alignment(i_new_type.alignment())); // the size must be non-zero, the alignment must be a non-zero power of 2
 
-			size_t buffer_size = (size() + i_new_element_count) * sizeof(TYPE_INFO);
-			size_t buffer_alignment = std::max(std::alignment_of<TYPE_INFO>::value, i_new_type.alignment());
+			size_t buffer_size = (size() + i_new_element_count) * sizeof(TypeInfo);
+			size_t buffer_alignment = std::max(std::alignment_of<TypeInfo>::value, i_new_type.alignment());
 			auto const end_it = cend();
 			for (auto it = cbegin(); ; ++it)
 			{
@@ -756,9 +764,9 @@ namespace reflective
 			*o_buffer_alignment = buffer_alignment;
 		}
 		
-		iterator insert_n_impl(const_iterator i_position, size_t i_count, const TYPE_INFO & i_source_type, const ELEMENT & i_source)
+		iterator insert_n_impl(const_iterator i_position, size_t i_count, const TypeInfo & i_source_type, const ELEMENT & i_source)
 		{
-			const TYPE_INFO * new_type_info = nullptr;
+			const TypeInfo * new_type_info = nullptr;
 			void * new_element = nullptr;
 
 			if (i_count > 0)
@@ -766,15 +774,15 @@ namespace reflective
 				size_t buffer_size = 0, buffer_alignment = 0;
 				compute_buffer_size_and_alignment_for_insert(&buffer_size, &buffer_alignment, i_position, i_count, i_source_type );
 
-				BulkList new_list;
+				DenseList new_list;
 
 				void * const buffer = details::aligned_alloc(*static_cast<ALLOCATOR*>(this), buffer_size, buffer_alignment);
-				TYPE_INFO * const types = static_cast<TYPE_INFO*>(buffer);
+				TypeInfo * const types = static_cast<TypeInfo*>(buffer);
 
 				size_t count_to_insert = i_count;
 
 				auto curr_element = reinterpret_cast<uintptr_t>(types + size() + i_count);
-				TYPE_INFO * curr_type = types;
+				TypeInfo * curr_type = types;
 				auto const end_it = cend();
 				for (auto it = cbegin(); ; )
 				{
@@ -783,7 +791,7 @@ namespace reflective
 					const ELEMENT * copy_source = nullptr;
 					if (iterator_match && count_to_insert > 0)
 					{
-						new(curr_type) TYPE_INFO(i_source_type);
+						new(curr_type) TypeInfo(i_source_type);
 						copy_source = &i_source;
 						count_to_insert--;
 					}
@@ -794,7 +802,7 @@ namespace reflective
 							break;
 						}
 
-						new (curr_type) TYPE_INFO(*(it.curr_type()));
+						new (curr_type) TypeInfo(*(it.curr_type()));
 						copy_source = it.curr_element();
 						++it;
 					}
@@ -820,7 +828,7 @@ namespace reflective
 				// from now on, no exception can be thrown
 				destroy_impl();
 				m_size = m_size + i_count;
-				m_bulk = types;
+				m_dense = types;
 			}
 			else
 			{
@@ -836,8 +844,8 @@ namespace reflective
 			assert(i_remove_to.m_curr_type >= i_remove_from.m_curr_type);
 			const size_t size_to_remove = i_remove_to.m_curr_type - i_remove_from.m_curr_type;
 			assert(size() >= size_to_remove);
-			size_t buffer_size = (size() - size_to_remove) * sizeof(TYPE_INFO);
-			size_t buffer_alignment = std::alignment_of<TYPE_INFO>::value;
+			size_t buffer_size = (size() - size_to_remove) * sizeof(TypeInfo);
+			size_t buffer_alignment = std::alignment_of<TypeInfo>::value;
 			
 			bool in_range = false;
 			auto const end_it = cend();
@@ -867,9 +875,9 @@ namespace reflective
 			*o_buffer_alignment = buffer_alignment;
 		}
 
-		BulkList(InternalConstructor)	{ 	}
+		DenseList(InternalConstructor)	{ 	}
 
-		BulkList(InternalConstructor, const ALLOCATOR & i_allocator) : ALLOCATOR(i_allocator) {}
+		DenseList(InternalConstructor, const ALLOCATOR & i_allocator) : ALLOCATOR(i_allocator) {}
 
 		template <size_t PREV_ELEMENTS_SIZE, typename...> struct RecursiveSize
 		{
@@ -887,7 +895,7 @@ namespace reflective
 		{
 			static const size_t s_element_count = 0;
 			static const size_t s_element_alignment = 1;
-			static void construct(TYPE_INFO * /*i_types*/, void * /*i_elements*/, TYPES &&...) { }
+			static void construct(TypeInfo * /*i_types*/, void * /*i_elements*/, TYPES &&...) { }
 		};
 		template <typename FIRST_TYPE, typename... OTHER_TYPES>
 			struct RecursiveHelper<FIRST_TYPE, OTHER_TYPES...>
@@ -895,15 +903,15 @@ namespace reflective
 			static_assert(std::alignment_of<FIRST_TYPE>::value > 0 && (std::alignment_of<FIRST_TYPE>::value & (std::alignment_of<FIRST_TYPE>::value - 1)) == 0,
 				"the alignment must be a non-zero integer power of 2" );
 
-			static_assert(std::is_base_of<ELEMENT, FIRST_TYPE >::value, "Trying to initiaize a bulk list with an object whose type is not a subtype of the base element type");
+			static_assert(std::is_base_of<ELEMENT, FIRST_TYPE >::value, "Trying to initiaize a dense list with an object whose type is not a subtype of the base element type");
 
 			static const size_t s_element_count = 1 + RecursiveHelper<OTHER_TYPES...>::s_element_count;
 			static const size_t s_element_alignment = std::alignment_of<FIRST_TYPE>::value > RecursiveHelper<OTHER_TYPES...>::s_element_alignment ?
 				std::alignment_of<FIRST_TYPE>::value : RecursiveHelper<OTHER_TYPES...>::s_element_alignment;
 
-			inline static void construct(TYPE_INFO * i_types, void * i_elements, FIRST_TYPE && i_source, OTHER_TYPES && ... i_s1)
+			inline static void construct(TypeInfo * i_types, void * i_elements, FIRST_TYPE && i_source, OTHER_TYPES && ... i_s1)
 			{
-				new(i_types) TYPE_INFO(TYPE_INFO::template make<FIRST_TYPE>());
+				new(i_types) TypeInfo(TypeInfo::template make<FIRST_TYPE>());
 				FIRST_TYPE * const new_element = new(details::address_upper_align<FIRST_TYPE>(i_elements)) FIRST_TYPE(std::forward<FIRST_TYPE>(i_source));
 				RecursiveHelper<OTHER_TYPES...>::construct(
 					i_types + 1, new_element + 1, std::forward<OTHER_TYPES>(i_s1)...);
@@ -911,11 +919,11 @@ namespace reflective
 		};
 
 	private:
-		TYPE_INFO * m_bulk;
+		TypeInfo * m_dense;
 		size_t m_size;
 	};
 
 	#if REFLECTIVE_ENABLE_TESTING
-		void bulk_list_test(CorrectnessTestContext & i_context);
+		void dense_list_test(CorrectnessTestContext & i_context);
 	#endif
 }

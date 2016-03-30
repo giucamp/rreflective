@@ -8,7 +8,6 @@
 void Name_test();
 void SpecialFunctions_test();
 void Type_test();
-void bulk_list__test();
 
 namespace reflective
 {
@@ -32,8 +31,8 @@ int main()
 	
 	
 
-	UnitTestingManager::instance().add_correctness_test("bulk_list_test", bulk_list_test);
-	UnitTestingManager::instance().run("bulk_list_test");
+	UnitTestingManager::instance().add_correctness_test("dense_list_test", dense_list_test);
+	UnitTestingManager::instance().run("dense_list_test");
 
 	std::cout << get_type<QualifiedTypePtr>() << std::endl;
 	std::cout << get_type<StringView>() << std::endl;
@@ -52,7 +51,6 @@ int main()
 	int h = 0;
 	in_stream >> h;
 
-	bulk_list__test();
 	reflective::details::hier::test_hier();
 	
 	{
@@ -108,8 +106,6 @@ int main()
 	reflective::Namespace::unit_test();
 
 	Name_test();
-
-	bulk_list__test();
 
 	SpecialFunctions_test();
 

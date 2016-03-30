@@ -1,7 +1,7 @@
 #pragma once
 #include "array_view.h"
 #include "string_view.h"
-#include "bulk_list.h"
+#include "dense_list.h"
 #include "out_buffer_text_stream.h"
 #include "in_buffer_text_stream.h"
 #include "stream_adapters.h"

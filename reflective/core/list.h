@@ -33,6 +33,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace reflective
 {
 	template <typename ELEMENT>
-		using List = BulkList<ELEMENT>;
+		using List = DenseList<ELEMENT>;
 }
 

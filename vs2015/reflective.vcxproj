@@ -192,7 +192,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\reflective\core\array_view.h" />
-    <ClInclude Include="..\reflective\core\bulk_list.h" />
+    <ClInclude Include="..\reflective\core\dense_list.h" />
     <ClInclude Include="..\reflective\core\core.h" />
     <ClInclude Include="..\reflective\core\identifier.h" />
     <ClInclude Include="..\reflective\core\in_buffer_text_stream.h" />
@@ -239,7 +239,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_clang|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\reflective\core\testing\bulk_list_test.cpp">
+    <ClCompile Include="..\reflective\core\testing\dense_list_test.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_clang|Win32'">true</ExcludedFromBuild>

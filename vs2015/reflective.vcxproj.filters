@@ -102,9 +102,6 @@
     <ClInclude Include="..\reflective\core\array_view.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="..\reflective\core\bulk_list.h">
-      <Filter>core</Filter>
-    </ClInclude>
     <ClInclude Include="..\reflective\core\identifier.h">
       <Filter>core</Filter>
     </ClInclude>
@@ -134,6 +131,9 @@
     </ClInclude>
     <ClInclude Include="..\reflective\reflection\get_naked_type_traits.h">
       <Filter>reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\reflective\core\dense_list.h">
+      <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -201,7 +201,7 @@
     <ClCompile Include="..\reflective\reflection\testing\qualified_type_ptr_test.cpp">
       <Filter>reflection\testing</Filter>
     </ClCompile>
-    <ClCompile Include="..\reflective\core\testing\bulk_list_test.cpp">
+    <ClCompile Include="..\reflective\core\testing\dense_list_test.cpp">
       <Filter>core\testing</Filter>
     </ClCompile>
   </ItemGroup>

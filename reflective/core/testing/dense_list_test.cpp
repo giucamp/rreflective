@@ -5,7 +5,7 @@ namespace reflective
 
 	namespace details
 	{
-		namespace BulkListTest
+		namespace DenseListTest
 		{
 			class TestAllocatorBase
 			{
@@ -143,11 +143,11 @@ namespace reflective
 			};
 
 			using TestString = std::basic_string<char, std::char_traits<char>, TestAllocator<char> >;
-			using TestBulkListString = BulkList< TestString, TestAllocator<TestString> >;
+			using TestDenseListString = DenseList< TestString, TestAllocator<TestString> >;
 
-			void bulk_list_test_insert(TestBulkListString i_list, size_t i_at, size_t i_count)
+			void dense_list_test_insert(TestDenseListString i_list, size_t i_at, size_t i_count)
 			{
-				using namespace BulkListTest;
+				using namespace DenseListTest;
 
 				std::vector<TestString> vec(i_list.begin(), i_list.end());
 
@@ -224,11 +224,11 @@ namespace reflective
 			{
 				TestAllocatorBase::NoLeakScope leak_detector;
 
-				const auto list = TestBulkListString::make();
-				static_assert(sizeof(list) == sizeof(void*) * 2, "If the allocator is stateless BulkList is documented to be big as two pointers");
+				const auto list = TestDenseListString::make();
+				static_assert(sizeof(list) == sizeof(void*) * 2, "If the allocator is stateless DenseList is documented to be big as two pointers");
 				REFLECTIVE_TEST_ASSERT(list.begin() == list.end());
 				REFLECTIVE_TEST_ASSERT(list.size() == 0);
-				REFLECTIVE_TEST_ASSERT(list == TestBulkListString());
+				REFLECTIVE_TEST_ASSERT(list == TestDenseListString());
 
 				// check copy constructor and copy assignment
 				auto list_1 = list;
@@ -249,20 +249,20 @@ namespace reflective
 			{
 				TestAllocatorBase::NoLeakScope leak_detector;
 
-				const auto list = TestBulkListString::make(TestString("1"), TestString("2"), TestString("3"));
+				const auto list = TestDenseListString::make(TestString("1"), TestString("2"), TestString("3"));
 				REFLECTIVE_TEST_ASSERT(*std::next(list.begin(), 0) == "1");
 				REFLECTIVE_TEST_ASSERT(*std::next(list.begin(), 1) == "2");
 				REFLECTIVE_TEST_ASSERT(*std::next(list.begin(), 2) == "3");
 				REFLECTIVE_TEST_ASSERT(std::next(list.begin(), 2) != list.end());
 				REFLECTIVE_TEST_ASSERT(std::next(list.begin(), 3) == list.end());
 				REFLECTIVE_TEST_ASSERT(list.size() == 3);
-				REFLECTIVE_TEST_ASSERT(list != TestBulkListString());
+				REFLECTIVE_TEST_ASSERT(list != TestDenseListString());
 
 				for (size_t i = 0; i <= list.size(); i++)
 				{
 					for (size_t j = 0; j < 4; j++)
 					{
-						bulk_list_test_insert(list, i, j);
+						dense_list_test_insert(list, i, j);
 					}
 				}
 
@@ -287,8 +287,8 @@ namespace reflective
 					{
 						auto list_5 = list;
 						vector<TestString> vec(list_5.begin(), list_5.end());
-						const auto vec_res = vec.erase(std::next(vec.cbegin(), i), std::next(vec.cbegin(), j));
-						const auto lst_res = list_5.erase(std::next(list_5.cbegin(), i), std::next(list_5.cbegin(), j));
+						const auto vec_res = vec.erase(std::next(vec.begin(), i), std::next(vec.begin(), j));
+						const auto lst_res = list_5.erase(std::next(list_5.begin(), i), std::next(list_5.begin(), j));
 						vector<TestString> vec1(list_5.begin(), list_5.end());
 						REFLECTIVE_TEST_ASSERT(vec == vec1);
 
@@ -302,7 +302,7 @@ namespace reflective
 			template <typename BASE_CLASS>
 				void typed_alignment_test()
 			{
-				using List = BulkList< BASE_CLASS, TestAllocator<BASE_CLASS> >;
+				using List = DenseList< BASE_CLASS, TestAllocator<BASE_CLASS> >;
 				
 				std::vector<List> lists = {
 					List::make(),
@@ -377,11 +377,11 @@ namespace reflective
 		}
 	}
 
-	void bulk_list_test(CorrectnessTestContext & /*i_context*/)
+	void dense_list_test(CorrectnessTestContext & /*i_context*/)
 	{
-		details::BulkListTest::test1();
-		details::BulkListTest::test2();
-		details::BulkListTest::test3();
+		details::DenseListTest::test1();
+		details::DenseListTest::test2();
+		details::DenseListTest::test3();
 	}
 
 #endif
