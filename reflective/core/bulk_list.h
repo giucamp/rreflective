@@ -197,7 +197,7 @@ namespace reflective
 				auto uint_address = reinterpret_cast<uintptr_t>(complete_block);
 
 				uint_address += extra_size;
-				uint_address = uint_address & ~(i_alignment - 1);
+				uint_address &= ~(i_alignment - 1);
 
 				AlignmentHeader * header = reinterpret_cast<AlignmentHeader*>(uint_address) - 1;
 				header->m_block = complete_block;
@@ -343,12 +343,14 @@ namespace reflective
 				return copy;
 			}
 
-			bool operator == (const gen_iterator & i_other) const REFLECTIVE_NOEXCEPT
+			template <typename OTHER_ELEMENT_TYPE>
+				bool operator == (const gen_iterator<OTHER_ELEMENT_TYPE> & i_other) const REFLECTIVE_NOEXCEPT
 			{
 				return m_curr_type == i_other.m_curr_type;
 			}
 
-			bool operator != (const gen_iterator & i_other) const REFLECTIVE_NOEXCEPT
+			template <typename OTHER_ELEMENT_TYPE>
+				bool operator != (const gen_iterator<OTHER_ELEMENT_TYPE> & i_other) const REFLECTIVE_NOEXCEPT
 			{
 				return m_curr_type != i_other.m_curr_type;
 			}
@@ -425,7 +427,7 @@ namespace reflective
 			return insert_n_impl(cend(), 1, TYPE_INFO::template make<ELEMENT_COMPLETE_TYPE>(), i_source);
 		}
 
-		/*iterator erase(const_iterator i_position)
+		iterator erase(const_iterator i_position)
 		{
 			const_iterator to = i_position;
 			++to;
@@ -451,13 +453,53 @@ namespace reflective
 
 				void * const buffer = details::aligned_alloc(*static_cast<ALLOCATOR*>(this), buffer_size, buffer_alignment);
 				TYPE_INFO * const types = static_cast<TYPE_INFO*>(buffer);
-				
+				const size_t new_size = m_size - size_to_remove;
+
+				auto curr_element = reinterpret_cast<uintptr_t>(types + new_size);
+				TYPE_INFO * curr_type = types;
+				TYPE_INFO * return_type_info = nullptr;
+				void * return_element = nullptr;
+
+				const auto end_it = cend();
+				bool is_range = false;
+				for (auto it = cbegin(); it != end_it; it++)
+				{
+					// upper align curr_element to it.m_curr_type->alignment()
+					const uintptr_t element_alignment = it.m_curr_type->alignment();
+					assert(details::is_valid_alignment(element_alignment)); // internal check: the alignment must be a power of 2
+					auto const alignment_mask = element_alignment - 1;
+					curr_element = (curr_element + alignment_mask) & ~alignment_mask;
+
+					if (it == i_from)
+					{
+						is_range = true;
+						return_type_info = curr_type;
+						return_element = reinterpret_cast<void*>(curr_element);
+					}
+					if (it == i_to)
+					{
+						is_range = false;
+					}
+
+					if (!is_range)
+					{
+						new(curr_type) TYPE_INFO(*it.m_curr_type);
+																		
+						curr_type->copy_construct(reinterpret_cast<void*>(curr_element), *it);
+						
+						curr_element += curr_type->size();
+						curr_type++;
+					}
+				}
+
 				// from now on, no exception can be thrown
 				destroy_impl();
-				m_size = m_size - size_to_remove;
+				m_size = new_size;
 				m_bulk = types;
+
+				return iterator(InternalConstructorMem, return_element, return_type_info);
 			}
-		}*/
+		}
 
 		void clear()
 		{
@@ -700,7 +742,7 @@ namespace reflective
 			
 			bool in_range = false;
 			auto const end_it = cend();
-			for (auto it = cbegin(); ; ++it)
+			for (auto it = cbegin(); it != end_it; ++it)
 			{
 				if (it == i_remove_from)
 				{

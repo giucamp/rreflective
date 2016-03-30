@@ -199,6 +199,20 @@ namespace reflective
 				auto list_4 = list_2;
 				list_4 = std::move(list_2);
 				REFLECTIVE_TEST_ASSERT(list == list_4);
+
+				// test erase
+				for (size_t i = 0; i <= list.size(); i++)
+				{
+					for (size_t j = i; j <= list.size(); j++)
+					{
+						auto list_5 = list;
+						vector<TestString> vec(list_5.begin(), list_5.end());
+						auto vec_res = vec.erase(std::next(vec.cbegin(), i), std::next(vec.cbegin(), j));
+						auto lst_res = list_5.erase(std::next(list_5.cbegin(), i), std::next(list_5.cbegin(), j) );
+						vector<TestString> vec1(list_5.begin(), list_5.end());
+						REFLECTIVE_TEST_ASSERT(vec == vec1);
+					}
+				}
 			}
 
 			template <typename BASE_CLASS>
