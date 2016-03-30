@@ -303,66 +303,76 @@ namespace reflective
 
 		bool empty() const REFLECTIVE_NOEXCEPT  { return m_size == 0; }
 
-		template <typename ELEMENT_TYPE>
-			class gen_iterator
+
+		class const_iterator;
+
+		class iterator
 		{
 		public:
 
 			using iterator_category = std::forward_iterator_tag;
-			using value_type = ELEMENT_TYPE;
-			using reference = ELEMENT_TYPE &;
-			using const_reference = const ELEMENT_TYPE &;
+			using value_type = ELEMENT;
+			using reference = ELEMENT &;
+			using const_reference = const ELEMENT &;
 			using pointer = typename std::allocator_traits<allocator_type>::pointer;
 			using const_pointer = typename std::allocator_traits<allocator_type>::const_pointer;
 			using difference_type = ptrdiff_t;
 			using size_type = size_t;
 
-			using VoidPtr = typename std::conditional<std::is_const<ELEMENT_TYPE>::value, const void *, void *>::type;
+			using VoidPtr = void *;
 
-			gen_iterator() REFLECTIVE_NOEXCEPT
+			iterator() REFLECTIVE_NOEXCEPT
 				: m_curr_element(nullptr), m_curr_type(nullptr) { }
 
-			gen_iterator(InternalConstructor, VoidPtr i_curr_element, const TYPE_INFO * i_curr_type ) REFLECTIVE_NOEXCEPT
+			iterator(InternalConstructor, VoidPtr i_curr_element, const TYPE_INFO * i_curr_type) REFLECTIVE_NOEXCEPT
 				: m_curr_element(i_curr_element), m_curr_type(i_curr_type)
 			{
 			}
 
-			gen_iterator & operator ++ () REFLECTIVE_NOEXCEPT
+			iterator & operator ++ () REFLECTIVE_NOEXCEPT
 			{
 				VoidPtr const prev_element = curr_element();
 				auto const curr_element_size = m_curr_type->size();
 				m_curr_type++;
-				m_curr_element = reinterpret_cast<ELEMENT_TYPE*>( reinterpret_cast<uintptr_t>(prev_element) + curr_element_size );
+				m_curr_element = reinterpret_cast<value_type*>( reinterpret_cast<uintptr_t>(prev_element) + curr_element_size );
 				return *this;
 			}
 
-			gen_iterator operator++ ( int ) REFLECTIVE_NOEXCEPT
+			iterator operator++ (int) REFLECTIVE_NOEXCEPT
 			{
-				gen_iterator copy(*this);
+				iterator copy(*this);
 				operator ++ ();
 				return copy;
 			}
 
-			template <typename OTHER_ELEMENT_TYPE>
-				bool operator == (const gen_iterator<OTHER_ELEMENT_TYPE> & i_other) const REFLECTIVE_NOEXCEPT
+			bool operator == (const iterator & i_other) const REFLECTIVE_NOEXCEPT
 			{
-				return m_curr_type == i_other.m_curr_type;
+				return m_curr_type == i_other.curr_type();
 			}
 
-			template <typename OTHER_ELEMENT_TYPE>
-				bool operator != (const gen_iterator<OTHER_ELEMENT_TYPE> & i_other) const REFLECTIVE_NOEXCEPT
+			bool operator != (const iterator & i_other) const REFLECTIVE_NOEXCEPT
 			{
-				return m_curr_type != i_other.m_curr_type;
+				return m_curr_type != i_other.curr_type();
 			}
 
-			ELEMENT_TYPE & operator * () const	REFLECTIVE_NOEXCEPT { return *curr_element(); }
-			ELEMENT_TYPE * operator -> () const	REFLECTIVE_NOEXCEPT { return curr_element(); }
+			bool operator == (const const_iterator & i_other) const REFLECTIVE_NOEXCEPT
+			{
+				return m_curr_type == i_other.curr_type();
+			}
 
-			ELEMENT_TYPE * curr_element() const REFLECTIVE_NOEXCEPT 
+			bool operator != (const const_iterator & i_other) const REFLECTIVE_NOEXCEPT
+			{
+				return m_curr_type != i_other.curr_type();
+			}
+
+			value_type & operator * () const	REFLECTIVE_NOEXCEPT { return *curr_element(); }
+			value_type * operator -> () const	REFLECTIVE_NOEXCEPT { return curr_element(); }
+
+			value_type * curr_element() const REFLECTIVE_NOEXCEPT 
 			{ 
 				auto const curr_element_alignment = m_curr_type->alignment();
 				assert(details::is_valid_alignment(curr_element_alignment));
-				return reinterpret_cast<ELEMENT_TYPE*>(
+				return reinterpret_cast<value_type*>(
 					(reinterpret_cast<uintptr_t>(m_curr_element) + (curr_element_alignment - 1)) & ~(curr_element_alignment - 1) );
 			}
 
@@ -374,8 +384,83 @@ namespace reflective
 			friend class BulkList;
 		};
 
-		using iterator = gen_iterator<ELEMENT>;
-		using const_iterator = gen_iterator<const ELEMENT>;
+		class const_iterator
+		{
+		public:
+
+			using iterator_category = std::forward_iterator_tag;
+			using value_type = const ELEMENT;
+			using reference = const ELEMENT &;
+			using const_reference = const ELEMENT &;
+			using pointer = typename std::allocator_traits<allocator_type>::pointer;
+			using const_pointer = typename std::allocator_traits<allocator_type>::const_pointer;
+			using difference_type = ptrdiff_t;
+			using size_type = size_t;
+
+			using VoidPtr = const void *;
+
+			const_iterator() REFLECTIVE_NOEXCEPT
+				: m_curr_element(nullptr), m_curr_type(nullptr) { }
+
+			const_iterator(InternalConstructor, VoidPtr i_curr_element, const TYPE_INFO * i_curr_type) REFLECTIVE_NOEXCEPT
+				: m_curr_element(i_curr_element), m_curr_type(i_curr_type)
+			{
+			}
+
+			const_iterator & operator ++ () REFLECTIVE_NOEXCEPT
+			{
+				VoidPtr const prev_element = curr_element();
+				auto const curr_element_size = m_curr_type->size();
+				m_curr_type++;
+				m_curr_element = reinterpret_cast<value_type*>( reinterpret_cast<uintptr_t>(prev_element) + curr_element_size );
+				return *this;
+			}
+
+			const_iterator operator++ (int)REFLECTIVE_NOEXCEPT
+			{
+				const_iterator copy(*this);
+				operator ++ ();
+				return copy;
+			}
+
+			bool operator == (const iterator & i_other) const REFLECTIVE_NOEXCEPT
+			{
+				return m_curr_type == i_other.curr_type();
+			}
+
+			bool operator != (const iterator & i_other) const REFLECTIVE_NOEXCEPT
+			{
+				return m_curr_type != i_other.curr_type();
+			}
+
+			bool operator == (const const_iterator & i_other) const REFLECTIVE_NOEXCEPT
+			{
+				return m_curr_type == i_other.curr_type();
+			}
+
+			bool operator != (const const_iterator & i_other) const REFLECTIVE_NOEXCEPT
+			{
+				return m_curr_type != i_other.curr_type();
+			}
+
+			value_type & operator * () const	REFLECTIVE_NOEXCEPT { return *curr_element(); }
+			value_type * operator -> () const	REFLECTIVE_NOEXCEPT { return curr_element(); }
+
+			value_type * curr_element() const REFLECTIVE_NOEXCEPT 
+			{ 
+				auto const curr_element_alignment = m_curr_type->alignment();
+				assert(details::is_valid_alignment(curr_element_alignment));
+				return reinterpret_cast<value_type*>(
+					(reinterpret_cast<uintptr_t>(m_curr_element) + (curr_element_alignment - 1)) & ~(curr_element_alignment - 1) );
+			}
+
+			const TYPE_INFO * curr_type() const REFLECTIVE_NOEXCEPT { return m_curr_type; }
+
+		private:
+			VoidPtr m_curr_element;
+			const TYPE_INFO * m_curr_type;
+			friend class BulkList;
+		};
 
 		iterator begin() REFLECTIVE_NOEXCEPT { return iterator(InternalConstructorMem, get_elements(), m_bulk ); }
 		iterator end() REFLECTIVE_NOEXCEPT { return iterator(InternalConstructorMem, nullptr, m_bulk + m_size); }
@@ -462,13 +547,27 @@ namespace reflective
 
 				const auto end_it = cend();
 				bool is_range = false;
-				for (auto it = cbegin(); it != end_it; it++)
+				for (auto it = cbegin(); ; it++)
 				{
 					// upper align curr_element to it.m_curr_type->alignment()
-					const uintptr_t element_alignment = it.m_curr_type->alignment();
-					assert(details::is_valid_alignment(element_alignment)); // internal check: the alignment must be a power of 2
-					auto const alignment_mask = element_alignment - 1;
-					curr_element = (curr_element + alignment_mask) & ~alignment_mask;
+					if (it != end_it)
+					{
+						const uintptr_t element_alignment = it.m_curr_type->alignment();
+						assert(details::is_valid_alignment(element_alignment)); // internal check: the alignment must be a power of 2
+						auto const alignment_mask = element_alignment - 1;
+						curr_element = (curr_element + alignment_mask) & ~alignment_mask;						
+					}
+					else
+					{
+						curr_element = 0;
+						if (it == i_from)
+						{
+							is_range = true;
+							return_type_info = curr_type;
+							return_element = reinterpret_cast<void*>(curr_element);
+						}
+						break;
+					}
 
 					if (it == i_from)
 					{

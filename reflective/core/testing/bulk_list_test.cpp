@@ -16,12 +16,12 @@ namespace reflective
 				public:
 					NoLeakScope()
 					{
-						REFLECTIVE_TEST_ASSERT(t_map.size() == 0);
+						REFLECTIVE_TEST_ASSERT(GetMap().size() == 0);
 					}
 
 					~NoLeakScope()
 					{
-						REFLECTIVE_TEST_ASSERT(t_map.size() == 0);
+						REFLECTIVE_TEST_ASSERT(GetMap().size() == 0);
 					}
 
 					NoLeakScope(const NoLeakScope &) = delete;
@@ -33,28 +33,54 @@ namespace reflective
 					void * block = operator new (i_size);
 					AllocationEntry entry;
 					entry.m_size = i_size;
-					auto res = t_map.insert(std::make_pair(block, entry));
+					auto res = GetMap().insert(std::make_pair(block, entry));
 					REFLECTIVE_INTERNAL_ASSERT(res.second);
 					return block;
 				}
 
 				void free(void * i_block)
 				{
-					auto it = t_map.find(i_block);
-					REFLECTIVE_INTERNAL_ASSERT(it != t_map.end());
-					t_map.erase(it);
+					auto & map = GetMap();
+					auto it = map.find(i_block);
+					REFLECTIVE_INTERNAL_ASSERT(it != map.end());
+					map.erase(it);
 					operator delete (i_block);
 				}
 
 			private:
+
 				struct AllocationEntry
 				{
 					size_t m_size;
 				};
-				static thread_local std::unordered_map<void*, AllocationEntry> t_map;
+
+				static std::unordered_map<void*, AllocationEntry> & GetMap()
+				{
+					#if defined(_MSC_VER) && _MSC_VER < 1900 // Visual Studio 2013 and below
+						if (t_map == nullptr)
+						{
+							t_map = new std::unordered_map<void*, AllocationEntry>;
+						}
+						return *t_map;
+					#else
+						return t_map;
+					#endif
+				}
+
+			private:
+
+				#if defined(_MSC_VER) && _MSC_VER < 1900 // Visual Studio 2013 and below
+					static _declspec(thread) std::unordered_map<void*, AllocationEntry> * t_map;
+				#else
+					static thread_local std::unordered_map<void*, AllocationEntry> t_map;
+				#endif
 			};
 
-			thread_local std::unordered_map<void*, TestAllocatorBase::AllocationEntry> TestAllocatorBase::t_map;
+			#if defined(_MSC_VER) && _MSC_VER < 1900 // Visual Studio 2013 and below
+				_declspec(thread) std::unordered_map<void*, TestAllocatorBase::AllocationEntry> * TestAllocatorBase::t_map;
+			#else
+				thread_local std::unordered_map<void*, TestAllocatorBase::AllocationEntry> TestAllocatorBase::t_map;
+			#endif
 
 			template <class TYPE> class TestAllocator : private TestAllocatorBase
 			{
@@ -76,16 +102,44 @@ namespace reflective
 				}
 
 				template <typename OTHER_TYPE>
-				bool operator == (const TestAllocator<OTHER_TYPE> &) const
+					bool operator == (const TestAllocator<OTHER_TYPE> &) const
 				{
 					return true;
 				}
 
 				template <typename OTHER_TYPE>
-				bool operator != (const TestAllocator<OTHER_TYPE> &) const
+					bool operator != (const TestAllocator<OTHER_TYPE> &) const
 				{
 					return false;
 				}				
+
+				#if defined(_MSC_VER) && _MSC_VER < 1900 // Visual Studio 2013 and below
+					
+					template<class Other> struct rebind { typedef TestAllocator<Other> other; };
+
+					void construct(TYPE * i_pointer)
+					{	
+						new (i_pointer) TYPE();
+					}
+
+					void construct(TYPE * i_pointer, const TYPE & i_source)
+					{
+						new (i_pointer) TYPE(i_source);
+					}
+
+					template<class OTHER_TYPE, class... ARG_TYPES>
+						void construct(OTHER_TYPE * i_pointer, ARG_TYPES &&... i_args)
+					{
+						new (i_pointer)OTHER_TYPE(std::forward<ARG_TYPES>(i_args)...);
+					}
+
+					void destroy(TYPE * i_pointer)
+					{
+						i_pointer->~TYPE();
+						(void)i_pointer; // avoid warning C4100: 'i_pointer' : unreferenced formal parameter
+					}
+
+				#endif
 			};
 
 			using TestString = std::basic_string<char, std::char_traits<char>, TestAllocator<char> >;
@@ -112,29 +166,55 @@ namespace reflective
 				#pragma warning(disable: 4324) // structure was padded due to alignment specifier
 			#endif
 
-			struct alignas(1) StructB_1 { char m_member = 42; };
-			struct alignas(2) StructB_2 { char m_member = 42; };
-			struct alignas(4) StructB_4 { int m_member = 42; };
-			struct alignas(8) StructB_8 { int m_member = 42; };
-			struct alignas(16) StructB_16 { int m_member = 42; };
-			struct alignas(32) StructB_32 { int m_member = 42; };
-			struct alignas(64) StructB_64 { int m_member = 42; };
-			struct alignas(128) StructB_128 { int m_member = 42; };
-			struct alignas(256) StructB_256 { int m_member = 42; };
+			#if defined(_MSC_VER) && _MSC_VER < 1900 // Visual Studio 2013 and below
 
-			template <size_t VALUE, typename BASE> struct AlignHelper {
-				static const size_t value = VALUE > std::alignment_of<BASE>::value ? VALUE : std::alignment_of<BASE>::value;
-			};
+				struct StructB_1{ char m_member = 42; std::aligned_storage<1, 1> m_aligned; };
+				struct StructB_2 { char m_member = 42; std::aligned_storage<1, 2> m_aligned; };
+				struct StructB_4 { int m_member = 42; std::aligned_storage<1, 4> m_aligned; };
+				struct StructB_8 { int m_member = 42; std::aligned_storage<1, 8> m_aligned; };
+				struct StructB_16 { int m_member = 42; std::aligned_storage<1, 16> m_aligned; };
+				struct StructB_32 { int m_member = 42; std::aligned_storage<1, 32> m_aligned; };
+				struct StructB_64 { int m_member = 42; std::aligned_storage<1, 64> m_aligned; };
+				struct StructB_128 { int m_member = 42; std::aligned_storage<1, 128> m_aligned; };
+				struct StructB_256 { int m_member = 42; std::aligned_storage<1, 256> m_aligned; };
 
-			template <typename BASE> struct alignas(AlignHelper<1, BASE>::value) StructA_1 : BASE { };
-			template <typename BASE> struct alignas(AlignHelper<2, BASE>::value) StructA_2 : BASE { };
-			template <typename BASE> struct alignas(AlignHelper<4, BASE>::value) StructA_4 : BASE { };
-			template <typename BASE> struct alignas(AlignHelper<8, BASE>::value) StructA_8 : BASE { };
-			template <typename BASE> struct alignas(AlignHelper<16, BASE>::value) StructA_16 : BASE { };
-			template <typename BASE> struct alignas(AlignHelper<32, BASE>::value) StructA_32 : BASE { };
-			template <typename BASE> struct alignas(AlignHelper<64, BASE>::value) StructA_64 : BASE { };
-			template <typename BASE> struct alignas(AlignHelper<128, BASE>::value) StructA_128 : BASE { };
-			template <typename BASE> struct alignas(AlignHelper<256, BASE>::value) StructA_256 : BASE { };
+				template <typename BASE> struct StructA_1 : BASE { std::aligned_storage<1, 1 > m_aligned; };
+				template <typename BASE> struct StructA_2 : BASE { std::aligned_storage<1, 2 > m_aligned; };
+				template <typename BASE> struct StructA_4 : BASE { std::aligned_storage<1, 4 > m_aligned; };
+				template <typename BASE> struct StructA_8 : BASE { std::aligned_storage<1, 8 > m_aligned; };
+				template <typename BASE> struct StructA_16 : BASE { std::aligned_storage<1, 16 > m_aligned; };
+				template <typename BASE> struct StructA_32 : BASE { std::aligned_storage<1, 32 > m_aligned; };
+				template <typename BASE> struct StructA_64 : BASE { std::aligned_storage<1, 64 > m_aligned; };
+				template <typename BASE> struct StructA_128 : BASE { std::aligned_storage<1, 128 > m_aligned; };
+				template <typename BASE> struct StructA_256 : BASE { std::aligned_storage<1, 256 > m_aligned; };
+
+			#else
+
+				struct alignas(1) StructB_1{ char m_member = 42; };
+				struct alignas(2) StructB_2 { char m_member = 42; };
+				struct alignas(4) StructB_4 { int m_member = 42; };
+				struct alignas(8) StructB_8 { int m_member = 42; };
+				struct alignas(16) StructB_16 { int m_member = 42; };
+				struct alignas(32) StructB_32 { int m_member = 42; };
+				struct alignas(64) StructB_64 { int m_member = 42; };
+				struct alignas(128) StructB_128 { int m_member = 42; };
+				struct alignas(256) StructB_256 { int m_member = 42; };
+
+				template <size_t VALUE, typename BASE> struct AlignHelper {
+					static const size_t value = VALUE > std::alignment_of<BASE>::value ? VALUE : std::alignment_of<BASE>::value;
+				};
+
+				template <typename BASE> struct alignas(AlignHelper<1, BASE>::value) StructA_1 : BASE { };
+				template <typename BASE> struct alignas(AlignHelper<2, BASE>::value) StructA_2 : BASE { };
+				template <typename BASE> struct alignas(AlignHelper<4, BASE>::value) StructA_4 : BASE { };
+				template <typename BASE> struct alignas(AlignHelper<8, BASE>::value) StructA_8 : BASE { };
+				template <typename BASE> struct alignas(AlignHelper<16, BASE>::value) StructA_16 : BASE { };
+				template <typename BASE> struct alignas(AlignHelper<32, BASE>::value) StructA_32 : BASE { };
+				template <typename BASE> struct alignas(AlignHelper<64, BASE>::value) StructA_64 : BASE { };
+				template <typename BASE> struct alignas(AlignHelper<128, BASE>::value) StructA_128 : BASE { };
+				template <typename BASE> struct alignas(AlignHelper<256, BASE>::value) StructA_256 : BASE { };
+
+			#endif
 
 			#ifdef _MSC_VER
 				#pragma warning(pop)
@@ -207,10 +287,14 @@ namespace reflective
 					{
 						auto list_5 = list;
 						vector<TestString> vec(list_5.begin(), list_5.end());
-						auto vec_res = vec.erase(std::next(vec.cbegin(), i), std::next(vec.cbegin(), j));
-						auto lst_res = list_5.erase(std::next(list_5.cbegin(), i), std::next(list_5.cbegin(), j) );
+						const auto vec_res = vec.erase(std::next(vec.cbegin(), i), std::next(vec.cbegin(), j));
+						const auto lst_res = list_5.erase(std::next(list_5.cbegin(), i), std::next(list_5.cbegin(), j));
 						vector<TestString> vec1(list_5.begin(), list_5.end());
 						REFLECTIVE_TEST_ASSERT(vec == vec1);
+
+						const auto lst_dist = std::distance(list_5.begin(), lst_res);
+						const auto vec_dist = std::distance(vec.begin(), vec_res);
+						REFLECTIVE_TEST_ASSERT(lst_dist == vec_dist);
 					}
 				}
 			}

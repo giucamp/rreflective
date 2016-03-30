@@ -8,6 +8,12 @@ namespace reflective
 		{
 			return typeid(TYPE).name();
 		}
+
+		template <>
+			inline StringView get_type_full_name<void*>()
+		{
+			return "pointer";
+		}
 	}
 
 	template <typename TYPE>
