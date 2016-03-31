@@ -164,14 +164,30 @@ namespace reflective
 
 	namespace details
 	{
-		template <typename ELEMENT>
-			inline ELEMENT * address_upper_align(void * i_address) REFLECTIVE_NOEXCEPT
+		inline bool is_valid_alignment(size_t i_alignment) REFLECTIVE_NOEXCEPT
 		{
-			const size_t alignment_mask = std::alignment_of<ELEMENT>::value - 1;
-			return reinterpret_cast<ELEMENT*>((reinterpret_cast<uintptr_t>(i_address) + alignment_mask) & ~alignment_mask);
+			return i_alignment > 0 && (i_alignment & (i_alignment - 1)) == 0;
 		}
 
-		inline bool is_valid_alignment(size_t i_alignment) REFLECTIVE_NOEXCEPT { return i_alignment > 0 && (i_alignment & (i_alignment - 1)) == 0; }
+		template <typename TYPE>
+			inline TYPE * address_upper_align(void * i_address) REFLECTIVE_NOEXCEPT
+		{
+			const size_t alignment_mask = std::alignment_of<TYPE>::value - 1;
+			return reinterpret_cast<TYPE*>((reinterpret_cast<uintptr_t>(i_address) + alignment_mask) & ~alignment_mask);
+		}
+
+		inline void * address_upper_align(void * i_address, size_t i_alignment) REFLECTIVE_NOEXCEPT
+		{
+			assert(is_valid_alignment(i_alignment));
+			const size_t alignment_mask = i_alignment - 1;
+			return reinterpret_cast<void*>((reinterpret_cast<uintptr_t>(i_address) + alignment_mask) & ~alignment_mask);
+		}
+
+		template <typename TYPE>
+			inline TYPE * address_add(TYPE * i_address, size_t i_offset) REFLECTIVE_NOEXCEPT
+		{
+			return reinterpret_cast<TYPE*>(reinterpret_cast<uintptr_t>(i_address) + i_offset);
+		}
 
 		struct AlignmentHeader
 		{
@@ -268,7 +284,7 @@ namespace reflective
 		}
 
 		DenseList() REFLECTIVE_NOEXCEPT
-			: m_dense(nullptr), m_size(0)
+			: m_buffer(nullptr), m_size(0)
 				{ }
 
 		DenseList(DenseList && i_source) REFLECTIVE_NOEXCEPT
@@ -470,14 +486,14 @@ namespace reflective
 			friend class DenseList;
 		};
 
-		iterator begin() REFLECTIVE_NOEXCEPT { return iterator(InternalConstructorMem, get_elements(), m_dense ); }
-		iterator end() REFLECTIVE_NOEXCEPT { return iterator(InternalConstructorMem, nullptr, m_dense + m_size); }
+		iterator begin() REFLECTIVE_NOEXCEPT { return iterator(InternalConstructorMem, get_elements(), m_buffer ); }
+		iterator end() REFLECTIVE_NOEXCEPT { return iterator(InternalConstructorMem, nullptr, m_buffer + m_size); }
 
-		const_iterator begin() const REFLECTIVE_NOEXCEPT { return const_iterator(InternalConstructorMem, get_elements(), m_dense ); }
-		const_iterator end() const REFLECTIVE_NOEXCEPT { return const_iterator(InternalConstructorMem, nullptr, m_dense + m_size); }
+		const_iterator begin() const REFLECTIVE_NOEXCEPT { return const_iterator(InternalConstructorMem, get_elements(), m_buffer ); }
+		const_iterator end() const REFLECTIVE_NOEXCEPT { return const_iterator(InternalConstructorMem, nullptr, m_buffer + m_size); }
 
-		const_iterator cbegin() const REFLECTIVE_NOEXCEPT { return const_iterator(InternalConstructorMem, get_elements(), m_dense ); }
-		const_iterator cend() const REFLECTIVE_NOEXCEPT { return const_iterator(InternalConstructorMem, nullptr, m_dense + m_size); }
+		const_iterator cbegin() const REFLECTIVE_NOEXCEPT { return const_iterator(InternalConstructorMem, get_elements(), m_buffer ); }
+		const_iterator cend() const REFLECTIVE_NOEXCEPT { return const_iterator(InternalConstructorMem, nullptr, m_buffer + m_size); }
 
 		bool operator == (const DenseList & i_source) const
 		{
@@ -602,7 +618,7 @@ namespace reflective
 				// from now on, no exception can be thrown
 				destroy_impl();
 				m_size = new_size;
-				m_dense = types;
+				m_buffer = types;
 
 				return iterator(InternalConstructorMem, return_element, return_type_info);
 			}
@@ -611,7 +627,7 @@ namespace reflective
 		void clear()
 		{
 			destroy_impl();
-			m_dense = nullptr;
+			m_buffer = nullptr;
 			m_size = 0;
 		}
 
@@ -621,9 +637,9 @@ namespace reflective
 		{
 			if (m_size > 0)
 			{
-				assert(details::is_valid_alignment(m_dense[0].alignment()));
-				const auto first_element_align_mask = m_dense[0].alignment() - 1;
-				auto ptr = reinterpret_cast<uintptr_t>(m_dense + m_size);
+				assert(details::is_valid_alignment(m_buffer[0].alignment()));
+				const auto first_element_align_mask = m_buffer[0].alignment() - 1;
+				auto ptr = reinterpret_cast<uintptr_t>(m_buffer + m_size);
 				ptr = (ptr + first_element_align_mask) & ~first_element_align_mask;
 				return reinterpret_cast<ELEMENT *>(ptr);
 			}
@@ -633,6 +649,57 @@ namespace reflective
 			}
 		}
 				
+		class ListBuilder
+		{
+		public:
+
+			ListBuilder(ALLOCATOR & i_allocator, size_t i_count, size_t i_buffer_size, size_t i_buffer_alignment)
+			{
+				void * const buffer = details::aligned_alloc(i_allocator, i_buffer_size, i_buffer_alignment);
+				m_end_of_type_infos = m_type_infos = static_cast<TypeInfo*>(buffer);
+				m_end_of_elements = m_elements = m_type_infos + i_count;
+			}
+
+			void add_by_copy(const TypeInfo & i_type_info, const ELEMENT & i_source)
+			{
+				void * new_element = details::address_upper_align(m_end_of_elements, i_type_info.alignment());
+				i_type_info.copy_construct(new_element, i_source);
+				m_end_of_elements = details::address_add(new_element, i_type_info.size());
+				new(m_end_of_type_infos++) TypeInfo(i_type_info);
+			}
+
+			void add_by_move(const TypeInfo & i_type_info, ELEMENT && i_source)
+			{
+				void * new_element = details::address_upper_align(m_end_of_elements, i_type_info.alignment());
+				i_type_info.move_construct(new_element, std::move(i_source));
+				m_end_of_elements = details::address_add(new_element, i_type_info.size());
+				new(m_end_of_type_infos++) TypeInfo(i_type_info);
+			}
+
+			TypeInfo * commit()
+			{
+				return m_type_infos;
+			}
+
+			void rollback()
+			{
+				for (TypeInfo * type_info = m_type_infos, void * element = m_elements; type_info < m_end_of_type_infos; type_info++)
+				{
+					element = details::address_upper_align(m_end_of_elements, type_info->alignment());
+					type_info->destroy(element);
+					element = details::address_add(element, type_info->size());
+					type_info->~TypeInfo();
+				}
+			}
+
+		private:
+			TypeInfo * m_type_infos;
+			void * m_elements;
+			TypeInfo * m_end_of_type_infos;
+			void * m_end_of_elements;
+		};
+
+
 		void destroy_impl() REFLECTIVE_NOEXCEPT
 		{
 			size_t dense_alignment = std::alignment_of<TypeInfo>::value;
@@ -645,45 +712,29 @@ namespace reflective
 				curr_type->destroy(it.curr_element());
 				curr_type->TypeInfo::~TypeInfo();
 			}
-			details::aligned_free( *static_cast<ALLOCATOR*>(this), m_dense, dense_size, dense_alignment);
+			details::aligned_free( *static_cast<ALLOCATOR*>(this), m_buffer, dense_size, dense_alignment);
 		}
 
 		void copy_impl(const DenseList & i_source)
 		{
-			// allocate the buffer
 			size_t buffer_size = 0, buffer_alignment = 0;
 			i_source.compute_buffer_size_and_alignment(&buffer_size, &buffer_alignment);
-			void * const buffer = details::aligned_alloc(*static_cast<ALLOCATOR*>(this), buffer_size, buffer_alignment);
-			TypeInfo * const types = static_cast<TypeInfo*>(buffer);
-			
-			auto curr_element = reinterpret_cast<uintptr_t>( types + i_source.size());
-			TypeInfo * curr_type = types;
+			ListBuilder builder(*static_cast<ALLOCATOR*>(this), i_source.m_size, buffer_size, buffer_alignment);
 			auto const end_it = i_source.cend();
 			for (auto it = i_source.cbegin(); it != end_it; ++it)
 			{
-				new (curr_type) TypeInfo( *(it.curr_type()) );
-				
-				// upper align curr_element to curr_type->alignment()
-				const uintptr_t element_alignment = curr_type->alignment();
-				assert(details::is_valid_alignment(element_alignment) ); // internal check: the alignment must be a power of 2
-				auto const alignment_mask = element_alignment - 1;
-				curr_element = (curr_element + alignment_mask) & ~alignment_mask;
-
-				curr_type->copy_construct(reinterpret_cast<void*>(curr_element), *it);
-				
-				curr_element += curr_type->size();
-				curr_type++;
+				builder.add_by_copy(*it.m_curr_type, *it.curr_element());
 			}
 
 			m_size = i_source.size();
-			m_dense = types;
+			m_buffer = builder.commit();
 		}
 
 		void move_impl(DenseList && i_source) REFLECTIVE_NOEXCEPT
 		{
-			m_dense = i_source.m_dense;
+			m_buffer = i_source.m_buffer;
 			m_size = i_source.m_size;
-			i_source.m_dense = nullptr;
+			i_source.m_buffer = nullptr;
 			i_source.m_size = 0;
 		}
 
@@ -700,7 +751,7 @@ namespace reflective
 
 			RecursiveHelper<TYPES...>::construct(types, elements, std::forward<TYPES>(i_args)...);
 			o_dest_list.m_size = element_count;
-			o_dest_list.m_dense = types;
+			o_dest_list.m_buffer = types;
 
 			#ifndef NDEBUG
 				size_t dbg_buffer_size = 0, dbg_buffer_alignment = 0;
@@ -828,7 +879,7 @@ namespace reflective
 				// from now on, no exception can be thrown
 				destroy_impl();
 				m_size = m_size + i_count;
-				m_dense = types;
+				m_buffer = types;
 			}
 			else
 			{
@@ -919,7 +970,7 @@ namespace reflective
 		};
 
 	private:
-		TypeInfo * m_dense;
+		TypeInfo * m_buffer;
 		size_t m_size;
 	};
 

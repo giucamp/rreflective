@@ -374,6 +374,23 @@ namespace reflective
 				typed_alignment_test<StructB_128>();
 				typed_alignment_test<StructB_256>();
 			}
+
+			class Moveable
+			{
+				public:
+					Moveable(int){}
+					Moveable(Moveable &&) = default;
+					Moveable & operator = (Moveable &&) = default;
+					Moveable(const Moveable &) = delete;
+					Moveable & operator = (const Moveable &) = delete;
+			};
+
+			void test4()
+			{
+				TestAllocatorBase::NoLeakScope leak_detector;
+				using List = DenseList< Moveable, TestAllocator<Moveable> >;
+				List::make(Moveable(1), Moveable(2));
+			}
 		}
 	}
 
@@ -382,6 +399,7 @@ namespace reflective
 		details::DenseListTest::test1();
 		details::DenseListTest::test2();
 		details::DenseListTest::test3();
+		details::DenseListTest::test4();
 	}
 
 #endif
