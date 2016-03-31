@@ -1,6 +1,12 @@
 
 #pragma once
 
+#ifndef NDEBUG
+	#define REFLECTIVE_DENSE_LIST_DEBUG		0
+#else
+	#define REFLECTIVE_DENSE_LIST_DEBUG		1
+#endif
+
 namespace reflective
 {
 	template <typename ELEMENT> class CopyableTypeInfo;
@@ -8,20 +14,20 @@ namespace reflective
 	template <typename ELEMENT> using DefaultTypeInfo = typename std::conditional< std::is_copy_constructible<ELEMENT>::value,
 		CopyableTypeInfo<ELEMENT>, MovableTypeInfo<ELEMENT> >::type;
 	template <typename ELEMENT, typename ALLOCATOR = std::allocator<ELEMENT>, 
-		template<typename> typename TYPE_INFO = DefaultTypeInfo > class DenseList;
+		typename TYPE_INFO = DefaultTypeInfo<ELEMENT> > class DenseList;
 
 	/** Creates and returns by value a DenseList, whose element base type is ELEMENT. The specified parameters
 		are added to the list<br>
 		Example: auto int_list = make_dense_list<int>( 1, 2 * 2, 3 * 3 ); */
 	template <typename ELEMENT, typename... TYPES>
-		inline DenseList<ELEMENT, std::allocator<ELEMENT>, DefaultTypeInfo> make_dense_list(TYPES &&... i_parameters)
+		inline DenseList<ELEMENT, std::allocator<ELEMENT>> make_dense_list(TYPES &&... i_parameters)
 	{
-		return DenseList<ELEMENT, std::allocator<ELEMENT>, DefaultTypeInfo>::make( std::forward<TYPES>(i_parameters)... );
+		return DenseList<ELEMENT, std::allocator<ELEMENT>>::make( std::forward<TYPES>(i_parameters)... );
 	}
 	template <typename ELEMENT, typename ALLOCATOR, typename... TYPES>
-		inline DenseList<ELEMENT, ALLOCATOR, DefaultTypeInfo<ELEMENT>> alloc_dense_list(const ALLOCATOR & i_allocator, TYPES &&... i_parameters)
+		inline DenseList<ELEMENT, ALLOCATOR> alloc_dense_list(const ALLOCATOR & i_allocator, TYPES &&... i_parameters)
 	{
-		return DenseList<ELEMENT, ALLOCATOR, DefaultTypeInfo<ELEMENT>>::make_with_alloc(i_allocator, std::forward<TYPES>(i_parameters)... );
+		return DenseList<ELEMENT, ALLOCATOR>::make_with_alloc(i_allocator, std::forward<TYPES>(i_parameters)... );
 	}
 
 	template <typename ELEMENT>
@@ -249,14 +255,14 @@ namespace reflective
 	} // namespace details
 
 	/** A dense-list is a sequence container of heterogeneous elements. */
-	template <typename ELEMENT, typename ALLOCATOR, template<typename> typename TYPE_INFO >
+	template <typename ELEMENT, typename ALLOCATOR, typename TYPE_INFO >
 		class DenseList : private ALLOCATOR
 	{
 		enum InternalConstructor { InternalConstructorMem };
 
 	public:
 
-		using TypeInfo = TYPE_INFO<ELEMENT>;
+		using TypeInfo = TYPE_INFO;
 
 		using allocator_type = ALLOCATOR;
 		using value_type = ELEMENT;
@@ -653,26 +659,47 @@ namespace reflective
 		{
 		public:
 
-			ListBuilder(ALLOCATOR & i_allocator, size_t i_count, size_t i_buffer_size, size_t i_buffer_alignment)
+			ListBuilder() REFLECTIVE_NOEXCEPT
+				: m_type_infos(nullptr)
+			{
+			}
+
+			void init(ALLOCATOR & i_allocator, size_t i_count, size_t i_buffer_size, size_t i_buffer_alignment)
 			{
 				void * const buffer = details::aligned_alloc(i_allocator, i_buffer_size, i_buffer_alignment);
 				m_end_of_type_infos = m_type_infos = static_cast<TypeInfo*>(buffer);
 				m_end_of_elements = m_elements = m_type_infos + i_count;
+
+				#if REFLECTIVE_DENSE_LIST_DEBUG
+					m_dbg_end_of_buffer = details::address_add(buffer, i_buffer_size);
+				#endif
 			}
 
 			void add_by_copy(const TypeInfo & i_type_info, const ELEMENT & i_source)
 			{
 				void * new_element = details::address_upper_align(m_end_of_elements, i_type_info.alignment());
+				#if REFLECTIVE_DENSE_LIST_DEBUG
+					dbg_check_range(new_element, details::address_add(new_element, i_type_info.size()));
+				#endif
 				i_type_info.copy_construct(new_element, i_source);
 				m_end_of_elements = details::address_add(new_element, i_type_info.size());
+				#if REFLECTIVE_DENSE_LIST_DEBUG
+					dbg_check_range(m_end_of_type_infos, m_end_of_type_infos + 1);
+				#endif
 				new(m_end_of_type_infos++) TypeInfo(i_type_info);
 			}
 
 			void add_by_move(const TypeInfo & i_type_info, ELEMENT && i_source)
 			{
 				void * new_element = details::address_upper_align(m_end_of_elements, i_type_info.alignment());
+				#if REFLECTIVE_DENSE_LIST_DEBUG
+					dbg_check_range(new_element, details::address_add(new_element, i_type_info.size()));
+				#endif
 				i_type_info.move_construct(new_element, std::move(i_source));
 				m_end_of_elements = details::address_add(new_element, i_type_info.size());
+				#if REFLECTIVE_DENSE_LIST_DEBUG
+					dbg_check_range(m_end_of_type_infos, m_end_of_type_infos + 1);
+				#endif
 				new(m_end_of_type_infos++) TypeInfo(i_type_info);
 			}
 
@@ -681,24 +708,39 @@ namespace reflective
 				return m_type_infos;
 			}
 
-			void rollback()
+			void rollback(ALLOCATOR & i_allocator, size_t i_buffer_size, size_t i_buffer_alignment) REFLECTIVE_NOEXCEPT
 			{
-				for (TypeInfo * type_info = m_type_infos, void * element = m_elements; type_info < m_end_of_type_infos; type_info++)
+				if (m_type_infos != nullptr)
 				{
-					element = details::address_upper_align(m_end_of_elements, type_info->alignment());
-					type_info->destroy(element);
-					element = details::address_add(element, type_info->size());
-					type_info->~TypeInfo();
+					void * element = m_elements;
+					for (TypeInfo * type_info = m_type_infos; type_info < m_end_of_type_infos; type_info++)
+					{
+						element = details::address_upper_align(m_end_of_elements, type_info->alignment());
+						type_info->destroy( static_cast<ELEMENT*>(element));
+						element = details::address_add(element, type_info->size());
+						type_info->~TypeInfo();
+					}
+					details::aligned_free(i_allocator, m_type_infos, i_buffer_size, i_buffer_alignment);
 				}
 			}
+
+		private:
+			#if REFLECTIVE_DENSE_LIST_DEBUG
+				void dbg_check_range(const void * i_start, const void * i_end)
+				{
+					assert(start >= m_type_infos && i_end < m_dbg_end_of_buffer );
+				}
+			#endif
 
 		private:
 			TypeInfo * m_type_infos;
 			void * m_elements;
 			TypeInfo * m_end_of_type_infos;
 			void * m_end_of_elements;
+			#if REFLECTIVE_DENSE_LIST_DEBUG
+				void * m_dbg_end_of_buffer;
+			#endif
 		};
-
 
 		void destroy_impl() REFLECTIVE_NOEXCEPT
 		{
@@ -717,17 +759,27 @@ namespace reflective
 
 		void copy_impl(const DenseList & i_source)
 		{
+			ListBuilder builder;
 			size_t buffer_size = 0, buffer_alignment = 0;
 			i_source.compute_buffer_size_and_alignment(&buffer_size, &buffer_alignment);
-			ListBuilder builder(*static_cast<ALLOCATOR*>(this), i_source.m_size, buffer_size, buffer_alignment);
-			auto const end_it = i_source.cend();
-			for (auto it = i_source.cbegin(); it != end_it; ++it)
-			{
-				builder.add_by_copy(*it.m_curr_type, *it.curr_element());
-			}
 
-			m_size = i_source.size();
-			m_buffer = builder.commit();
+			try
+			{
+				builder.init(*static_cast<ALLOCATOR*>(this), i_source.m_size, buffer_size, buffer_alignment);
+				auto const end_it = i_source.cend();
+				for (auto it = i_source.cbegin(); it != end_it; ++it)
+				{
+					builder.add_by_copy(*it.m_curr_type, *it.curr_element());
+				}
+
+				m_size = i_source.size();
+				m_buffer = builder.commit();
+			}
+			catch (...)
+			{
+				builder.rollback(*static_cast<ALLOCATOR*>(this), buffer_size, buffer_alignment);
+				throw;
+			}
 		}
 
 		void move_impl(DenseList && i_source) REFLECTIVE_NOEXCEPT
@@ -817,6 +869,56 @@ namespace reflective
 		
 		iterator insert_n_impl(const_iterator i_position, size_t i_count, const TypeInfo & i_source_type, const ELEMENT & i_source)
 		{
+			/*const TypeInfo * new_type_info = nullptr;
+			void * new_element = nullptr;
+			
+			size_t buffer_size = 0, buffer_alignment = 0;
+			compute_buffer_size_and_alignment_for_insert(&buffer_size, &buffer_alignment, i_position, i_count, i_source_type);
+
+			if (i_count > 0)
+			{
+				ListBuilder builder;				
+				try
+				{
+					builder.init(*static_cast<ALLOCATOR*>(this), m_size + i_count, buffer_size, buffer_alignment);
+					
+					size_t count_to_insert = i_count;
+					auto const end_it = cend();
+					for (auto it = cbegin();;  ++it)
+					{
+						if (it == i_position && count_to_insert > 0)
+						{
+							builder.add_by_copy(i_source_type, i_source);
+							count_to_insert--;
+						}
+						else
+						{
+							if (it == end_it)
+							{
+								break;
+							}
+							builder.add_by_copy(*it.m_curr_type, *it.curr_element());
+						}						
+					}
+
+					m_size = i_source.size();
+					m_buffer = builder.commit();
+				}
+				catch (...)
+				{
+					builder.rollback(*static_cast<ALLOCATOR*>(this), buffer_size, buffer_alignment);
+					throw;
+				}
+			}
+			else
+			{
+				// inserting 0 new elements...
+				new_type_info = i_position.m_curr_type;
+				new_element = const_cast<void*>(i_position.m_curr_element);
+			}
+
+			return iterator(InternalConstructorMem, new_element, new_type_info);*/
+
 			const TypeInfo * new_type_info = nullptr;
 			void * new_element = nullptr;
 

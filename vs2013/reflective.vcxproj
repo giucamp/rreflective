@@ -135,8 +135,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\reflective\core.h" />
-    <ClInclude Include="..\reflective\core\bulk_list.h" />
     <ClInclude Include="..\reflective\core\array_view.h" />
+    <ClInclude Include="..\reflective\core\dense_list.h" />
     <ClInclude Include="..\reflective\core\in_buffer_text_stream.h" />
     <ClInclude Include="..\reflective\core\ptr_string.h" />
     <ClInclude Include="..\reflective\core\identifier.h" />
@@ -179,24 +179,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\reflective\core\impl\in_buffer_text_stream.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\reflective\core\impl\out_buffer_text_stream.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\reflective\core\testing\string_view_test.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="..\reflective\core\testing\dense_list_test.cpp" />
+    <ClCompile Include="..\reflective\core\testing\in_buffer_text_stream.cpp" />
+    <ClCompile Include="..\reflective\core\testing\out_buffer_text_stream.cpp" />
     <ClCompile Include="..\reflective\reflection\class.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -297,6 +282,7 @@
     <ClCompile Include="..\reflective\unit_testing\unit_testing.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\reflective\core\impl\string_view.inl" />
     <None Include="..\reflective\reflection\enum.inl" />
     <None Include="..\reflective\reflection\get_naked_type.inl" />
     <None Include="..\reflective\reflection\namespace.inl" />

@@ -379,17 +379,19 @@ namespace reflective
 			{
 				public:
 					Moveable(int){}
-					Moveable(Moveable &&) = default;
-					Moveable & operator = (Moveable &&) = default;
+					Moveable(Moveable &&) {}
+					Moveable & operator = (Moveable &&) {}
 					Moveable(const Moveable &) = delete;
 					Moveable & operator = (const Moveable &) = delete;
 			};
 
 			void test4()
 			{
-				TestAllocatorBase::NoLeakScope leak_detector;
-				using List = DenseList< Moveable, TestAllocator<Moveable> >;
-				List::make(Moveable(1), Moveable(2));
+				#if !defined(_MSC_VER) || _MSC_VER >= 1900 // disable for Visual Studio 2013 and below
+					TestAllocatorBase::NoLeakScope leak_detector;
+					using List = DenseList< Moveable, TestAllocator<Moveable> >;
+					List::make(Moveable(1), Moveable(2));
+				#endif
 			}
 		}
 	}

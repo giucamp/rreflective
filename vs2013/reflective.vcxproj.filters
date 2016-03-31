@@ -111,9 +111,6 @@
     <ClInclude Include="..\reflective\core\string_view.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="..\reflective\core\bulk_list.h">
-      <Filter>core</Filter>
-    </ClInclude>
     <ClInclude Include="..\reflective\core\stream_adapters.h">
       <Filter>core</Filter>
     </ClInclude>
@@ -122,6 +119,9 @@
     </ClInclude>
     <ClInclude Include="..\reflective\core.h" />
     <ClInclude Include="..\reflective\core\array_view.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\reflective\core\dense_list.h">
       <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>
@@ -178,14 +178,14 @@
     <ClCompile Include="..\reflective\reflection\string_functions.cpp">
       <Filter>reflection</Filter>
     </ClCompile>
-    <ClCompile Include="..\reflective\core\testing\string_view_test.cpp">
-      <Filter>core\testing</Filter>
-    </ClCompile>
     <ClCompile Include="..\reflective\core.cpp" />
-    <ClCompile Include="..\reflective\core\impl\out_buffer_text_stream.cpp">
+    <ClCompile Include="..\reflective\core\testing\in_buffer_text_stream.cpp">
       <Filter>core\testing</Filter>
     </ClCompile>
-    <ClCompile Include="..\reflective\core\impl\in_buffer_text_stream.cpp">
+    <ClCompile Include="..\reflective\core\testing\out_buffer_text_stream.cpp">
+      <Filter>core\testing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\reflective\core\testing\dense_list_test.cpp">
       <Filter>core\testing</Filter>
     </ClCompile>
   </ItemGroup>
@@ -207,6 +207,9 @@
     </None>
     <None Include="..\reflective\reflection\namespace.inl">
       <Filter>reflection</Filter>
+    </None>
+    <None Include="..\reflective\core\impl\string_view.inl">
+      <Filter>core\impl</Filter>
     </None>
   </ItemGroup>
 </Project>
