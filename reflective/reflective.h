@@ -91,7 +91,7 @@ namespace reflective
 #include "reflective_common.h"
 
 // core headers
-#include "core\core.h"
+#include "density\density.h"
 
 namespace reflective
 {
@@ -123,7 +123,7 @@ namespace reflective
 #include "reflection\get_naked_type.h"
 
 // inlines
-#include "core\core.inl"
+#include "density\density.inl"
 #include "reflection\qualified_type_ptr.inl"
 #include "reflection\special_functions.inl"
 #include "reflection\type.inl"

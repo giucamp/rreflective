@@ -276,7 +276,7 @@ namespace reflective
 		template <typename... TYPES>
 			inline static DenseList make(TYPES &&... i_args)
 		{
-			DenseList new_list(InternalConstructorMem);
+			DenseList new_list;
 			make_impl(new_list, std::forward<TYPES>(i_args)...);
 			return std::move(new_list);
 		}
@@ -284,7 +284,7 @@ namespace reflective
 		template <typename... TYPES>
 			inline static DenseList make_with_alloc(const ALLOCATOR & i_allocator, TYPES &&... i_args)
 		{
-			DenseList new_list(InternalConstructorMem, i_allocator);
+			DenseList new_list;
 			make_impl(new_list, std::forward<TYPES>(i_args)...);
 			return std::move(new_list);
 		}
@@ -711,6 +711,21 @@ namespace reflective
 				return return_element;
 			}
 
+			void * add_dont_constuct(const TypeInfo & i_type_info)
+			{
+				void * return_element = details::address_upper_align(m_end_of_elements, i_type_info.alignment());
+				#if REFLECTIVE_DENSE_LIST_DEBUG
+					dbg_check_range(return_element, details::address_add(return_element, i_type_info.size()));
+				#endif
+				m_end_of_elements = details::address_add(return_element, i_type_info.size());
+				#if REFLECTIVE_DENSE_LIST_DEBUG
+					dbg_check_range(m_end_of_type_infos, m_end_of_type_infos + 1);
+				#endif
+				new(m_end_of_type_infos++) TypeInfo(i_type_info);
+
+				return return_element;
+			}
+
 			TypeInfo * end_of_type_infos()
 			{
 				return m_end_of_type_infos;
@@ -806,17 +821,34 @@ namespace reflective
 		template <typename... TYPES>
 			static void make_impl(DenseList & o_dest_list, TYPES &&... i_args)
 		{
+			assert(o_dest_list.m_size == 0 && o_dest_list.m_buffer == nullptr); // precondition
+
 			size_t const buffer_size = RecursiveSize<RecursiveHelper<TYPES...>::s_element_count * sizeof(TypeInfo), TYPES...>::s_buffer_size;
 			size_t const buffer_alignment = std::max( RecursiveHelper<TYPES...>::s_element_alignment, std::alignment_of<TypeInfo>::value );
 			size_t const element_count = RecursiveHelper<TYPES...>::s_element_count;
 
-			void * const buffer = details::aligned_alloc(static_cast<ALLOCATOR&>(o_dest_list), buffer_size, buffer_alignment);
+			ListBuilder builder;
+			try
+			{
+				builder.init(static_cast<ALLOCATOR&>(o_dest_list), element_count, buffer_size, buffer_alignment);
+
+				RecursiveHelper<TYPES...>::construct(builder, std::forward<TYPES>(i_args)...);
+
+				o_dest_list.m_size = element_count;
+				o_dest_list.m_buffer = builder.commit();
+			}
+			catch (...)
+			{
+				builder.rollback(static_cast<ALLOCATOR&>(o_dest_list), buffer_size, buffer_alignment);
+				throw;
+			}
+			/*void * const buffer = details::aligned_alloc(static_cast<ALLOCATOR&>(o_dest_list), buffer_size, buffer_alignment);
 			TypeInfo * const types = static_cast<TypeInfo*>(buffer);
 			void * const elements = types + element_count;
 
 			RecursiveHelper<TYPES...>::construct(types, elements, std::forward<TYPES>(i_args)...);
 			o_dest_list.m_size = element_count;
-			o_dest_list.m_buffer = types;
+			o_dest_list.m_buffer = types;*/
 
 			#ifndef NDEBUG
 				size_t dbg_buffer_size = 0, dbg_buffer_alignment = 0;
@@ -979,10 +1011,6 @@ namespace reflective
 			*o_buffer_alignment = buffer_alignment;
 		}
 
-		DenseList(InternalConstructor)	{ 	}
-
-		DenseList(InternalConstructor, const ALLOCATOR & i_allocator) : ALLOCATOR(i_allocator) {}
-
 		template <size_t PREV_ELEMENTS_SIZE, typename...> struct RecursiveSize
 		{
 			static const size_t s_buffer_size = PREV_ELEMENTS_SIZE;
@@ -999,7 +1027,7 @@ namespace reflective
 		{
 			static const size_t s_element_count = 0;
 			static const size_t s_element_alignment = 1;
-			static void construct(TypeInfo * /*i_types*/, void * /*i_elements*/, TYPES &&...) { }
+			static void construct(ListBuilder &, TYPES &&...) { }
 		};
 		template <typename FIRST_TYPE, typename... OTHER_TYPES>
 			struct RecursiveHelper<FIRST_TYPE, OTHER_TYPES...>
@@ -1013,12 +1041,11 @@ namespace reflective
 			static const size_t s_element_alignment = std::alignment_of<FIRST_TYPE>::value > RecursiveHelper<OTHER_TYPES...>::s_element_alignment ?
 				std::alignment_of<FIRST_TYPE>::value : RecursiveHelper<OTHER_TYPES...>::s_element_alignment;
 
-			inline static void construct(TypeInfo * i_types, void * i_elements, FIRST_TYPE && i_source, OTHER_TYPES && ... i_s1)
+			inline static void construct(ListBuilder & i_builder, FIRST_TYPE && i_source, OTHER_TYPES && ... i_other_arguments)
 			{
-				new(i_types) TypeInfo(TypeInfo::template make<FIRST_TYPE>());
-				FIRST_TYPE * const return_element = new(details::address_upper_align<FIRST_TYPE>(i_elements)) FIRST_TYPE(std::forward<FIRST_TYPE>(i_source));
-				RecursiveHelper<OTHER_TYPES...>::construct(
-					i_types + 1, return_element + 1, std::forward<OTHER_TYPES>(i_s1)...);
+				void * new_element = i_builder.add_dont_constuct(TypeInfo::template make<FIRST_TYPE>());
+				new (new_element) FIRST_TYPE(std::forward<FIRST_TYPE>(i_source));
+				RecursiveHelper<OTHER_TYPES...>::construct( i_builder, std::forward<OTHER_TYPES>(i_other_arguments)...);
 			}
 		};
 

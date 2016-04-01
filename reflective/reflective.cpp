@@ -7,7 +7,7 @@
 
 #include "reflective.h"
 
-#include "core\core.cpp"
+#include "density\density.cpp"
 
 #include "reflection\impl\symbol.cpp"
 #include "reflection\impl\special_functions.cpp"
