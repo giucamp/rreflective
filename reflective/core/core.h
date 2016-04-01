@@ -1,3 +1,4 @@
+
 #pragma once
 #include "array_view.h"
 #include "string_view.h"
@@ -8,5 +9,4 @@
 #include "ptr_string.h"
 #include "identifier.h"
 #include "string_hash.h"
-#include "list.h"
 

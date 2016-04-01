@@ -1,7 +1,7 @@
 
 #pragma once
 
-#ifndef NDEBUG
+#ifdef NDEBUG
 	#define REFLECTIVE_DENSE_LIST_DEBUG		0
 #else
 	#define REFLECTIVE_DENSE_LIST_DEBUG		1
@@ -65,7 +65,7 @@ namespace reflective
 			(*m_copy_constructor)(i_destination, i_source_element);
 		}
 
-		void move_construct(void * i_destination, ELEMENT * i_source_element) const REFLECTIVE_NOEXCEPT
+		void move_construct_if_no_except(void * i_destination, ELEMENT * i_source_element) const REFLECTIVE_NOEXCEPT
 		{
 			(*m_mover_destructor)(i_destination, i_source_element);
 		}
@@ -135,7 +135,7 @@ namespace reflective
 		
 		size_t alignment() const REFLECTIVE_NOEXCEPT { return m_alignment; }
 		
-		void move_construct(void * i_destination, ELEMENT * i_source_element) const REFLECTIVE_NOEXCEPT
+		void move_construct_if_no_except(void * i_destination, ELEMENT * i_source_element) const REFLECTIVE_NOEXCEPT
 		{
 			(*m_mover_destructor)(i_destination, i_source_element);
 		}
@@ -427,7 +427,7 @@ namespace reflective
 			const_iterator() REFLECTIVE_NOEXCEPT
 				: m_curr_element(nullptr), m_curr_type(nullptr) { }
 
-			const_iterator(const iterator & i_iterator)
+			const_iterator(const iterator & i_iterator) REFLECTIVE_NOEXCEPT
 				: m_curr_element(i_iterator.m_curr_element), m_curr_type(i_iterator.m_curr_type)
 			{
 			}
@@ -446,7 +446,7 @@ namespace reflective
 				return *this;
 			}
 
-			const_iterator operator++ (int)REFLECTIVE_NOEXCEPT
+			const_iterator operator++ (int) REFLECTIVE_NOEXCEPT
 			{
 				const_iterator copy(*this);
 				operator ++ ();
@@ -675,32 +675,41 @@ namespace reflective
 				#endif
 			}
 
-			void add_by_copy(const TypeInfo & i_type_info, const ELEMENT & i_source)
+			void * add_by_copy(const TypeInfo & i_type_info, const ELEMENT & i_source)
 			{
-				void * new_element = details::address_upper_align(m_end_of_elements, i_type_info.alignment());
+				void * return_element = details::address_upper_align(m_end_of_elements, i_type_info.alignment());
 				#if REFLECTIVE_DENSE_LIST_DEBUG
-					dbg_check_range(new_element, details::address_add(new_element, i_type_info.size()));
+					dbg_check_range(return_element, details::address_add(return_element, i_type_info.size()));
 				#endif
-				i_type_info.copy_construct(new_element, i_source);
-				m_end_of_elements = details::address_add(new_element, i_type_info.size());
+				i_type_info.copy_construct(return_element, i_source);
+				m_end_of_elements = details::address_add(return_element, i_type_info.size());
 				#if REFLECTIVE_DENSE_LIST_DEBUG
 					dbg_check_range(m_end_of_type_infos, m_end_of_type_infos + 1);
 				#endif
 				new(m_end_of_type_infos++) TypeInfo(i_type_info);
+
+				return return_element;
 			}
 
-			void add_by_move(const TypeInfo & i_type_info, ELEMENT && i_source)
+			void * add_by_move(const TypeInfo & i_type_info, ELEMENT && i_source)
 			{
-				void * new_element = details::address_upper_align(m_end_of_elements, i_type_info.alignment());
+				void * return_element = details::address_upper_align(m_end_of_elements, i_type_info.alignment());
 				#if REFLECTIVE_DENSE_LIST_DEBUG
-					dbg_check_range(new_element, details::address_add(new_element, i_type_info.size()));
+					dbg_check_range(return_element, details::address_add(return_element, i_type_info.size()));
 				#endif
-				i_type_info.move_construct(new_element, std::move(i_source));
-				m_end_of_elements = details::address_add(new_element, i_type_info.size());
+				i_type_info.move_construct_if_no_except(return_element, std::move(i_source));
+				m_end_of_elements = details::address_add(return_element, i_type_info.size());
 				#if REFLECTIVE_DENSE_LIST_DEBUG
 					dbg_check_range(m_end_of_type_infos, m_end_of_type_infos + 1);
 				#endif
 				new(m_end_of_type_infos++) TypeInfo(i_type_info);
+
+				return return_element;
+			}
+
+			TypeInfo * end_of_type_infos()
+			{
+				return m_end_of_type_infos;
 			}
 
 			TypeInfo * commit()
@@ -728,7 +737,7 @@ namespace reflective
 			#if REFLECTIVE_DENSE_LIST_DEBUG
 				void dbg_check_range(const void * i_start, const void * i_end)
 				{
-					assert(start >= m_type_infos && i_end < m_dbg_end_of_buffer );
+					assert(i_start >= m_type_infos && i_end <= m_dbg_end_of_buffer );
 				}
 			#endif
 
@@ -867,28 +876,34 @@ namespace reflective
 			*o_buffer_alignment = buffer_alignment;
 		}
 		
-		iterator insert_n_impl(const_iterator i_position, size_t i_count, const TypeInfo & i_source_type, const ELEMENT & i_source)
+		iterator insert_n_impl(const_iterator i_position, size_t i_count_to_insert, const TypeInfo & i_source_type, const ELEMENT & i_source)
 		{
-			/*const TypeInfo * new_type_info = nullptr;
-			void * new_element = nullptr;
+			const TypeInfo * return_type_info = nullptr;
+			void * return_element = nullptr;
 			
 			size_t buffer_size = 0, buffer_alignment = 0;
-			compute_buffer_size_and_alignment_for_insert(&buffer_size, &buffer_alignment, i_position, i_count, i_source_type);
+			compute_buffer_size_and_alignment_for_insert(&buffer_size, &buffer_alignment, i_position, i_count_to_insert, i_source_type);
 
-			if (i_count > 0)
+			if (i_count_to_insert > 0)
 			{
 				ListBuilder builder;				
 				try
 				{
-					builder.init(*static_cast<ALLOCATOR*>(this), m_size + i_count, buffer_size, buffer_alignment);
+					builder.init(*static_cast<ALLOCATOR*>(this), m_size + i_count_to_insert, buffer_size, buffer_alignment);
 					
-					size_t count_to_insert = i_count;
+					size_t count_to_insert = i_count_to_insert;
 					auto const end_it = cend();
-					for (auto it = cbegin();;  ++it)
+					for (auto it = cbegin();;)
 					{
 						if (it == i_position && count_to_insert > 0)
 						{
-							builder.add_by_copy(i_source_type, i_source);
+							auto const end_of_type_infos = builder.end_of_type_infos();
+							void * const new_element = builder.add_by_copy(i_source_type, i_source);
+							if (count_to_insert == i_count_to_insert)
+							{
+								return_type_info = end_of_type_infos;
+								return_element = new_element;
+							}
 							count_to_insert--;
 						}
 						else
@@ -898,10 +913,13 @@ namespace reflective
 								break;
 							}
 							builder.add_by_copy(*it.m_curr_type, *it.curr_element());
+							++it;
 						}						
 					}
 
-					m_size = i_source.size();
+					destroy_impl();
+
+					m_size += i_count_to_insert;
 					m_buffer = builder.commit();
 				}
 				catch (...)
@@ -913,82 +931,11 @@ namespace reflective
 			else
 			{
 				// inserting 0 new elements...
-				new_type_info = i_position.m_curr_type;
-				new_element = const_cast<void*>(i_position.m_curr_element);
+				return_type_info = i_position.m_curr_type;
+				return_element = const_cast<void*>(i_position.m_curr_element);
 			}
 
-			return iterator(InternalConstructorMem, new_element, new_type_info);*/
-
-			const TypeInfo * new_type_info = nullptr;
-			void * new_element = nullptr;
-
-			if (i_count > 0)
-			{
-				size_t buffer_size = 0, buffer_alignment = 0;
-				compute_buffer_size_and_alignment_for_insert(&buffer_size, &buffer_alignment, i_position, i_count, i_source_type );
-
-				DenseList new_list;
-
-				void * const buffer = details::aligned_alloc(*static_cast<ALLOCATOR*>(this), buffer_size, buffer_alignment);
-				TypeInfo * const types = static_cast<TypeInfo*>(buffer);
-
-				size_t count_to_insert = i_count;
-
-				auto curr_element = reinterpret_cast<uintptr_t>(types + size() + i_count);
-				TypeInfo * curr_type = types;
-				auto const end_it = cend();
-				for (auto it = cbegin(); ; )
-				{
-					const bool iterator_match = it == i_position;
-
-					const ELEMENT * copy_source = nullptr;
-					if (iterator_match && count_to_insert > 0)
-					{
-						new(curr_type) TypeInfo(i_source_type);
-						copy_source = &i_source;
-						count_to_insert--;
-					}
-					else
-					{
-						if (it == end_it)
-						{
-							break;
-						}
-
-						new (curr_type) TypeInfo(*(it.curr_type()));
-						copy_source = it.curr_element();
-						++it;
-					}
-
-					// upper align curr_element to curr_type->alignment()
-					const uintptr_t element_alignment = curr_type->alignment();
-					assert(details::is_valid_alignment(element_alignment)); // internal check: the alignment must be a power of 2
-					auto const alignment_mask = element_alignment - 1;
-					curr_element = (curr_element + alignment_mask) & ~alignment_mask;
-
-					if (iterator_match && new_type_info == nullptr)
-					{
-						new_type_info = curr_type;
-						new_element = reinterpret_cast<ELEMENT*>(curr_element);
-					}
-
-					curr_type->copy_construct(reinterpret_cast<void*>(curr_element), *copy_source);
-
-					curr_element += curr_type->size();
-					curr_type++;
-				}
-
-				// from now on, no exception can be thrown
-				destroy_impl();
-				m_size = m_size + i_count;
-				m_buffer = types;
-			}
-			else
-			{
-				new_type_info = i_position.m_curr_type;
-				new_element = const_cast<void*>(i_position.m_curr_element);
-			}
-			return iterator(InternalConstructorMem, new_element, new_type_info);
+			return iterator(InternalConstructorMem, return_element, return_type_info);
 		}
 
 		void compute_buffer_size_and_alignment_for_erase(size_t * o_buffer_size, size_t * o_buffer_alignment,
@@ -1065,9 +1012,9 @@ namespace reflective
 			inline static void construct(TypeInfo * i_types, void * i_elements, FIRST_TYPE && i_source, OTHER_TYPES && ... i_s1)
 			{
 				new(i_types) TypeInfo(TypeInfo::template make<FIRST_TYPE>());
-				FIRST_TYPE * const new_element = new(details::address_upper_align<FIRST_TYPE>(i_elements)) FIRST_TYPE(std::forward<FIRST_TYPE>(i_source));
+				FIRST_TYPE * const return_element = new(details::address_upper_align<FIRST_TYPE>(i_elements)) FIRST_TYPE(std::forward<FIRST_TYPE>(i_source));
 				RecursiveHelper<OTHER_TYPES...>::construct(
-					i_types + 1, new_element + 1, std::forward<OTHER_TYPES>(i_s1)...);
+					i_types + 1, return_element + 1, std::forward<OTHER_TYPES>(i_s1)...);
 			}
 		};
 

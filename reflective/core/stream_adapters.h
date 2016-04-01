@@ -222,7 +222,7 @@ namespace reflective
 		}
 		
 	private:
-		vector<CHAR> m_buffer, m_tmp_string;
+		std::vector<CHAR> m_buffer, m_tmp_string;
 		std::basic_istream<CHAR, CHAR_TRAITS> & m_underlying_stream;
 		std::basic_ostringstream<CHAR, CHAR_TRAITS> m_error_stream;
 		static const size_t s_min_buffer_size = 512;

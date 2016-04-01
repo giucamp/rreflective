@@ -108,9 +108,6 @@
     <ClInclude Include="..\reflective\core\in_buffer_text_stream.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="..\reflective\core\list.h">
-      <Filter>core</Filter>
-    </ClInclude>
     <ClInclude Include="..\reflective\core\out_buffer_text_stream.h">
       <Filter>core</Filter>
     </ClInclude>

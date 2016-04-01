@@ -74,8 +74,6 @@ namespace reflective
 	class ObjPtr;
 	class QualifiedTypePtr;
 	
-
-
 	template < typename UINT>
 		class StringHasher;
 	
@@ -94,6 +92,12 @@ namespace reflective
 
 // core headers
 #include "core\core.h"
+
+namespace reflective
+{
+	template <typename ELEMENT>
+		using List = DenseList<ELEMENT>;
+}
 
 // type headers
 #include "reflection\symbol.h"

@@ -541,5 +541,6 @@ namespace reflective
 
 		template <typename CHAR, typename CHAR_TRAITS >
 			void unit_test(BasicStringView<CHAR, CHAR_TRAITS>**, CorrectnessTestContext & i_context);
+
 	#endif
 }

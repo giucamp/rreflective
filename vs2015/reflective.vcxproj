@@ -196,7 +196,6 @@
     <ClInclude Include="..\reflective\core\core.h" />
     <ClInclude Include="..\reflective\core\identifier.h" />
     <ClInclude Include="..\reflective\core\in_buffer_text_stream.h" />
-    <ClInclude Include="..\reflective\core\list.h" />
     <ClInclude Include="..\reflective\core\out_buffer_text_stream.h" />
     <ClInclude Include="..\reflective\core\ptr_string.h" />
     <ClInclude Include="..\reflective\core\stream_adapters.h" />
