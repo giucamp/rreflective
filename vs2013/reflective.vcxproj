@@ -143,7 +143,6 @@
     <ClInclude Include="..\reflective\core\stream_adapters.h" />
     <ClInclude Include="..\reflective\core\string_view.h" />
     <ClInclude Include="..\reflective\core\string_hash.h" />
-    <ClInclude Include="..\reflective\core\list.h" />
     <ClInclude Include="..\reflective\core\traits.h" />
     <ClInclude Include="..\reflective\reflection\class.h" />
     <ClInclude Include="..\reflective\reflection\class_member.h" />

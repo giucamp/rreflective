@@ -503,7 +503,7 @@ namespace reflective
 
 		bool operator == (const DenseList & i_source) const
 		{
-			//return (m_size == i_source.m_size) && std::equal(cbegin(), cend(), i_source.cbegin());
+			// this in visual studio generates a warning, because the iterators are not "checked" // return (m_size == i_source.m_size) && std::equal(cbegin(), cend(), i_source.cbegin());
 			if (m_size != i_source.m_size)
 			{
 				return false;
@@ -612,47 +612,12 @@ namespace reflective
 								first_in_range = false;
 							}
 						}
+					}
 
-						// upper align curr_element to it.m_curr_type->alignment()
-						/*if (it != end_it)
-						{
-							const uintptr_t element_alignment = it.m_curr_type->alignment();
-							assert(details::is_valid_alignment(element_alignment));
-							auto const alignment_mask = element_alignment - 1;
-							curr_element = (curr_element + alignment_mask) & ~alignment_mask;
-						}
-						else
-						{
-							curr_element = 0;
-							if (it == i_from)
-							{
-								is_in_range = true;
-								return_type_info = curr_type;
-								return_element = reinterpret_cast<void*>(curr_element);
-							}
-							break;
-						}
-
-						if (it == i_from)
-						{
-							is_in_range = true;
-							return_type_info = curr_type;
-							return_element = reinterpret_cast<void*>(curr_element);
-						}
-						if (it == i_to)
-						{
-							is_in_range = false;
-						}
-
-						if (!is_in_range)
-						{
-							new(curr_type) TypeInfo(*it.m_curr_type);
-
-							curr_type->copy_construct(reinterpret_cast<void*>(curr_element), *it);
-
-							curr_element += curr_type->size();
-							curr_type++;
-						}*/
+					if (return_type_info == nullptr) // if no elements were copied after the erased range
+					{
+						assert(i_to == cend());
+						return_type_info = builder.end_of_type_infos();
 					}
 
 					destroy_impl();
@@ -665,87 +630,8 @@ namespace reflective
 					builder.rollback(*static_cast<ALLOCATOR*>(this), buffer_size, buffer_alignment);
 					throw;
 				}
-
 				return iterator(InternalConstructorMem, return_element, return_type_info);
 			}
-
-			/*size_t buffer_size = 0, buffer_alignment = 0;
-			compute_buffer_size_and_alignment_for_erase(&buffer_size, &buffer_alignment, i_from, i_to);
-			const size_t size_to_remove = i_to.m_curr_type - i_from.m_curr_type;
-
-			assert(size_to_remove <= m_size);
-			if (size_to_remove == m_size)
-			{
-				assert(i_from == cbegin() && i_to == cend());
-				clear();
-				return begin();
-			}
-			else
-			{
-				DenseList new_list;
-
-				void * const buffer = details::aligned_alloc(*static_cast<ALLOCATOR*>(this), buffer_size, buffer_alignment);
-				TypeInfo * const types = static_cast<TypeInfo*>(buffer);
-				const size_t new_size = m_size - size_to_remove;
-
-				auto curr_element = reinterpret_cast<uintptr_t>(types + new_size);
-				TypeInfo * curr_type = types;
-				TypeInfo * return_type_info = nullptr;
-				void * return_element = nullptr;
-
-				const auto end_it = cend();
-				bool is_in_range = false;
-				for (auto it = cbegin(); ; it++)
-				{
-					// upper align curr_element to it.m_curr_type->alignment()
-					if (it != end_it)
-					{
-						const uintptr_t element_alignment = it.m_curr_type->alignment();
-						assert(details::is_valid_alignment(element_alignment));
-						auto const alignment_mask = element_alignment - 1;
-						curr_element = (curr_element + alignment_mask) & ~alignment_mask;						
-					}
-					else
-					{
-						curr_element = 0;
-						if (it == i_from)
-						{
-							is_in_range = true;
-							return_type_info = curr_type;
-							return_element = reinterpret_cast<void*>(curr_element);
-						}
-						break;
-					}
-
-					if (it == i_from)
-					{
-						is_in_range = true;
-						return_type_info = curr_type;
-						return_element = reinterpret_cast<void*>(curr_element);
-					}
-					if (it == i_to)
-					{
-						is_in_range = false;
-					}
-
-					if (!is_in_range)
-					{
-						new(curr_type) TypeInfo(*it.m_curr_type);
-																		
-						curr_type->copy_construct(reinterpret_cast<void*>(curr_element), *it);
-						
-						curr_element += curr_type->size();
-						curr_type++;
-					}
-				}
-
-				// from now on, no exception can be thrown
-				destroy_impl();
-				m_size = new_size;
-				m_buffer = types;
-
-				return iterator(InternalConstructorMem, return_element, return_type_info);
-			}*/
 		}
 
 		void clear()

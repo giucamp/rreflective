@@ -78,9 +78,6 @@
     <ClInclude Include="..\reflective\reflection\namespace_member.h">
       <Filter>reflection</Filter>
     </ClInclude>
-    <ClInclude Include="..\reflective\core\list.h">
-      <Filter>core</Filter>
-    </ClInclude>
     <ClInclude Include="..\reflective\reflection\symbol.h">
       <Filter>reflection</Filter>
     </ClInclude>
