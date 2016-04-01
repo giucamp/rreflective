@@ -551,7 +551,125 @@ namespace reflective
 
 		iterator erase(const_iterator i_from, const_iterator i_to)
 		{
-			size_t buffer_size = 0, buffer_alignment = 0;
+			const size_t size_to_remove = i_to.m_curr_type - i_from.m_curr_type;
+
+			assert(size_to_remove <= m_size);
+			if (size_to_remove == m_size)
+			{
+				// erasing all the elements
+				assert(i_from == cbegin() && i_to == cend());
+				clear();
+				return begin();
+			}
+			else if(size_to_remove == 0)
+			{
+				// erasing 0 new elements...
+				return iterator(InternalConstructorMem, const_cast<void*>(i_from.m_curr_element), i_from.m_curr_type);
+			}
+			else
+			{
+				size_t buffer_size = 0, buffer_alignment = 0;
+				compute_buffer_size_and_alignment_for_erase(&buffer_size, &buffer_alignment, i_from, i_to);
+
+				const TypeInfo * return_type_info = nullptr;
+				void * return_element = nullptr;
+
+				ListBuilder builder;
+				try
+				{
+					builder.init(*static_cast<ALLOCATOR*>(this), m_size - size_to_remove, buffer_size, buffer_alignment);
+			
+					const auto end_it = cend();
+					bool is_in_range = false;
+					bool first_in_range = false;
+					for (auto it = cbegin(); ; it++)
+					{						
+						if (it == i_from)
+						{
+							is_in_range = true;
+							first_in_range = true;
+						}
+						if (it == i_to)
+						{
+							is_in_range = false;
+						}
+
+						if (it == end_it)
+						{
+							assert(!is_in_range);
+							break;
+						}
+
+						if (!is_in_range)
+						{
+							auto const new_type_info = builder.end_of_type_infos();
+							auto const new_element = builder.add_by_copy(*it.m_curr_type, *it.curr_element());
+
+							if (first_in_range)
+							{
+								return_type_info = new_type_info;
+								return_element = new_element;
+								first_in_range = false;
+							}
+						}
+
+						// upper align curr_element to it.m_curr_type->alignment()
+						/*if (it != end_it)
+						{
+							const uintptr_t element_alignment = it.m_curr_type->alignment();
+							assert(details::is_valid_alignment(element_alignment));
+							auto const alignment_mask = element_alignment - 1;
+							curr_element = (curr_element + alignment_mask) & ~alignment_mask;
+						}
+						else
+						{
+							curr_element = 0;
+							if (it == i_from)
+							{
+								is_in_range = true;
+								return_type_info = curr_type;
+								return_element = reinterpret_cast<void*>(curr_element);
+							}
+							break;
+						}
+
+						if (it == i_from)
+						{
+							is_in_range = true;
+							return_type_info = curr_type;
+							return_element = reinterpret_cast<void*>(curr_element);
+						}
+						if (it == i_to)
+						{
+							is_in_range = false;
+						}
+
+						if (!is_in_range)
+						{
+							new(curr_type) TypeInfo(*it.m_curr_type);
+
+							curr_type->copy_construct(reinterpret_cast<void*>(curr_element), *it);
+
+							curr_element += curr_type->size();
+							curr_type++;
+						}*/
+					}
+
+					destroy_impl();
+
+					m_size -= size_to_remove;
+					m_buffer = builder.commit();
+				}
+				catch (...)
+				{
+					builder.rollback(*static_cast<ALLOCATOR*>(this), buffer_size, buffer_alignment);
+					throw;
+				}
+
+				return iterator(InternalConstructorMem, return_element, return_type_info);
+			}
+
+			/*size_t buffer_size = 0, buffer_alignment = 0;
 			compute_buffer_size_and_alignment_for_erase(&buffer_size, &buffer_alignment, i_from, i_to);
 			const size_t size_to_remove = i_to.m_curr_type - i_from.m_curr_type;
 
@@ -576,14 +694,14 @@ namespace reflective
 				void * return_element = nullptr;
 
 				const auto end_it = cend();
-				bool is_range = false;
+				bool is_in_range = false;
 				for (auto it = cbegin(); ; it++)
 				{
 					// upper align curr_element to it.m_curr_type->alignment()
 					if (it != end_it)
 					{
 						const uintptr_t element_alignment = it.m_curr_type->alignment();
-						assert(details::is_valid_alignment(element_alignment)); // internal check: the alignment must be a power of 2
+						assert(details::is_valid_alignment(element_alignment));
 						auto const alignment_mask = element_alignment - 1;
 						curr_element = (curr_element + alignment_mask) & ~alignment_mask;						
 					}
@@ -592,7 +710,7 @@ namespace reflective
 						curr_element = 0;
 						if (it == i_from)
 						{
-							is_range = true;
+							is_in_range = true;
 							return_type_info = curr_type;
 							return_element = reinterpret_cast<void*>(curr_element);
 						}
@@ -601,16 +719,16 @@ namespace reflective
 
 					if (it == i_from)
 					{
-						is_range = true;
+						is_in_range = true;
 						return_type_info = curr_type;
 						return_element = reinterpret_cast<void*>(curr_element);
 					}
 					if (it == i_to)
 					{
-						is_range = false;
+						is_in_range = false;
 					}
 
-					if (!is_range)
+					if (!is_in_range)
 					{
 						new(curr_type) TypeInfo(*it.m_curr_type);
 																		
@@ -627,7 +745,7 @@ namespace reflective
 				m_buffer = types;
 
 				return iterator(InternalConstructorMem, return_element, return_type_info);
-			}
+			}*/
 		}
 
 		void clear()
@@ -831,7 +949,7 @@ namespace reflective
 			{
 				const size_t curr_size = it.curr_type()->size();
 				const size_t curr_alignment = it.curr_type()->alignment();
-				assert(curr_size > 0 && details::is_valid_alignment(curr_alignment)); // the alignment must be a power of 2
+				assert(curr_size > 0 && details::is_valid_alignment(curr_alignment));
 				buffer_size = (buffer_size + (curr_alignment - 1)) & ~(curr_alignment - 1);
 				buffer_size += curr_size;
 
