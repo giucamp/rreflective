@@ -26,14 +26,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ***********************************************************************************/
 
 #pragma once
-#ifndef INCLUDING_REFLECTIVE
-	#error "cant't include this header directly, include reflective.h instead"
-#endif
-
-#include <vector>
-#include <unordered_map>
-#include <typeinfo>
-#include <typeindex>
 
 namespace reflective
 {
@@ -62,6 +54,26 @@ namespace reflective
 		inline bool is_address_aligned(const TYPE * i_address)
 	{
 		return is_address_aligned(i_address, std::alignment_of<TYPE>::value);
+	}
+
+	template <typename TYPE>
+		inline TYPE * address_upper_align(void * i_address) REFLECTIVE_NOEXCEPT
+	{
+		const size_t alignment_mask = std::alignment_of<TYPE>::value - 1;
+		return reinterpret_cast<TYPE*>((reinterpret_cast<uintptr_t>(i_address) + alignment_mask) & ~alignment_mask);
+	}
+
+	inline void * address_upper_align(void * i_address, size_t i_alignment) REFLECTIVE_NOEXCEPT
+	{
+		assert(is_power_of_2(i_alignment));
+		const size_t alignment_mask = i_alignment - 1;
+		return reinterpret_cast<void*>((reinterpret_cast<uintptr_t>(i_address) + alignment_mask) & ~alignment_mask);
+	}
+
+	template <typename TYPE>
+		inline TYPE * address_add(TYPE * i_address, size_t i_offset) REFLECTIVE_NOEXCEPT
+	{
+		return reinterpret_cast<TYPE*>(reinterpret_cast<uintptr_t>(i_address) + i_offset);
 	}
 
 	/** Returns true whether the given pair of pointers enclose a valid array of objects of the type. This function is intended to validate
@@ -95,50 +107,61 @@ namespace reflective
 		return true;
 	}
 
-	template <typename TYPE>
-		inline void dbg_object_validate( const TYPE & /*i_object*/ )
+	struct AlignmentHeader
 	{
-
-	}
-				
-	template <typename TYPE>
-		using unique_ptr = std::unique_ptr< TYPE >;
-
-	using std::make_unique;
-	
-	template <typename TYPE>
-		using vector = std::vector< TYPE > ;
-
-	template <typename KEY, typename TYPE, typename HASHER = std::hash<KEY>, typename KEY_EQUAL_PRED = std::equal_to<KEY> >
-		using unordered_map = std::unordered_map< KEY, TYPE, HASHER, KEY_EQUAL_PRED >;
-
-
-	class Ext
-	{
-	public:
-		
-		template <typename CONTAINER, typename ELEMENT>
-			static auto find(CONTAINER & i_container, ELEMENT && i_value) -> decltype(std::find(i_container.begin(), i_container.end(), i_value))
-		{
-			return std::find(i_container.begin(), i_container.end(), i_value);
-		}
-
-		template <typename CONTAINER, typename PREDICATE>
-			static auto find_if(CONTAINER & i_container, PREDICATE && i_predicate) -> decltype(std::find_if(i_container.begin(), i_container.end(), i_predicate))
-		{
-			return std::find_if(i_container.begin(), i_container.end(), i_predicate);
-		}
-
-		template <typename CONTAINER, typename ELEMENT>
-			static bool contains(CONTAINER & i_container, ELEMENT && i_value)
-		{
-			return std::find(i_container.begin(), i_container.end(), i_value) != i_container.end();
-		}
-
-		template <typename CONTAINER, typename PREDICATE>
-			static bool contains_if(CONTAINER & i_container, PREDICATE && i_predicate)
-		{
-			return std::find_if(i_container.begin(), i_container.end(), i_predicate) != i_container.end();
-		}
+		void * m_block;
 	};
-}
+
+	template <typename ALLOCATOR>
+		void * aligned_alloc(ALLOCATOR & i_allocator, size_t i_size, size_t i_alignment)
+	{
+		assert(is_power_of_2(i_alignment));
+
+		if (i_alignment <= std::alignment_of<void*>::value)
+		{
+			typename std::allocator_traits<ALLOCATOR>::template rebind_alloc<void *> other_alloc(i_allocator);
+			return other_alloc.allocate((i_size + sizeof(void*) - 1) / sizeof(void*));
+		}
+		else
+		{
+			const size_t extra_size = (i_alignment >= sizeof(AlignmentHeader) ? i_alignment : sizeof(AlignmentHeader));
+			const size_t actual_size = i_size + extra_size;
+
+			typename std::allocator_traits<ALLOCATOR>::template rebind_alloc<char> char_alloc(i_allocator);
+			void * complete_block = char_alloc.allocate(actual_size);
+			auto uint_address = reinterpret_cast<uintptr_t>(complete_block);
+
+			uint_address += extra_size;
+			uint_address &= ~(i_alignment - 1);
+
+			AlignmentHeader * header = reinterpret_cast<AlignmentHeader*>(uint_address) - 1;
+			header->m_block = complete_block;
+
+			return reinterpret_cast<void*>(uint_address);
+		}
+	}
+
+	template <typename ALLOCATOR>
+		void aligned_free(ALLOCATOR & i_allocator, void * i_block, size_t i_size, size_t i_alignment) REFLECTIVE_NOEXCEPT
+	{
+		if (i_block != nullptr)
+		{
+			if (i_alignment <= std::alignment_of<void*>::value)
+			{
+				typename std::allocator_traits<ALLOCATOR>::template rebind_alloc<void *> other_alloc(i_allocator);
+				other_alloc.deallocate(static_cast<void**>(i_block), (i_size + sizeof(void*) - 1) / sizeof(void*));
+			}
+			else
+			{
+				const size_t extra_size = (i_alignment >= sizeof(AlignmentHeader) ? i_alignment : sizeof(AlignmentHeader));
+				const size_t actual_size = i_size + extra_size;
+
+				AlignmentHeader * header = static_cast<AlignmentHeader*>(i_block) - 1;
+
+				typename std::allocator_traits<ALLOCATOR>::template rebind_alloc<char> char_alloc(i_allocator);
+				char_alloc.deallocate(static_cast<char*>(header->m_block), actual_size);
+			}
+		}
+	}
+
+} // namespace reflective

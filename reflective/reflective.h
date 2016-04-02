@@ -39,6 +39,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <algorithm>
 #include <iostream>
 #include <sstream>
+#include <vector>
+#include <typeinfo>
+#include <typeindex>
 
 #define INCLUDING_REFLECTIVE
 
@@ -88,7 +91,6 @@ namespace reflective
 }
 
 #include "reflective_settings.h"
-#include "reflective_common.h"
 
 // core headers
 #include "density\density.h"
@@ -97,6 +99,54 @@ namespace reflective
 {
 	template <typename ELEMENT>
 		using List = DenseList<ELEMENT>;
+
+	template <typename TYPE>
+		inline void dbg_object_validate( const TYPE & /*i_object*/ )
+	{
+
+	}
+				
+	template <typename TYPE>
+		using unique_ptr = std::unique_ptr< TYPE >;
+
+	using std::make_unique;
+	
+	template <typename TYPE>
+		using vector = std::vector< TYPE > ;
+
+	template <typename KEY, typename TYPE, typename HASHER = std::hash<KEY>, typename KEY_EQUAL_PRED = std::equal_to<KEY> >
+		using unordered_map = std::unordered_map< KEY, TYPE, HASHER, KEY_EQUAL_PRED >;
+
+			
+
+	class Ext
+	{
+	public:
+		
+		template <typename CONTAINER, typename ELEMENT>
+			static auto find(CONTAINER & i_container, ELEMENT && i_value) -> decltype(std::find(i_container.begin(), i_container.end(), i_value))
+		{
+			return std::find(i_container.begin(), i_container.end(), i_value);
+		}
+
+		template <typename CONTAINER, typename PREDICATE>
+			static auto find_if(CONTAINER & i_container, PREDICATE && i_predicate) -> decltype(std::find_if(i_container.begin(), i_container.end(), i_predicate))
+		{
+			return std::find_if(i_container.begin(), i_container.end(), i_predicate);
+		}
+
+		template <typename CONTAINER, typename ELEMENT>
+			static bool contains(CONTAINER & i_container, ELEMENT && i_value)
+		{
+			return std::find(i_container.begin(), i_container.end(), i_value) != i_container.end();
+		}
+
+		template <typename CONTAINER, typename PREDICATE>
+			static bool contains_if(CONTAINER & i_container, PREDICATE && i_predicate)
+		{
+			return std::find_if(i_container.begin(), i_container.end(), i_predicate) != i_container.end();
+		}
+	};
 }
 
 // type headers

@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="core">
-      <UniqueIdentifier>{db18c095-47d7-490e-aaae-e3a22225a7aa}</UniqueIdentifier>
-    </Filter>
     <Filter Include="reflection">
       <UniqueIdentifier>{fbb2c830-fbe2-4ae6-9504-2a8fa165c772}</UniqueIdentifier>
     </Filter>
@@ -13,21 +10,23 @@
     <Filter Include="reflection\property">
       <UniqueIdentifier>{5aee0120-f38c-441c-8026-8735713eb228}</UniqueIdentifier>
     </Filter>
-    <Filter Include="core\testing">
-      <UniqueIdentifier>{7ae1a29c-a10e-4d3d-8422-84e088da9845}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="core\impl">
-      <UniqueIdentifier>{e8c8a74a-63dc-427b-9d80-fdfbb813abd4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="reflection\impl">
       <UniqueIdentifier>{34e6ebe8-cbd4-4b53-9b2f-e57d81de1bd4}</UniqueIdentifier>
     </Filter>
     <Filter Include="reflection\testing">
       <UniqueIdentifier>{20c07bcf-570d-429e-b287-ca1e1d17903e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="density">
+      <UniqueIdentifier>{db18c095-47d7-490e-aaae-e3a22225a7aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="density\testing">
+      <UniqueIdentifier>{7ae1a29c-a10e-4d3d-8422-84e088da9845}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="density\impl">
+      <UniqueIdentifier>{e8c8a74a-63dc-427b-9d80-fdfbb813abd4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\reflective\reflective_common.h" />
     <ClInclude Include="..\reflective\reflective_settings.h" />
     <ClInclude Include="..\reflective\reflective.h" />
     <ClInclude Include="..\reflective\reflection\qualified_type_ptr.h">
@@ -99,38 +98,44 @@
     <ClInclude Include="..\reflective\reflection\base_type.h">
       <Filter>reflection</Filter>
     </ClInclude>
-    <ClInclude Include="..\reflective\core\array_view.h">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\reflective\core\identifier.h">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\reflective\core\in_buffer_text_stream.h">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\reflective\core\out_buffer_text_stream.h">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\reflective\core\ptr_string.h">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\reflective\core\stream_adapters.h">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\reflective\core\string_hash.h">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\reflective\core\string_view.h">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\reflective\core\core.h">
-      <Filter>core</Filter>
-    </ClInclude>
     <ClInclude Include="..\reflective\reflection\get_naked_type_traits.h">
       <Filter>reflection</Filter>
     </ClInclude>
-    <ClInclude Include="..\reflective\core\dense_list.h">
-      <Filter>core</Filter>
+    <ClInclude Include="..\reflective\density\array_view.h">
+      <Filter>density</Filter>
+    </ClInclude>
+    <ClInclude Include="..\reflective\density\dense_list.h">
+      <Filter>density</Filter>
+    </ClInclude>
+    <ClInclude Include="..\reflective\density\density.h">
+      <Filter>density</Filter>
+    </ClInclude>
+    <ClInclude Include="..\reflective\density\identifier.h">
+      <Filter>density</Filter>
+    </ClInclude>
+    <ClInclude Include="..\reflective\density\in_buffer_text_stream.h">
+      <Filter>density</Filter>
+    </ClInclude>
+    <ClInclude Include="..\reflective\density\out_buffer_text_stream.h">
+      <Filter>density</Filter>
+    </ClInclude>
+    <ClInclude Include="..\reflective\density\ptr_string.h">
+      <Filter>density</Filter>
+    </ClInclude>
+    <ClInclude Include="..\reflective\density\stream_adapters.h">
+      <Filter>density</Filter>
+    </ClInclude>
+    <ClInclude Include="..\reflective\density\string_hash.h">
+      <Filter>density</Filter>
+    </ClInclude>
+    <ClInclude Include="..\reflective\density\string_view.h">
+      <Filter>density</Filter>
+    </ClInclude>
+    <ClInclude Include="..\reflective\density\testing_utils.h">
+      <Filter>density</Filter>
+    </ClInclude>
+    <ClInclude Include="..\reflective\density\density_common.h">
+      <Filter>density</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -143,15 +148,6 @@
     </ClCompile>
     <ClCompile Include="..\reflective\unit_testing\uint_test_manager.cpp">
       <Filter>unit_testing</Filter>
-    </ClCompile>
-    <ClCompile Include="..\reflective\core\testing\in_buffer_text_stream.cpp">
-      <Filter>core\testing</Filter>
-    </ClCompile>
-    <ClCompile Include="..\reflective\core\testing\out_buffer_text_stream.cpp">
-      <Filter>core\testing</Filter>
-    </ClCompile>
-    <ClCompile Include="..\reflective\core\core.cpp">
-      <Filter>core</Filter>
     </ClCompile>
     <ClCompile Include="..\reflective\reflection\testing\type_derived_list_test.cpp">
       <Filter>reflection\testing</Filter>
@@ -198,8 +194,17 @@
     <ClCompile Include="..\reflective\reflection\testing\qualified_type_ptr_test.cpp">
       <Filter>reflection\testing</Filter>
     </ClCompile>
-    <ClCompile Include="..\reflective\core\testing\dense_list_test.cpp">
-      <Filter>core\testing</Filter>
+    <ClCompile Include="..\reflective\density\density.cpp">
+      <Filter>density</Filter>
+    </ClCompile>
+    <ClCompile Include="..\reflective\density\testing\dense_list_test.cpp">
+      <Filter>density\testing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\reflective\density\testing\in_buffer_text_stream.cpp">
+      <Filter>density\testing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\reflective\density\testing\out_buffer_text_stream.cpp">
+      <Filter>density\testing</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -221,11 +226,11 @@
     <None Include="..\reflective\reflection\namespace.inl">
       <Filter>reflection</Filter>
     </None>
-    <None Include="..\reflective\core\core.inl">
-      <Filter>core</Filter>
+    <None Include="..\reflective\density\density.inl">
+      <Filter>density</Filter>
     </None>
-    <None Include="..\reflective\core\impl\string_view.inl">
-      <Filter>core\impl</Filter>
+    <None Include="..\reflective\density\impl\string_view.inl">
+      <Filter>density\impl</Filter>
     </None>
   </ItemGroup>
 </Project>

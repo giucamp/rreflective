@@ -1,5 +1,6 @@
 
 #pragma once
+#include "density_common.h"
 
 #ifdef NDEBUG
 	#define REFLECTIVE_DENSE_LIST_DEBUG		0
@@ -168,92 +169,6 @@ namespace reflective
 		MoverDestructorPtr const m_mover_destructor;
 	};
 
-	namespace details
-	{
-		inline bool is_valid_alignment(size_t i_alignment) REFLECTIVE_NOEXCEPT
-		{
-			return i_alignment > 0 && (i_alignment & (i_alignment - 1)) == 0;
-		}
-
-		template <typename TYPE>
-			inline TYPE * address_upper_align(void * i_address) REFLECTIVE_NOEXCEPT
-		{
-			const size_t alignment_mask = std::alignment_of<TYPE>::value - 1;
-			return reinterpret_cast<TYPE*>((reinterpret_cast<uintptr_t>(i_address) + alignment_mask) & ~alignment_mask);
-		}
-
-		inline void * address_upper_align(void * i_address, size_t i_alignment) REFLECTIVE_NOEXCEPT
-		{
-			assert(is_valid_alignment(i_alignment));
-			const size_t alignment_mask = i_alignment - 1;
-			return reinterpret_cast<void*>((reinterpret_cast<uintptr_t>(i_address) + alignment_mask) & ~alignment_mask);
-		}
-
-		template <typename TYPE>
-			inline TYPE * address_add(TYPE * i_address, size_t i_offset) REFLECTIVE_NOEXCEPT
-		{
-			return reinterpret_cast<TYPE*>(reinterpret_cast<uintptr_t>(i_address) + i_offset);
-		}
-
-		struct AlignmentHeader
-		{
-			void * m_block;
-		};
-
-		template <typename ALLOCATOR>
-			void * aligned_alloc(ALLOCATOR & i_allocator, size_t i_size, size_t i_alignment)
-		{
-			assert(is_valid_alignment(i_alignment));
-
-			if (i_alignment <= std::alignment_of<void*>::value)
-			{
-				typename std::allocator_traits<ALLOCATOR>::template rebind_alloc<void *> other_alloc(i_allocator);
-				return other_alloc.allocate((i_size + sizeof(void*) - 1) / sizeof(void*));
-			}
-			else
-			{
-				const size_t extra_size = (i_alignment >= sizeof(AlignmentHeader) ? i_alignment : sizeof(AlignmentHeader));
-				const size_t actual_size = i_size + extra_size;
-
-				typename std::allocator_traits<ALLOCATOR>::template rebind_alloc<char> char_alloc(i_allocator);
-				void * complete_block = char_alloc.allocate(actual_size);
-				auto uint_address = reinterpret_cast<uintptr_t>(complete_block);
-
-				uint_address += extra_size;
-				uint_address &= ~(i_alignment - 1);
-
-				AlignmentHeader * header = reinterpret_cast<AlignmentHeader*>(uint_address) - 1;
-				header->m_block = complete_block;
-
-				return reinterpret_cast<void*>(uint_address);
-			}
-		}
-
-		template <typename ALLOCATOR>
-			void aligned_free(ALLOCATOR & i_allocator, void * i_block, size_t i_size, size_t i_alignment) REFLECTIVE_NOEXCEPT
-		{
-			if (i_block != nullptr)
-			{
-				if (i_alignment <= std::alignment_of<void*>::value)
-				{
-					typename std::allocator_traits<ALLOCATOR>::template rebind_alloc<void *> other_alloc(i_allocator);
-					other_alloc.deallocate(static_cast<void**>(i_block), (i_size + sizeof(void*) - 1) / sizeof(void*));
-				}
-				else
-				{
-					const size_t extra_size = (i_alignment >= sizeof(AlignmentHeader) ? i_alignment : sizeof(AlignmentHeader));
-					const size_t actual_size = i_size + extra_size;
-
-					AlignmentHeader * header = static_cast<AlignmentHeader*>(i_block) - 1;
-
-					typename std::allocator_traits<ALLOCATOR>::template rebind_alloc<char> char_alloc(i_allocator);
-					char_alloc.deallocate(static_cast<char*>(header->m_block), actual_size);
-				}
-			}
-		}
-			
-	} // namespace details
-
 	/** A dense-list is a sequence container of heterogeneous elements. */
 	template <typename ELEMENT, typename ALLOCATOR, typename TYPE_INFO >
 		class DenseList : private ALLOCATOR
@@ -396,7 +311,7 @@ namespace reflective
 			value_type * curr_element() const REFLECTIVE_NOEXCEPT 
 			{ 
 				auto const curr_element_alignment = m_curr_type->alignment();
-				assert(details::is_valid_alignment(curr_element_alignment));
+				assert(is_power_of_2(curr_element_alignment));
 				return reinterpret_cast<value_type*>(
 					(reinterpret_cast<uintptr_t>(m_curr_element) + (curr_element_alignment - 1)) & ~(curr_element_alignment - 1) );
 			}
@@ -479,7 +394,7 @@ namespace reflective
 			value_type * curr_element() const REFLECTIVE_NOEXCEPT 
 			{ 
 				auto const curr_element_alignment = m_curr_type->alignment();
-				assert(details::is_valid_alignment(curr_element_alignment));
+				assert(is_power_of_2(curr_element_alignment));
 				return reinterpret_cast<value_type*>(
 					(reinterpret_cast<uintptr_t>(m_curr_element) + (curr_element_alignment - 1)) & ~(curr_element_alignment - 1) );
 			}
@@ -647,7 +562,7 @@ namespace reflective
 		{
 			if (m_size > 0)
 			{
-				assert(details::is_valid_alignment(m_buffer[0].alignment()));
+				assert(is_power_of_2(m_buffer[0].alignment()));
 				const auto first_element_align_mask = m_buffer[0].alignment() - 1;
 				auto ptr = reinterpret_cast<uintptr_t>(m_buffer + m_size);
 				ptr = (ptr + first_element_align_mask) & ~first_element_align_mask;
@@ -670,23 +585,23 @@ namespace reflective
 
 			void init(ALLOCATOR & i_allocator, size_t i_count, size_t i_buffer_size, size_t i_buffer_alignment)
 			{
-				void * const buffer = details::aligned_alloc(i_allocator, i_buffer_size, i_buffer_alignment);
+				void * const buffer = aligned_alloc(i_allocator, i_buffer_size, i_buffer_alignment);
 				m_end_of_type_infos = m_type_infos = static_cast<TypeInfo*>(buffer);
 				m_end_of_elements = m_elements = m_type_infos + i_count;
 
 				#if REFLECTIVE_DENSE_LIST_DEBUG
-					m_dbg_end_of_buffer = details::address_add(buffer, i_buffer_size);
+					m_dbg_end_of_buffer = address_add(buffer, i_buffer_size);
 				#endif
 			}
 
 			void * add_by_copy(const TypeInfo & i_type_info, const ELEMENT & i_source)
 			{
-				void * return_element = details::address_upper_align(m_end_of_elements, i_type_info.alignment());
+				void * return_element = address_upper_align(m_end_of_elements, i_type_info.alignment());
 				#if REFLECTIVE_DENSE_LIST_DEBUG
-					dbg_check_range(return_element, details::address_add(return_element, i_type_info.size()));
+					dbg_check_range(return_element, address_add(return_element, i_type_info.size()));
 				#endif
 				i_type_info.copy_construct(return_element, i_source);
-				m_end_of_elements = details::address_add(return_element, i_type_info.size());
+				m_end_of_elements = address_add(return_element, i_type_info.size());
 				#if REFLECTIVE_DENSE_LIST_DEBUG
 					dbg_check_range(m_end_of_type_infos, m_end_of_type_infos + 1);
 				#endif
@@ -697,12 +612,12 @@ namespace reflective
 
 			void * add_by_move(const TypeInfo & i_type_info, ELEMENT && i_source)
 			{
-				void * return_element = details::address_upper_align(m_end_of_elements, i_type_info.alignment());
+				void * return_element = address_upper_align(m_end_of_elements, i_type_info.alignment());
 				#if REFLECTIVE_DENSE_LIST_DEBUG
-					dbg_check_range(return_element, details::address_add(return_element, i_type_info.size()));
+					dbg_check_range(return_element, address_add(return_element, i_type_info.size()));
 				#endif
 				i_type_info.move_construct_if_no_except(return_element, std::move(i_source));
-				m_end_of_elements = details::address_add(return_element, i_type_info.size());
+				m_end_of_elements = address_add(return_element, i_type_info.size());
 				#if REFLECTIVE_DENSE_LIST_DEBUG
 					dbg_check_range(m_end_of_type_infos, m_end_of_type_infos + 1);
 				#endif
@@ -713,11 +628,11 @@ namespace reflective
 
 			void * add_dont_constuct(const TypeInfo & i_type_info)
 			{
-				void * return_element = details::address_upper_align(m_end_of_elements, i_type_info.alignment());
+				void * return_element = address_upper_align(m_end_of_elements, i_type_info.alignment());
 				#if REFLECTIVE_DENSE_LIST_DEBUG
-					dbg_check_range(return_element, details::address_add(return_element, i_type_info.size()));
+					dbg_check_range(return_element, address_add(return_element, i_type_info.size()));
 				#endif
-				m_end_of_elements = details::address_add(return_element, i_type_info.size());
+				m_end_of_elements = address_add(return_element, i_type_info.size());
 				#if REFLECTIVE_DENSE_LIST_DEBUG
 					dbg_check_range(m_end_of_type_infos, m_end_of_type_infos + 1);
 				#endif
@@ -743,12 +658,12 @@ namespace reflective
 					void * element = m_elements;
 					for (TypeInfo * type_info = m_type_infos; type_info < m_end_of_type_infos; type_info++)
 					{
-						element = details::address_upper_align(m_end_of_elements, type_info->alignment());
+						element = address_upper_align(m_end_of_elements, type_info->alignment());
 						type_info->destroy( static_cast<ELEMENT*>(element));
-						element = details::address_add(element, type_info->size());
+						element = address_add(element, type_info->size());
 						type_info->~TypeInfo();
 					}
-					details::aligned_free(i_allocator, m_type_infos, i_buffer_size, i_buffer_alignment);
+					aligned_free(i_allocator, m_type_infos, i_buffer_size, i_buffer_alignment);
 				}
 			}
 
@@ -782,7 +697,7 @@ namespace reflective
 				curr_type->destroy(it.curr_element());
 				curr_type->TypeInfo::~TypeInfo();
 			}
-			details::aligned_free( *static_cast<ALLOCATOR*>(this), m_buffer, dense_size, dense_alignment);
+			aligned_free( *static_cast<ALLOCATOR*>(this), m_buffer, dense_size, dense_alignment);
 		}
 
 		void copy_impl(const DenseList & i_source)
@@ -842,13 +757,6 @@ namespace reflective
 				builder.rollback(static_cast<ALLOCATOR&>(o_dest_list), buffer_size, buffer_alignment);
 				throw;
 			}
-			/*void * const buffer = details::aligned_alloc(static_cast<ALLOCATOR&>(o_dest_list), buffer_size, buffer_alignment);
-			TypeInfo * const types = static_cast<TypeInfo*>(buffer);
-			void * const elements = types + element_count;
-
-			RecursiveHelper<TYPES...>::construct(types, elements, std::forward<TYPES>(i_args)...);
-			o_dest_list.m_size = element_count;
-			o_dest_list.m_buffer = types;*/
 
 			#ifndef NDEBUG
 				size_t dbg_buffer_size = 0, dbg_buffer_alignment = 0;
@@ -867,7 +775,7 @@ namespace reflective
 			{
 				const size_t curr_size = it.curr_type()->size();
 				const size_t curr_alignment = it.curr_type()->alignment();
-				assert(curr_size > 0 && details::is_valid_alignment(curr_alignment));
+				assert(curr_size > 0 && is_power_of_2(curr_alignment));
 				buffer_size = (buffer_size + (curr_alignment - 1)) & ~(curr_alignment - 1);
 				buffer_size += curr_size;
 
@@ -881,7 +789,7 @@ namespace reflective
 		void compute_buffer_size_and_alignment_for_insert(size_t * o_buffer_size, size_t * o_buffer_alignment,
 			const const_iterator & i_insert_at, size_t i_new_element_count, const TypeInfo & i_new_type ) const REFLECTIVE_NOEXCEPT
 		{
-			assert(i_new_type.size() > 0 && details::is_valid_alignment(i_new_type.alignment())); // the size must be non-zero, the alignment must be a non-zero power of 2
+			assert(i_new_type.size() > 0 && is_power_of_2(i_new_type.alignment())); // the size must be non-zero, the alignment must be a non-zero power of 2
 
 			size_t buffer_size = (size() + i_new_element_count) * sizeof(TypeInfo);
 			size_t buffer_alignment = std::max(std::alignment_of<TypeInfo>::value, i_new_type.alignment());
@@ -902,7 +810,7 @@ namespace reflective
 
 				const size_t curr_size = it.curr_type()->size();
 				const size_t curr_alignment = it.curr_type()->alignment();
-				assert(curr_size > 0 && details::is_valid_alignment(curr_alignment)); // the size must be non-zero, the alignment must be a non-zero power of 2
+				assert(curr_size > 0 && is_power_of_2(curr_alignment)); // the size must be non-zero, the alignment must be a non-zero power of 2
 				buffer_size = (buffer_size + (curr_alignment - 1)) & ~(curr_alignment - 1);
 				buffer_size += curr_size;
 				buffer_alignment = std::max(buffer_alignment, curr_alignment);
@@ -1000,7 +908,7 @@ namespace reflective
 				{
 					const size_t curr_size = it.curr_type()->size();
 					const size_t curr_alignment = it.curr_type()->alignment();
-					assert(curr_size > 0 && details::is_valid_alignment(curr_alignment)); // the size must be non-zero, the alignment must be a non-zero power of 2
+					assert(curr_size > 0 && is_power_of_2(curr_alignment)); // the size must be non-zero, the alignment must be a non-zero power of 2
 					buffer_size = (buffer_size + (curr_alignment - 1)) & ~(curr_alignment - 1);
 					buffer_size += curr_size;
 					buffer_alignment = std::max(buffer_alignment, curr_alignment);
@@ -1057,4 +965,5 @@ namespace reflective
 	#if REFLECTIVE_ENABLE_TESTING
 		void dense_list_test(CorrectnessTestContext & i_context);
 	#endif
-}
+
+} // namespace reflective

@@ -1,5 +1,6 @@
 
 #pragma once
+#include "density_common.h"
 #include "array_view.h"
 #include "string_view.h"
 #include "dense_list.h"
