@@ -206,6 +206,9 @@
     <ClCompile Include="..\reflective\density\testing\out_buffer_text_stream.cpp">
       <Filter>density\testing</Filter>
     </ClCompile>
+    <ClCompile Include="..\reflective\density\impl\testing_utils.cpp">
+      <Filter>density\impl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\reflective\reflection\qualified_type_ptr.inl">

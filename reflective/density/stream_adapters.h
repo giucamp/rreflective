@@ -25,11 +25,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ***********************************************************************************/
 
-#pragma once
-#ifndef INCLUDING_REFLECTIVE
-	#error "cant't include this header directly, include reflective.h instead"
-#endif
-
 namespace reflective
 {
 	/*template <typename UNDERLYING_STREAM, typename CHAR = UNDERLYING_STREAM::char_type, typename CHAR_TRAITS = std::char_traits<CHAR> >

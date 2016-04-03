@@ -1,6 +1,8 @@
 
 #pragma once
 #include "density_common.h"
+#include "assert.h"
+#include <algorithm> // std::max<size_t> would be needed, but details::size_max is defined to avoid this dependency
 
 #ifdef NDEBUG
 	#define REFLECTIVE_DENSE_LIST_DEBUG		0
@@ -12,10 +14,10 @@ namespace reflective
 {
 	template <typename ELEMENT> class CopyableTypeInfo;
 	template <typename ELEMENT> class MovableTypeInfo;
-	template <typename ELEMENT> using DefaultTypeInfo = typename std::conditional< std::is_copy_constructible<ELEMENT>::value,
+	template <typename ELEMENT> using AutomaticTypeInfo = typename std::conditional< std::is_copy_constructible<ELEMENT>::value,
 		CopyableTypeInfo<ELEMENT>, MovableTypeInfo<ELEMENT> >::type;
 	template <typename ELEMENT, typename ALLOCATOR = std::allocator<ELEMENT>, 
-		typename TYPE_INFO = DefaultTypeInfo<ELEMENT> > class DenseList;
+		typename TYPE_INFO = AutomaticTypeInfo<ELEMENT> > class DenseList;
 
 	/** Creates and returns by value a DenseList, whose element base type is ELEMENT. The specified parameters
 		are added to the list<br>
@@ -51,7 +53,7 @@ namespace reflective
 		#endif
 
 		template <typename COMPLETE_TYPE>
-			static CopyableTypeInfo make()
+			static CopyableTypeInfo make() REFLECTIVE_NOEXCEPT
 		{
 			return CopyableTypeInfo(sizeof(COMPLETE_TYPE), std::alignment_of<COMPLETE_TYPE>::value, 
 				&CopyConstructImpl< COMPLETE_TYPE >, &MoverDestructorImpl< COMPLETE_TYPE >);
@@ -127,7 +129,7 @@ namespace reflective
 		#endif
 
 		template <typename COMPLETE_TYPE>
-			static MovableTypeInfo make()
+			static MovableTypeInfo make() REFLECTIVE_NOEXCEPT
 		{
 			return MovableTypeInfo(sizeof(COMPLETE_TYPE), std::alignment_of<COMPLETE_TYPE>::value, &MoverDestructorImpl< COMPLETE_TYPE >);
 		}
@@ -168,6 +170,15 @@ namespace reflective
 		size_t const m_size, m_alignment;
 		MoverDestructorPtr const m_mover_destructor;
 	};
+
+	namespace details
+	{
+		// size_max: avoid incuding <algorithm> just to use std::max<size_t>
+		REFLECTIVE_CONSTEXPR inline size_t size_max(size_t i_first, size_t i_second) REFLECTIVE_NOEXCEPT
+		{
+			return i_first > i_second ? i_first : i_second;
+		}
+	}
 
 	/** A dense-list is a sequence container of heterogeneous elements. */
 	template <typename ELEMENT, typename ALLOCATOR, typename TYPE_INFO >
@@ -438,6 +449,18 @@ namespace reflective
 		}
 
 		bool operator != (const DenseList & i_source) const		{ return !operator == (i_source); }
+		
+		template <typename ELEMENT_COMPLETE_TYPE>
+			iterator push_back(const ELEMENT_COMPLETE_TYPE & i_source)
+		{
+			return insert_n_impl(cend(), 1, TypeInfo::template make<ELEMENT_COMPLETE_TYPE>(), i_source);
+		}
+
+		template <typename ELEMENT_COMPLETE_TYPE>
+			iterator push_front(const ELEMENT_COMPLETE_TYPE & i_source)
+		{
+			return insert_n_impl(cbegin(), 1, TypeInfo::template make<ELEMENT_COMPLETE_TYPE>(), i_source);
+		}
 
 		template <typename ELEMENT_COMPLETE_TYPE>
 			iterator insert(const_iterator i_position, const ELEMENT_COMPLETE_TYPE & i_source)
@@ -451,19 +474,13 @@ namespace reflective
 			return insert_n_impl(i_position, i_count, TypeInfo::template make<ELEMENT_COMPLETE_TYPE>(), i_source);
 		}
 
-		template <typename ELEMENT_COMPLETE_TYPE>
-			iterator push_back(const ELEMENT_COMPLETE_TYPE & i_source)
-		{
-			return insert_n_impl(cend(), 1, TypeInfo::template make<ELEMENT_COMPLETE_TYPE>(), i_source);
-		}
-
 		iterator erase(const_iterator i_position)
 		{
 			const_iterator to = i_position;
 			++to;
 			return erase(i_position, to);
 		}
-
+		
 		iterator erase(const_iterator i_from, const_iterator i_to)
 		{
 			const size_t size_to_remove = i_to.m_curr_type - i_from.m_curr_type;
@@ -574,10 +591,8 @@ namespace reflective
 			}
 		}
 				
-		class ListBuilder
+		struct ListBuilder
 		{
-		public:
-
 			ListBuilder() REFLECTIVE_NOEXCEPT
 				: m_type_infos(nullptr)
 			{
@@ -594,51 +609,60 @@ namespace reflective
 				#endif
 			}
 
+			/* Adds a (type-info, element) pair to the list. The new element is copy-constructed. 
+				Note: ELEMENT is not the comlete type of the element, as the
+				list allows polymorphic types. The use of the TypeInfo avoid slicing or partial constructions. */
 			void * add_by_copy(const TypeInfo & i_type_info, const ELEMENT & i_source)
+					// REFLECTIVE_NOEXCEPT_V(std::declval<TypeInfo>().copy_construct(nullptr, std::declval<ELEMENT>() ))
 			{
-				void * return_element = address_upper_align(m_end_of_elements, i_type_info.alignment());
+				// copy-construct the element first (this may throw)
+				void * new_element = address_upper_align(m_end_of_elements, i_type_info.alignment());
 				#if REFLECTIVE_DENSE_LIST_DEBUG
-					dbg_check_range(return_element, address_add(return_element, i_type_info.size()));
+					dbg_check_range(new_element, address_add(new_element, i_type_info.size()));
 				#endif
-				i_type_info.copy_construct(return_element, i_source);
-				m_end_of_elements = address_add(return_element, i_type_info.size());
+				i_type_info.copy_construct(new_element, i_source);
+				// from now on, for the whole function, we cant except
+				m_end_of_elements = address_add(new_element, i_type_info.size());
+
+				// construct the typeinfo - if this would throw, the element just constructed would not be destroyed. A static_assert guarantees the noexcept-ness.
 				#if REFLECTIVE_DENSE_LIST_DEBUG
 					dbg_check_range(m_end_of_type_infos, m_end_of_type_infos + 1);
 				#endif
-				new(m_end_of_type_infos++) TypeInfo(i_type_info);
-
-				return return_element;
+				REFLECTIVE_ASSERT_NOEXCEPT(new(m_end_of_type_infos++) TypeInfo(i_type_info));
+				new(m_end_of_type_infos++) TypeInfo(i_type_info); 
+				return new_element;
 			}
 
+			/* Adds a (type-info, element) pair to the list. The new element is move-constructed.
+				Note: ELEMENT is not the comlete type of the element, as the
+				list allows polymorphic types. The use of the TypeInfo avoid slicing or partial constructions. */
 			void * add_by_move(const TypeInfo & i_type_info, ELEMENT && i_source)
 			{
-				void * return_element = address_upper_align(m_end_of_elements, i_type_info.alignment());
+				// move-construct the element first (this may throw)
+				void * new_element = address_upper_align(m_end_of_elements, i_type_info.alignment());
 				#if REFLECTIVE_DENSE_LIST_DEBUG
-					dbg_check_range(return_element, address_add(return_element, i_type_info.size()));
+					dbg_check_range(new_element, address_add(new_element, i_type_info.size()));
 				#endif
-				i_type_info.move_construct_if_no_except(return_element, std::move(i_source));
-				m_end_of_elements = address_add(return_element, i_type_info.size());
+				i_type_info.move_construct_if_no_except(new_element, std::move(i_source));
+				// from now on, for the whole function, we cant except
+				m_end_of_elements = address_add(new_element, i_type_info.size());
+
+				// construct the typeinfo - if this would throw, the element just constructed would not be destroyed. A static_assert guarantees the noexcept-ness.
 				#if REFLECTIVE_DENSE_LIST_DEBUG
 					dbg_check_range(m_end_of_type_infos, m_end_of_type_infos + 1);
 				#endif
+				REFLECTIVE_ASSERT_NOEXCEPT(new(m_end_of_type_infos++) TypeInfo(i_type_info));
 				new(m_end_of_type_infos++) TypeInfo(i_type_info);
-
-				return return_element;
+				return new_element;
 			}
 
-			void * add_dont_constuct(const TypeInfo & i_type_info)
+			void add_only_type_info(const TypeInfo & i_type_info) REFLECTIVE_NOEXCEPT
 			{
-				void * return_element = address_upper_align(m_end_of_elements, i_type_info.alignment());
-				#if REFLECTIVE_DENSE_LIST_DEBUG
-					dbg_check_range(return_element, address_add(return_element, i_type_info.size()));
-				#endif
-				m_end_of_elements = address_add(return_element, i_type_info.size());
+				REFLECTIVE_ASSERT_NOEXCEPT(new(m_end_of_type_infos++) TypeInfo(i_type_info));
 				#if REFLECTIVE_DENSE_LIST_DEBUG
 					dbg_check_range(m_end_of_type_infos, m_end_of_type_infos + 1);
 				#endif
 				new(m_end_of_type_infos++) TypeInfo(i_type_info);
-
-				return return_element;
 			}
 
 			TypeInfo * end_of_type_infos()
@@ -658,7 +682,7 @@ namespace reflective
 					void * element = m_elements;
 					for (TypeInfo * type_info = m_type_infos; type_info < m_end_of_type_infos; type_info++)
 					{
-						element = address_upper_align(m_end_of_elements, type_info->alignment());
+						element = address_upper_align(element, type_info->alignment());
 						type_info->destroy( static_cast<ELEMENT*>(element));
 						element = address_add(element, type_info->size());
 						type_info->~TypeInfo();
@@ -667,7 +691,6 @@ namespace reflective
 				}
 			}
 
-		private:
 			#if REFLECTIVE_DENSE_LIST_DEBUG
 				void dbg_check_range(const void * i_start, const void * i_end)
 				{
@@ -675,7 +698,6 @@ namespace reflective
 				}
 			#endif
 
-		private:
 			TypeInfo * m_type_infos;
 			void * m_elements;
 			TypeInfo * m_end_of_type_infos;
@@ -693,7 +715,7 @@ namespace reflective
 			for (auto it = begin(); it != end_it; ++it)
 			{
 				auto curr_type = it.curr_type();
-				dense_alignment = std::max(dense_alignment, curr_type->alignment() );
+				dense_alignment = details::size_max(dense_alignment, curr_type->alignment() );
 				curr_type->destroy(it.curr_element());
 				curr_type->TypeInfo::~TypeInfo();
 			}
@@ -950,9 +972,17 @@ namespace reflective
 				std::alignment_of<FIRST_TYPE>::value : RecursiveHelper<OTHER_TYPES...>::s_element_alignment;
 
 			inline static void construct(ListBuilder & i_builder, FIRST_TYPE && i_source, OTHER_TYPES && ... i_other_arguments)
+				// REFLECTIVE_NOEXCEPT_V( new (nullptr) FIRST_TYPE(std::forward<FIRST_TYPE>(std::declval<FIRST_TYPE>())) )
 			{
-				void * new_element = i_builder.add_dont_constuct(TypeInfo::template make<FIRST_TYPE>());
+				void * new_element = address_upper_align(i_builder.m_end_of_elements, std::alignment_of<FIRST_TYPE>::value );
 				new (new_element) FIRST_TYPE(std::forward<FIRST_TYPE>(i_source));
+				i_builder.m_end_of_elements = address_add(new_element, sizeof(FIRST_TYPE));
+				#if REFLECTIVE_DENSE_LIST_DEBUG
+					i_builder.dbg_check_range(new_element, i_builder.m_end_of_elements);
+				#endif
+	
+				i_builder.add_only_type_info(TypeInfo::template make<FIRST_TYPE>());
+
 				RecursiveHelper<OTHER_TYPES...>::construct( i_builder, std::forward<OTHER_TYPES>(i_other_arguments)...);
 			}
 		};
@@ -963,7 +993,7 @@ namespace reflective
 	};
 
 	#if REFLECTIVE_ENABLE_TESTING
-		void dense_list_test(CorrectnessTestContext & i_context);
+		void dense_list_test();
 	#endif
 
 } // namespace reflective

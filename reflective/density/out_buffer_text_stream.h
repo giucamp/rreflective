@@ -25,11 +25,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ***********************************************************************************/
 
-#pragma once
-#ifndef INCLUDING_REFLECTIVE
-	#error "cant't include this header directly, include reflective.h instead"
-#endif
-
 namespace reflective
 {
 	/** This class implements an output text stream to write formatted text to an user-provided character buffer. It is a lightweight objects, and

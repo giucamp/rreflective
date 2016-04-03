@@ -31,7 +31,8 @@ int main()
 	
 	
 
-	UnitTestingManager::instance().add_correctness_test("dense_list_test", dense_list_test);
+	UnitTestingManager::instance().add_correctness_test("dense_list_test", 
+		[](reflective::CorrectnessTestContext &) {dense_list_test(); });
 	UnitTestingManager::instance().run("dense_list_test");
 
 	std::cout << get_type<QualifiedTypePtr>() << std::endl;

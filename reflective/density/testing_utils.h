@@ -1,6 +1,8 @@
 
 #pragma once
 #include "density_common.h"
+#include <unordered_map>
+#include <functional>
 
 namespace reflective
 {
@@ -8,76 +10,50 @@ namespace reflective
 	{
 	public:
 
+		TestAllocatorBase();
+		~TestAllocatorBase();
+
 		class NoLeakScope
 		{
 		public:
-			NoLeakScope()
-			{
-				REFLECTIVE_TEST_ASSERT(GetMap().size() == 0);
-			}
-
-			~NoLeakScope()
-			{
-				REFLECTIVE_TEST_ASSERT(GetMap().size() == 0);
-			}
-
+			NoLeakScope();
+			~NoLeakScope();
 			NoLeakScope(const NoLeakScope &) = delete;
 			NoLeakScope & operator = (const NoLeakScope &) = delete;
 		};
 
-		void * alloc(size_t i_size)
-		{
-			void * block = operator new (i_size);
-			AllocationEntry entry;
-			entry.m_size = i_size;
-			auto res = GetMap().insert(std::make_pair(block, entry));
-			REFLECTIVE_INTERNAL_ASSERT(res.second);
-			return block;
-		}
+	protected:
 
-		void free(void * i_block)
-		{
-			auto & map = GetMap();
-			auto it = map.find(i_block);
-			REFLECTIVE_INTERNAL_ASSERT(it != map.end());
-			map.erase(it);
-			operator delete (i_block);
-		}
+		void * alloc(size_t i_size);
+
+		void free(void * i_block);
 
 	private:
-
 		struct AllocationEntry
 		{
 			size_t m_size;
 		};
-
-		static std::unordered_map<void*, AllocationEntry> & GetMap()
+		struct Levels
 		{
-			#if defined(_MSC_VER) && _MSC_VER < 1900 // Visual Studio 2013 and below
-				if (t_map == nullptr)
-				{
-					t_map = new std::unordered_map<void*, AllocationEntry>;
-				}
-				return *t_map;
-			#else
-				return t_map;
-			#endif
-		}
+			std::unordered_map<void*, AllocationEntry> m_allocations;
+		};
+		struct ThreadData
+		{
+			std::vector<Levels> m_levels;
+
+			void push_level();
+
+			void pop_level();
+		};
+		static ThreadData & GetThreadData();
 
 	private:
-
 		#if defined(_MSC_VER) && _MSC_VER < 1900 // Visual Studio 2013 and below
-			static _declspec(thread) std::unordered_map<void*, AllocationEntry> * t_map;
+			static _declspec(thread) ThreadData * st_thread_data;
 		#else
-			static thread_local std::unordered_map<void*, AllocationEntry> t_map;
+			static thread_local ThreadData st_thread_data;
 		#endif
 	};
-
-	#if defined(_MSC_VER) && _MSC_VER < 1900 // Visual Studio 2013 and below
-		_declspec(thread) std::unordered_map<void*, TestAllocatorBase::AllocationEntry> * TestAllocatorBase::t_map;
-	#else
-		thread_local std::unordered_map<void*, TestAllocatorBase::AllocationEntry> TestAllocatorBase::t_map;
-	#endif
 
 	template <class TYPE> class TestAllocator : private TestAllocatorBase
 	{
@@ -138,10 +114,100 @@ namespace reflective
 
 		#endif
 	};
-
-	class ExceptionStressTestObject
+	
+	namespace except_stress
 	{
-		std::vector<int, TestAllocator<int> > m_vector;
-	};
+		void run_test(std::function<void()> i_test);
 
-} //namespace reflective
+		void check_point();
+
+		class AllocatingTester
+		{
+		public:
+
+			AllocatingTester();
+
+			bool operator == (const AllocatingTester & i_other) const
+				{ return m_rand_value == i_other.m_rand_value; }
+			
+			bool operator != (const AllocatingTester & i_other) const
+				{ return m_rand_value != i_other.m_rand_value; }
+
+		private:
+			std::vector<int, TestAllocator<int> > m_vector;
+			int m_rand_value;
+		};
+
+		class Copy_MoveExcept final : private AllocatingTester
+		{
+		public:
+
+			Copy_MoveExcept() { check_point(); }
+
+			// copy
+			Copy_MoveExcept(const Copy_MoveExcept & i_source)
+				: AllocatingTester((check_point(), i_source))
+			{
+
+			}
+			Copy_MoveExcept & operator = (const Copy_MoveExcept & i_source)
+			{
+				check_point();
+				AllocatingTester::operator = (i_source);
+				check_point();
+				return *this;
+			}
+
+			// move (except)
+			Copy_MoveExcept(Copy_MoveExcept && i_source)
+				: AllocatingTester((check_point(), std::move(i_source)))
+			{
+				check_point();
+			}
+			Copy_MoveExcept & operator = (Copy_MoveExcept && i_source)
+			{
+				check_point();
+				AllocatingTester::operator = (std::move(i_source));
+				check_point();
+				return *this;
+			}
+
+			bool operator == (const Copy_MoveExcept & i_other) const
+				{ return AllocatingTester::operator == (i_other); }
+
+			bool operator != (const Copy_MoveExcept & i_other) const
+				{ return AllocatingTester::operator != (i_other); }
+		};
+
+		class NoCopy_MoveExcept final : private AllocatingTester
+		{
+		public:
+
+			NoCopy_MoveExcept() { check_point(); }
+			
+			// copy
+			NoCopy_MoveExcept(const NoCopy_MoveExcept & i_source) = delete;
+			NoCopy_MoveExcept & operator = (const NoCopy_MoveExcept & i_source) = delete;
+
+			// move (except)
+			NoCopy_MoveExcept(NoCopy_MoveExcept && i_source)
+				: AllocatingTester((check_point(), std::move(i_source)) )
+					{ check_point(); }
+			NoCopy_MoveExcept & operator = (NoCopy_MoveExcept && i_source)
+			{
+				check_point();
+				AllocatingTester::operator = (std::move(i_source));
+				check_point();
+				return *this;
+			}
+
+			bool operator == (const NoCopy_MoveExcept & i_other) const
+				{ return AllocatingTester::operator == (i_other); }
+
+			bool operator != (const NoCopy_MoveExcept & i_other) const
+				{ return AllocatingTester::operator != (i_other); }
+		};
+
+	} // namespace except_stress
+
+} // namespace reflective

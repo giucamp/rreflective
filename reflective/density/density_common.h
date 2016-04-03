@@ -26,6 +26,20 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ***********************************************************************************/
 
 #pragma once
+#include "..\reflective_settings.h"
+
+#if defined(_MSC_VER) && _MSC_VER < 1900 // Visual Studio 2013 and below
+	#define REFLECTIVE_CONSTEXPR
+	#define REFLECTIVE_NOEXCEPT
+	#define REFLECTIVE_NOEXCEPT_V(value)
+	#define REFLECTIVE_ASSERT_NOEXCEPT(expr)
+#else
+	#define REFLECTIVE_CONSTEXPR					constexpr
+	#define REFLECTIVE_NOEXCEPT						noexcept
+	#define REFLECTIVE_NOEXCEPT_V(value)			noexcept(value)
+	#define REFLECTIVE_ASSERT_NOEXCEPT(expr)		static_assert(noexcept(expr), "The expression " #expr " is required not be noexcept");
+#endif
+
 
 namespace reflective
 {
@@ -33,7 +47,7 @@ namespace reflective
 
 	/** Returns true whether the given unsigned integer number is a power of 2 (1, 2, 4, 8, ...)
 		@param i_number must be > 0, otherwise the behavior is undefined */
-	inline bool is_power_of_2(size_t i_number)
+	inline bool is_power_of_2(size_t i_number) REFLECTIVE_NOEXCEPT
 	{
 		REFLECTIVE_ASSERT(i_number > 0, "invalid argument");
 		return (i_number & (i_number - 1)) == 0;
@@ -42,7 +56,7 @@ namespace reflective
 	/** Returns true whether the given address has the specified alignment
 		@param i_address address to be checked
 		@i_alignment must be > 0 and a power of 2 */
-	inline bool is_address_aligned(const void * i_address, size_t i_alignment)
+	inline bool is_address_aligned(const void * i_address, size_t i_alignment) REFLECTIVE_NOEXCEPT
 	{
 		REFLECTIVE_ASSERT(i_alignment > 0 && is_power_of_2(i_alignment), "the alignment is not a power of 2 or is zero");
 		return (reinterpret_cast<uintptr_t>(i_address) & (i_alignment - 1)) == 0;
@@ -51,7 +65,7 @@ namespace reflective
 	/** Returns true whether the given address has the alignment for the type it points to
 		@param i_address address to be checked */
 	template <typename TYPE>
-		inline bool is_address_aligned(const TYPE * i_address)
+		inline bool is_address_aligned(const TYPE * i_address) REFLECTIVE_NOEXCEPT
 	{
 		return is_address_aligned(i_address, std::alignment_of<TYPE>::value);
 	}
@@ -65,7 +79,7 @@ namespace reflective
 
 	inline void * address_upper_align(void * i_address, size_t i_alignment) REFLECTIVE_NOEXCEPT
 	{
-		assert(is_power_of_2(i_alignment));
+		REFLECTIVE_INTERNAL_ASSERT(is_power_of_2(i_alignment));
 		const size_t alignment_mask = i_alignment - 1;
 		return reinterpret_cast<void*>((reinterpret_cast<uintptr_t>(i_address) + alignment_mask) & ~alignment_mask);
 	}
@@ -85,7 +99,7 @@ namespace reflective
 			- the difference (in bytes) between i_objects_end and i_objects_start is a multiple of the size of TYPE
 			- both i_objects_start and i_objects_end respects the alignment for TYPE. */
 	template <typename TYPE>
-		inline bool is_valid_range(const TYPE * i_objects_start, const TYPE * i_objects_end)
+		inline bool is_valid_range(const TYPE * i_objects_start, const TYPE * i_objects_end) REFLECTIVE_NOEXCEPT
 	{
 		if (i_objects_start > i_objects_end)
 		{
@@ -115,7 +129,7 @@ namespace reflective
 	template <typename ALLOCATOR>
 		void * aligned_alloc(ALLOCATOR & i_allocator, size_t i_size, size_t i_alignment)
 	{
-		assert(is_power_of_2(i_alignment));
+		REFLECTIVE_INTERNAL_ASSERT(is_power_of_2(i_alignment));
 
 		if (i_alignment <= std::alignment_of<void*>::value)
 		{

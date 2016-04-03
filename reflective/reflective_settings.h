@@ -26,22 +26,27 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ***********************************************************************************/
 
 #pragma once
-#ifndef INCLUDING_REFLECTIVE
-	#error "cant't include this header directly, include reflective.h instead"
-#endif
+#include <stdint.h>
+#include <string>
 
 namespace reflective
 {
+	template < typename HASHER, typename STRING > class Identifier; 
+	template < typename UINT> class StringHasher;
 	template <typename CHAR, typename CHAR_TRAITS > class BasicStringView;
-	using SymbolName = Identifier< StringHasher<uint32_t>, BasicStringView<char, std::char_traits<char>> >;
+		using SymbolName = Identifier< StringHasher<uint32_t>, BasicStringView<char, std::char_traits<char>> >;
 
 	template <typename TYPE>
 		using Allocator = std::allocator<TYPE>;
 
-	static const size_t s_global_registry_reserve = 512;
-
 	#define REFLECTIVE_ENABLE_TESTING					1
 
+	enum class InheritanceSupport
+	{
+		Functions,
+		OffsettingAndFunctions,
+		Offsetting,
+	}; 
 	static const InheritanceSupport s_inheritance_support = InheritanceSupport::Functions;
 
 	#define REFLECTIVE_ENABLE_MULTIPLE_INHERITANCE		1
