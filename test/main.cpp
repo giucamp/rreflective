@@ -25,11 +25,15 @@ struct GGGG
 
 };
 
+namespace reflective
+{
+	void dense_list_benchmark();
+}
+
 int main()
 {
 	using namespace reflective;
-	
-	
+	dense_list_benchmark();	
 
 	UnitTestingManager::instance().add_correctness_test("dense_list_test", 
 		[](reflective::CorrectnessTestContext &) {dense_list_test(); });

@@ -194,6 +194,12 @@
     <ClCompile Include="..\reflective\density\testing\dense_list_test.cpp">
       <Filter>density\testing</Filter>
     </ClCompile>
+    <ClCompile Include="..\reflective\density\impl\testing_utils.cpp">
+      <Filter>density</Filter>
+    </ClCompile>
+    <ClCompile Include="..\reflective\density\testing\dense_list_benchmark.cpp">
+      <Filter>density\testing</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\reflective\reflection\qualified_type_ptr.inl">
