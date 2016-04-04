@@ -36,10 +36,11 @@ namespace reflective
 			TestContainerVector()
 			{
 				m_vector.reserve(24*2);
-				for (size_t i = 0; i < m_vector.size(); i++)
+				for (size_t i = 0; i < 24 * 2; i++)
 				{
 					m_vector.push_back(std::make_unique<TestObjectDerived>());
 				}
+				//std::cout << m_vector.size() << std::endl;
 			}
 
 			std::vector<std::unique_ptr<TestObjectBase>> m_vector;
@@ -62,6 +63,7 @@ namespace reflective
 					TestObjectDerived(), TestObjectDerived(), TestObjectDerived(), TestObjectDerived(), TestObjectDerived(), TestObjectDerived(),
 					TestObjectDerived(), TestObjectDerived(), TestObjectDerived(), TestObjectDerived(), TestObjectDerived(), TestObjectDerived(),
 					TestObjectDerived(), TestObjectDerived(), TestObjectDerived(), TestObjectDerived(), TestObjectDerived(), TestObjectDerived());
+				//std::cout << m_list.size() << std::endl;
 			}
 
 			List m_list;
@@ -89,7 +91,7 @@ namespace reflective
 		using namespace std;
 		using namespace std::chrono;
 
-		const size_t count = 1000000;
+		const size_t count = 10000;
 		vector<TestContainerList> lists(count);
 		vector<TestContainerVector> vectors(count);
 
@@ -124,5 +126,6 @@ namespace reflective
 			auto spent = duration_cast<nanoseconds>(high_resolution_clock::now() - time_before);
 			cout << spent.count() << endl;
 		}
+		memory_stress();
 	}
 }
