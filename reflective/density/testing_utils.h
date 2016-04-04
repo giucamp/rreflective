@@ -3,59 +3,49 @@
 #include "density_common.h"
 #include <unordered_map>
 #include <functional>
+#include <memory>
 
 namespace reflective
 {
-	class TestAllocatorBase
+	namespace details
 	{
-	public:
-
-		TestAllocatorBase();
-		~TestAllocatorBase();
-
-		class NoLeakScope
+		class TestAllocatorBase
 		{
 		public:
-			NoLeakScope();
-			~NoLeakScope();
-			NoLeakScope(const NoLeakScope &) = delete;
-			NoLeakScope & operator = (const NoLeakScope &) = delete;
+
+			static void push_level();
+			static void pop_level();
+
+			static void * alloc(size_t i_size);
+			static void free(void * i_block);
+
+		private:
+			struct AllocationEntry
+			{
+				size_t m_size;
+			};
+			struct Levels
+			{
+				std::unordered_map<void*, AllocationEntry> m_allocations;
+			};
+			struct ThreadData
+			{
+				std::vector<Levels> m_levels;
+			};
+			static ThreadData & GetThreadData();
+
+		private:
+			#if defined(_MSC_VER) && _MSC_VER < 1900 // Visual Studio 2013 and below
+				static _declspec(thread) ThreadData * st_thread_data;
+			#else
+				static thread_local ThreadData st_thread_data;
+			#endif
 		};
 
-	protected:
+	} // namespace details
 
-		void * alloc(size_t i_size);
-
-		void free(void * i_block);
-
-	private:
-		struct AllocationEntry
-		{
-			size_t m_size;
-		};
-		struct Levels
-		{
-			std::unordered_map<void*, AllocationEntry> m_allocations;
-		};
-		struct ThreadData
-		{
-			std::vector<Levels> m_levels;
-
-			void push_level();
-
-			void pop_level();
-		};
-		static ThreadData & GetThreadData();
-
-	private:
-		#if defined(_MSC_VER) && _MSC_VER < 1900 // Visual Studio 2013 and below
-			static _declspec(thread) ThreadData * st_thread_data;
-		#else
-			static thread_local ThreadData st_thread_data;
-		#endif
-	};
-
-	template <class TYPE> class TestAllocator : private TestAllocatorBase
+	template <class TYPE>
+		class TestAllocator : private details::TestAllocatorBase
 	{
 	public:
 		typedef TYPE value_type;
@@ -66,12 +56,12 @@ namespace reflective
 
 		TYPE * allocate(std::size_t i_count)
 		{
-			return static_cast<TYPE *>( TestAllocatorBase::alloc(i_count * sizeof(TYPE)) );
+			return static_cast<TYPE *>(details::TestAllocatorBase::alloc(i_count * sizeof(TYPE)) );
 		}
 
 		void deallocate(TYPE * i_block, std::size_t /*i_count*/)
 		{
-			TestAllocatorBase::free(i_block);
+			details::TestAllocatorBase::free(i_block);
 		}
 
 		template <typename OTHER_TYPE>
@@ -114,100 +104,111 @@ namespace reflective
 
 		#endif
 	};
-	
-	namespace except_stress
+
+	class NoLeakScope
 	{
-		void run_test(std::function<void()> i_test);
+	public:
+		NoLeakScope();
+		~NoLeakScope();
+		NoLeakScope(const NoLeakScope &) = delete;
+		NoLeakScope & operator = (const NoLeakScope &) = delete;
+	};
+	
+	/** Rurns an exception safeness test, calling the provided function many times.
+		First the provided function is called without raising any exception. 
+		- Then the function is called, an the first time exception_check_point is called, an exception is thrown
+		- then the function is called, an the second time exception_check_point is called, an exception is thrown
+		During the execution of the function the function exception_check_point should be called to 
+		test the effect of throwing an exception.
+	*/
+	void run_exception_stress_test(std::function<void()> i_test);
 
-		void check_point();
+	void exception_check_point();
 
-		class AllocatingTester
-		{
-		public:
+	class AllocatingTester
+	{
+	public:
 
-			AllocatingTester();
+		AllocatingTester();
 
-			bool operator == (const AllocatingTester & i_other) const
-				{ return m_rand_value == i_other.m_rand_value; }
+		bool operator == (const AllocatingTester & i_other) const
+			{ return *m_rand_value == *i_other.m_rand_value; }
 			
-			bool operator != (const AllocatingTester & i_other) const
-				{ return m_rand_value != i_other.m_rand_value; }
+		bool operator != (const AllocatingTester & i_other) const
+			{ return *m_rand_value != *i_other.m_rand_value; }
 
-		private:
-			std::vector<int, TestAllocator<int> > m_vector;
-			int m_rand_value;
-		};
+	private:
+		std::shared_ptr<int> m_rand_value;
+	};
 
-		class Copy_MoveExcept final : private AllocatingTester
+	class Copy_MoveExcept final : private AllocatingTester
+	{
+	public:
+
+		Copy_MoveExcept() { exception_check_point(); }
+
+		// copy
+		Copy_MoveExcept(const Copy_MoveExcept & i_source)
+			: AllocatingTester((exception_check_point(), i_source))
 		{
-		public:
 
-			Copy_MoveExcept() { check_point(); }
-
-			// copy
-			Copy_MoveExcept(const Copy_MoveExcept & i_source)
-				: AllocatingTester((check_point(), i_source))
-			{
-
-			}
-			Copy_MoveExcept & operator = (const Copy_MoveExcept & i_source)
-			{
-				check_point();
-				AllocatingTester::operator = (i_source);
-				check_point();
-				return *this;
-			}
-
-			// move (except)
-			Copy_MoveExcept(Copy_MoveExcept && i_source)
-				: AllocatingTester((check_point(), std::move(i_source)))
-			{
-				check_point();
-			}
-			Copy_MoveExcept & operator = (Copy_MoveExcept && i_source)
-			{
-				check_point();
-				AllocatingTester::operator = (std::move(i_source));
-				check_point();
-				return *this;
-			}
-
-			bool operator == (const Copy_MoveExcept & i_other) const
-				{ return AllocatingTester::operator == (i_other); }
-
-			bool operator != (const Copy_MoveExcept & i_other) const
-				{ return AllocatingTester::operator != (i_other); }
-		};
-
-		class NoCopy_MoveExcept final : private AllocatingTester
+		}
+		Copy_MoveExcept & operator = (const Copy_MoveExcept & i_source)
 		{
-		public:
+			exception_check_point();
+			AllocatingTester::operator = (i_source);
+			exception_check_point();
+			return *this;
+		}
 
-			NoCopy_MoveExcept() { check_point(); }
+		// move (except)
+		Copy_MoveExcept(Copy_MoveExcept && i_source)
+			: AllocatingTester((exception_check_point(), std::move(i_source)))
+		{
+			exception_check_point();
+		}
+		Copy_MoveExcept & operator = (Copy_MoveExcept && i_source)
+		{
+			exception_check_point();
+			AllocatingTester::operator = (std::move(i_source));
+			exception_check_point();
+			return *this;
+		}
+
+		bool operator == (const Copy_MoveExcept & i_other) const
+			{ return AllocatingTester::operator == (i_other); }
+
+		bool operator != (const Copy_MoveExcept & i_other) const
+			{ return AllocatingTester::operator != (i_other); }
+	};
+
+	class NoCopy_MoveExcept final : private AllocatingTester
+	{
+	public:
+
+		NoCopy_MoveExcept() { exception_check_point(); }
 			
-			// copy
-			NoCopy_MoveExcept(const NoCopy_MoveExcept & i_source) = delete;
-			NoCopy_MoveExcept & operator = (const NoCopy_MoveExcept & i_source) = delete;
+		// copy
+		NoCopy_MoveExcept(const NoCopy_MoveExcept & i_source) = delete;
+		NoCopy_MoveExcept & operator = (const NoCopy_MoveExcept & i_source) = delete;
 
-			// move (except)
-			NoCopy_MoveExcept(NoCopy_MoveExcept && i_source)
-				: AllocatingTester((check_point(), std::move(i_source)) )
-					{ check_point(); }
-			NoCopy_MoveExcept & operator = (NoCopy_MoveExcept && i_source)
-			{
-				check_point();
-				AllocatingTester::operator = (std::move(i_source));
-				check_point();
-				return *this;
-			}
+		// move (except)
+		NoCopy_MoveExcept(NoCopy_MoveExcept && i_source)
+			: AllocatingTester((exception_check_point(), std::move(i_source)) )
+				{ exception_check_point(); }
+		NoCopy_MoveExcept & operator = (NoCopy_MoveExcept && i_source)
+		{
+			exception_check_point();
+			AllocatingTester::operator = (std::move(i_source));
+			exception_check_point();
+			return *this;
+		}
 
-			bool operator == (const NoCopy_MoveExcept & i_other) const
-				{ return AllocatingTester::operator == (i_other); }
+		bool operator == (const NoCopy_MoveExcept & i_other) const
+			{ return AllocatingTester::operator == (i_other); }
 
-			bool operator != (const NoCopy_MoveExcept & i_other) const
-				{ return AllocatingTester::operator != (i_other); }
-		};
-
-	} // namespace except_stress
+		bool operator != (const NoCopy_MoveExcept & i_other) const
+			{ return AllocatingTester::operator != (i_other); }
+	};
 
 } // namespace reflective

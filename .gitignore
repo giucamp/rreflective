@@ -20,3 +20,5 @@
 doc/Doc/
 reflective/misc/hierarchy_test_util/hierarchy_test_util/bin/
 reflective/misc/hierarchy_test_util/hierarchy_test_util/obj/
+*.iobj
+*.ipdb

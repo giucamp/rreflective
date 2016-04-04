@@ -113,7 +113,7 @@ namespace reflective
 		{
 			return false;
 		}
-		const uintptr_t diff = reinterpret_cast<uintptr_t>(i_objects_end)-  reinterpret_cast<uintptr_t>(i_objects_start);
+		const uintptr_t diff = reinterpret_cast<uintptr_t>(i_objects_end) -  reinterpret_cast<uintptr_t>(i_objects_start);
 		if (diff % sizeof(TYPE) != 0)
 		{
 			return false;

@@ -14,8 +14,14 @@ namespace reflective
 {
 	template <typename ELEMENT> class CopyableTypeInfo;
 	template <typename ELEMENT> class MovableTypeInfo;
+	template <typename ELEMENT> class UnmovableTypeInfo;
+
 	template <typename ELEMENT> using AutomaticTypeInfo = typename std::conditional< std::is_copy_constructible<ELEMENT>::value,
-		CopyableTypeInfo<ELEMENT>, MovableTypeInfo<ELEMENT> >::type;
+		CopyableTypeInfo<ELEMENT>,
+			typename std::conditional< std::is_nothrow_move_constructible<ELEMENT>::value,
+				MovableTypeInfo<ELEMENT>, UnmovableTypeInfo<ELEMENT> >::type
+		>::type;
+
 	template <typename ELEMENT, typename ALLOCATOR = std::allocator<ELEMENT>, 
 		typename TYPE_INFO = AutomaticTypeInfo<ELEMENT> > class DenseList;
 
@@ -169,6 +175,53 @@ namespace reflective
 	private:
 		size_t const m_size, m_alignment;
 		MoverDestructorPtr const m_mover_destructor;
+	};
+
+	template <typename ELEMENT>
+		class UnmovableTypeInfo
+	{
+	public:
+
+		UnmovableTypeInfo() = delete;
+		UnmovableTypeInfo & operator = (const UnmovableTypeInfo &) = delete;
+		UnmovableTypeInfo & operator = (UnmovableTypeInfo &&) = delete;
+
+		UnmovableTypeInfo(const UnmovableTypeInfo &) REFLECTIVE_NOEXCEPT = default;
+
+		#if defined(_MSC_VER) && _MSC_VER < 1900
+			UnmovableTypeInfo(UnmovableTypeInfo && i_source) REFLECTIVE_NOEXCEPT // visual studio 2013 doesnt seems to support defauted move constructors
+				: m_size(i_source.m_size), m_alignment(i_source.m_alignment)
+					{ }			
+		#else
+			UnmovableTypeInfo(UnmovableTypeInfo && i_source) REFLECTIVE_NOEXCEPT = default;
+		#endif
+
+		template <typename COMPLETE_TYPE>
+			static UnmovableTypeInfo make() REFLECTIVE_NOEXCEPT
+		{
+			return UnmovableTypeInfo(sizeof(COMPLETE_TYPE), std::alignment_of<COMPLETE_TYPE>::value);
+		}
+
+		size_t size() const REFLECTIVE_NOEXCEPT { return m_size; }
+		
+		size_t alignment() const REFLECTIVE_NOEXCEPT { return m_alignment; }
+		
+		void destroy(ELEMENT * i_element) const REFLECTIVE_NOEXCEPT
+		{
+			#if defined(_MSC_VER)
+				(void)i_element; // workaround for warning C4100: 'i_element': unreferenced formal parameter
+			#endif
+			i_element->~ELEMENT();
+		}
+
+	private:
+
+		UnmovableTypeInfo(size_t i_size, size_t i_alignment)
+			: m_size(i_size), m_alignment(i_alignment)
+				{ }
+
+	private:
+		size_t const m_size, m_alignment;
 	};
 
 	namespace details
@@ -453,119 +506,56 @@ namespace reflective
 		template <typename ELEMENT_COMPLETE_TYPE>
 			iterator push_back(const ELEMENT_COMPLETE_TYPE & i_source)
 		{
-			return insert_n_impl(cend(), 1, TypeInfo::template make<ELEMENT_COMPLETE_TYPE>(), i_source);
+			return insert_n_impl(m_buffer + m_size, 1, TypeInfo::template make<ELEMENT_COMPLETE_TYPE>(), i_source);
 		}
 
 		template <typename ELEMENT_COMPLETE_TYPE>
 			iterator push_front(const ELEMENT_COMPLETE_TYPE & i_source)
 		{
-			return insert_n_impl(cbegin(), 1, TypeInfo::template make<ELEMENT_COMPLETE_TYPE>(), i_source);
+			return insert_n_impl(m_buffer, 1, TypeInfo::template make<ELEMENT_COMPLETE_TYPE>(), i_source);
 		}
 
+		void pop_front()
+		{
+			erase_impl(m_buffer, m_buffer + 1);
+		}
+
+		void pop_back()
+		{
+			auto const end_type = m_buffer + m_size;
+			erase_impl(end_type - 1, end_type);
+		}
+		
 		template <typename ELEMENT_COMPLETE_TYPE>
 			iterator insert(const_iterator i_position, const ELEMENT_COMPLETE_TYPE & i_source)
 		{
-			return insert_n_impl(i_position, 1, TypeInfo::template make<ELEMENT_COMPLETE_TYPE>(), i_source);
+			return insert_n_impl(i_position.m_curr_type, 1, TypeInfo::template make<ELEMENT_COMPLETE_TYPE>(), i_source);
 		}
 
 		template <typename ELEMENT_COMPLETE_TYPE>
 			iterator insert(const_iterator i_position, size_t i_count, const ELEMENT_COMPLETE_TYPE & i_source)
 		{
-			return insert_n_impl(i_position, i_count, TypeInfo::template make<ELEMENT_COMPLETE_TYPE>(), i_source);
+			return insert_n_impl(i_position.m_curr_type, i_count, TypeInfo::template make<ELEMENT_COMPLETE_TYPE>(), i_source);
 		}
 
 		iterator erase(const_iterator i_position)
 		{
-			const_iterator to = i_position;
-			++to;
-			return erase(i_position, to);
+			return erase_impl(i_position.m_curr_type, i_position.m_curr_type + 1);
 		}
-		
+
 		iterator erase(const_iterator i_from, const_iterator i_to)
 		{
-			const size_t size_to_remove = i_to.m_curr_type - i_from.m_curr_type;
-
-			assert(size_to_remove <= m_size);
-			if (size_to_remove == m_size)
+			if (i_from.m_curr_type != i_to.m_curr_type)
 			{
-				// erasing all the elements
-				assert(i_from == cbegin() && i_to == cend());
-				clear();
-				return begin();
-			}
-			else if(size_to_remove == 0)
-			{
-				// erasing 0 new elements...
-				return iterator(InternalConstructorMem, const_cast<void*>(i_from.m_curr_element), i_from.m_curr_type);
+				return erase_impl(i_from.m_curr_type, i_to.m_curr_type);
 			}
 			else
 			{
-				size_t buffer_size = 0, buffer_alignment = 0;
-				compute_buffer_size_and_alignment_for_erase(&buffer_size, &buffer_alignment, i_from, i_to);
-
-				const TypeInfo * return_type_info = nullptr;
-				void * return_element = nullptr;
-
-				ListBuilder builder;
-				try
-				{
-					builder.init(*static_cast<ALLOCATOR*>(this), m_size - size_to_remove, buffer_size, buffer_alignment);
-			
-					const auto end_it = cend();
-					bool is_in_range = false;
-					bool first_in_range = false;
-					for (auto it = cbegin(); ; it++)
-					{						
-						if (it == i_from)
-						{
-							is_in_range = true;
-							first_in_range = true;
-						}
-						if (it == i_to)
-						{
-							is_in_range = false;
-						}
-
-						if (it == end_it)
-						{
-							assert(!is_in_range);
-							break;
-						}
-
-						if (!is_in_range)
-						{
-							auto const new_type_info = builder.end_of_type_infos();
-							auto const new_element = builder.add_by_copy(*it.m_curr_type, *it.curr_element());
-
-							if (first_in_range)
-							{
-								return_type_info = new_type_info;
-								return_element = new_element;
-								first_in_range = false;
-							}
-						}
-					}
-
-					if (return_type_info == nullptr) // if no elements were copied after the erased range
-					{
-						assert(i_to == cend());
-						return_type_info = builder.end_of_type_infos();
-					}
-
-					destroy_impl();
-
-					m_size -= size_to_remove;
-					m_buffer = builder.commit();
-				}
-				catch (...)
-				{
-					builder.rollback(*static_cast<ALLOCATOR*>(this), buffer_size, buffer_alignment);
-					throw;
-				}
-				return iterator(InternalConstructorMem, return_element, return_type_info);
+				// removing 0 elements
+				return iterator(InternalConstructorMem, const_cast<void*>(i_from.m_curr_element), i_from.m_curr_type);
 			}
 		}
-
+		
 		void clear()
 		{
 			destroy_impl();
@@ -809,7 +799,7 @@ namespace reflective
 		}
 
 		void compute_buffer_size_and_alignment_for_insert(size_t * o_buffer_size, size_t * o_buffer_alignment,
-			const const_iterator & i_insert_at, size_t i_new_element_count, const TypeInfo & i_new_type ) const REFLECTIVE_NOEXCEPT
+			const TypeInfo * i_insert_at, size_t i_new_element_count, const TypeInfo & i_new_type ) const REFLECTIVE_NOEXCEPT
 		{
 			assert(i_new_type.size() > 0 && is_power_of_2(i_new_type.alignment())); // the size must be non-zero, the alignment must be a non-zero power of 2
 
@@ -818,7 +808,7 @@ namespace reflective
 			auto const end_it = cend();
 			for (auto it = cbegin(); ; ++it)
 			{
-				if (it == i_insert_at && i_new_element_count > 0)
+				if (it.m_curr_type == i_insert_at && i_new_element_count > 0)
 				{					
 					const auto alignment_mask = i_new_type.alignment() - 1;
 					buffer_size = (buffer_size + alignment_mask) & ~alignment_mask;
@@ -842,7 +832,8 @@ namespace reflective
 			*o_buffer_alignment = buffer_alignment;
 		}
 		
-		iterator insert_n_impl(const_iterator i_position, size_t i_count_to_insert, const TypeInfo & i_source_type, const ELEMENT & i_source)
+
+		iterator insert_n_impl(const TypeInfo * i_position, size_t i_count_to_insert, const TypeInfo & i_source_type, const ELEMENT & i_source)
 		{
 			const TypeInfo * return_type_info = nullptr;
 			void * return_element = nullptr;
@@ -861,7 +852,7 @@ namespace reflective
 					auto const end_it = cend();
 					for (auto it = cbegin();;)
 					{
-						if (it == i_position && count_to_insert > 0)
+						if (it.m_curr_type == i_position && count_to_insert > 0)
 						{
 							auto const end_of_type_infos = builder.end_of_type_infos();
 							void * const new_element = builder.add_by_copy(i_source_type, i_source);
@@ -897,18 +888,103 @@ namespace reflective
 			else
 			{
 				// inserting 0 new elements...
-				return_type_info = i_position.m_curr_type;
-				return_element = const_cast<void*>(i_position.m_curr_element);
+				const size_t insert_at_index = i_position - m_buffer;
+				return std::next(begin(), insert_at_index);
 			}
 
 			return iterator(InternalConstructorMem, return_element, return_type_info);
 		}
 
-		void compute_buffer_size_and_alignment_for_erase(size_t * o_buffer_size, size_t * o_buffer_alignment,
-			const const_iterator & i_remove_from, const const_iterator & i_remove_to ) const REFLECTIVE_NOEXCEPT
+		iterator erase_impl(const TypeInfo * i_from, const TypeInfo * i_to)
 		{
-			assert(i_remove_to.m_curr_type >= i_remove_from.m_curr_type);
-			const size_t size_to_remove = i_remove_to.m_curr_type - i_remove_from.m_curr_type;
+			// test preconditions
+			assert(i_from < i_to &&
+				i_from >= m_buffer && i_from <= m_buffer + m_size &&
+				i_to >= m_buffer && i_to <= m_buffer + m_size);
+
+			const size_t size_to_remove = i_to - i_from;
+
+			assert(size_to_remove <= m_size);
+			if (size_to_remove == m_size)
+			{
+				// erasing all the elements
+				assert(i_from == m_buffer && i_to == m_buffer + m_size);
+				clear();
+				return begin();
+			}
+			else
+			{
+				size_t buffer_size = 0, buffer_alignment = 0;
+				compute_buffer_size_and_alignment_for_erase(&buffer_size, &buffer_alignment, i_from, i_to);
+
+				const TypeInfo * return_type_info = nullptr;
+				void * return_element = nullptr;
+
+				ListBuilder builder;
+				try
+				{
+					builder.init(*static_cast<ALLOCATOR*>(this), m_size - size_to_remove, buffer_size, buffer_alignment);
+
+					const auto end_it = cend();
+					bool is_in_range = false;
+					bool first_in_range = false;
+					for (auto it = cbegin(); ; it++)
+					{
+						if (it.m_curr_type == i_from)
+						{
+							is_in_range = true;
+							first_in_range = true;
+						}
+						if (it.m_curr_type == i_to)
+						{
+							is_in_range = false;
+						}
+
+						if (it == end_it)
+						{
+							assert(!is_in_range);
+							break;
+						}
+
+						if (!is_in_range)
+						{
+							auto const new_type_info = builder.end_of_type_infos();
+							auto const new_element = builder.add_by_copy(*it.m_curr_type, *it.curr_element());
+
+							if (first_in_range)
+							{
+								return_type_info = new_type_info;
+								return_element = new_element;
+								first_in_range = false;
+							}
+						}
+					}
+
+					if (return_type_info == nullptr) // if no elements were copied after the erased range
+					{
+						assert(i_to == m_buffer + m_size);
+						return_type_info = builder.end_of_type_infos();
+					}
+
+					destroy_impl();
+
+					m_size -= size_to_remove;
+					m_buffer = builder.commit();
+				}
+				catch (...)
+				{
+					builder.rollback(*static_cast<ALLOCATOR*>(this), buffer_size, buffer_alignment);
+					throw;
+				}
+				return iterator(InternalConstructorMem, return_element, return_type_info);
+			}
+		}
+
+		void compute_buffer_size_and_alignment_for_erase(size_t * o_buffer_size, size_t * o_buffer_alignment,
+			const TypeInfo * i_remove_from, const TypeInfo * i_remove_to ) const REFLECTIVE_NOEXCEPT
+		{
+			assert(i_remove_to >= i_remove_from );
+			const size_t size_to_remove = i_remove_to - i_remove_from;
 			assert(size() >= size_to_remove);
 			size_t buffer_size = (size() - size_to_remove) * sizeof(TypeInfo);
 			size_t buffer_alignment = std::alignment_of<TypeInfo>::value;
@@ -917,11 +993,11 @@ namespace reflective
 			auto const end_it = cend();
 			for (auto it = cbegin(); it != end_it; ++it)
 			{
-				if (it == i_remove_from)
+				if (it.m_curr_type == i_remove_from)
 				{
 					in_range = true;
 				}
-				if (it == i_remove_to)
+				if (it.m_curr_type == i_remove_to)
 				{
 					in_range = false;
 				}
