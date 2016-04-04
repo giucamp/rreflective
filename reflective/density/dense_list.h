@@ -12,6 +12,94 @@
 
 namespace reflective
 {
+	/** Specifies the way in which the size and the alignment of elements of a DenseList is stored. */
+	enum SizeAlignmentMode
+	{
+		most_general, /**< Uses two separate size_t to store the size and the alignment. */
+		compact, /**< Both size and alignment are stored in a single size_t word. The alignment uses the 25% of the bits
+					of the size_t, while the alignment uses all the other bits. For example, if size_t is big 64-bits, the
+					alignment is stored in 16 bits, while the size is stored in 48 bits.
+					If the size or the alignment can't be represented with the given number of bits, the behaviour is undefined.
+					The implementation may report this error with a debug assert.
+					If size_t has not a binary representation (that is std::numeric_limits<size_t>::radix != 2), using this
+					representation wi resut in a compile time error. */
+		assume_normal_alignment /**< Use a size_t word to store the size, and do not store the alignment: just assume that
+					every element does not need an alignment more strict than a void pointer (void*).
+					If an element actually needs a more strict alignment , the behaviour is undefined.
+					The implementation may report this error with a debug assert.*/
+	};
+
+	enum CopyMove
+	{
+		move_only,
+		copy_and_move,
+		none,
+	};
+
+	namespace details
+	{
+		template <SizeAlignmentMode MODE>
+			struct DenseList_SizeAlignmentChunk;
+
+		template <> class DenseList_SizeAlignmentChunk<SizeAlignmentMode::most_general>
+		{
+		public:
+			DenseList_SizeAlignmentChunk(size_t i_size, size_t i_alignment)
+				: m_size(i_size), m_alignment(i_alignment) {}
+			
+			size_t size() const { return m_size; }
+			size_t alignment() const { return m_alignment; }
+
+			DenseList_SizeAlignmentChunk & operator = (const DenseList_SizeAlignmentChunk &) = delete;
+			
+		private:
+			const size_t m_size, m_alignment;
+		};
+
+
+		template <> class DenseList_SizeAlignmentChunk<
+			std::enable_if<std::numeric_limits<size_t>::radix == 2, SizeAlignmentMode>::type::compact>
+		{
+		public:
+			DenseList_SizeAlignmentChunk(size_t i_size, size_t i_alignment)
+				: m_size(i_size), m_alignment(i_alignment)
+			{
+				// check for narrowing conversion - this is a critical check, on faiure the behaviour is undefined
+				assert(m_size == i_size && m_alignment == i_alignment);
+			}
+
+			size_t size() const { return m_size; }
+			size_t alignment() const { return m_alignment; }
+
+			DenseList_SizeAlignmentChunk & operator = (const DenseList_SizeAlignmentChunk &) = delete;
+
+		private:
+			static_assert(std::numeric_limits<size_t>::radix == 2, "size_t is expected to be a binary number");
+			const size_t m_size : std::numeric_limits<size_t>::digits - std::numeric_limits<size_t>::digits / 4;
+			const size_t m_alignment : std::numeric_limits<size_t>::digits / 4;
+		};
+
+		template <> class DenseList_SizeAlignmentChunk<SizeAlignmentMode::assume_normal_alignment>
+		{
+		public:
+			DenseList_SizeAlignmentChunk(size_t i_size, size_t i_alignment)
+				: m_size(i_size)
+			{
+				// check for narrowing conversion - this is a critical check, on faiure the behaviour is undefined
+				assert(i_alignment <= std::alignment_of<void*>::value );
+				(void)i_alignment;
+			}
+
+			size_t size() const { return m_size; }
+			size_t alignment() const { return std::alignment_of<void*>::value; }
+
+			DenseList_SizeAlignmentChunk & operator = (const DenseList_SizeAlignmentChunk &) = delete;
+
+		private:
+			const size_t m_size;
+		};
+	}
+
 	template <typename ELEMENT> class CopyableTypeInfo;
 	template <typename ELEMENT> class MovableTypeInfo;
 	template <typename ELEMENT> class UnmovableTypeInfo;
