@@ -1,6 +1,6 @@
 
-#include "..\dense_list.h"
-#include "..\testing_utils.h"
+#include "..\density\dense_list.h"
+#include "..\unit_testing\testing_utils.h"
 #include <vector>
 #include <memory>
 #include <chrono>

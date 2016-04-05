@@ -1,4 +1,9 @@
 
+#include "..\uint_test_manager.h"
+#include <algorithm>
+#include <chrono>
+#include <iostream>
+
 namespace reflective
 {
 	class UnitTestingManager::Impl
@@ -70,7 +75,7 @@ namespace reflective
 
 			Node * find_child(StringView i_name)
 			{
-				auto entry_it = Ext::find_if(m_children, [i_name](const Node & i_entry) { return i_name == i_entry.name().c_str(); });
+				auto entry_it = std::find_if(m_children.begin(), m_children.end(), [i_name](const Node & i_entry) { return i_name == i_entry.name().c_str(); });
 				if (entry_it != m_children.end())
 				{
 					return &*entry_it;
@@ -182,7 +187,7 @@ namespace reflective
 	}
 	
 	UnitTestingManager::UnitTestingManager()
-		: m_impl( make_unique<Impl>() )
+		: m_impl( std::make_unique<Impl>() )
 	{
 	}
 

@@ -25,6 +25,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ***********************************************************************************/
 
+#pragma once
+#include "correctness_test_context.h"
+#include "..\density\string_view.h"
+#include <memory>
+
 namespace reflective
 {
 	class UnitTestingManager

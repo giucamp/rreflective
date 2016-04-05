@@ -33,7 +33,8 @@ namespace reflective
 int main()
 {
 	using namespace reflective;
-	dense_list_benchmark();	
+	
+	reference_globals();
 
 	UnitTestingManager::instance().add_correctness_test("dense_list_test", 
 		[](reflective::CorrectnessTestContext &) {dense_list_test(); });

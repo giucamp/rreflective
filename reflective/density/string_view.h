@@ -25,6 +25,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ***********************************************************************************/
 
+#pragma once
+#include "density_common.h"
+
 namespace reflective
 {
 	template <typename CHAR, typename CHAR_TRAITS = std::char_traits<CHAR> > class BasicStringView;
@@ -529,13 +532,6 @@ namespace reflective
 		result.append(i_second.data(), i_second.size());
 		return result;
 	}
-
-	#if REFLECTIVE_ENABLE_TESTING
-
-		class CorrectnessTestContext;
-
-		template <typename CHAR, typename CHAR_TRAITS >
-			void unit_test(BasicStringView<CHAR, CHAR_TRAITS>**, CorrectnessTestContext & i_context);
-
-	#endif
 }
+
+

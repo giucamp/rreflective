@@ -7,8 +7,6 @@
 
 #include "reflective.h"
 
-#include "density\density.cpp"
-
 #include "reflection\impl\symbol.cpp"
 #include "reflection\impl\special_functions.cpp"
 #include "reflection\impl\string_functions.cpp"
@@ -27,3 +25,16 @@
 	#include "reflection\testing\type_inheritance_test.cpp"
 	#include "reflection\testing\qualified_type_ptr_test.cpp"
 #endif
+
+
+namespace reflective
+{
+	void dense_list_test();
+	void dense_list_benchmark();
+
+	void reference_globals()
+	{		
+		dense_list_test();
+		dense_list_benchmark();
+	}
+}

@@ -1,6 +1,5 @@
 
 #pragma once
-#include "density_common.h"
 #include <unordered_map>
 #include <functional>
 #include <memory>
@@ -114,7 +113,7 @@ namespace reflective
 		NoLeakScope & operator = (const NoLeakScope &) = delete;
 	};
 	
-	/** Rurns an exception safeness test, calling the provided function many times.
+	/** Runs an exception safeness test, calling the provided function many times.
 		First the provided function is called without raising any exception. 
 		- Then the function is called, an the first time exception_check_point is called, an exception is thrown
 		- then the function is called, an the second time exception_check_point is called, an exception is thrown

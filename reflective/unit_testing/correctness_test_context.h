@@ -25,6 +25,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ***********************************************************************************/
 
+#pragma once
+#include <random>
+#include <string>
+
 namespace reflective
 {
 	class CorrectnessTestContext

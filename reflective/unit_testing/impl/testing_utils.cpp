@@ -1,6 +1,7 @@
 
 #include "..\testing_utils.h"
 #include <random>
+#include <assert.h>
 
 namespace reflective
 {
@@ -34,8 +35,8 @@ namespace reflective
 		void TestAllocatorBase::pop_level()
 		{
 			auto & levels = GetThreadData().m_levels;
-			REFLECTIVE_INTERNAL_ASSERT(levels.size() > 0);
-			REFLECTIVE_INTERNAL_ASSERT(levels.back().m_allocations.size() == 0);
+			assert(levels.size() > 0);
+			assert(levels.back().m_allocations.size() == 0);
 			levels.pop_back();
 		}
 
@@ -53,7 +54,7 @@ namespace reflective
 
 				auto & allocations = thread_data.m_levels.back().m_allocations;
 				auto res = allocations.insert(std::make_pair(block, entry));
-				REFLECTIVE_INTERNAL_ASSERT(res.second);
+				assert(res.second);
 			}
 
 			return block;
@@ -66,7 +67,7 @@ namespace reflective
 			{
 				auto & allocations = thread_data.m_levels.back().m_allocations;
 				auto it = allocations.find(i_block);
-				REFLECTIVE_INTERNAL_ASSERT(it != allocations.end());
+				assert(it != allocations.end());
 				allocations.erase(it);
 			}
 
@@ -128,7 +129,7 @@ namespace reflective
 
 	void run_exception_stress_test(std::function<void()> i_test)
 	{
-		REFLECTIVE_RUNTIME_CHECK(st_static_data == nullptr, __func__ " does no support recursion");
+		assert(st_static_data == nullptr); // "run_exception_stress_test does no support recursion"
 
 		i_test();
 
