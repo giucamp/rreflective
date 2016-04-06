@@ -90,9 +90,6 @@
     <ClInclude Include="..\reflective\density\dense_list.h">
       <Filter>density</Filter>
     </ClInclude>
-    <ClInclude Include="..\reflective\density\density.h">
-      <Filter>density</Filter>
-    </ClInclude>
     <ClInclude Include="..\reflective\density\density_common.h">
       <Filter>density</Filter>
     </ClInclude>

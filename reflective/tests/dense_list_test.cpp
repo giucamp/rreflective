@@ -94,7 +94,7 @@ namespace reflective
 				NoLeakScope leak_detector;
 
 				const auto list = TestDenseListString::make();
-				static_assert(sizeof(list) == sizeof(void*) * 2, "If the allocator is stateless DenseList is documented to be big as two pointers");
+				static_assert(sizeof(list) == sizeof(void*) * 1, "If the allocator is stateless DenseList is documented to be big as one pointers");
 				REFLECTIVE_TEST_ASSERT(list.begin() == list.end());
 				REFLECTIVE_TEST_ASSERT(list.size() == 0);
 				REFLECTIVE_TEST_ASSERT(list == TestDenseListString());
