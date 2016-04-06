@@ -195,7 +195,6 @@
     <ClInclude Include="..\reflective\density\dense_fixed_queue.h" />
     <ClInclude Include="..\reflective\density\dense_list.h" />
     <ClInclude Include="..\reflective\density\dense_type_wrapper.h" />
-    <ClInclude Include="..\reflective\density\density.h" />
     <ClInclude Include="..\reflective\density\density_common.h" />
     <ClInclude Include="..\reflective\density\identifier.h" />
     <ClInclude Include="..\reflective\density\in_buffer_text_stream.h" />

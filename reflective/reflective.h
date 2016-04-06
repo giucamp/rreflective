@@ -79,7 +79,17 @@ namespace reflective
 #include "reflective_settings.h"
 
 // core headers
-#include "density\density.h"
+#include "density\density_common.h"
+#include "density\array_view.h"
+#include "density\string_view.h"
+#include "density\dense_list.h"
+#include "density\out_buffer_text_stream.h"
+#include "density\in_buffer_text_stream.h"
+#include "density\stream_adapters.h"
+#include "density\ptr_string.h"
+#include "density\identifier.h"
+#include "density\string_hash.h"
+
 
 namespace reflective
 {

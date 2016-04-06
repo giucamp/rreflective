@@ -91,9 +91,23 @@ namespace reflective
 			destroy_impl();
 		}
 
-		size_t size() const REFLECTIVE_NOEXCEPT { return m_size; }
+		size_t size() const REFLECTIVE_NOEXCEPT 
+		{
+			if (m_buffer != nullptr)
+			{
+				Header * const header = reinterpret_cast<Header*>(m_buffer) - 1;
+				return header->m_count;
+			}
+			else
+			{
+				return 0;
+			}
+		}
 
-		bool empty() const REFLECTIVE_NOEXCEPT  { return m_size == 0; }
+		bool empty() const REFLECTIVE_NOEXCEPT
+		{
+			return m_buffer == nullptr; 
+		}
 
 		class iterator;
 		class const_iterator;
@@ -376,7 +390,12 @@ namespace reflective
 				return nullptr;
 			}
 		}
-				
+
+		struct Header
+		{
+			size_t m_count;
+		};
+		
 		struct ListBuilder
 		{
 			ListBuilder() REFLECTIVE_NOEXCEPT
@@ -386,12 +405,14 @@ namespace reflective
 
 			void init(ALLOCATOR & i_allocator, size_t i_count, size_t i_buffer_size, size_t i_buffer_alignment)
 			{
-				void * const buffer = aligned_alloc(i_allocator, i_buffer_size, i_buffer_alignment);
-				m_end_of_type_infos = m_type_infos = static_cast<TypeWrapper*>(buffer);
+				void * const memory_block = aligned_alloc(i_allocator, i_buffer_size + sizeof(Header), i_buffer_alignment, sizeof(Header));
+				Header * header = static_cast<Header*>(memory_block);
+				header->m_count = i_count;
+				m_end_of_type_infos = m_type_infos = reinterpret_cast<TypeWrapper*>(header + 1);
 				m_end_of_elements = m_elements = m_type_infos + i_count;
 
 				#if REFLECTIVE_DENSE_LIST_DEBUG
-					m_dbg_end_of_buffer = address_add(buffer, i_buffer_size);
+					m_dbg_end_of_buffer = address_add(m_type_infos, i_buffer_size);
 				#endif
 			}
 
@@ -473,7 +494,7 @@ namespace reflective
 						element = address_add(element, type_info->size());
 						type_info->~TypeWrapper();
 					}
-					aligned_free(i_allocator, m_type_infos, i_buffer_size, i_buffer_alignment);
+					aligned_free(i_allocator, reinterpret_cast<Header*>( m_type_infos ) - 1, i_buffer_size, i_buffer_alignment);
 				}
 			}
 
@@ -495,17 +516,23 @@ namespace reflective
 
 		void destroy_impl() REFLECTIVE_NOEXCEPT
 		{
-			size_t dense_alignment = std::alignment_of<TypeWrapper>::value;
-			const auto end_it = end();
-			const size_t dense_size = m_size * sizeof(TypeWrapper);
-			for (auto it = begin(); it != end_it; ++it)
+			if (m_buffer != nullptr)
 			{
-				auto curr_type = it.curr_type();
-				dense_alignment = details::size_max(dense_alignment, curr_type->alignment() );
-				curr_type->destroy(it.curr_element());
-				curr_type->TypeWrapper::~TypeWrapper();
+				size_t dense_alignment = std::alignment_of<TypeWrapper>::value;
+				const auto end_it = end();
+				const size_t dense_size = m_size * sizeof(TypeWrapper);
+				for (auto it = begin(); it != end_it; ++it)
+				{
+					auto curr_type = it.curr_type();
+					dense_alignment = details::size_max(dense_alignment, curr_type->alignment());
+					curr_type->destroy(it.curr_element());
+					curr_type->TypeWrapper::~TypeWrapper();
+				}
+
+				Header * const header = reinterpret_cast<Header*>(m_buffer) - 1;
+				assert(header->m_count == m_size);
+				aligned_free(*static_cast<ALLOCATOR*>(this), header, dense_size, dense_alignment);
 			}
-			aligned_free( *static_cast<ALLOCATOR*>(this), m_buffer, dense_size, dense_alignment);
 		}
 
 		void copy_impl(const DenseList & i_source)
