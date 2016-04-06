@@ -225,14 +225,14 @@ namespace reflective
 		return nullptr;
 	}
 
-	struct TypeInfo
+	struct TypeWrapper
 	{
 		uintptr_t m_multeplicity : std::numeric_limits<uintptr_t>::digits - 1;
 		uintptr_t m_virtual_multeplicity : 1;
 		BaseType m_base;
 		const Type * m_derived_type;
 
-		TypeInfo()
+		TypeWrapper()
 		{
 			m_multeplicity = 0;
 			m_virtual_multeplicity = 0;
@@ -242,7 +242,7 @@ namespace reflective
 
 	bool Type::internal_find_path_to_type(const Type & i_source_type, const Type & i_target_type, std::vector<BaseType> & io_base_types)
 	{
-		std::map<const Type*, TypeInfo> map;
+		std::map<const Type*, TypeWrapper> map;
 		std::vector<const Type*> stack;
 
 		stack.push_back(&i_source_type);

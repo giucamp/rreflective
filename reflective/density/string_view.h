@@ -121,7 +121,7 @@ namespace reflective
 
 		REFLECTIVE_CONSTEXPR const CHAR & operator [] (size_t i_index) const REFLECTIVE_NOEXCEPT
 		{
-			REFLECTIVE_ASSERT(i_index < m_size, "invalid index for reflective::BasicStringView::operator []" );
+			assert(i_index < m_size);
 			return m_chars[i_index];
 		}
 
@@ -136,13 +136,13 @@ namespace reflective
 
 		REFLECTIVE_CONSTEXPR const CHAR & front() const REFLECTIVE_NOEXCEPT
 		{
-			REFLECTIVE_ASSERT(m_size > 0, "reflective::BasicStringView::front called on empty string");
+			assert(m_size > 0);
 			return m_chars[0];
 		}
 
 		REFLECTIVE_CONSTEXPR const CHAR & back() const REFLECTIVE_NOEXCEPT
 		{
-			REFLECTIVE_ASSERT(m_size > 0, "reflective::BasicStringView::back called on empty string");
+			assert(m_size > 0);
 			return m_chars[m_size - 1];
 		}
 
@@ -335,7 +335,7 @@ namespace reflective
 
 		void copy_to_cstr(CHAR * i_dest, size_t i_buffer_size, size_t i_start_index = 0)
 		{
-			REFLECTIVE_ASSERT(i_buffer_size > 0, "reflective::BasicStringView::copy_to_cstr called with an empty buffer");
+			assert(i_buffer_size > 0);
 
 			size_t length_to_copy = std::min(i_buffer_size - 1, m_size >= i_start_index ? m_size - i_start_index : 0);
 			CHAR_TRAITS::copy(i_dest, m_chars, length_to_copy);
@@ -353,7 +353,7 @@ namespace reflective
 
 		void remove_prefix(size_t i_char_count) REFLECTIVE_NOEXCEPT
 		{
-			REFLECTIVE_ASSERT(i_char_count <= m_size, "reflective::BasicStringView::remove_prefix called with invalid param");
+			assert(i_char_count <= m_size);
 			m_chars += i_char_count;
 			m_size -= i_char_count;
 		}
@@ -388,14 +388,14 @@ namespace reflective
 		template <size_t ARRAY_SIZE>
 			bool remove_prefix_literal(const CHAR(&i_array)[ARRAY_SIZE]) REFLECTIVE_NOEXCEPT
 		{
-			REFLECTIVE_ASSERT(i_array[ARRAY_SIZE - 1] == 0, "the array must be null-terminated");
+			assert(i_array[ARRAY_SIZE - 1] == 0); // the array must be null-terminated
 			return remove_prefix_string(StringView(i_array, ARRAY_SIZE - 1));
 		}
 
 		template <size_t ARRAY_SIZE>
 			bool remove_suffix_literal(const CHAR(&i_array)[ARRAY_SIZE]) REFLECTIVE_NOEXCEPT
 		{
-			REFLECTIVE_ASSERT(i_array[ARRAY_SIZE - 1] == 0, "the array must be null-terminated");
+			assert(i_array[ARRAY_SIZE - 1] == 0); // the array must be null-terminated"
 			return remove_suffix_string(StringView(i_array, ARRAY_SIZE - 1));
 		}
 
@@ -442,7 +442,7 @@ namespace reflective
 
 		void remove_suffix(size_t i_char_count) REFLECTIVE_NOEXCEPT
 		{
-			REFLECTIVE_ASSERT(i_char_count <= m_size, "reflective::BasicStringView::remove_suffix called with invalid param");
+			assert(i_char_count <= m_size);
 			m_size -= i_char_count;
 		}
 

@@ -19,11 +19,11 @@
     <Filter Include="density">
       <UniqueIdentifier>{db18c095-47d7-490e-aaae-e3a22225a7aa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="density\testing">
-      <UniqueIdentifier>{7ae1a29c-a10e-4d3d-8422-84e088da9845}</UniqueIdentifier>
+    <Filter Include="unit_testing\impl">
+      <UniqueIdentifier>{d44fc31c-54d0-4453-a7e9-32f9f3598b49}</UniqueIdentifier>
     </Filter>
-    <Filter Include="density\impl">
-      <UniqueIdentifier>{e8c8a74a-63dc-427b-9d80-fdfbb813abd4}</UniqueIdentifier>
+    <Filter Include="tests">
+      <UniqueIdentifier>{77089583-b318-4b78-93b8-f260ae5d8574}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -86,15 +86,6 @@
     <ClInclude Include="..\reflective\reflection\property\data_member_property.h">
       <Filter>reflection\property</Filter>
     </ClInclude>
-    <ClInclude Include="..\reflective\unit_testing\uint_test_manager.h">
-      <Filter>unit_testing</Filter>
-    </ClInclude>
-    <ClInclude Include="..\reflective\unit_testing\unit_testing.h">
-      <Filter>unit_testing</Filter>
-    </ClInclude>
-    <ClInclude Include="..\reflective\unit_testing\correctness_test_context.h">
-      <Filter>unit_testing</Filter>
-    </ClInclude>
     <ClInclude Include="..\reflective\reflection\base_type.h">
       <Filter>reflection</Filter>
     </ClInclude>
@@ -108,6 +99,9 @@
       <Filter>density</Filter>
     </ClInclude>
     <ClInclude Include="..\reflective\density\density.h">
+      <Filter>density</Filter>
+    </ClInclude>
+    <ClInclude Include="..\reflective\density\density_common.h">
       <Filter>density</Filter>
     </ClInclude>
     <ClInclude Include="..\reflective\density\identifier.h">
@@ -131,10 +125,19 @@
     <ClInclude Include="..\reflective\density\string_view.h">
       <Filter>density</Filter>
     </ClInclude>
-    <ClInclude Include="..\reflective\density\testing_utils.h">
+    <ClInclude Include="..\reflective\unit_testing\correctness_test_context.h">
+      <Filter>unit_testing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\reflective\unit_testing\testing_utils.h">
+      <Filter>unit_testing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\reflective\unit_testing\uint_test_manager.h">
+      <Filter>unit_testing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\reflective\density\dense_fixed_queue.h">
       <Filter>density</Filter>
     </ClInclude>
-    <ClInclude Include="..\reflective\density\density_common.h">
+    <ClInclude Include="..\reflective\density\dense_type_wrapper.h">
       <Filter>density</Filter>
     </ClInclude>
   </ItemGroup>
@@ -142,12 +145,6 @@
     <ClCompile Include="..\reflective\reflective.cpp" />
     <ClCompile Include="..\reflective\reflection\property\property.cpp">
       <Filter>reflection\property</Filter>
-    </ClCompile>
-    <ClCompile Include="..\reflective\unit_testing\unit_testing.cpp">
-      <Filter>unit_testing</Filter>
-    </ClCompile>
-    <ClCompile Include="..\reflective\unit_testing\uint_test_manager.cpp">
-      <Filter>unit_testing</Filter>
     </ClCompile>
     <ClCompile Include="..\reflective\reflection\testing\type_derived_list_test.cpp">
       <Filter>reflection\testing</Filter>
@@ -194,20 +191,20 @@
     <ClCompile Include="..\reflective\reflection\testing\qualified_type_ptr_test.cpp">
       <Filter>reflection\testing</Filter>
     </ClCompile>
-    <ClCompile Include="..\reflective\density\density.cpp">
-      <Filter>density</Filter>
+    <ClCompile Include="..\reflective\unit_testing\impl\testing_utils.cpp">
+      <Filter>unit_testing\impl</Filter>
     </ClCompile>
-    <ClCompile Include="..\reflective\density\testing\dense_list_test.cpp">
-      <Filter>density\testing</Filter>
+    <ClCompile Include="..\reflective\unit_testing\impl\unit_test_manager.cpp">
+      <Filter>unit_testing\impl</Filter>
     </ClCompile>
-    <ClCompile Include="..\reflective\density\testing\in_buffer_text_stream.cpp">
-      <Filter>density\testing</Filter>
+    <ClCompile Include="..\reflective\tests\dense_list_benchmark.cpp">
+      <Filter>tests</Filter>
     </ClCompile>
-    <ClCompile Include="..\reflective\density\testing\out_buffer_text_stream.cpp">
-      <Filter>density\testing</Filter>
+    <ClCompile Include="..\reflective\tests\dense_list_test.cpp">
+      <Filter>tests</Filter>
     </ClCompile>
-    <ClCompile Include="..\reflective\density\impl\testing_utils.cpp">
-      <Filter>density\impl</Filter>
+    <ClCompile Include="..\reflective\tests\string_view_test.cpp">
+      <Filter>tests</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -228,12 +225,6 @@
     </None>
     <None Include="..\reflective\reflection\namespace.inl">
       <Filter>reflection</Filter>
-    </None>
-    <None Include="..\reflective\density\density.inl">
-      <Filter>density</Filter>
-    </None>
-    <None Include="..\reflective\density\impl\string_view.inl">
-      <Filter>density\impl</Filter>
     </None>
   </ItemGroup>
 </Project>

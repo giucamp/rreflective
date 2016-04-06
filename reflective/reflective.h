@@ -43,6 +43,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <typeinfo>
 #include <typeindex>
 
+#include "unit_testing\correctness_test_context.h"
+
 #define INCLUDING_REFLECTIVE
 
 

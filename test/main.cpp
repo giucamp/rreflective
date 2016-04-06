@@ -1,7 +1,7 @@
 
 
 #include "..\reflective\reflective.h"
-#include "..\reflective\unit_testing\unit_testing.h"
+#include "..\reflective\unit_testing\uint_test_manager.h"
 #include <sstream>
 #include <iostream>
 
@@ -36,9 +36,9 @@ int main()
 	
 	reference_globals();
 
-	UnitTestingManager::instance().add_correctness_test("dense_list_test", 
+	/*UnitTestingManager::instance().add_correctness_test("dense_list_test", 
 		[](reflective::CorrectnessTestContext &) {dense_list_test(); });
-	UnitTestingManager::instance().run("dense_list_test");
+	UnitTestingManager::instance().run("dense_list_test");*/
 
 	std::cout << get_type<QualifiedTypePtr>() << std::endl;
 	std::cout << get_type<StringView>() << std::endl;

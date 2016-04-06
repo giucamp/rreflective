@@ -50,7 +50,7 @@ namespace reflective
 		{
 		public:
 
-			using List = DenseList < TestObjectBase, std::allocator<TestObjectBase>, UnmovableTypeInfo<TestObjectBase> >;
+			using List = DenseList < TestObjectBase, std::allocator<TestObjectBase>, UnmovableTypeWrapper<TestObjectBase> >;
 
 			TestContainerList()
 			{
@@ -72,7 +72,7 @@ namespace reflective
 
 		void memory_stress()
 		{
-			const size_t size = 10000;
+			const size_t size = 1000;
 			volatile int * ints = new int[size];
 			for (size_t i = 0; i < size; i++)
 			{
@@ -91,7 +91,7 @@ namespace reflective
 		using namespace std;
 		using namespace std::chrono;
 
-		const size_t count = 10000;
+		const size_t count = 1000;
 		vector<TestContainerList> lists(count);
 		vector<TestContainerVector> vectors(count);
 

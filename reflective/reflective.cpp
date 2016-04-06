@@ -20,7 +20,7 @@
 #include "reflection\impl\global_registry.cpp"
 
 #if REFLECTIVE_ENABLE_TESTING
-	#include "unit_testing\unit_testing.h"
+	#include "unit_testing\uint_test_manager.h"
 	#include "reflection\testing\type_derived_list_test.cpp"
 	#include "reflection\testing\type_inheritance_test.cpp"
 	#include "reflection\testing\qualified_type_ptr_test.cpp"

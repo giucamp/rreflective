@@ -3,11 +3,10 @@
 #include "..\unit_testing\testing_utils.h"
 #include <vector>
 #include <list>
+#include "..\reflective_settings.h"
 
 namespace reflective
 {
-#if REFLECTIVE_ENABLE_TESTING
-
 	namespace details
 	{
 		namespace DenseListTest
@@ -397,5 +396,4 @@ namespace reflective
 		run_exception_stress_test(&details::DenseListTest::test_with_exceptions);
 	}
 
-#endif
 }

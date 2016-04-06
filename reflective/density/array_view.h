@@ -25,6 +25,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ***********************************************************************************/
 
+#include <assert.h>
+
 namespace reflective
 {	
 	template <typename TYPE>
