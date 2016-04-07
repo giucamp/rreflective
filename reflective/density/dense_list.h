@@ -78,18 +78,18 @@ namespace reflective
 			return std::move(new_list);
 		}
 
-		/** Constructs an empty list. This function never throws. */
+		/** Constructs an empty list */
 		DenseList() REFLECTIVE_NOEXCEPT
 			: m_buffer(nullptr)
 				{ }
 
-		/** Move-construct a list, leaving the source list empty. This function never throws. */
+		/** Move-construct a list, leaving the source list empty. */
 		DenseList(DenseList && i_source) REFLECTIVE_NOEXCEPT
 		{
 			move_impl(std::move(i_source));
 		}
 
-		/** Move-assigns a list, leaving the source list empty. This function never throws. */
+		/** Move-assigns a list, leaving the source list empty. */
 		DenseList & operator = (DenseList && i_source) REFLECTIVE_NOEXCEPT
 		{
 			assert(this != &i_source); // self assignment not supported
@@ -113,13 +113,13 @@ namespace reflective
 			return *this;
 		}
 
-		/** Destroys a list. This function never throws. */
+		/** Destroys a list */
 		~DenseList() REFLECTIVE_NOEXCEPT
 		{
 			destroy_impl();
 		}
 
-		/** Returns the number of elements in the list. To check if a list is empty, the function empty() is faster. This function never throws. */
+		/** Returns the number of elements in the list. To check if a list is empty, the function empty() is faster. */
 		size_t size() const REFLECTIVE_NOEXCEPT 
 		{
 			if (m_buffer != nullptr)
@@ -133,7 +133,7 @@ namespace reflective
 			}
 		}
 
-		/** Returns wheter a list is empty. Note: This function is equivalent to size() != 0, but is faster. This function never throws. */
+		/** Returns wheter a list is empty. Note: This function is equivalent to size() != 0, but is faster. */
 		bool empty() const REFLECTIVE_NOEXCEPT
 		{
 			return m_buffer == nullptr; 

@@ -66,7 +66,7 @@ namespace reflective
 /* Note: this assert does not allow lambda expressions inside the bool expression, as 
 	the standard forbids lambda-expression in unevaluated expressions. */
 #ifdef NDEBUG
-	#define REFLECTIVE_INTERNAL_ASSERT(i_value)						(void)sizeof(i_value);
+	#define REFLECTIVE_INTERNAL_ASSERT(i_value)						;
 #else
 	#define REFLECTIVE_INTERNAL_ASSERT(i_value)						if(!(i_value)) {__debugbreak();}
 #endif

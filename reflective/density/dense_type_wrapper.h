@@ -35,7 +35,7 @@ namespace reflective
 	{
 		// This class is used by the default type-infos to store the size and the alignment according to the secified DenseList_SizeAlignmentMode
 		template <DenseList_SizeAlignmentMode MODE>
-			struct DenseList_SizeAlignmentChunk;
+			class DenseList_SizeAlignmentChunk;
 		template <> class DenseList_SizeAlignmentChunk<DenseList_SizeAlignmentMode::most_general>
 		{
 		public:

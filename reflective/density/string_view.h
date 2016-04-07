@@ -27,6 +27,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
 #include "density_common.h"
+#include <algorithm>
 
 namespace reflective
 {
