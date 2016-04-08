@@ -41,7 +41,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_clang|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v140_clang_3_7</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -194,7 +194,7 @@
     <ClInclude Include="..\reflective\density\array_view.h" />
     <ClInclude Include="..\reflective\density\dense_fixed_queue.h" />
     <ClInclude Include="..\reflective\density\dense_list.h" />
-    <ClInclude Include="..\reflective\density\dense_type_wrapper.h" />
+    <ClInclude Include="..\reflective\density\element_type.h" />
     <ClInclude Include="..\reflective\density\density_common.h" />
     <ClInclude Include="..\reflective\density\identifier.h" />
     <ClInclude Include="..\reflective\density\in_buffer_text_stream.h" />

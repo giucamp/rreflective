@@ -11,7 +11,14 @@ namespace reflective
 	{
 		namespace DenseListTest
 		{
-			using TestString = std::basic_string<char, std::char_traits<char>, TestAllocator<char> >;
+			class TestString : public std::basic_string<char, std::char_traits<char>, TestAllocator<char> >
+			{
+			public:
+				TestString() = default;
+				TestString(const char * i_str) : std::basic_string<char, std::char_traits<char>, TestAllocator<char> >(i_str) {}
+				virtual ~TestString() {}
+			};
+
 			using TestDenseListString = DenseList< TestString, TestAllocator<TestString> >;
 
 			void dense_list_test_insert(TestDenseListString i_list, size_t i_at, size_t i_count)
@@ -382,6 +389,11 @@ namespace reflective
 			void test_with_exceptions()
 			{
 				test_with_exceptions_typed<Copy_MoveExcept>();
+			}
+
+			void test_void_dense_list()
+			{
+				//auto void_list = DenseList<void>::make(1,2,3);
 			}
 		}
 	}

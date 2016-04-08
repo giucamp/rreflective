@@ -1,6 +1,6 @@
 
 #pragma once
-#include "dense_type_wrapper.h"
+#include "element_type.h"
 
 namespace reflective
 {

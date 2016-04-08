@@ -134,7 +134,7 @@
     <ClInclude Include="..\reflective\density\dense_fixed_queue.h">
       <Filter>density</Filter>
     </ClInclude>
-    <ClInclude Include="..\reflective\density\dense_type_wrapper.h">
+    <ClInclude Include="..\reflective\density\element_type.h">
       <Filter>density</Filter>
     </ClInclude>
   </ItemGroup>

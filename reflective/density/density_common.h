@@ -320,4 +320,17 @@ namespace reflective
 		}
 	}
 
+
+	template <typename BASE_CLASS, typename... TYPES>
+		struct AllCovariant
+	{
+		static const bool value = true;
+	};
+	template <typename BASE_CLASS, typename FIRST_TYPE, typename... OTHER_TYPES>
+		struct AllCovariant<BASE_CLASS, FIRST_TYPE, OTHER_TYPES...>
+	{
+		static const bool value = std::is_base_of<BASE_CLASS, FIRST_TYPE>::value &&
+			AllCovariant<BASE_CLASS, OTHER_TYPES...>::value;
+	};
+
 } // namespace reflective
