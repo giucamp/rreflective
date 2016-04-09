@@ -25,11 +25,7 @@ namespace reflective
 
 				void copy_construct(void * i_dest_element, const void * i_source_element) const
 				void move_construct(void * i_dest_element, void * i_source_element) const noexcept
-				
-				template <typename TYPE, typename... ARGS>
-					TYPE * emplace_construct(void * i_dest_element, ARGS &&... i_args) const
-						{ return new(i_dest_element) TYPE(std::forward<ARGS>(i_args)...); }
-				
+								
 				void destroy(void * i_element) const noexcept;
 		};
 	
@@ -365,7 +361,7 @@ namespace reflective
 
 	private:
 
-		enum class Operation { copy, move, destroy };
+		enum class Operation { copy, move };
  
 		using FunctionPtr = void(*)(Operation i_operation, void * i_first, void * i_second );
 

@@ -713,7 +713,7 @@ namespace reflective
 		class iterator;
 		class const_iterator;
 
-		using BaseIterator = typename DenseListBase<ALLOCATOR, ELEMENT_TYPE>::BaseIterator;
+		using BaseIterator = typename BaseClass::BaseIterator;
 
 		class iterator final : private BaseIterator
 		{
@@ -737,7 +737,7 @@ namespace reflective
 
 			iterator & operator ++ () REFLECTIVE_NOEXCEPT
 			{
-				move_next();
+				BaseIterator::move_next();
 				return *this;
 			}
 
@@ -822,15 +822,15 @@ namespace reflective
 
 			bool operator == (const const_iterator & i_other) const REFLECTIVE_NOEXCEPT
 			{
-				return m_curr_type == i_other.curr_type();
+				return BaseIterator::m_curr_type == i_other.curr_type();
 			}
 
 			bool operator != (const const_iterator & i_other) const REFLECTIVE_NOEXCEPT
 			{
-				return m_curr_type != i_other.curr_type();
+				return BaseIterator::m_curr_type != i_other.curr_type();
 			}
 
-			const ELEMENT_TYPE * curr_type() const REFLECTIVE_NOEXCEPT { return m_curr_type; }
+			const ELEMENT_TYPE * curr_type() const REFLECTIVE_NOEXCEPT { return BaseIterator::m_curr_type; }
 		
 			friend class DenseList;
 
@@ -852,7 +852,7 @@ namespace reflective
 			CopyConstruct(const ELEMENT * i_source)
 				: m_source(i_source) { }
 
-			void * operator () (ListBuilder & i_builder, const ElementType & i_element_type)
+			void * operator () (typename BaseClass::ListBuilder & i_builder, const ElementType & i_element_type)
 			{
 				return i_builder.add_by_copy(i_element_type, m_source);
 			}
@@ -865,7 +865,7 @@ namespace reflective
 			MoveConstruct(ELEMENT * i_source)
 				: m_source(i_source) { }
 
-			void * operator () (ListBuilder & i_builder, const ElementType & i_element_type)
+			void * operator () (typename BaseClass::ListBuilder & i_builder, const ElementType & i_element_type)
 			{
 				return i_builder.add_by_move(i_element_type, m_source);
 			}
@@ -874,7 +874,7 @@ namespace reflective
 		template <typename ELEMENT_COMPLETE_TYPE>
 			void push_back(const ELEMENT_COMPLETE_TYPE & i_source)
 		{
-			insert_n_impl(m_types + size(), 1, 
+			BaseClass::insert_n_impl(BaseClass::m_types + BaseClass::size(), 1,
 				ElementType::template make<ELEMENT_COMPLETE_TYPE>(),
 				CopyConstruct(&i_source) );
 		}
@@ -882,7 +882,7 @@ namespace reflective
 		template <typename ELEMENT_COMPLETE_TYPE>
 			void push_front(const ELEMENT_COMPLETE_TYPE & i_source)
 		{
-			insert_n_impl(m_types, 1,
+			BaseClass::insert_n_impl(BaseClass::m_types, 1,
 				ElementType::template make<ELEMENT_COMPLETE_TYPE>(),
 				CopyConstruct(&i_source) );
 		}
@@ -890,7 +890,7 @@ namespace reflective
 		template <typename ELEMENT_COMPLETE_TYPE>
 			void push_back(ELEMENT_COMPLETE_TYPE && i_source)
 		{
-			insert_n_impl(m_types + size(), 1, 
+			BaseClass::insert_n_impl(BaseClass::m_types + BaseClass::size(), 1,
 				ElementType::template make<ELEMENT_COMPLETE_TYPE>(),
 				MoveConstruct(&i_source) );
 		}
@@ -898,26 +898,28 @@ namespace reflective
 		template <typename ELEMENT_COMPLETE_TYPE>
 			void push_front(ELEMENT_COMPLETE_TYPE && i_source)
 		{
-			insert_n_impl(m_types, 1,
+			BaseClass::insert_n_impl(BaseClass::m_types, 1,
 				ElementType::template make<ELEMENT_COMPLETE_TYPE>()
 				MoveConstruct(&i_source) );
 		}
 
 		void pop_front()
 		{
-			erase_impl(m_types, m_types + 1);
+			auto const types = BaseClass::m_types;
+			BaseClass::erase_impl(types, types + 1);
 		}
 
 		void pop_back()
 		{
-			auto const end_type = m_types + get_size_not_empty();
-			erase_impl(end_type - 1, end_type);
+			auto const end_type = BaseClass::m_types + 
+				BaseClass::get_size_not_empty();
+			BaseClass::erase_impl(end_type - 1, end_type);
 		}
 
 		template <typename ELEMENT_COMPLETE_TYPE>
 			iterator insert(const_iterator i_position, const ELEMENT_COMPLETE_TYPE & i_source)
 		{
-			return insert_n_impl(i_position.m_curr_type, 1,
+			return BaseClass::insert_n_impl(i_position.m_curr_type, 1,
 				ElementType::template make<ELEMENT_COMPLETE_TYPE>(),
 				CopyConstruct(&i_source) );
 		}
@@ -927,7 +929,7 @@ namespace reflective
 		{
 			if (i_count > 0)
 			{
-				return insert_n_impl(i_position.m_curr_type, i_count, 
+				return BaseClass::insert_n_impl(i_position.m_curr_type, i_count,
 					ElementType::template make<ELEMENT_COMPLETE_TYPE>(),
 					CopyConstruct(&i_source) );
 			}
@@ -940,7 +942,7 @@ namespace reflective
 
 		iterator erase(const_iterator i_position)
 		{
-			return erase_impl(i_position.m_curr_type, i_position.m_curr_type + 1);
+			return BaseClass::erase_impl(i_position.m_curr_type, i_position.m_curr_type + 1);
 		}
 
 		iterator erase(const_iterator i_from, const_iterator i_to)
@@ -949,7 +951,7 @@ namespace reflective
 			auto to_type = i_to.curr_type();
 			if (from_type != to_type)
 			{
-				return erase_impl(from_type, to_type);
+				return BaseClass::erase_impl(from_type, to_type);
 			}
 			else
 			{
@@ -963,7 +965,7 @@ namespace reflective
 		/* to do, & WARNING!: this function is slicing-comparing. Fix or delete. */
 		bool equal_to(const DenseList & i_source) const
 		{
-			if (size() != i_source.size())
+			if (BaseClass::size() != i_source.size())
 			{
 				return false;
 			}

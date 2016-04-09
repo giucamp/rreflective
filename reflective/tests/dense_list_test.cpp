@@ -485,7 +485,7 @@ namespace reflective
 				using List = DenseList< Element, TestAllocator<Element> >;
 
 				auto list = List::make(Element(), Element(), Element());
-				TestWithExceptionsOnList<std::is_copy_constructible<List::value_type>::value, List>::do_it(list);
+				TestWithExceptionsOnList<std::is_copy_constructible<typename List::value_type>::value, List>::do_it(list);
 			}
 
 			void test_with_exceptions()
