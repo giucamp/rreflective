@@ -16,6 +16,13 @@ namespace reflective
 			public:
 				TestString() = default;
 				TestString(const char * i_str) : std::basic_string<char, std::char_traits<char>, TestAllocator<char> >(i_str) {}
+
+				TestString(const TestString&) = default;
+				TestString & operator = (const TestString&) = default;
+
+				TestString(TestString&&) noexcept = default;
+				TestString & operator = (TestString&&) noexcept = default;
+				
 				virtual ~TestString() {}
 			};
 
@@ -110,6 +117,9 @@ namespace reflective
 				auto list_1 = list;
 				REFLECTIVE_TEST_ASSERT(list == list_1);
 				auto list_2 = list_1;
+				static_assert( std::is_copy_constructible<TestDenseListString::value_type>::value, "");
+				//static_assert( (TestDenseListString::ElementType::s_caps & ElementTypeCaps::copy_only) == TestDenseListString::ElementType::s_caps, "");
+				static_assert( (details::GetAutoCopyMoveCap<TestDenseListString::value_type>::value & ElementTypeCaps::copy_only) == ElementTypeCaps::copy_only, "");
 				list_2 = list_1;
 				REFLECTIVE_TEST_ASSERT(list == list_2);
 
@@ -255,8 +265,8 @@ namespace reflective
 			{
 				public:
 					Moveable(int){}
-					Moveable(Moveable &&) {}
-					Moveable & operator = (Moveable &&) { return *this; }
+					Moveable(Moveable &&) REFLECTIVE_NOEXCEPT {}
+					Moveable & operator = (Moveable &&) REFLECTIVE_NOEXCEPT { return *this; }
 					Moveable(const Moveable &) = delete;
 					Moveable & operator = (const Moveable &) = delete;
 			};
@@ -275,10 +285,73 @@ namespace reflective
 					const DenseList< ELEMENT, TestAllocator<ELEMENT> > & i_dense_list, 
 					ACTION_ON_DENSE_LIST i_action_on_dense_list, ACTION_ON_STD_LIST i_action_std_list )
 			{
-				std::list<ELEMENT> std_container(i_dense_list.begin(), i_dense_list.end());
+				// dense_list_copy = i_dense_list
+				DenseList< ELEMENT, TestAllocator<ELEMENT> > dense_list_copy;
+				for (const auto & el : i_dense_list)
+				{
+					const typename ELEMENT::UnderlyingClass & elu = el;
+					dense_list_copy.push_back(ELEMENT(elu));
+				}
 
-				auto list = i_dense_list;
-				const auto copy_of_list = list;
+				// std_list_copy = i_dense_list
+				std::list<ELEMENT> std_list_copy;
+				for (const auto & el : i_dense_list)
+				{
+					const typename ELEMENT::UnderlyingClass & elu = el;
+					std_list_copy.push_back(ELEMENT(elu));
+				}
+
+				// apply the action on the dense list
+				try
+				{
+					i_action_on_dense_list(dense_list_copy);
+				}
+				catch (...)
+				{
+					// ...check the strong exception guarantee: no changes is the list
+
+					// std_list_copy_2 = i_dense_list
+					std::list<ELEMENT> std_list_copy_2;
+					for (const auto & el : i_dense_list)
+					{
+						const typename ELEMENT::UnderlyingClass & elu = el;
+						std_list_copy_2.push_back(ELEMENT(elu));
+					}
+
+					REFLECTIVE_TEST_ASSERT(std_list_copy == std_list_copy_2);
+
+					throw;
+				}
+				
+				// appy the action on the list
+				i_action_std_list(std_list_copy);
+
+				// compare std_list_copy and dense_list_copy (should be equal)
+				{
+					std::list<ELEMENT> dense_list_post_copy;
+					for (const auto & el : dense_list_copy)
+					{
+						const typename ELEMENT::UnderlyingClass & elu = el;
+						dense_list_post_copy.push_back(ELEMENT(elu));
+					}
+					REFLECTIVE_TEST_ASSERT(dense_list_post_copy == std_list_copy);
+				}
+
+				// this local function makes a copy of the DenseList: ELEMENT may be not-copyable, but ELEMENT::UnderlyingClass is copyable				
+				/*const auto copy_to_std_list = [](const DenseList< ELEMENT, TestAllocator<ELEMENT> > & i_list) -> std::list<ELEMENT> {
+					std::list<ELEMENT> prev_std_container;
+					for (const auto & el : i_dense_list)
+					{
+						const typename ELEMENT::UnderlyingClass & elu = el;
+						prev_std_container.push_back(ELEMENT(elu));
+					}
+					return copy_to_std_list;
+				};
+
+				const auto std_prev_list = copy_to_std_list(i_dense_list);
+				const auto std_list = std_prev_list;
+
+				//auto list = std_container;
 				try
 				{
 					i_action_on_dense_list(list);
@@ -286,95 +359,124 @@ namespace reflective
 				catch (...)
 				{
 					// check the strong exception guarantee: no changes is the list
-					REFLECTIVE_TEST_ASSERT(list == copy_of_list);
+					//REFLECTIVE_TEST_ASSERT(list == copy_of_list);
 					throw;
 				}
 
-				i_action_std_list(std_container);
+				// apply the action on the std::list
+				i_action_std_list(std_list);
+				
+				// now std_list must be = to list
+				REFLECTIVE_TEST_ASSERT(new_std_container.size() == std_container.size());
+				for(auto it1 = )
+				
 				std::list<ELEMENT> new_std_container(list.begin(), list.end());
-				REFLECTIVE_TEST_ASSERT(new_std_container == std_container);
+				REFLECTIVE_TEST_ASSERT(new_std_container == std_container);*/
 			}
 
-			template <typename LIST>
-				void test_with_exceptions_on_list(const LIST & i_list)
+			template <bool CAN_COPY_ELEMENTS, typename LIST> struct TestWithExceptionsOnList;
+				template <typename LIST> struct TestWithExceptionsOnList<false, LIST>
 			{
-				using Element = typename LIST::value_type;
-				Element new_element;
-
-				// test push_back( const Element & new_element )
-				test_operation_with_exceptions(i_list,
-					[new_element](LIST & i_container) {
-						i_container.push_back(new_element); },
-					[new_element](std::list<Element> & i_container) {
-						i_container.push_back(new_element); }
-					);
-
-				// test push_front( const Element & new_element )
-				test_operation_with_exceptions(i_list,
-					[new_element](LIST & i_container) {
-						i_container.push_front(new_element); },
-					[new_element](std::list<Element> & i_container) {
-						i_container.push_front(new_element); }
-					);
-
-				// test pop_back()
-				test_operation_with_exceptions(i_list,
-					[](LIST & i_container) {
-						i_container.pop_back(); },
-					[](std::list<Element> & i_container) {
-						i_container.pop_back(); }
-					);
-
-				// test pop_front()
-				test_operation_with_exceptions(i_list,
-					[](LIST & i_container) {
-						i_container.pop_front(); },
-					[](std::list<Element> & i_container) {
-						i_container.pop_front(); }
-					);
-
-				auto const size = i_list.size();
-				for (size_t from = 0; from <= size; from++)
+				// test on list with non-copyable elements
+				static void do_it(const LIST & i_list)
 				{
-					// test insert( iterator at, const Element & new_element )
+					using Element = typename LIST::value_type;
+					Element new_element;
+
+					// test pop_back()
 					test_operation_with_exceptions(i_list,
-						[from, new_element](LIST & i_container) {
-							i_container.insert(std::next(i_container.begin(), from), new_element); },
-						[from, new_element](std::list<Element> & i_container) {
-							i_container.insert(std::next(i_container.begin(), from), new_element); }
+						[](LIST & i_container) {
+							i_container.pop_back(); },
+						[](std::list<Element> & i_container) {
+							i_container.pop_back(); }
 						);
 
-					// test erase( iterator at )
-					if (from < size)
+					// test pop_front()
+					test_operation_with_exceptions(i_list,
+						[](LIST & i_container) {
+							i_container.pop_front(); },
+						[](std::list<Element> & i_container) {
+							i_container.pop_front(); }
+						);
+
+					auto const size = i_list.size();
+					for (size_t from = 0; from <= size; from++)
 					{
-						test_operation_with_exceptions(i_list,
-							[from, new_element](LIST & i_container) {
-							i_container.erase(std::next(i_container.begin(), from)); },
-							[from, new_element](std::list<Element> & i_container) {
-								i_container.erase(std::next(i_container.begin(), from)); }
-							);
-					}
+						// test erase( iterator at )
+						if (from < size)
+						{
+							test_operation_with_exceptions(i_list,
+								[from](LIST & i_container) {
+									i_container.erase(std::next(i_container.begin(), from)); },
+								[from](std::list<Element> & i_container) {
+									i_container.erase(std::next(i_container.begin(), from)); }
+								);
+						}
 
-					for (size_t to = from; to <= size; to++)
-					{		
-						// test insert( iterator at, size_t count, const Element & new_element )
-						test_operation_with_exceptions(i_list,
-							[from, to, new_element](LIST & i_container) {
-								i_container.insert(std::next(i_container.begin(), from), to - from, new_element); },
-							[from, to, new_element](std::list<Element> & i_container) {
-								i_container.insert(std::next(i_container.begin(), from), to - from, new_element); }
-							);
-
-						// test erase( iterator at, size_t count, const Element & new_element )
-						test_operation_with_exceptions(i_list,
-							[from, to, new_element](LIST & i_container) {
-								i_container.erase(std::next(i_container.begin(), from), std::next(i_container.begin(), to)); },
-							[from, to, new_element](std::list<Element> & i_container) {
-								i_container.erase(std::next(i_container.begin(), from), std::next(i_container.begin(), to)); }
-							);
+						for (size_t to = from; to <= size; to++)
+						{
+							// test erase( iterator at, size_t count, const Element & new_element )
+							test_operation_with_exceptions(i_list,
+								[from, to](LIST & i_container) {
+									i_container.erase(std::next(i_container.begin(), from), std::next(i_container.begin(), to)); },
+								[from, to](std::list<Element> & i_container) {
+									i_container.erase(std::next(i_container.begin(), from), std::next(i_container.begin(), to)); }
+								);
+						}
 					}
 				}
-			}
+			};
+			template <typename LIST> struct TestWithExceptionsOnList<true, LIST>
+			{
+				// test on list with copyable elements
+				static void do_it(const LIST & i_list)
+				{
+					TestWithExceptionsOnList<false, LIST>::do_it(i_list);
+					
+					using Element = typename LIST::value_type;
+					Element new_element;
+
+					// test push_back( const Element & new_element )
+					test_operation_with_exceptions(i_list,
+						[new_element](LIST & i_container) {
+							i_container.push_back(new_element); },
+						[new_element](std::list<Element> & i_container) {
+							i_container.push_back(new_element); }
+						);
+
+					// test push_front( const Element & new_element )
+					test_operation_with_exceptions(i_list,
+						[new_element](LIST & i_container) {
+							i_container.push_front(new_element); },
+						[new_element](std::list<Element> & i_container) {
+							i_container.push_front(new_element); }
+						);
+
+					auto const size = i_list.size();
+					for (size_t from = 0; from <= size; from++)
+					{
+						// test insert( iterator at, const Element & new_element )
+						test_operation_with_exceptions(i_list,
+							[from, new_element](LIST & i_container) {
+								i_container.insert(std::next(i_container.begin(), from), new_element); },
+							[from, new_element](std::list<Element> & i_container) {
+								i_container.insert(std::next(i_container.begin(), from), new_element); }
+							);
+
+						for (size_t to = from; to <= size; to++)
+						{
+							// test insert( iterator at, size_t count, const Element & new_element )
+							test_operation_with_exceptions(i_list,
+								[from, to, new_element](LIST & i_container) {
+									i_container.insert(std::next(i_container.begin(), from), to - from, new_element); },
+								[from, to, new_element](std::list<Element> & i_container) {
+									i_container.insert(std::next(i_container.begin(), from), to - from, new_element); }
+								);
+						}
+					}
+				}
+			};
+
 
 			template <typename ELEMENT>
 				void test_with_exceptions_typed()
@@ -383,12 +485,13 @@ namespace reflective
 				using List = DenseList< Element, TestAllocator<Element> >;
 
 				auto list = List::make(Element(), Element(), Element());
-				test_with_exceptions_on_list(list);
+				TestWithExceptionsOnList<std::is_copy_constructible<List::value_type>::value, List>::do_it(list);
 			}
 
 			void test_with_exceptions()
 			{
-				test_with_exceptions_typed<Copy_MoveExcept>();
+				test_with_exceptions_typed<NoCopy_MoveNoExcept>();
+				test_with_exceptions_typed<Copy_MoveNoExcept>();
 			}
 
 			void test_void_dense_list()

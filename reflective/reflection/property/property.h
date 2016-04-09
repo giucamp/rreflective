@@ -41,6 +41,12 @@ namespace reflective
 	{
 	public:
 
+		Property(Property && src)
+			: ClassMember(std::move(src))
+		{
+
+		}
+
 		/** Retrieves the type of the property. This information is very important to use the getter and the 
 			setters methods. To construct, destroy, get the size and alignment of values of the property use 
 			type().primary_type(). */

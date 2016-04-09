@@ -122,9 +122,12 @@ namespace reflective
 	std::random_device g_random_device;
 	std::mt19937 g_rand(g_random_device());
 
-	AllocatingTester::AllocatingTester()
-		: m_rand_value( std::allocate_shared<int>(TestAllocator<int>(), std::uniform_int_distribution<int>(100000)(g_rand) ) )
+	namespace details
 	{
+		AllocatingTester::AllocatingTester()
+			: m_rand_value(std::allocate_shared<int>(TestAllocator<int>(), std::uniform_int_distribution<int>(100000)(g_rand)))
+		{
+		}
 	}
 
 	void run_exception_stress_test(std::function<void()> i_test)

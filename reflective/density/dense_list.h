@@ -20,66 +20,13 @@ namespace reflective
 			return i_first > i_second ? i_first : i_second;
 		}
 	}
-	/** A dense-list is a polymorphic sequence container optimized to be compact in both heap memory and inline storage.
-		Elements is a DenseList are allocated respecting their alignment requirements.
-		In a polymorphic container every element can have a different complete type, provided that this type is covariant to the type ELEMENT.
-		All the elements of a DenseList are arranged in the same memory block of the heap. 
-		Insertions\removals of a non-zero number of elements and clear() always reallocate the memory blocks and invalidate existing iterators.
-		The inline storage of DenseList is the same of a pointer. An empty DenseList does not use heap memory.
-		All the functions of DenseList gives at least the strong exception guarantee. */
-	template <typename ALLOCATOR, typename ELEMENT_TYPE >
+
+	template < typename ALLOCATOR, typename ELEMENT_TYPE >
 		class DenseListBase : private ALLOCATOR
 	{
-	protected:
-		enum InternalConstructor { InternalConstructorMem };
-
 	public:
 
-
-
-		/** Constructs an empty list */
-		DenseListBase() REFLECTIVE_NOEXCEPT
-			: m_types(nullptr)
-				{ }
-
-		/** Move-construct a list, leaving the source list empty. */
-		DenseListBase(DenseListBase && i_source) REFLECTIVE_NOEXCEPT
-		{
-			move_impl(std::move(i_source));
-		}
-
-		/** Move-assigns a list, leaving the source list empty. */
-		DenseListBase & operator = (DenseListBase && i_source) REFLECTIVE_NOEXCEPT
-		{
-			assert(this != &i_source); // self assignment not supported
-			destroy_impl();
-			move_impl(std::move(i_source));
-			return *this;
-		}
-
-		/** Copy-constructs a list. This function gives the strong exception guarantee. */
-		DenseListBase(const DenseListBase & i_source)
-		{
-			copy_impl(i_source);
-		}
-
-		/** Copy-assigns a list. This function gives the strong exception guarantee. */
-		DenseListBase & operator = (const DenseListBase & i_source)
-		{
-			assert(this != &i_source); // self assignment not supported
-			destroy_impl();
-			copy_impl(i_source);
-			return *this;
-		}
-
-		/** Destroys a list */
-		~DenseListBase() REFLECTIVE_NOEXCEPT
-		{
-			destroy_impl();
-		}
-
-		/** Returns the number of elements in the list. To check if a list is empty, the function empty() is faster. */
-		size_t size() const REFLECTIVE_NOEXCEPT 
+		size_t size() const REFLECTIVE_NOEXCEPT
 		{
 			if (m_types != nullptr)
 			{
@@ -92,181 +39,106 @@ namespace reflective
 			}
 		}
 
-		/** Returns wheter a list is empty. Note: This function is equivalent to size() != 0, but is faster. */
 		bool empty() const REFLECTIVE_NOEXCEPT
 		{
-			return m_types == nullptr; 
+			return m_types == nullptr;
 		}
 
-		class iterator;
-		class const_iterator;
-
-		class iterator
-		{
-		public:
-
-			using iterator_category = std::forward_iterator_tag;
-			using difference_type = ptrdiff_t;
-			using size_type = size_t;
-
-			iterator() REFLECTIVE_NOEXCEPT
-				: m_unaligned_curr_element(nullptr), m_curr_type(nullptr) { }
-
-			iterator(InternalConstructor, void * i_curr_element, const ELEMENT_TYPE * i_curr_type) REFLECTIVE_NOEXCEPT
-				: m_unaligned_curr_element(i_curr_element), m_curr_type(i_curr_type)
-			{
-			}
-
-			iterator & operator ++ () REFLECTIVE_NOEXCEPT
-			{
-				void * const prev_element = curr_element();
-				auto const curr_element_size = m_curr_type->size();
-				m_curr_type++;
-				m_unaligned_curr_element = reinterpret_cast<value_type*>( reinterpret_cast<uintptr_t>(prev_element) + curr_element_size );
-				return *this;
-			}
-
-			iterator operator++ (int) REFLECTIVE_NOEXCEPT
-			{
-				iterator copy(*this);
-				operator ++ ();
-				return copy;
-			}
-
-			bool operator == (const iterator & i_other) const REFLECTIVE_NOEXCEPT
-			{
-				return m_curr_type == i_other.curr_type();
-			}
-
-			bool operator != (const iterator & i_other) const REFLECTIVE_NOEXCEPT
-			{
-				return m_curr_type != i_other.curr_type();
-			}
-
-			bool operator == (const const_iterator & i_other) const REFLECTIVE_NOEXCEPT
-			{
-				return m_curr_type == i_other.curr_type();
-			}
-
-			bool operator != (const const_iterator & i_other) const REFLECTIVE_NOEXCEPT
-			{
-				return m_curr_type != i_other.curr_type();
-			}
-			
-			const ELEMENT_TYPE * curr_type() const REFLECTIVE_NOEXCEPT { return m_curr_type; }
-
-			void * curr_element() const REFLECTIVE_NOEXCEPT
-			{
-				auto const curr_element_alignment = m_curr_type->alignment();
-				return address_upper_align(m_unaligned_curr_element, curr_element_alignment);
-			}
-
-		//private:
-			void * m_unaligned_curr_element;
-			const ELEMENT_TYPE * m_curr_type;
-			
-		}; // class iteartor
-
-		class const_iterator
-		{
-		public:
-
-			using iterator_category = std::forward_iterator_tag;
-			using difference_type = ptrdiff_t;
-			using size_type = size_t;
-
-			const_iterator() REFLECTIVE_NOEXCEPT
-				: m_unaligned_curr_element(nullptr), m_curr_type(nullptr) { }
-
-			const_iterator(const iterator & i_iterator) REFLECTIVE_NOEXCEPT
-				: m_unaligned_curr_element(i_iterator.m_unaligned_curr_element), m_curr_type(i_iterator.m_curr_type)
-			{
-			}
-
-			const_iterator(InternalConstructor, const void * i_curr_element, const ELEMENT_TYPE * i_curr_type) REFLECTIVE_NOEXCEPT
-				: m_unaligned_curr_element(i_curr_element), m_curr_type(i_curr_type)
-			{
-			}
-
-			const_iterator & operator ++ () REFLECTIVE_NOEXCEPT
-			{
-				const void * const prev_element = curr_element();
-				auto const curr_element_size = m_curr_type->size();
-				m_curr_type++;
-				m_unaligned_curr_element = reinterpret_cast<value_type*>( reinterpret_cast<uintptr_t>(prev_element) + curr_element_size );
-				return *this;
-			}
-
-			const_iterator operator++ (int) REFLECTIVE_NOEXCEPT
-			{
-				const_iterator copy(*this);
-				operator ++ ();
-				return copy;
-			}
-
-			bool operator == (const iterator & i_other) const REFLECTIVE_NOEXCEPT
-			{
-				return m_curr_type == i_other.curr_type();
-			}
-
-			bool operator != (const iterator & i_other) const REFLECTIVE_NOEXCEPT
-			{
-				return m_curr_type != i_other.curr_type();
-			}
-
-			bool operator == (const const_iterator & i_other) const REFLECTIVE_NOEXCEPT
-			{
-				return m_curr_type == i_other.curr_type();
-			}
-
-			bool operator != (const const_iterator & i_other) const REFLECTIVE_NOEXCEPT
-			{
-				return m_curr_type != i_other.curr_type();
-			}
-
-			const void * curr_element() const REFLECTIVE_NOEXCEPT
-			{
-				auto const curr_element_alignment = m_curr_type->alignment();
-				return address_upper_align(m_unaligned_curr_element, curr_element_alignment);
-			}
-
-			const void * unaligned_curr_element() const { return m_unaligned_curr_element; }
-
-			const ELEMENT_TYPE * curr_type() const REFLECTIVE_NOEXCEPT { return m_curr_type; }
-
-		//private:
-			const void * m_unaligned_curr_element;
-			const ELEMENT_TYPE * m_curr_type;
-		};
-
-		iterator begin() REFLECTIVE_NOEXCEPT { return iterator(InternalConstructorMem, get_elements(), m_types); }
-		iterator end() REFLECTIVE_NOEXCEPT { return iterator(InternalConstructorMem, nullptr, m_types + size()); }
-
-		const_iterator begin() const REFLECTIVE_NOEXCEPT { return const_iterator(InternalConstructorMem, get_elements(), m_types); }
-		const_iterator end() const REFLECTIVE_NOEXCEPT { return const_iterator(InternalConstructorMem, nullptr, m_types + size()); }
-
-		const_iterator cbegin() const REFLECTIVE_NOEXCEPT { return const_iterator(InternalConstructorMem, get_elements(), m_types); }
-		const_iterator cend() const REFLECTIVE_NOEXCEPT { return const_iterator(InternalConstructorMem, nullptr, m_types + size()); }
-			
-		void clear()
+		void clear() REFLECTIVE_NOEXCEPT
 		{
 			destroy_impl();
 			m_types = nullptr;
 		}
 
 	protected:
+		
+		DenseListBase() REFLECTIVE_NOEXCEPT
+			: m_types(nullptr)
+				{ }
 
+		DenseListBase(DenseListBase && i_source) REFLECTIVE_NOEXCEPT
+		{
+			move_impl(std::move(i_source));
+		}
+
+		DenseListBase & operator = (DenseListBase && i_source) REFLECTIVE_NOEXCEPT
+		{
+			assert(this != &i_source); // self assignment not supported
+			destroy_impl();
+			move_impl(std::move(i_source));
+			return *this;
+		}
+
+		template <typename = typename std::enable_if< (ELEMENT_TYPE::s_caps & ElementTypeCaps::copy_only) != 0, void >::type>
+			DenseListBase(const DenseListBase & i_source)
+		{
+			copy_impl(i_source);
+		}
+
+		template <typename = typename std::enable_if< (ELEMENT_TYPE::s_caps & ElementTypeCaps::copy_only) != 0, void >::type>
+			DenseListBase & operator = (const DenseListBase & i_source)
+		{
+			assert(this != &i_source); // self assignment not supported
+			destroy_impl();
+			copy_impl(i_source);
+			return *this;
+		}
+
+		~DenseListBase() REFLECTIVE_NOEXCEPT
+		{
+			destroy_impl();
+		}
+		
+		struct BaseIterator
+		{
+			BaseIterator() REFLECTIVE_NOEXCEPT
+				: m_unaligned_curr_element(nullptr), m_curr_type(nullptr) { }
+
+			BaseIterator(void * i_curr_element, const ELEMENT_TYPE * i_curr_type) REFLECTIVE_NOEXCEPT
+				: m_unaligned_curr_element(i_curr_element), m_curr_type(i_curr_type)
+			{
+			}
+
+			void move_next() REFLECTIVE_NOEXCEPT
+			{
+				void * const prev_element = curr_element();
+				auto const curr_element_size = m_curr_type->size();
+				m_curr_type++;
+				m_unaligned_curr_element = reinterpret_cast<value_type*>(reinterpret_cast<uintptr_t>(prev_element) + curr_element_size);
+			}			
+			
+			void * curr_element() const REFLECTIVE_NOEXCEPT
+			{
+				auto const curr_element_alignment = m_curr_type->alignment();
+				return address_upper_align(m_unaligned_curr_element, curr_element_alignment);
+			}
+
+			bool operator == (const BaseIterator & i_other) const REFLECTIVE_NOEXCEPT
+			{
+				return m_curr_type == i_other.m_curr_type;
+			}
+
+			bool operator != (const BaseIterator & i_other) const REFLECTIVE_NOEXCEPT
+			{
+				return m_curr_type != i_other.m_curr_type;
+			}
+
+			void operator ++ () REFLECTIVE_NOEXCEPT
+			{
+				move_next();
+			}
+
+			void * m_unaligned_curr_element;
+			const ELEMENT_TYPE * m_curr_type;
+			
+		}; // class BaseIterator
+
+		BaseIterator begin() const REFLECTIVE_NOEXCEPT { return BaseIterator(get_elements(), m_types); }
+		BaseIterator end() const REFLECTIVE_NOEXCEPT { return BaseIterator(nullptr, m_types + size()); }
+		
 		void * get_elements() const // this function gives a non-const element from a const container, but this avoids duplicating the function
 		{
 			return m_types + size();
-			/*if (m_types != nullptr)
-			{
-				return address_upper_align(m_types + get_size_not_empty(), m_types[0].alignment());
-			}
-			else
-			{
-				return nullptr;
-			}*/
 		}
 
 		size_t get_size_not_empty() const REFLECTIVE_NOEXCEPT
@@ -309,7 +181,8 @@ namespace reflective
 			/* Adds a (type-info, element) pair to the list. The new element is copy-constructed. 
 				Note: ELEMENT is not the comlete type of the element, as the
 				list allows polymorphic types. The use of the ELEMENT_TYPE avoid slicing or partial constructions. */
-			void * add_by_copy(const ELEMENT_TYPE & i_element_info, const void * i_source)
+			template <typename = typename std::enable_if< (ELEMENT_TYPE::s_caps & ElementTypeCaps::copy_only) != 0, void >::type>
+				void * add_by_copy(const ELEMENT_TYPE & i_element_info, const void * i_source)
 					// REFLECTIVE_NOEXCEPT_V(std::declval<ELEMENT_TYPE>().copy_construct(nullptr, std::declval<ELEMENT>() ))
 			{
 				// copy-construct the element first (this may throw)
@@ -389,7 +262,7 @@ namespace reflective
 			}
 
 			#if REFLECTIVE_DENSE_LIST_DEBUG
-				void dbg_check_range(const void * i_start, const void * i_end)
+				void dbg_check_range(const void * i_start, const void * i_end) REFLECTIVE_NOEXCEPT
 				{
 					assert(i_start >= m_element_infos && i_end <= m_dbg_end_of_buffer );
 				}
@@ -413,7 +286,7 @@ namespace reflective
 				const size_t dense_size = get_size_not_empty() * sizeof(ELEMENT_TYPE);
 				for (auto it = begin(); it != end_it; ++it)
 				{
-					auto curr_type = it.curr_type();
+					auto curr_type = it.m_curr_type;
 					dense_alignment = details::size_max(dense_alignment, curr_type->alignment());
 					curr_type->destroy(it.curr_element());
 					curr_type->ELEMENT_TYPE::~ELEMENT_TYPE();
@@ -424,7 +297,8 @@ namespace reflective
 			}
 		}
 
-		void copy_impl(const DenseListBase & i_source)
+		template <typename = typename std::enable_if< (ELEMENT_TYPE::s_caps & ElementTypeCaps::copy_only) != 0, void >::type>
+			void copy_impl(const DenseListBase & i_source)
 		{
 			if (i_source.m_types != nullptr)
 			{
@@ -435,8 +309,8 @@ namespace reflective
 				{
 					const auto source_size = i_source.get_size_not_empty();
 					builder.init(*static_cast<ALLOCATOR*>(this), source_size, buffer_size, buffer_alignment);
-					auto const end_it = i_source.cend();
-					for (auto it = i_source.cbegin(); it != end_it; ++it)
+					auto const end_it = i_source.end();
+					for (auto it = i_source.begin(); it != end_it; ++it)
 					{
 						builder.add_by_copy(*it.m_curr_type, it.curr_element());
 					}
@@ -501,11 +375,11 @@ namespace reflective
 		{
 			size_t buffer_size = size() * sizeof(ELEMENT_TYPE);
 			size_t buffer_alignment = std::alignment_of<ELEMENT_TYPE>::value;
-			auto const end_it = cend();
-			for (auto it = cbegin(); it != end_it; ++it)
+			auto const end_it = end();
+			for (auto it = begin(); it != end_it; ++it)
 			{
-				const size_t curr_size = it.curr_type()->size();
-				const size_t curr_alignment = it.curr_type()->alignment();
+				const size_t curr_size = it.m_curr_type->size();
+				const size_t curr_alignment = it.m_curr_type->alignment();
 				assert(curr_size > 0 && is_power_of_2(curr_alignment));
 				buffer_size = (buffer_size + (curr_alignment - 1)) & ~(curr_alignment - 1);
 				buffer_size += curr_size;
@@ -524,8 +398,8 @@ namespace reflective
 
 			size_t buffer_size = (size() + i_new_element_count) * sizeof(ELEMENT_TYPE);
 			size_t buffer_alignment = details::size_max(std::alignment_of<ELEMENT_TYPE>::value, i_new_type.alignment());
-			auto const end_it = cend();
-			for (auto it = cbegin(); ; ++it)
+			auto const end_it = end();
+			for (auto it = begin(); ; ++it)
 			{
 				if (it.m_curr_type == i_insert_at && i_new_element_count > 0)
 				{					
@@ -539,8 +413,8 @@ namespace reflective
 					break;
 				}
 
-				const size_t curr_size = it.curr_type()->size();
-				const size_t curr_alignment = it.curr_type()->alignment();
+				const size_t curr_size = it.m_curr_type->size();
+				const size_t curr_alignment = it.m_curr_type->alignment();
 				assert(curr_size > 0 && is_power_of_2(curr_alignment)); // the size must be non-zero, the alignment must be a non-zero power of 2
 				buffer_size = (buffer_size + (curr_alignment - 1)) & ~(curr_alignment - 1);
 				buffer_size += curr_size;
@@ -550,15 +424,24 @@ namespace reflective
 			*o_buffer_size = buffer_size;
 			*o_buffer_alignment = buffer_alignment;
 		}
-		
+
 		enum class InsertOp
 		{
 			copy,
 			move
 		};
+		template <InsertOp> static void * insert_single(ListBuilder & i_builder, const ELEMENT_TYPE & i_source_type, void * i_source);
+		template <> static void * insert_single<InsertOp::copy>(ListBuilder & i_builder, const ELEMENT_TYPE & i_source_type, void * i_source)
+		{
+			return i_builder.add_by_copy(i_source_type, i_source);
+		}
+		template <> static void * insert_single<InsertOp::move>(ListBuilder & i_builder, const ELEMENT_TYPE & i_source_type, void * i_source)
+		{
+			return i_builder.add_by_move(i_source_type, i_source);
+		}
 
-		iterator insert_n_impl(const ELEMENT_TYPE * i_position, size_t i_count_to_insert, const ELEMENT_TYPE & i_source_type, 
-			void * i_source, InsertOp i_op )
+		template <InsertOp OP>
+			BaseIterator insert_n_impl(const ELEMENT_TYPE * i_position, size_t i_count_to_insert, const ELEMENT_TYPE & i_source_type, void * i_source )
 		{
 			assert(i_count_to_insert > 0);
 
@@ -580,9 +463,7 @@ namespace reflective
 					if (it.m_curr_type == i_position && count_to_insert > 0)
 					{
 						auto const end_of_types = builder.end_of_types();
-						void * const new_element = //i_op == InsertOp::copy ?
-							builder.add_by_copy(i_source_type, i_source); // : builder.add_by_move(i_source_type, i_source);
-						(void)i_op;
+						void * const new_element = insert_single<OP>(builder, i_source_type, i_source);
 						if (count_to_insert == i_count_to_insert)
 						{
 							return_element_info = end_of_types;
@@ -596,8 +477,8 @@ namespace reflective
 						{
 							break;
 						}
-						builder.add_by_copy(*it.m_curr_type, it.curr_element());
-						++it;
+						builder.add_by_move(*it.m_curr_type, it.curr_element());
+						it.move_next();
 					}						
 				}
 
@@ -611,10 +492,10 @@ namespace reflective
 				throw;
 			}
 
-			return iterator(InternalConstructorMem, return_element, return_element_info);
+			return BaseIterator(return_element, return_element_info);
 		}
 
-		iterator erase_impl(const ELEMENT_TYPE * i_from, const ELEMENT_TYPE * i_to)
+		BaseIterator erase_impl(const ELEMENT_TYPE * i_from, const ELEMENT_TYPE * i_to)
 		{
 			// test preconditions
 			const auto prev_size = get_size_not_empty();
@@ -645,10 +526,10 @@ namespace reflective
 				{
 					builder.init(*static_cast<ALLOCATOR*>(this), prev_size - size_to_remove, buffer_size, buffer_alignment);
 
-					const auto end_it = cend();
+					const auto end_it = end();
 					bool is_in_range = false;
 					bool first_in_range = false;
-					for (auto it = cbegin(); ; it++)
+					for (auto it = begin(); ; ++it)
 					{
 						if (it.m_curr_type == i_from)
 						{
@@ -669,7 +550,7 @@ namespace reflective
 						if (!is_in_range)
 						{
 							auto const new_element_info = builder.end_of_types();
-							auto const new_element = builder.add_by_copy(*it.m_curr_type, it.curr_element());
+							auto const new_element = builder.add_by_move(*it.m_curr_type, it.curr_element());
 
 							if (first_in_range)
 							{
@@ -695,7 +576,7 @@ namespace reflective
 					builder.rollback(*static_cast<ALLOCATOR*>(this), buffer_size, buffer_alignment);
 					throw;
 				}
-				return iterator(InternalConstructorMem, return_element, return_element_info);
+				return BaseIterator(return_element, return_element_info);
 			}
 		}
 
@@ -709,8 +590,8 @@ namespace reflective
 			size_t buffer_alignment = std::alignment_of<ELEMENT_TYPE>::value;
 			
 			bool in_range = false;
-			auto const end_it = cend();
-			for (auto it = cbegin(); it != end_it; ++it)
+			auto const end_it = end();
+			for (auto it = begin(); it != end_it; ++it)
 			{
 				if (it.m_curr_type == i_remove_from)
 				{
@@ -723,8 +604,8 @@ namespace reflective
 
 				if (!in_range)
 				{
-					const size_t curr_size = it.curr_type()->size();
-					const size_t curr_alignment = it.curr_type()->alignment();
+					const size_t curr_size = it.m_curr_type->size();
+					const size_t curr_alignment = it.m_curr_type->alignment();
 					assert(curr_size > 0 && is_power_of_2(curr_alignment)); // the size must be non-zero, the alignment must be a non-zero power of 2
 					buffer_size = (buffer_size + (curr_alignment - 1)) & ~(curr_alignment - 1);
 					buffer_size += curr_size;
@@ -780,16 +661,22 @@ namespace reflective
 			}
 		};
 
-	// private:
 		ELEMENT_TYPE * m_types;
 	};
 
+	/** A dense-list is a polymorphic sequence container optimized to be compact in both heap memory and inline storage.
+		Elements is a DenseList are allocated respecting their alignment requirements.
+		In a polymorphic container every element can have a different complete type, provided that this type is covariant to the type ELEMENT.
+		All the elements of a DenseList are arranged in the same memory block of the heap. 
+		Insertions\removals of a non-zero number of elements and clear() always reallocate the memory blocks and invalidate existing iterators.
+		The inline storage of DenseList is the same of a pointer. An empty DenseList does not use heap memory.
+		All the functions of DenseList gives at least the strong exception guarantee. */
 	template <typename ELEMENT, typename ALLOCATOR = std::allocator<ELEMENT>, typename ELEMENT_TYPE = AutomaticElementType<ELEMENT> >
 		class DenseList final : public DenseListBase<ALLOCATOR, ELEMENT_TYPE>
 	{
 	private:
 		using BaseClass = DenseListBase<ALLOCATOR, ELEMENT_TYPE>;
-		using InternalConstructor = typename DenseListBase<ALLOCATOR, ELEMENT_TYPE>::InternalConstructor;
+		
 	public:
 
 		using allocator_type = ALLOCATOR;
@@ -816,7 +703,7 @@ namespace reflective
 		{
 			static_assert(AllCovariant<ELEMENT, TYPES...>::value, "Al the paraneter types must be covariant to ELEMENT" );
 			DenseList new_list;
-			make_impl(new_list, std::forward<TYPES>(i_args)...);
+			BaseClass::make_impl(new_list, std::forward<TYPES>(i_args)...);
 			return std::move(new_list);
 		}
 
@@ -834,78 +721,171 @@ namespace reflective
 		{
 			static_assert(AllCovariant<ELEMENT, TYPES...>::value, "Al the paraneter types must be covariant to ELEMENT");
 			DenseList new_list;
-			make_impl(new_list, std::forward<TYPES>(i_args)...);
+			BaseClass::make_impl(new_list, std::forward<TYPES>(i_args)...);
 			return std::move(new_list);
 		}
 
-		class iterator final : public BaseClass::iterator
+		class iterator;
+		class const_iterator;
+
+		using BaseIterator = typename DenseListBase<ALLOCATOR, ELEMENT_TYPE>::BaseIterator;
+
+		class iterator final : private BaseIterator
 		{
 		public:
+			using iterator_category = std::forward_iterator_tag;
+			using difference_type = ptrdiff_t;
+			using size_type = size_t;
 			using value_type = ELEMENT;
 			using reference = ELEMENT &;
 			using const_reference = const ELEMENT &;
 			using pointer = typename std::allocator_traits<allocator_type>::pointer;
 			using const_pointer = typename std::allocator_traits<allocator_type>::const_pointer;
 
-			iterator(const typename BaseClass::iterator & i_source) REFLECTIVE_NOEXCEPT
-				: BaseClass::iterator(i_source) {  }
-
-			iterator(InternalConstructor i_dummy, void * i_curr_element, const ElementType * i_curr_type) REFLECTIVE_NOEXCEPT
-				: BaseClass::iterator(i_dummy, i_curr_element, i_curr_type) {  }
-
+			iterator(const BaseIterator & i_source) REFLECTIVE_NOEXCEPT
+				: BaseIterator(i_source) {  }
+			
 			value_type & operator * () const REFLECTIVE_NOEXCEPT { return *curr_element(); }
 			value_type * operator -> () const REFLECTIVE_NOEXCEPT { return curr_element(); }
 			value_type * curr_element() const REFLECTIVE_NOEXCEPT
-				{ return static_cast<value_type *>(BaseClass::iterator::curr_element()); }
+				{ return static_cast<value_type *>(BaseIterator::curr_element()); }
+
+			iterator & operator ++ () REFLECTIVE_NOEXCEPT
+			{
+				move_next();
+				return *this;
+			}
+
+			iterator operator++ (int) REFLECTIVE_NOEXCEPT
+			{
+				iterator copy(*this);
+				move_next();
+				return copy;
+			}
+
+			bool operator == (const iterator & i_other) const REFLECTIVE_NOEXCEPT
+			{
+				return m_curr_type == i_other.curr_type();
+			}
+
+			bool operator != (const iterator & i_other) const REFLECTIVE_NOEXCEPT
+			{
+				return m_curr_type != i_other.curr_type();
+			}
+
+			bool operator == (const const_iterator & i_other) const REFLECTIVE_NOEXCEPT
+			{
+				return m_curr_type == i_other.curr_type();
+			}
+
+			bool operator != (const const_iterator & i_other) const REFLECTIVE_NOEXCEPT
+			{
+				return m_curr_type != i_other.curr_type();
+			}
+			
+			const ELEMENT_TYPE * curr_type() const REFLECTIVE_NOEXCEPT { return m_curr_type; }
+
+			friend class const_iterator;
 
 		}; // class iterator
 
-		class const_iterator final : public BaseClass::const_iterator
+		class const_iterator final : private BaseIterator
 		{
 		public:
+			using iterator_category = std::forward_iterator_tag;
+			using difference_type = ptrdiff_t;
+			using size_type = size_t;
 			using value_type = const ELEMENT;
 			using reference = const ELEMENT &;
 			using const_reference = const ELEMENT &;
 			using pointer = typename std::allocator_traits<allocator_type>::pointer;
 			using const_pointer = typename std::allocator_traits<allocator_type>::const_pointer;
 
-			const_iterator(const typename BaseClass::const_iterator & i_source) REFLECTIVE_NOEXCEPT
-				: BaseClass::const_iterator(i_source) {  }
+			const_iterator(const BaseIterator & i_source) REFLECTIVE_NOEXCEPT
+				: BaseIterator(i_source) {  }
 
-			const_iterator(const typename BaseClass::iterator & i_source) REFLECTIVE_NOEXCEPT
-				: BaseClass::const_iterator(i_source) {  }
-
-			const_iterator(InternalConstructor i_dummy, void * i_curr_element, const ElementType * i_curr_type) REFLECTIVE_NOEXCEPT
-				: BaseClass::const_iterator(i_dummy, i_curr_element, i_curr_type) {  }
-
+			const_iterator(const iterator & i_source) REFLECTIVE_NOEXCEPT
+				: BaseIterator(i_source) {  }
+									
 			value_type & operator * () const REFLECTIVE_NOEXCEPT { return *curr_element(); }
 			value_type * operator -> () const REFLECTIVE_NOEXCEPT { return curr_element(); }
 			value_type * curr_element() const REFLECTIVE_NOEXCEPT
-				{ return static_cast<value_type *>(BaseClass::const_iterator::curr_element()); }
+				{ return static_cast<value_type *>(BaseIterator::curr_element()); }
+
+			const_iterator & operator ++ () REFLECTIVE_NOEXCEPT
+			{
+				move_next();
+				return *this;
+			}
+
+			const_iterator operator++ (int) REFLECTIVE_NOEXCEPT
+			{
+				iterator copy(*this);
+				move_next();
+				return copy;
+			}
+
+			bool operator == (const iterator & i_other) const REFLECTIVE_NOEXCEPT
+			{
+				return m_curr_type == i_other.curr_type();
+			}
+
+			bool operator != (const iterator & i_other) const REFLECTIVE_NOEXCEPT
+			{
+				return m_curr_type != i_other.curr_type();
+			}
+
+			bool operator == (const const_iterator & i_other) const REFLECTIVE_NOEXCEPT
+			{
+				return m_curr_type == i_other.curr_type();
+			}
+
+			bool operator != (const const_iterator & i_other) const REFLECTIVE_NOEXCEPT
+			{
+				return m_curr_type != i_other.curr_type();
+			}
+
+			const ELEMENT_TYPE * curr_type() const REFLECTIVE_NOEXCEPT { return m_curr_type; }
 		
+			friend class DenseList;
+
 		}; // class const_iterator
 
-		iterator begin() REFLECTIVE_NOEXCEPT { return iterator(InternalConstructorMem, get_elements(), m_types ); }
-		iterator end() REFLECTIVE_NOEXCEPT{ return iterator(InternalConstructorMem, nullptr, m_types + size()); }
+		iterator begin() REFLECTIVE_NOEXCEPT { return iterator(BaseClass::begin()); }
+		iterator end() REFLECTIVE_NOEXCEPT { return iterator(BaseClass::end()); }
 
-		const_iterator begin() const REFLECTIVE_NOEXCEPT { return const_iterator(InternalConstructorMem, get_elements(), m_types ); }
-		const_iterator end() const REFLECTIVE_NOEXCEPT{ return const_iterator(InternalConstructorMem, nullptr, m_types + size()); }
+		const_iterator begin() const REFLECTIVE_NOEXCEPT { return const_iterator(BaseClass::begin()); }
+		const_iterator end() const REFLECTIVE_NOEXCEPT{ return const_iterator(BaseClass::end()); }
 
-		const_iterator cbegin() const REFLECTIVE_NOEXCEPT { return const_iterator(InternalConstructorMem, get_elements(), m_types ); }
-		const_iterator cend() const REFLECTIVE_NOEXCEPT{ return const_iterator(InternalConstructorMem, nullptr, m_types + size()); }
+		const_iterator cbegin() const REFLECTIVE_NOEXCEPT { return const_iterator(BaseClass::begin()); }
+		const_iterator cend() const REFLECTIVE_NOEXCEPT { return const_iterator(BaseClass::end()); }
 
-		template <typename ELEMENT_COMPLETE_TYPE>
+		template <typename ELEMENT_COMPLETE_TYPE, typename = typename std::enable_if< (ELEMENT_TYPE::s_caps & ElementTypeCaps::copy_only) != 0, void >::type>
 			void push_back(const ELEMENT_COMPLETE_TYPE & i_source)
 		{
-			insert_n_impl(m_types + size(), 1, ElementType::template make<ELEMENT_COMPLETE_TYPE>(),
-				const_cast<ELEMENT_COMPLETE_TYPE*>(&i_source), InsertOp::copy);
+			insert_n_impl<InsertOp::copy>(m_types + size(), 1, ElementType::template make<ELEMENT_COMPLETE_TYPE>(),
+				const_cast<ELEMENT_COMPLETE_TYPE*>(&i_source) );
 		}
 
-		template <typename ELEMENT_COMPLETE_TYPE>
+		template <typename ELEMENT_COMPLETE_TYPE, typename = typename std::enable_if< (ELEMENT_TYPE::s_caps & ElementTypeCaps::copy_only) != 0, void >::type>
 			void push_front(const ELEMENT_COMPLETE_TYPE & i_source)
 		{
-			insert_n_impl(m_types, 1, ElementType::template make<ELEMENT_COMPLETE_TYPE>(),
-				const_cast<ELEMENT_COMPLETE_TYPE*>(&i_source), InsertOp::copy);
+			insert_n_impl<InsertOp::copy>(m_types, 1, ElementType::template make<ELEMENT_COMPLETE_TYPE>(),
+				const_cast<ELEMENT_COMPLETE_TYPE*>(&i_source));
+		}
+
+		template <typename ELEMENT_COMPLETE_TYPE, typename = typename std::enable_if< (ELEMENT_TYPE::s_caps & ElementTypeCaps::move_only) != 0, void >::type>
+			void push_back(ELEMENT_COMPLETE_TYPE && i_source)
+		{
+			insert_n_impl<InsertOp::move>(m_types + size(), 1, ElementType::template make<ELEMENT_COMPLETE_TYPE>(),
+				const_cast<ELEMENT_COMPLETE_TYPE*>(&i_source) );
+		}
+
+		template <typename ELEMENT_COMPLETE_TYPE, typename = typename std::enable_if< (ELEMENT_TYPE::s_caps & ElementTypeCaps::move_only) != 0, void >::type>
+			void push_front(ELEMENT_COMPLETE_TYPE && i_source)
+		{
+			insert_n_impl<InsertOp::move>(m_types, 1, ElementType::template make<ELEMENT_COMPLETE_TYPE>(),
+				const_cast<ELEMENT_COMPLETE_TYPE*>(&i_source));
 		}
 
 		void pop_front()
@@ -922,8 +902,8 @@ namespace reflective
 		template <typename ELEMENT_COMPLETE_TYPE>
 			iterator insert(const_iterator i_position, const ELEMENT_COMPLETE_TYPE & i_source)
 		{
-			return insert_n_impl(i_position.m_curr_type, 1, ElementType::template make<ELEMENT_COMPLETE_TYPE>(), 
-				const_cast<ELEMENT_COMPLETE_TYPE*>(&i_source), InsertOp::copy);
+			return insert_n_impl<InsertOp::copy>(i_position.m_curr_type, 1, ElementType::template make<ELEMENT_COMPLETE_TYPE>(),
+				const_cast<ELEMENT_COMPLETE_TYPE*>(&i_source));
 		}
 
 		template <typename ELEMENT_COMPLETE_TYPE>
@@ -931,12 +911,12 @@ namespace reflective
 		{
 			if (i_count > 0)
 			{
-				return insert_n_impl(i_position.m_curr_type, i_count, ElementType::template make<ELEMENT_COMPLETE_TYPE>(), const_cast<ELEMENT_COMPLETE_TYPE*>(&i_source), InsertOp::copy);
+				return insert_n_impl<InsertOp::copy>(i_position.m_curr_type, i_count, ElementType::template make<ELEMENT_COMPLETE_TYPE>(), const_cast<ELEMENT_COMPLETE_TYPE*>(&i_source));
 			}
 			else
 			{
 				// inserting 0 elements
-				return iterator(InternalConstructorMem, const_cast<void*>(i_position.m_unaligned_curr_element), i_position.m_curr_type);
+				return iterator(i_position);
 			}
 		}
 
@@ -947,14 +927,16 @@ namespace reflective
 
 		iterator erase(const_iterator i_from, const_iterator i_to)
 		{
-			if (i_from.m_curr_type != i_to.m_curr_type)
+			auto from_type = i_from.curr_type();
+			auto to_type = i_to.curr_type();
+			if (from_type != to_type)
 			{
-				return erase_impl(i_from.m_curr_type, i_to.m_curr_type);
+				return erase_impl(from_type, to_type);
 			}
 			else
 			{
 				// removing 0 elements
-				return iterator(InternalConstructorMem, const_cast<void*>(i_from.m_unaligned_curr_element), i_from.m_curr_type);
+				return iterator(i_from);
 			}
 		}
 

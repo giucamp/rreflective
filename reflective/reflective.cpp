@@ -35,6 +35,7 @@ namespace reflective
 	void reference_globals()
 	{		
 		dense_list_test();
-		dense_list_benchmark();
+		for (int i = 0; i < 20; i++ )
+			dense_list_benchmark();
 	}
 }

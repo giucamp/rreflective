@@ -30,7 +30,7 @@ namespace reflective
 	
 	*/
 	/** Specifies the way in which the size and the alignment of elements of a DenseList are stored */
-	enum DenseList_SizeAlignmentMode
+	enum SizeAlignmentMode
 	{
 		most_general, /**< Uses two separate size_t to store the size and the alignment. */
 		compact, /**< Both size and alignment are stored in a single size_t word. The alignment uses the 25% of the bits
@@ -48,18 +48,18 @@ namespace reflective
 
 	enum ElementTypeCaps
 	{
-		copy_and_move,
-		copy_only,
-		move_only,		
-		none,
+		none = 0,
+		move_only = 1 << 1,
+		copy_only = 1 << 0,		
+		copy_and_move = move_only | copy_only,
 	};
 
 	namespace details
 	{
-		// This class is used by the default type-infos to store the size and the alignment according to the secified DenseList_SizeAlignmentMode
-		template <DenseList_SizeAlignmentMode MODE>
+		// This class is used by the default type-infos to store the size and the alignment according to the secified SizeAlignmentMode
+		template <SizeAlignmentMode MODE>
 			class ElementType_SizeAlign;
-		template <> class ElementType_SizeAlign<DenseList_SizeAlignmentMode::most_general>
+		template <> class ElementType_SizeAlign<SizeAlignmentMode::most_general>
 		{
 		public:
 
@@ -85,7 +85,7 @@ namespace reflective
 			const size_t m_size, m_alignment;
 		};
 		template <> class ElementType_SizeAlign<
-			std::enable_if<std::numeric_limits<size_t>::radix == 2, DenseList_SizeAlignmentMode>::type::compact>
+			std::enable_if<std::numeric_limits<size_t>::radix == 2, SizeAlignmentMode>::type::compact>
 		{
 		public:
 			
@@ -115,7 +115,7 @@ namespace reflective
 			const size_t m_size : std::numeric_limits<size_t>::digits - std::numeric_limits<size_t>::digits / 4;
 			const size_t m_alignment : std::numeric_limits<size_t>::digits / 4;
 		};
-		template <> class ElementType_SizeAlign<DenseList_SizeAlignmentMode::assume_normal_alignment>
+		template <> class ElementType_SizeAlign<SizeAlignmentMode::assume_normal_alignment>
 		{
 		public:
 
@@ -146,10 +146,10 @@ namespace reflective
 			const size_t m_size;
 		};
 
-		template <typename ELEMENT, DenseList_SizeAlignmentMode SIZE_ALIGNMENT_MODE, 
+		template <typename ELEMENT, SizeAlignmentMode SIZE_ALIGNMENT_MODE, 
 			bool HAS_VIRTUAL_DESTRUCTOR = std::has_virtual_destructor<ELEMENT>::value> class ElementType_Destr;
 
-		template <typename ELEMENT, DenseList_SizeAlignmentMode SIZE_ALIGNMENT_MODE>
+		template <typename ELEMENT, SizeAlignmentMode SIZE_ALIGNMENT_MODE>
 			class ElementType_Destr<ELEMENT, SIZE_ALIGNMENT_MODE, true> 
 				: public ElementType_SizeAlign<SIZE_ALIGNMENT_MODE>
 		{
@@ -166,7 +166,7 @@ namespace reflective
 			}
 		};
 
-		template <typename ELEMENT, DenseList_SizeAlignmentMode SIZE_ALIGNMENT_MODE>
+		template <typename ELEMENT, SizeAlignmentMode SIZE_ALIGNMENT_MODE>
 			class ElementType_Destr<ELEMENT, SIZE_ALIGNMENT_MODE, false> 
 				: public ElementType_SizeAlign<SIZE_ALIGNMENT_MODE>
 		{
@@ -233,20 +233,24 @@ namespace reflective
 	} // namespace details
 
 
-	template <typename ELEMENT, ElementTypeCaps COPY_MOVE, DenseList_SizeAlignmentMode SIZE_ALIGNMENT_MODE = DenseList_SizeAlignmentMode::most_general>
+	template <typename ELEMENT, ElementTypeCaps COPY_MOVE, SizeAlignmentMode SIZE_ALIGNMENT_MODE = SizeAlignmentMode::most_general>
 		class ElementType;
 	
-	template <typename ELEMENT, DenseList_SizeAlignmentMode SIZE_ALIGNMENT_MODE = DenseList_SizeAlignmentMode::most_general>
+	template <typename ELEMENT, SizeAlignmentMode SIZE_ALIGNMENT_MODE = SizeAlignmentMode::most_general>
 		using AutomaticElementType = typename std::conditional<std::is_same<void, ELEMENT>::value,
 			ElementType<void, ElementTypeCaps::copy_and_move, SIZE_ALIGNMENT_MODE >,
 			ElementType<ELEMENT, details::GetAutoCopyMoveCap<ELEMENT>::value, SIZE_ALIGNMENT_MODE >
 		>::type;
 		
-	template <DenseList_SizeAlignmentMode SIZE_ALIGNMENT_MODE>
+	template <SizeAlignmentMode SIZE_ALIGNMENT_MODE>
 		class ElementType<void, ElementTypeCaps::copy_and_move, SIZE_ALIGNMENT_MODE> 
 			: public details::ElementType_Destr<void, SIZE_ALIGNMENT_MODE>
 	{
 	public:
+		
+		using Element = void;
+		static const SizeAlignmentMode s_size_alignment_mode = SIZE_ALIGNMENT_MODE;
+		static const ElementTypeCaps s_caps = ElementTypeCaps::copy_and_move;
 
 		ElementType() = delete;
 		ElementType & operator = (const ElementType &) = delete;
@@ -312,10 +316,14 @@ namespace reflective
 		const FunctionPtr m_function;
 	};
 
-	template <typename ELEMENT, DenseList_SizeAlignmentMode SIZE_ALIGNMENT_MODE>
+	template <typename ELEMENT, SizeAlignmentMode SIZE_ALIGNMENT_MODE>
 		class ElementType<ELEMENT, ElementTypeCaps::copy_and_move, SIZE_ALIGNMENT_MODE> : public details::ElementType_Destr<ELEMENT, SIZE_ALIGNMENT_MODE>
 	{
 	public:
+
+		using Element = ELEMENT;
+		static const SizeAlignmentMode s_size_alignment_mode = SIZE_ALIGNMENT_MODE;
+		static const ElementTypeCaps s_caps = ElementTypeCaps::copy_and_move;
 
 		ElementType() = delete;
 		ElementType & operator = (const ElementType &) = delete;
@@ -378,10 +386,14 @@ namespace reflective
 		const FunctionPtr m_function;
 	};
 
-	template <typename ELEMENT, DenseList_SizeAlignmentMode SIZE_ALIGNMENT_MODE>
+	template <typename ELEMENT, SizeAlignmentMode SIZE_ALIGNMENT_MODE>
 		class ElementType<ELEMENT, ElementTypeCaps::copy_only, SIZE_ALIGNMENT_MODE> : public details::ElementType_Destr<ELEMENT, SIZE_ALIGNMENT_MODE>
 	{
 	public:
+
+		using Element = ELEMENT;
+		static const SizeAlignmentMode s_size_alignment_mode = SIZE_ALIGNMENT_MODE;
+		static const ElementTypeCaps s_caps = ElementTypeCaps::copy_only;
 
 		ElementType() = delete;
 		ElementType & operator = (const ElementType &) = delete;
@@ -429,11 +441,15 @@ namespace reflective
 		const FunctionPtr m_function;
 	};
 
-	template <typename ELEMENT, DenseList_SizeAlignmentMode SIZE_ALIGNMENT_MODE>
+	template <typename ELEMENT, SizeAlignmentMode SIZE_ALIGNMENT_MODE>
 		class ElementType<ELEMENT, ElementTypeCaps::move_only, SIZE_ALIGNMENT_MODE> 
 			: public details::ElementType_Destr<ELEMENT, SIZE_ALIGNMENT_MODE>
 	{
 	public:
+
+		using Element = ELEMENT;
+		static const SizeAlignmentMode s_size_alignment_mode = SIZE_ALIGNMENT_MODE;
+		static const ElementTypeCaps s_caps = ElementTypeCaps::move_only;
 
 		ElementType() = delete;
 		ElementType & operator = (const ElementType &) = delete;
@@ -459,7 +475,7 @@ namespace reflective
 		void move_construct(void * i_destination, void * i_source_element) const REFLECTIVE_NOEXCEPT
 		{
 			assert(i_destination != nullptr && i_source_element != nullptr && i_destination != i_source_element);
-			(*m_function)(Operation::move, i_destination, i_source_element); // first > second
+			(*m_function)(i_destination, i_source_element); // first > second
 		}
 
 	private:
@@ -479,11 +495,15 @@ namespace reflective
 		const FunctionPtr m_function;
 	};
 
-	template <typename ELEMENT, DenseList_SizeAlignmentMode SIZE_ALIGNMENT_MODE>
+	template <typename ELEMENT, SizeAlignmentMode SIZE_ALIGNMENT_MODE>
 		class ElementType<ELEMENT, ElementTypeCaps::none, SIZE_ALIGNMENT_MODE>
 			: public details::ElementType_Destr<ELEMENT, SIZE_ALIGNMENT_MODE>
 	{
 	public:
+
+		using Element = ELEMENT;
+		static const SizeAlignmentMode s_size_alignment_mode = SIZE_ALIGNMENT_MODE;
+		static const ElementTypeCaps s_caps = ElementTypeCaps::none;
 
 		ElementType() = delete;
 		ElementType & operator = (const ElementType &) = delete;
