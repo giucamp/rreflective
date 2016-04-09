@@ -69,14 +69,12 @@ namespace reflective
 			return *this;
 		}
 
-		template <typename = typename std::enable_if< (ELEMENT_TYPE::s_caps & ElementTypeCaps::copy_only) != 0, void >::type>
-			DenseListBase(const DenseListBase & i_source)
+		DenseListBase(const DenseListBase & i_source)
 		{
 			copy_impl(i_source);
 		}
 
-		template <typename = typename std::enable_if< (ELEMENT_TYPE::s_caps & ElementTypeCaps::copy_only) != 0, void >::type>
-			DenseListBase & operator = (const DenseListBase & i_source)
+		DenseListBase & operator = (const DenseListBase & i_source)
 		{
 			assert(this != &i_source); // self assignment not supported
 			destroy_impl();
@@ -101,10 +99,10 @@ namespace reflective
 
 			void move_next() REFLECTIVE_NOEXCEPT
 			{
-				void * const prev_element = curr_element();
+				auto const prev_element_ptr = curr_element();
 				auto const curr_element_size = m_curr_type->size();
 				m_curr_type++;
-				m_unaligned_curr_element = reinterpret_cast<value_type*>(reinterpret_cast<uintptr_t>(prev_element) + curr_element_size);
+				m_unaligned_curr_element = address_add(prev_element_ptr, curr_element_size);
 			}			
 			
 			void * curr_element() const REFLECTIVE_NOEXCEPT
@@ -165,6 +163,9 @@ namespace reflective
 			{
 			}
 
+			ListBuilder(const ListBuilder&) = delete;
+			ListBuilder & operator = (const ListBuilder&) = delete;
+
 			void init(ALLOCATOR & i_allocator, size_t i_count, size_t i_buffer_size, size_t i_buffer_alignment)
 			{
 				void * const memory_block = aligned_alloc(i_allocator, i_buffer_size + sizeof(Header), i_buffer_alignment, sizeof(Header));
@@ -181,8 +182,7 @@ namespace reflective
 			/* Adds a (type-info, element) pair to the list. The new element is copy-constructed. 
 				Note: ELEMENT is not the comlete type of the element, as the
 				list allows polymorphic types. The use of the ELEMENT_TYPE avoid slicing or partial constructions. */
-			template <typename = typename std::enable_if< (ELEMENT_TYPE::s_caps & ElementTypeCaps::copy_only) != 0, void >::type>
-				void * add_by_copy(const ELEMENT_TYPE & i_element_info, const void * i_source)
+			void * add_by_copy(const ELEMENT_TYPE & i_element_info, const void * i_source)
 					// REFLECTIVE_NOEXCEPT_V(std::declval<ELEMENT_TYPE>().copy_construct(nullptr, std::declval<ELEMENT>() ))
 			{
 				// copy-construct the element first (this may throw)
@@ -297,8 +297,7 @@ namespace reflective
 			}
 		}
 
-		template <typename = typename std::enable_if< (ELEMENT_TYPE::s_caps & ElementTypeCaps::copy_only) != 0, void >::type>
-			void copy_impl(const DenseListBase & i_source)
+		void copy_impl(const DenseListBase & i_source)
 		{
 			if (i_source.m_types != nullptr)
 			{
@@ -424,24 +423,10 @@ namespace reflective
 			*o_buffer_size = buffer_size;
 			*o_buffer_alignment = buffer_alignment;
 		}
-
-		enum class InsertOp
-		{
-			copy,
-			move
-		};
-		template <InsertOp> static void * insert_single(ListBuilder & i_builder, const ELEMENT_TYPE & i_source_type, void * i_source);
-		template <> static void * insert_single<InsertOp::copy>(ListBuilder & i_builder, const ELEMENT_TYPE & i_source_type, void * i_source)
-		{
-			return i_builder.add_by_copy(i_source_type, i_source);
-		}
-		template <> static void * insert_single<InsertOp::move>(ListBuilder & i_builder, const ELEMENT_TYPE & i_source_type, void * i_source)
-		{
-			return i_builder.add_by_move(i_source_type, i_source);
-		}
-
-		template <InsertOp OP>
-			BaseIterator insert_n_impl(const ELEMENT_TYPE * i_position, size_t i_count_to_insert, const ELEMENT_TYPE & i_source_type, void * i_source )
+		
+		template <typename CONSTRUCTOR>
+			BaseIterator insert_n_impl(const ELEMENT_TYPE * i_position, size_t i_count_to_insert, 
+				const ELEMENT_TYPE & i_source_type, CONSTRUCTOR && i_constructor )
 		{
 			assert(i_count_to_insert > 0);
 
@@ -463,7 +448,7 @@ namespace reflective
 					if (it.m_curr_type == i_position && count_to_insert > 0)
 					{
 						auto const end_of_types = builder.end_of_types();
-						void * const new_element = insert_single<OP>(builder, i_source_type, i_source);
+						void * const new_element = i_constructor(builder, i_source_type);
 						if (count_to_insert == i_count_to_insert)
 						{
 							return_element_info = end_of_types;
@@ -759,31 +744,31 @@ namespace reflective
 			iterator operator++ (int) REFLECTIVE_NOEXCEPT
 			{
 				iterator copy(*this);
-				move_next();
+				BaseIterator::move_next();
 				return copy;
 			}
 
 			bool operator == (const iterator & i_other) const REFLECTIVE_NOEXCEPT
 			{
-				return m_curr_type == i_other.curr_type();
+				return BaseIterator::m_curr_type == i_other.curr_type();
 			}
 
 			bool operator != (const iterator & i_other) const REFLECTIVE_NOEXCEPT
 			{
-				return m_curr_type != i_other.curr_type();
+				return BaseIterator::m_curr_type != i_other.curr_type();
 			}
 
 			bool operator == (const const_iterator & i_other) const REFLECTIVE_NOEXCEPT
 			{
-				return m_curr_type == i_other.curr_type();
+				return BaseIterator::m_curr_type == i_other.curr_type();
 			}
 
 			bool operator != (const const_iterator & i_other) const REFLECTIVE_NOEXCEPT
 			{
-				return m_curr_type != i_other.curr_type();
+				return BaseIterator::m_curr_type != i_other.curr_type();
 			}
 			
-			const ELEMENT_TYPE * curr_type() const REFLECTIVE_NOEXCEPT { return m_curr_type; }
+			const ELEMENT_TYPE * curr_type() const REFLECTIVE_NOEXCEPT { return BaseIterator::m_curr_type; }
 
 			friend class const_iterator;
 
@@ -814,14 +799,14 @@ namespace reflective
 
 			const_iterator & operator ++ () REFLECTIVE_NOEXCEPT
 			{
-				move_next();
+				BaseIterator::move_next();
 				return *this;
 			}
 
 			const_iterator operator++ (int) REFLECTIVE_NOEXCEPT
 			{
 				iterator copy(*this);
-				move_next();
+				BaseIterator::move_next();
 				return copy;
 			}
 
@@ -860,32 +845,62 @@ namespace reflective
 		const_iterator cbegin() const REFLECTIVE_NOEXCEPT { return const_iterator(BaseClass::begin()); }
 		const_iterator cend() const REFLECTIVE_NOEXCEPT { return const_iterator(BaseClass::end()); }
 
-		template <typename ELEMENT_COMPLETE_TYPE, typename = typename std::enable_if< (ELEMENT_TYPE::s_caps & ElementTypeCaps::copy_only) != 0, void >::type>
+		struct CopyConstruct
+		{
+			const ELEMENT * const m_source;
+
+			CopyConstruct(const ELEMENT * i_source)
+				: m_source(i_source) { }
+
+			void * operator () (ListBuilder & i_builder, const ElementType & i_element_type)
+			{
+				return i_builder.add_by_copy(i_element_type, m_source);
+			}
+		};
+
+		struct MoveConstruct
+		{
+			ELEMENT * const m_source;
+
+			MoveConstruct(ELEMENT * i_source)
+				: m_source(i_source) { }
+
+			void * operator () (ListBuilder & i_builder, const ElementType & i_element_type)
+			{
+				return i_builder.add_by_move(i_element_type, m_source);
+			}
+		};
+
+		template <typename ELEMENT_COMPLETE_TYPE>
 			void push_back(const ELEMENT_COMPLETE_TYPE & i_source)
 		{
-			insert_n_impl<InsertOp::copy>(m_types + size(), 1, ElementType::template make<ELEMENT_COMPLETE_TYPE>(),
-				const_cast<ELEMENT_COMPLETE_TYPE*>(&i_source) );
+			insert_n_impl(m_types + size(), 1, 
+				ElementType::template make<ELEMENT_COMPLETE_TYPE>(),
+				CopyConstruct(&i_source) );
 		}
 
-		template <typename ELEMENT_COMPLETE_TYPE, typename = typename std::enable_if< (ELEMENT_TYPE::s_caps & ElementTypeCaps::copy_only) != 0, void >::type>
+		template <typename ELEMENT_COMPLETE_TYPE>
 			void push_front(const ELEMENT_COMPLETE_TYPE & i_source)
 		{
-			insert_n_impl<InsertOp::copy>(m_types, 1, ElementType::template make<ELEMENT_COMPLETE_TYPE>(),
-				const_cast<ELEMENT_COMPLETE_TYPE*>(&i_source));
+			insert_n_impl(m_types, 1,
+				ElementType::template make<ELEMENT_COMPLETE_TYPE>(),
+				CopyConstruct(&i_source) );
 		}
 
-		template <typename ELEMENT_COMPLETE_TYPE, typename = typename std::enable_if< (ELEMENT_TYPE::s_caps & ElementTypeCaps::move_only) != 0, void >::type>
+		template <typename ELEMENT_COMPLETE_TYPE>
 			void push_back(ELEMENT_COMPLETE_TYPE && i_source)
 		{
-			insert_n_impl<InsertOp::move>(m_types + size(), 1, ElementType::template make<ELEMENT_COMPLETE_TYPE>(),
-				const_cast<ELEMENT_COMPLETE_TYPE*>(&i_source) );
+			insert_n_impl(m_types + size(), 1, 
+				ElementType::template make<ELEMENT_COMPLETE_TYPE>(),
+				MoveConstruct(&i_source) );
 		}
 
-		template <typename ELEMENT_COMPLETE_TYPE, typename = typename std::enable_if< (ELEMENT_TYPE::s_caps & ElementTypeCaps::move_only) != 0, void >::type>
+		template <typename ELEMENT_COMPLETE_TYPE>
 			void push_front(ELEMENT_COMPLETE_TYPE && i_source)
 		{
-			insert_n_impl<InsertOp::move>(m_types, 1, ElementType::template make<ELEMENT_COMPLETE_TYPE>(),
-				const_cast<ELEMENT_COMPLETE_TYPE*>(&i_source));
+			insert_n_impl(m_types, 1,
+				ElementType::template make<ELEMENT_COMPLETE_TYPE>()
+				MoveConstruct(&i_source) );
 		}
 
 		void pop_front()
@@ -902,8 +917,9 @@ namespace reflective
 		template <typename ELEMENT_COMPLETE_TYPE>
 			iterator insert(const_iterator i_position, const ELEMENT_COMPLETE_TYPE & i_source)
 		{
-			return insert_n_impl<InsertOp::copy>(i_position.m_curr_type, 1, ElementType::template make<ELEMENT_COMPLETE_TYPE>(),
-				const_cast<ELEMENT_COMPLETE_TYPE*>(&i_source));
+			return insert_n_impl(i_position.m_curr_type, 1,
+				ElementType::template make<ELEMENT_COMPLETE_TYPE>(),
+				CopyConstruct(&i_source) );
 		}
 
 		template <typename ELEMENT_COMPLETE_TYPE>
@@ -911,7 +927,9 @@ namespace reflective
 		{
 			if (i_count > 0)
 			{
-				return insert_n_impl<InsertOp::copy>(i_position.m_curr_type, i_count, ElementType::template make<ELEMENT_COMPLETE_TYPE>(), const_cast<ELEMENT_COMPLETE_TYPE*>(&i_source));
+				return insert_n_impl(i_position.m_curr_type, i_count, 
+					ElementType::template make<ELEMENT_COMPLETE_TYPE>(),
+					CopyConstruct(&i_source) );
 			}
 			else
 			{

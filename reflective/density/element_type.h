@@ -14,7 +14,7 @@ namespace reflective
 		{
 			public:
 
-				template <typename COMPLETE_TYPE> static AutomaticElementType make() noexcept;
+				template <typename COMPLETE_TYPE> static ElementType make() noexcept;
 
 				ElementType(const ElementType &) noexcept;
 				ElementType(ElementType &&) noexcept;
@@ -25,6 +25,11 @@ namespace reflective
 
 				void copy_construct(void * i_dest_element, const void * i_source_element) const
 				void move_construct(void * i_dest_element, void * i_source_element) const noexcept
+				
+				template <typename TYPE, typename... ARGS>
+					TYPE * emplace_construct(void * i_dest_element, ARGS &&... i_args) const
+						{ return new(i_dest_element) TYPE(std::forward<ARGS>(i_args)...); }
+				
 				void destroy(void * i_element) const noexcept;
 		};
 	

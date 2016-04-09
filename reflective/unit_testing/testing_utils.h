@@ -152,19 +152,18 @@ namespace reflective
 	{
 	public:
 
-		using ThisClass = Copy_MoveExcept;
 		using UnderlyingClass = details::AllocatingTester;
 
-		ThisClass() { exception_check_point(); }
-		ThisClass(const UnderlyingClass & i_source) : UnderlyingClass(i_source) {}
+		Copy_MoveExcept() { exception_check_point(); }
+		Copy_MoveExcept(const UnderlyingClass & i_source) : UnderlyingClass(i_source) {}
 
 		// copy
-		ThisClass(const ThisClass & i_source)
+		Copy_MoveExcept(const Copy_MoveExcept & i_source)
 			: UnderlyingClass((exception_check_point(), i_source))
 		{
 
 		}
-		ThisClass & operator = (const ThisClass & i_source)
+		Copy_MoveExcept & operator = (const Copy_MoveExcept & i_source)
 		{
 			exception_check_point();
 			UnderlyingClass::operator = (i_source);
@@ -173,12 +172,12 @@ namespace reflective
 		}
 
 		// move (except)
-		ThisClass(ThisClass && i_source)
+		Copy_MoveExcept(Copy_MoveExcept && i_source)
 			: UnderlyingClass((exception_check_point(), std::move(i_source)))
 		{
 			exception_check_point();
 		}
-		ThisClass & operator = (ThisClass && i_source)
+		Copy_MoveExcept & operator = (Copy_MoveExcept && i_source)
 		{
 			exception_check_point();
 			UnderlyingClass::operator = (std::move(i_source));
@@ -186,10 +185,10 @@ namespace reflective
 			return *this;
 		}
 
-		bool operator == (const ThisClass & i_other) const
+		bool operator == (const Copy_MoveExcept & i_other) const
 			{ return UnderlyingClass::operator == (i_other); }
 
-		bool operator != (const ThisClass & i_other) const
+		bool operator != (const Copy_MoveExcept & i_other) const
 			{ return UnderlyingClass::operator != (i_other); }
 	};
 
@@ -197,21 +196,20 @@ namespace reflective
 	{
 	public:
 
-		using ThisClass = NoCopy_MoveExcept;
 		using UnderlyingClass = details::AllocatingTester;
 
-		ThisClass() { exception_check_point(); }
-		ThisClass(const UnderlyingClass & i_source) : UnderlyingClass(i_source) {}
+		NoCopy_MoveExcept() { exception_check_point(); }
+		NoCopy_MoveExcept(const UnderlyingClass & i_source) : UnderlyingClass(i_source) {}
 
 		// copy
-		ThisClass(const ThisClass & i_source) = delete;
-		ThisClass & operator = (const ThisClass & i_source) = delete;
+		NoCopy_MoveExcept(const NoCopy_MoveExcept & i_source) = delete;
+		NoCopy_MoveExcept & operator = (const NoCopy_MoveExcept & i_source) = delete;
 
 		// move (except)
-		ThisClass(ThisClass && i_source)
+		NoCopy_MoveExcept(NoCopy_MoveExcept && i_source)
 			: UnderlyingClass((exception_check_point(), std::move(i_source)) )
 				{ exception_check_point(); }
-		ThisClass & operator = (ThisClass && i_source)
+		NoCopy_MoveExcept & operator = (NoCopy_MoveExcept && i_source)
 		{
 			exception_check_point();
 			UnderlyingClass::operator = (std::move(i_source));
@@ -219,10 +217,10 @@ namespace reflective
 			return *this;
 		}
 
-		bool operator == (const ThisClass & i_other) const
+		bool operator == (const NoCopy_MoveExcept & i_other) const
 			{ return UnderlyingClass::operator == (i_other); }
 
-		bool operator != (const ThisClass & i_other) const
+		bool operator != (const NoCopy_MoveExcept & i_other) const
 			{ return UnderlyingClass::operator != (i_other); }
 	};
 
@@ -230,19 +228,18 @@ namespace reflective
 	{
 	public:
 
-		using ThisClass = Copy_MoveNoExcept;
 		using UnderlyingClass = details::AllocatingTester;
 
-		ThisClass() { exception_check_point(); }
-		ThisClass(const UnderlyingClass & i_source) : UnderlyingClass(i_source) {}
+		Copy_MoveNoExcept() { exception_check_point(); }
+		Copy_MoveNoExcept(const UnderlyingClass & i_source) : UnderlyingClass(i_source) {}
 
 		// copy
-		ThisClass(const ThisClass & i_source)
+		Copy_MoveNoExcept(const Copy_MoveNoExcept & i_source)
 			: UnderlyingClass((exception_check_point(), i_source))
 		{
 
 		}
-		ThisClass & operator = (const ThisClass & i_source)
+		Copy_MoveNoExcept & operator = (const Copy_MoveNoExcept & i_source)
 		{
 			exception_check_point();
 			UnderlyingClass::operator = (i_source);
@@ -251,15 +248,15 @@ namespace reflective
 		}
 
 		// move (no except)
-		ThisClass(ThisClass && i_source) noexcept = default;
-		ThisClass & operator = (ThisClass && i_source) noexcept = default;
+		Copy_MoveNoExcept(Copy_MoveNoExcept && i_source) noexcept = default;
+		Copy_MoveNoExcept & operator = (Copy_MoveNoExcept && i_source) noexcept = default;
 
-		bool operator == (const ThisClass & i_other) const
+		bool operator == (const Copy_MoveNoExcept & i_other) const
 		{
 			return UnderlyingClass::operator == (i_other);
 		}
 
-		bool operator != (const ThisClass & i_other) const
+		bool operator != (const Copy_MoveNoExcept & i_other) const
 		{
 			return UnderlyingClass::operator != (i_other);
 		}
@@ -269,26 +266,25 @@ namespace reflective
 	{
 	public:
 
-		using ThisClass = NoCopy_MoveNoExcept;
 		using UnderlyingClass = details::AllocatingTester;
 
-		ThisClass() { exception_check_point(); }
-		ThisClass(const UnderlyingClass & i_source) : UnderlyingClass(i_source) {}
+		NoCopy_MoveNoExcept() { exception_check_point(); }
+		NoCopy_MoveNoExcept(const UnderlyingClass & i_source) : UnderlyingClass(i_source) {}
 
 		// copy
-		ThisClass(const ThisClass & i_source) = delete;
-		ThisClass & operator = (const ThisClass & i_source) = delete;
+		NoCopy_MoveNoExcept(const NoCopy_MoveNoExcept & i_source) = delete;
+		NoCopy_MoveNoExcept & operator = (const NoCopy_MoveNoExcept & i_source) = delete;
 
 		// move (no except)
-		ThisClass(ThisClass && i_source) noexcept = default;
-		ThisClass & operator = (ThisClass && i_source) noexcept = default;
+		NoCopy_MoveNoExcept(NoCopy_MoveNoExcept && i_source) noexcept = default;
+		NoCopy_MoveNoExcept & operator = (NoCopy_MoveNoExcept && i_source) noexcept = default;
 
-		bool operator == (const ThisClass & i_other) const
+		bool operator == (const NoCopy_MoveNoExcept & i_other) const
 		{
 			return UnderlyingClass::operator == (i_other);
 		}
 
-		bool operator != (const ThisClass & i_other) const
+		bool operator != (const NoCopy_MoveNoExcept & i_other) const
 		{
 			return UnderlyingClass::operator != (i_other);
 		}
