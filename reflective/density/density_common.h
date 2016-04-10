@@ -300,14 +300,13 @@ namespace reflective
 	template <typename ALLOCATOR>
 		void aligned_free(ALLOCATOR & i_allocator, void * i_block, size_t i_size, size_t i_alignment ) REFLECTIVE_NOEXCEPT
 	{
-		if (i_block != nullptr)
+		if (i_alignment <= std::alignment_of<void*>::value)
 		{
-			if (i_alignment <= std::alignment_of<void*>::value)
-			{
-				typename std::allocator_traits<ALLOCATOR>::template rebind_alloc<void *> other_alloc(i_allocator);
-				other_alloc.deallocate(static_cast<void**>(i_block), (i_size + sizeof(void*) - 1) / sizeof(void*));
-			}
-			else
+			typename std::allocator_traits<ALLOCATOR>::template rebind_alloc<void *> other_alloc(i_allocator);
+			other_alloc.deallocate(static_cast<void**>(i_block), (i_size + sizeof(void*) - 1) / sizeof(void*));
+		}
+		else if (i_block != nullptr)
+		{
 			{
 				size_t const extra_size = (i_alignment >= sizeof(details::AlignmentHeader) ? i_alignment : sizeof(details::AlignmentHeader));
 				size_t const actual_size = i_size + extra_size;

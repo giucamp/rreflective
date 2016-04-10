@@ -199,6 +199,8 @@
     <ClInclude Include="..\reflective\density\array_view.h" />
     <ClInclude Include="..\reflective\density\dense_fixed_queue.h" />
     <ClInclude Include="..\reflective\density\dense_list.h" />
+    <ClInclude Include="..\reflective\density\dense_list_typed.h" />
+    <ClInclude Include="..\reflective\density\dense_list_void.h" />
     <ClInclude Include="..\reflective\density\element_type.h" />
     <ClInclude Include="..\reflective\density\density_common.h" />
     <ClInclude Include="..\reflective\density\identifier.h" />

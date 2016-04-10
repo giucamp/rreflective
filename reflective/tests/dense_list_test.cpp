@@ -336,42 +336,6 @@ namespace reflective
 					}
 					REFLECTIVE_TEST_ASSERT(dense_list_post_copy == std_list_copy);
 				}
-
-				// this local function makes a copy of the DenseList: ELEMENT may be not-copyable, but ELEMENT::UnderlyingClass is copyable				
-				/*const auto copy_to_std_list = [](const DenseList< ELEMENT, TestAllocator<ELEMENT> > & i_list) -> std::list<ELEMENT> {
-					std::list<ELEMENT> prev_std_container;
-					for (const auto & el : i_dense_list)
-					{
-						const typename ELEMENT::UnderlyingClass & elu = el;
-						prev_std_container.push_back(ELEMENT(elu));
-					}
-					return copy_to_std_list;
-				};
-
-				const auto std_prev_list = copy_to_std_list(i_dense_list);
-				const auto std_list = std_prev_list;
-
-				//auto list = std_container;
-				try
-				{
-					i_action_on_dense_list(list);
-				}
-				catch (...)
-				{
-					// check the strong exception guarantee: no changes is the list
-					//REFLECTIVE_TEST_ASSERT(list == copy_of_list);
-					throw;
-				}
-
-				// apply the action on the std::list
-				i_action_std_list(std_list);
-				
-				// now std_list must be = to list
-				REFLECTIVE_TEST_ASSERT(new_std_container.size() == std_container.size());
-				for(auto it1 = )
-				
-				std::list<ELEMENT> new_std_container(list.begin(), list.end());
-				REFLECTIVE_TEST_ASSERT(new_std_container == std_container);*/
 			}
 
 			template <bool CAN_COPY_ELEMENTS, typename LIST> struct TestWithExceptionsOnList;
@@ -381,7 +345,25 @@ namespace reflective
 				static void do_it(const LIST & i_list)
 				{
 					using Element = typename LIST::value_type;
+					using UndelyingElement = typename LIST::value_type::UnderlyingClass;
 					Element new_element;
+					const UndelyingElement & copy_source = new_element;
+
+					// test push_back( Element && new_element )
+					test_operation_with_exceptions(i_list,
+						[&copy_source](LIST & i_container) {
+							i_container.push_back(Element(copy_source)); },
+						[&copy_source](std::list<Element> & i_container) {
+							i_container.push_back(Element(copy_source)); }
+						);
+
+					// test push_front( Element && new_element )
+					test_operation_with_exceptions(i_list,
+						[&copy_source](LIST & i_container) {
+						i_container.push_front(Element(copy_source)); },
+						[&copy_source](std::list<Element> & i_container) {
+							i_container.push_front(Element(copy_source)); }
+						);
 
 					// test pop_back()
 					test_operation_with_exceptions(i_list,
@@ -496,13 +478,21 @@ namespace reflective
 
 			void test_void_dense_list()
 			{
-				//auto void_list = DenseList<void>::make(1,2,3);
+				auto void_list = DenseList<void>::make(1,2,3);
+				int sum = 0;
+				for (auto it = void_list.begin(); it != void_list.end(); it++)
+				{
+					sum += *(int*)it.curr_element();
+				}
+				(void)sum;
 			}
 		}
 	}
 
 	void dense_list_test()
 	{
+		details::DenseListTest::test_void_dense_list();
+
 		details::DenseListTest::test1();
 		details::DenseListTest::test2();
 		details::DenseListTest::test3();

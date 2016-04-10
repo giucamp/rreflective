@@ -50,9 +50,9 @@ namespace reflective
 	enum ElementTypeCaps
 	{
 		none = 0,
-		move_only = 1 << 1,
+		nothrow_move_construtible = 1 << 1,
 		copy_only = 1 << 0,		
-		copy_and_move = move_only | copy_only,
+		copy_and_move = nothrow_move_construtible | copy_only,
 	};
 
 	namespace details
@@ -147,9 +147,9 @@ namespace reflective
 			const size_t m_size;
 		};
 
+		// ElementType_Destr class
 		template <typename ELEMENT, SizeAlignmentMode SIZE_ALIGNMENT_MODE, 
 			bool HAS_VIRTUAL_DESTRUCTOR = std::has_virtual_destructor<ELEMENT>::value> class ElementType_Destr;
-
 		template <typename ELEMENT, SizeAlignmentMode SIZE_ALIGNMENT_MODE>
 			class ElementType_Destr<ELEMENT, SIZE_ALIGNMENT_MODE, true> 
 				: public ElementType_SizeAlign<SIZE_ALIGNMENT_MODE>
@@ -166,13 +166,12 @@ namespace reflective
 				static_cast<ELEMENT*>(i_element)->~ELEMENT();
 			}
 		};
-
 		template <typename ELEMENT, SizeAlignmentMode SIZE_ALIGNMENT_MODE>
 			class ElementType_Destr<ELEMENT, SIZE_ALIGNMENT_MODE, false> 
 				: public ElementType_SizeAlign<SIZE_ALIGNMENT_MODE>
 		{
 		public:
-			static_assert(std::is_nothrow_destructible<ELEMENT>::value, "the destructor must be nothrow");
+			static_assert(std::is_same<ELEMENT, void>::value || std::is_nothrow_destructible<ELEMENT>::value, "the destructor must be nothrow");
 
 			ElementType_Destr(size_t i_size, size_t i_alignment) REFLECTIVE_NOEXCEPT
 				: ElementType_SizeAlign<SIZE_ALIGNMENT_MODE>(i_size, i_alignment) { }
@@ -219,13 +218,14 @@ namespace reflective
 		};
 
 		template <typename TYPE, 
-			bool CAN_COPY = std::is_copy_constructible<TYPE>::value,
-			bool CAN_MOVE = std::is_nothrow_move_constructible<TYPE>::value> struct GetAutoCopyMoveCap;
+			bool CAN_COPY = std::is_copy_constructible<TYPE>::value || std::is_same<void, TYPE>::value,
+			bool CAN_MOVE = std::is_nothrow_move_constructible<TYPE>::value || std::is_same<void, TYPE>::value
+				> struct GetAutoCopyMoveCap;
 
 		template <typename TYPE > struct GetAutoCopyMoveCap<TYPE, false, false>
 			{ static const ElementTypeCaps value = ElementTypeCaps::none; };
 		template <typename TYPE > struct GetAutoCopyMoveCap<TYPE, false, true>
-			{ static const ElementTypeCaps value = ElementTypeCaps::move_only; };
+			{ static const ElementTypeCaps value = ElementTypeCaps::nothrow_move_construtible; };
 		template <typename TYPE > struct GetAutoCopyMoveCap<TYPE, true, false>
 			{ static const ElementTypeCaps value = ElementTypeCaps::copy_only; };
 		template <typename TYPE > struct GetAutoCopyMoveCap<TYPE, true, true>
@@ -234,89 +234,9 @@ namespace reflective
 	} // namespace details
 
 
-	template <typename ELEMENT, ElementTypeCaps COPY_MOVE, SizeAlignmentMode SIZE_ALIGNMENT_MODE = SizeAlignmentMode::most_general>
+	template <typename ELEMENT, ElementTypeCaps COPY_MOVE = details::GetAutoCopyMoveCap<ELEMENT>::value, SizeAlignmentMode SIZE_ALIGNMENT_MODE = SizeAlignmentMode::most_general>
 		class ElementType;
 	
-	template <typename ELEMENT, SizeAlignmentMode SIZE_ALIGNMENT_MODE = SizeAlignmentMode::most_general>
-		using AutomaticElementType = typename std::conditional<std::is_same<void, ELEMENT>::value,
-			ElementType<void, ElementTypeCaps::copy_and_move, SIZE_ALIGNMENT_MODE >,
-			ElementType<ELEMENT, details::GetAutoCopyMoveCap<ELEMENT>::value, SIZE_ALIGNMENT_MODE >
-		>::type;
-		
-	template <SizeAlignmentMode SIZE_ALIGNMENT_MODE>
-		class ElementType<void, ElementTypeCaps::copy_and_move, SIZE_ALIGNMENT_MODE> 
-			: public details::ElementType_Destr<void, SIZE_ALIGNMENT_MODE>
-	{
-	public:
-		
-		using Element = void;
-		static const SizeAlignmentMode s_size_alignment_mode = SIZE_ALIGNMENT_MODE;
-		static const ElementTypeCaps s_caps = ElementTypeCaps::copy_and_move;
-
-		ElementType() = delete;
-		ElementType & operator = (const ElementType &) = delete;
-		ElementType & operator = (ElementType &&) = delete;
-
-		ElementType(const ElementType &) REFLECTIVE_NOEXCEPT = default;
-
-		#if defined(_MSC_VER) && _MSC_VER < 1900
-			ElementType(ElementType && i_source) REFLECTIVE_NOEXCEPT // visual studio 2013 doesnt seems to support defauted move constructors
-				: details::ElementType_Destr<void, SIZE_ALIGNMENT_MODE>(std::move(i_source)), m_function(i_source.m_function)
-					{ }			
-		#else
-			ElementType(ElementType && i_source) REFLECTIVE_NOEXCEPT = default;
-		#endif
-					
-		template <typename COMPLETE_TYPE>
-			static ElementType make() REFLECTIVE_NOEXCEPT
-		{
-			return ElementType(sizeof(COMPLETE_TYPE), std::alignment_of<COMPLETE_TYPE>::value, &function_impl< COMPLETE_TYPE > );
-		}
-
-		void copy_construct(void * i_destination, const void * i_source_element) const
-		{
-			assert(i_destination != nullptr && i_source_element != nullptr && i_destination != i_source_element);
-			(*m_function)(Operation::copy, i_destination, const_cast<void*>(i_source_element));
-		}
-
-		void move_construct(void * i_destination, void * i_source_element) const REFLECTIVE_NOEXCEPT
-		{
-			assert(i_destination != nullptr && i_source_element != nullptr && i_destination != i_source_element);
-			(*m_function)(Operation::move, i_destination, i_source_element); // first > second
-		}
-
-	private:
-
-		enum class Operation { copy, move, destroy };
- 
-		using FunctionPtr = void(*)(Operation i_operation, void * i_first, void * i_second );
-
-		ElementType(size_t i_size, size_t i_alignment, FunctionPtr i_function) REFLECTIVE_NOEXCEPT
-			: details::ElementType_Destr<void, SIZE_ALIGNMENT_MODE>(i_size, i_alignment), m_function(i_function) { }
-
-		template <typename COMPLETE_TYPE>
-			static void function_impl(Operation i_operation, void * i_first, void * i_second)
-		{
-			switch (i_operation )
-			{
-				case Operation::copy:
-					details::CopyConstructImpl<COMPLETE_TYPE>::invoke(i_first, i_second);
-					break;
-
-				case Operation::move:
-					details::MoveConstructImpl<COMPLETE_TYPE>::invoke(i_first, i_second);
-					break;
-
-				default:
-					static_cast<COMPLETE_TYPE*>(i_first)->COMPLETE_TYPE::~COMPLETE_TYPE();
-					break;
-			}
-		}
-
-	private:
-		const FunctionPtr m_function;
-	};
-
 	template <typename ELEMENT, SizeAlignmentMode SIZE_ALIGNMENT_MODE>
 		class ElementType<ELEMENT, ElementTypeCaps::copy_and_move, SIZE_ALIGNMENT_MODE> : public details::ElementType_Destr<ELEMENT, SIZE_ALIGNMENT_MODE>
 	{
@@ -343,7 +263,7 @@ namespace reflective
 		template <typename COMPLETE_TYPE>
 			static ElementType make() REFLECTIVE_NOEXCEPT
 		{
-			static_assert(std::is_base_of<ELEMENT, COMPLETE_TYPE>::value, "not covariant type");
+			static_assert(std::is_base_of<ELEMENT, COMPLETE_TYPE>::value || std::is_same<ELEMENT, void>::value, "not covariant type");
 			return ElementType(sizeof(COMPLETE_TYPE), std::alignment_of<COMPLETE_TYPE>::value, &function_impl< COMPLETE_TYPE > );
 		}
 
@@ -356,12 +276,12 @@ namespace reflective
 		void move_construct(void * i_destination, void * i_source_element) const REFLECTIVE_NOEXCEPT
 		{
 			assert(i_destination != nullptr && i_source_element != nullptr && i_destination != i_source_element);
-			(*m_function)(Operation::move, i_destination, i_source_element); // first > second
+			(*m_function)(Operation::move, i_destination, i_source_element);
 		}
 
 	private:
 
-		enum class Operation { copy, move };
+		enum class Operation { copy, move, destroy };
  
 		using FunctionPtr = void(*)(Operation i_operation, void * i_first, void * i_second );
 
@@ -413,7 +333,7 @@ namespace reflective
 		template <typename COMPLETE_TYPE>
 			static ElementType make() REFLECTIVE_NOEXCEPT
 		{
-			static_assert(std::is_base_of<ELEMENT, COMPLETE_TYPE>::value, "not covariant type");
+			static_assert(std::is_base_of<ELEMENT, COMPLETE_TYPE>::value || std::is_same<ELEMENT, void>::value, "not covariant type");
 			return ElementType(sizeof(COMPLETE_TYPE), std::alignment_of<COMPLETE_TYPE>::value, &function_impl< COMPLETE_TYPE > );
 		}
 
@@ -443,14 +363,14 @@ namespace reflective
 	};
 
 	template <typename ELEMENT, SizeAlignmentMode SIZE_ALIGNMENT_MODE>
-		class ElementType<ELEMENT, ElementTypeCaps::move_only, SIZE_ALIGNMENT_MODE> 
+		class ElementType<ELEMENT, ElementTypeCaps::nothrow_move_construtible, SIZE_ALIGNMENT_MODE> 
 			: public details::ElementType_Destr<ELEMENT, SIZE_ALIGNMENT_MODE>
 	{
 	public:
 
 		using Element = ELEMENT;
 		static const SizeAlignmentMode s_size_alignment_mode = SIZE_ALIGNMENT_MODE;
-		static const ElementTypeCaps s_caps = ElementTypeCaps::move_only;
+		static const ElementTypeCaps s_caps = ElementTypeCaps::nothrow_move_construtible;
 
 		ElementType() = delete;
 		ElementType & operator = (const ElementType &) = delete;
@@ -469,14 +389,14 @@ namespace reflective
 		template <typename COMPLETE_TYPE>
 			static ElementType make() REFLECTIVE_NOEXCEPT
 		{
-			static_assert(std::is_base_of<ELEMENT, COMPLETE_TYPE>::value, "not covariant type");
+			static_assert(std::is_base_of<ELEMENT, COMPLETE_TYPE>::value || std::is_same<ELEMENT, void>::value, "not covariant type");
 			return ElementType(sizeof(COMPLETE_TYPE), std::alignment_of<COMPLETE_TYPE>::value, &function_impl< COMPLETE_TYPE > );
 		}
 
 		void move_construct(void * i_destination, void * i_source_element) const REFLECTIVE_NOEXCEPT
 		{
 			assert(i_destination != nullptr && i_source_element != nullptr && i_destination != i_source_element);
-			(*m_function)(i_destination, i_source_element); // first > second
+			(*m_function)(i_destination, i_source_element);
 		}
 
 	private:
@@ -522,7 +442,7 @@ namespace reflective
 		template <typename COMPLETE_TYPE>
 			static ElementType make() REFLECTIVE_NOEXCEPT
 		{
-			static_assert(std::is_base_of<ELEMENT, COMPLETE_TYPE>::value, "not covariant type");
+			static_assert(std::is_base_of<ELEMENT, COMPLETE_TYPE>::value || std::is_same<ELEMENT, void>::value, "not covariant type");
 			return ElementType(sizeof(COMPLETE_TYPE), std::alignment_of<COMPLETE_TYPE>::value );
 		}
 

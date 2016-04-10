@@ -137,6 +137,12 @@
     <ClInclude Include="..\reflective\density\element_type.h">
       <Filter>density</Filter>
     </ClInclude>
+    <ClInclude Include="..\reflective\density\dense_list_typed.h">
+      <Filter>density</Filter>
+    </ClInclude>
+    <ClInclude Include="..\reflective\density\dense_list_void.h">
+      <Filter>density</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\reflective\reflective.cpp" />
