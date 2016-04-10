@@ -263,7 +263,7 @@ namespace reflective
 		template <typename COMPLETE_TYPE>
 			static ElementType make() REFLECTIVE_NOEXCEPT
 		{
-			static_assert(std::is_base_of<ELEMENT, COMPLETE_TYPE>::value || std::is_same<ELEMENT, void>::value, "not covariant type");
+			static_assert(std::is_same<ELEMENT, COMPLETE_TYPE>::value || std::is_base_of<ELEMENT, COMPLETE_TYPE>::value || std::is_same<ELEMENT, void>::value, "not covariant type");
 			return ElementType(sizeof(COMPLETE_TYPE), std::alignment_of<COMPLETE_TYPE>::value, &function_impl< COMPLETE_TYPE > );
 		}
 
@@ -333,7 +333,7 @@ namespace reflective
 		template <typename COMPLETE_TYPE>
 			static ElementType make() REFLECTIVE_NOEXCEPT
 		{
-			static_assert(std::is_base_of<ELEMENT, COMPLETE_TYPE>::value || std::is_same<ELEMENT, void>::value, "not covariant type");
+			static_assert(std::is_same<ELEMENT, COMPLETE_TYPE>::value || std::is_base_of<ELEMENT, COMPLETE_TYPE>::value || std::is_same<ELEMENT, void>::value, "not covariant type");
 			return ElementType(sizeof(COMPLETE_TYPE), std::alignment_of<COMPLETE_TYPE>::value, &function_impl< COMPLETE_TYPE > );
 		}
 
@@ -389,7 +389,7 @@ namespace reflective
 		template <typename COMPLETE_TYPE>
 			static ElementType make() REFLECTIVE_NOEXCEPT
 		{
-			static_assert(std::is_base_of<ELEMENT, COMPLETE_TYPE>::value || std::is_same<ELEMENT, void>::value, "not covariant type");
+			static_assert(std::is_same<ELEMENT, COMPLETE_TYPE>::value || std::is_base_of<ELEMENT, COMPLETE_TYPE>::value || std::is_same<ELEMENT, void>::value, "not covariant type");
 			return ElementType(sizeof(COMPLETE_TYPE), std::alignment_of<COMPLETE_TYPE>::value, &function_impl< COMPLETE_TYPE > );
 		}
 
@@ -442,7 +442,7 @@ namespace reflective
 		template <typename COMPLETE_TYPE>
 			static ElementType make() REFLECTIVE_NOEXCEPT
 		{
-			static_assert(std::is_base_of<ELEMENT, COMPLETE_TYPE>::value || std::is_same<ELEMENT, void>::value, "not covariant type");
+			static_assert(std::is_same<ELEMENT, COMPLETE_TYPE>::value || std::is_base_of<ELEMENT, COMPLETE_TYPE>::value || std::is_same<ELEMENT, void>::value, "not covariant type");
 			return ElementType(sizeof(COMPLETE_TYPE), std::alignment_of<COMPLETE_TYPE>::value );
 		}
 

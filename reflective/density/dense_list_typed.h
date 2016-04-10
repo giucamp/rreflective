@@ -8,7 +8,7 @@ namespace reflective
 		Insertions\removals of a non-zero number of elements and clear() always reallocate the memory blocks and invalidate existing iterators.
 		The inline storage of DenseList is the same of a pointer. An empty DenseList does not use heap memory.
 		All the functions of DenseList gives at least the strong exception guarantee. */
-	template <typename ELEMENT, typename ALLOCATOR = std::allocator<ELEMENT>, typename ELEMENT_TYPE = ElementType<ELEMENT> >
+	template <typename ELEMENT = void, typename ALLOCATOR = std::allocator<ELEMENT>, typename ELEMENT_TYPE = ElementType<ELEMENT> >
 		class DenseList final : public details::DenseListBase<ALLOCATOR, ELEMENT_TYPE>
 	{
 	private:
@@ -65,9 +65,9 @@ namespace reflective
 		class iterator;
 		class const_iterator;
 
-		using BaseIterator = typename BaseClass::BaseIterator;
+		using IteratorBase = typename BaseClass::IteratorBase;
 
-		class iterator final : private BaseIterator
+		class iterator final : private IteratorBase
 		{
 		public:
 			using iterator_category = std::forward_iterator_tag;
@@ -79,54 +79,54 @@ namespace reflective
 			using pointer = typename std::allocator_traits<allocator_type>::pointer;
 			using const_pointer = typename std::allocator_traits<allocator_type>::const_pointer;
 
-			iterator(const BaseIterator & i_source) REFLECTIVE_NOEXCEPT
-				: BaseIterator(i_source) {  }
+			iterator(const IteratorBase & i_source) REFLECTIVE_NOEXCEPT
+				: IteratorBase(i_source) {  }
 			
 			value_type & operator * () const REFLECTIVE_NOEXCEPT { return *curr_element(); }
 			value_type * operator -> () const REFLECTIVE_NOEXCEPT { return curr_element(); }
 			value_type * curr_element() const REFLECTIVE_NOEXCEPT
-				{ return static_cast<value_type *>(BaseIterator::curr_element()); }
+				{ return static_cast<value_type *>(IteratorBase::curr_element()); }
 
 			iterator & operator ++ () REFLECTIVE_NOEXCEPT
 			{
-				BaseIterator::move_next();
+				IteratorBase::move_next();
 				return *this;
 			}
 
 			iterator operator++ (int) REFLECTIVE_NOEXCEPT
 			{
 				iterator copy(*this);
-				BaseIterator::move_next();
+				IteratorBase::move_next();
 				return copy;
 			}
 
 			bool operator == (const iterator & i_other) const REFLECTIVE_NOEXCEPT
 			{
-				return BaseIterator::m_curr_type == i_other.curr_type();
+				return IteratorBase::m_curr_type == i_other.curr_type();
 			}
 
 			bool operator != (const iterator & i_other) const REFLECTIVE_NOEXCEPT
 			{
-				return BaseIterator::m_curr_type != i_other.curr_type();
+				return IteratorBase::m_curr_type != i_other.curr_type();
 			}
 
 			bool operator == (const const_iterator & i_other) const REFLECTIVE_NOEXCEPT
 			{
-				return BaseIterator::m_curr_type == i_other.curr_type();
+				return IteratorBase::m_curr_type == i_other.curr_type();
 			}
 
 			bool operator != (const const_iterator & i_other) const REFLECTIVE_NOEXCEPT
 			{
-				return BaseIterator::m_curr_type != i_other.curr_type();
+				return IteratorBase::m_curr_type != i_other.curr_type();
 			}
 			
-			const ELEMENT_TYPE * curr_type() const REFLECTIVE_NOEXCEPT { return BaseIterator::m_curr_type; }
+			const ELEMENT_TYPE * curr_type() const REFLECTIVE_NOEXCEPT { return IteratorBase::m_curr_type; }
 
 			friend class const_iterator;
 
 		}; // class iterator
 
-		class const_iterator final : private BaseIterator
+		class const_iterator final : private IteratorBase
 		{
 		public:
 			using iterator_category = std::forward_iterator_tag;
@@ -138,27 +138,27 @@ namespace reflective
 			using pointer = typename std::allocator_traits<allocator_type>::pointer;
 			using const_pointer = typename std::allocator_traits<allocator_type>::const_pointer;
 
-			const_iterator(const BaseIterator & i_source) REFLECTIVE_NOEXCEPT
-				: BaseIterator(i_source) {  }
+			const_iterator(const IteratorBase & i_source) REFLECTIVE_NOEXCEPT
+				: IteratorBase(i_source) {  }
 
 			const_iterator(const iterator & i_source) REFLECTIVE_NOEXCEPT
-				: BaseIterator(i_source) {  }
+				: IteratorBase(i_source) {  }
 									
 			value_type & operator * () const REFLECTIVE_NOEXCEPT { return *curr_element(); }
 			value_type * operator -> () const REFLECTIVE_NOEXCEPT { return curr_element(); }
 			value_type * curr_element() const REFLECTIVE_NOEXCEPT
-				{ return static_cast<value_type *>(BaseIterator::curr_element()); }
+				{ return static_cast<value_type *>(IteratorBase::curr_element()); }
 
 			const_iterator & operator ++ () REFLECTIVE_NOEXCEPT
 			{
-				BaseIterator::move_next();
+				IteratorBase::move_next();
 				return *this;
 			}
 
 			const_iterator operator++ (int) REFLECTIVE_NOEXCEPT
 			{
 				iterator copy(*this);
-				BaseIterator::move_next();
+				IteratorBase::move_next();
 				return copy;
 			}
 
@@ -174,15 +174,15 @@ namespace reflective
 
 			bool operator == (const const_iterator & i_other) const REFLECTIVE_NOEXCEPT
 			{
-				return BaseIterator::m_curr_type == i_other.curr_type();
+				return IteratorBase::m_curr_type == i_other.curr_type();
 			}
 
 			bool operator != (const const_iterator & i_other) const REFLECTIVE_NOEXCEPT
 			{
-				return BaseIterator::m_curr_type != i_other.curr_type();
+				return IteratorBase::m_curr_type != i_other.curr_type();
 			}
 
-			const ELEMENT_TYPE * curr_type() const REFLECTIVE_NOEXCEPT { return BaseIterator::m_curr_type; }
+			const ELEMENT_TYPE * curr_type() const REFLECTIVE_NOEXCEPT { return IteratorBase::m_curr_type; }
 		
 			friend class DenseList;
 

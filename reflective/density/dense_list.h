@@ -86,12 +86,12 @@ namespace reflective
 				destroy_impl();
 			}
 
-			struct BaseIterator
+			struct IteratorBase
 			{
-				BaseIterator() REFLECTIVE_NOEXCEPT
+				IteratorBase() REFLECTIVE_NOEXCEPT
 					: m_unaligned_curr_element(nullptr), m_curr_type(nullptr) { }
 
-				BaseIterator(void * i_curr_element, const ELEMENT_TYPE * i_curr_type) REFLECTIVE_NOEXCEPT
+				IteratorBase(void * i_curr_element, const ELEMENT_TYPE * i_curr_type) REFLECTIVE_NOEXCEPT
 					: m_unaligned_curr_element(i_curr_element), m_curr_type(i_curr_type)
 				{
 				}
@@ -110,12 +110,12 @@ namespace reflective
 					return address_upper_align(m_unaligned_curr_element, curr_element_alignment);
 				}
 
-				bool operator == (const BaseIterator & i_other) const REFLECTIVE_NOEXCEPT
+				bool operator == (const IteratorBase & i_other) const REFLECTIVE_NOEXCEPT
 				{
 					return m_curr_type == i_other.m_curr_type;
 				}
 
-				bool operator != (const BaseIterator & i_other) const REFLECTIVE_NOEXCEPT
+				bool operator != (const IteratorBase & i_other) const REFLECTIVE_NOEXCEPT
 				{
 					return m_curr_type != i_other.m_curr_type;
 				}
@@ -128,10 +128,10 @@ namespace reflective
 				void * m_unaligned_curr_element;
 				const ELEMENT_TYPE * m_curr_type;
 
-			}; // class BaseIterator
+			}; // class IteratorBase
 
-			BaseIterator begin() const REFLECTIVE_NOEXCEPT { return BaseIterator(get_elements(), m_types); }
-			BaseIterator end() const REFLECTIVE_NOEXCEPT { return BaseIterator(nullptr, m_types + size()); }
+			IteratorBase begin() const REFLECTIVE_NOEXCEPT { return IteratorBase(get_elements(), m_types); }
+			IteratorBase end() const REFLECTIVE_NOEXCEPT { return IteratorBase(nullptr, m_types + size()); }
 
 			void * get_elements() const // this function gives a non-const element from a const container, but this avoids duplicating the function
 			{
@@ -424,14 +424,14 @@ namespace reflective
 			}
 
 			template <typename CONSTRUCTOR>
-			BaseIterator insert_impl(const ELEMENT_TYPE * i_position,
+			IteratorBase insert_impl(const ELEMENT_TYPE * i_position,
 				const ELEMENT_TYPE & i_source_type, CONSTRUCTOR && i_constructor)
 			{
 				return insert_n_impl(i_position, 1, i_source_type, std::forward<CONSTRUCTOR>(i_constructor));
 			}
 
 			template <typename CONSTRUCTOR>
-			BaseIterator insert_n_impl(const ELEMENT_TYPE * i_position, size_t i_count_to_insert,
+			IteratorBase insert_n_impl(const ELEMENT_TYPE * i_position, size_t i_count_to_insert,
 				const ELEMENT_TYPE & i_source_type, CONSTRUCTOR && i_constructor)
 			{
 				assert(i_count_to_insert > 0);
@@ -483,10 +483,10 @@ namespace reflective
 					throw;
 				}
 
-				return BaseIterator(return_element, return_element_info);
+				return IteratorBase(return_element, return_element_info);
 			}
 
-			BaseIterator erase_impl(const ELEMENT_TYPE * i_from, const ELEMENT_TYPE * i_to)
+			IteratorBase erase_impl(const ELEMENT_TYPE * i_from, const ELEMENT_TYPE * i_to)
 			{
 				// test preconditions
 				const auto prev_size = get_size_not_empty();
@@ -567,7 +567,7 @@ namespace reflective
 						builder.rollback(*static_cast<ALLOCATOR*>(this), buffer_size, buffer_alignment);
 						throw;
 					}
-					return BaseIterator(return_element, return_element_info);
+					return IteratorBase(return_element, return_element_info);
 				}
 			}
 

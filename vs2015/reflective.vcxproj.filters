@@ -209,6 +209,9 @@
     <ClCompile Include="..\reflective\tests\string_view_test.cpp">
       <Filter>tests</Filter>
     </ClCompile>
+    <ClCompile Include="..\reflective\tests\dense_fixed_queue_test.cpp">
+      <Filter>tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\reflective\reflection\qualified_type_ptr.inl">

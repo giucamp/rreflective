@@ -367,6 +367,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_clang|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\reflective\reflective.cpp" />
+    <ClCompile Include="..\reflective\tests\dense_fixed_queue_test.cpp" />
     <ClCompile Include="..\reflective\tests\dense_list_benchmark.cpp" />
     <ClCompile Include="..\reflective\tests\dense_list_test.cpp" />
     <ClCompile Include="..\reflective\tests\string_view_test.cpp" />

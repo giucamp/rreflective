@@ -29,11 +29,13 @@
 
 namespace reflective
 {
+	void dense_fixed_queue_test();
 	void dense_list_test();
 	void dense_list_benchmark();
 
 	void reference_globals()
-	{		
+	{	
+		dense_fixed_queue_test();
 		dense_list_test();
 		for (int i = 0; i < 20; i++ )
 			dense_list_benchmark();
