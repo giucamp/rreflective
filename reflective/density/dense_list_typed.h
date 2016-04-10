@@ -321,6 +321,11 @@ namespace reflective
 			}
 		}
 
+		void swap(DenseList & i_other) REFLECTIVE_NOEXCEPT
+		{
+			std::swap(BaseClass::m_types, i_other.m_types);
+		}
+
 					/////////////////////////
 
 		/* to do, & WARNING!: this function is slicing-comparing. Fix or delete. */

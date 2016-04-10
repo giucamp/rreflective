@@ -56,7 +56,23 @@ namespace reflective
 
 			DenseFixedQueueBase(size_t i_buffer_byte_capacity)
 			{
-				impl_realloc(i_buffer_byte_capacity);
+				typename std::allocator_traits<ALLOCATOR>::template rebind_alloc<char> char_alloc(
+					*static_cast<ALLOCATOR*>(this));
+
+				m_buffer_start = char_alloc.allocate(i_buffer_byte_capacity);
+				m_buffer_end = address_add(m_buffer_start, i_buffer_byte_capacity);
+				m_tail = m_head = static_cast<ELEMENT_TYPE *>(m_buffer_start);
+			}
+
+			~DenseFixedQueueBase()
+			{
+				impl_clear();
+
+				typename std::allocator_traits<ALLOCATOR>::template rebind_alloc<char> char_alloc(
+					*static_cast<ALLOCATOR*>(this));
+				
+				char_alloc.deallocate(static_cast<char*>(m_buffer_start),
+					address_diff(m_buffer_end, m_buffer_start) );
 			}
 
 			bool impl_empty() const REFLECTIVE_NOEXCEPT
@@ -162,15 +178,20 @@ namespace reflective
 			}
 
 		private:
-
-			void impl_realloc(size_t i_buffer_byte_capacity)
+			
+			void impl_clear() REFLECTIVE_NOEXCEPT
 			{
-				typename std::allocator_traits<ALLOCATOR>::template rebind_alloc<char> char_alloc(
-					*static_cast<ALLOCATOR*>(this));
+				IteratorBase it = impl_begin();
+				while (it.m_curr_type != m_tail)
+				{
+					auto const type = it.m_curr_type;
+					auto const element = it.m_curr_element;
+					it.move_next();
 
-				m_buffer_start = char_alloc.allocate(i_buffer_byte_capacity);
-				m_buffer_end = address_add(m_buffer_start, i_buffer_byte_capacity);
-				m_tail = m_head = static_cast<ELEMENT_TYPE *>(m_buffer_start);
+					type->destroy(element);
+					type->ELEMENT_TYPE::~ELEMENT_TYPE();
+				}
+				m_head = m_tail;
 			}
 
 		private:
@@ -337,6 +358,8 @@ namespace reflective
 		const_iterator cend() const REFLECTIVE_NOEXCEPT { return const_iterator(BaseClass::impl_end()); }
 
 		bool empty() const REFLECTIVE_NOEXCEPT { return BaseClass::impl_empty(); }
+
+		void clear() REFLECTIVE_NOEXCEPT { BaseClass::impl_clear(); }
 
 		template <typename ELEMENT_COMPLETE_TYPE>
 			iterator try_push_back(const ELEMENT_COMPLETE_TYPE & i_source)
