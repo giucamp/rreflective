@@ -12,8 +12,36 @@ namespace reflective
 		class DenseList final : public details::DenseListBase<ALLOCATOR, ELEMENT_TYPE>
 	{
 	private:
-		using BaseClass = DenseListBase<ALLOCATOR, ELEMENT_TYPE>;
 		
+		using BaseClass = DenseListBase<ALLOCATOR, ELEMENT_TYPE>;
+		using IteratorBase = typename BaseClass::IteratorBase;
+
+		struct CopyConstruct
+		{
+			const ELEMENT * const m_source;
+
+			CopyConstruct(const ELEMENT * i_source)
+				: m_source(i_source) { }
+
+			void * operator () (typename BaseClass::ListBuilder & i_builder, const ElementType & i_element_type)
+			{
+				return i_builder.add_by_copy(i_element_type, m_source);
+			}
+		};
+
+		struct MoveConstruct
+		{
+			ELEMENT * const m_source;
+
+			MoveConstruct(ELEMENT * i_source)
+				: m_source(i_source) { }
+
+			void * operator () (typename BaseClass::ListBuilder & i_builder, const ElementType & i_element_type)
+			{
+				return i_builder.add_by_move(i_element_type, m_source);
+			}
+		};
+
 	public:
 
 		using allocator_type = ALLOCATOR;
@@ -64,9 +92,7 @@ namespace reflective
 
 		class iterator;
 		class const_iterator;
-
-		using IteratorBase = typename BaseClass::IteratorBase;
-
+		
 		class iterator final : private IteratorBase
 		{
 		public:
@@ -197,34 +223,9 @@ namespace reflective
 		const_iterator cbegin() const REFLECTIVE_NOEXCEPT { return const_iterator(BaseClass::begin()); }
 		const_iterator cend() const REFLECTIVE_NOEXCEPT { return const_iterator(BaseClass::end()); }
 
-		struct CopyConstruct
-		{
-			const ELEMENT * const m_source;
-
-			CopyConstruct(const ELEMENT * i_source)
-				: m_source(i_source) { }
-
-			void * operator () (typename BaseClass::ListBuilder & i_builder, const ElementType & i_element_type)
-			{
-				return i_builder.add_by_copy(i_element_type, m_source);
-			}
-		};
-
-		struct MoveConstruct
-		{
-			ELEMENT * const m_source;
-
-			MoveConstruct(ELEMENT * i_source)
-				: m_source(i_source) { }
-
-			void * operator () (typename BaseClass::ListBuilder & i_builder, const ElementType & i_element_type)
-			{
-				return i_builder.add_by_move(i_element_type, m_source);
-			}
-		};
-
 		template <typename ELEMENT_COMPLETE_TYPE>
 			void push_back(const ELEMENT_COMPLETE_TYPE & i_source)
+				REFLECTIVE_NOEXCEPT_V(std::is_nothrow_copy_constructible<ELEMENT_COMPLETE_TYPE>::value)
 		{
 			BaseClass::insert_impl(BaseClass::m_types + BaseClass::size(),
 				ElementType::template make<ELEMENT_COMPLETE_TYPE>(),
@@ -233,6 +234,7 @@ namespace reflective
 
 		template <typename ELEMENT_COMPLETE_TYPE>
 			void push_front(const ELEMENT_COMPLETE_TYPE & i_source)
+				REFLECTIVE_NOEXCEPT_V(std::is_nothrow_copy_constructible<ELEMENT_COMPLETE_TYPE>::value)
 		{
 			BaseClass::insert_impl(BaseClass::m_types,
 				ElementType::template make<ELEMENT_COMPLETE_TYPE>(),
@@ -241,6 +243,7 @@ namespace reflective
 
 		template <typename ELEMENT_COMPLETE_TYPE>
 			void push_back(ELEMENT_COMPLETE_TYPE && i_source)
+				REFLECTIVE_NOEXCEPT_V(std::is_nothrow_copy_constructible<ELEMENT_COMPLETE_TYPE>::value)
 		{
 			BaseClass::insert_impl(BaseClass::m_types + BaseClass::size(),
 				ElementType::template make<ELEMENT_COMPLETE_TYPE>(),
@@ -291,15 +294,6 @@ namespace reflective
 				return iterator(i_position);
 			}
 		}
-
-		/* Temporary disabled
-		template <typename ELEMENT_COMPLETE_TYPE, typename = typename std::enable_if<  >::value, void >
-			iterator insert(const_iterator i_position, ELEMENT_COMPLETE_TYPE && i_source)
-		{
-			return BaseClass::insert_impl(i_position.m_curr_type,
-				ElementType::template make<ELEMENT_COMPLETE_TYPE>(),
-				MoveConstruct(&i_source) );
-		}*/
 
 		iterator erase(const_iterator i_position)
 		{

@@ -360,7 +360,7 @@ namespace reflective
 					// test push_front( Element && new_element )
 					test_operation_with_exceptions(i_list,
 						[&copy_source](LIST & i_container) {
-						i_container.push_front(Element(copy_source)); },
+							i_container.push_front(Element(copy_source)); },
 						[&copy_source](std::list<Element> & i_container) {
 							i_container.push_front(Element(copy_source)); }
 						);
@@ -384,6 +384,14 @@ namespace reflective
 					auto const size = i_list.size();
 					for (size_t from = 0; from <= size; from++)
 					{
+						// test insert( iterator at, Element && new_element )
+						/*test_operation_with_exceptions(i_list,
+							[from, &copy_source](LIST & i_container) {
+								i_container.insert(std::next(i_container.begin(), from), Element(copy_source)); },
+							[from, &copy_source](std::list<Element> & i_container) {
+								i_container.insert(std::next(i_container.begin(), from), Element(copy_source)); }
+							);*/
+
 						// test erase( iterator at )
 						if (from < size)
 						{

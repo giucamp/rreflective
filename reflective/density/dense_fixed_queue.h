@@ -64,6 +64,28 @@ namespace reflective
 				m_tail = m_head = static_cast<ELEMENT_TYPE *>(m_buffer_start);
 			}
 
+			DenseFixedQueueBase(DenseFixedQueueBase && i_source) REFLECTIVE_NOEXCEPT
+				: m_head(i_source.m_head), m_tail(i_source.m_tail), m_buffer_start(i_source.m_buffer_start), m_buffer_end(i_source.m_buffer_end)
+			{
+				i_source.m_tail = i_source.m_head = nullptr;
+				i_source.m_buffer_end = i_source.m_buffer_start = nullptr;
+			}
+
+			DenseFixedQueueBase & operator = (DenseFixedQueueBase && i_source) REFLECTIVE_NOEXCEPT
+			{
+				impl_clear();
+
+				m_head = i_source.m_head;
+				m_tail = i_source.m_tail;
+				m_buffer_start = i_source.m_buffer_start;
+				m_buffer_end = i_source.m_buffer_end;
+
+				i_source.m_tail = i_source.m_head = nullptr;
+				i_source.m_buffer_end = i_source.m_buffer_start = nullptr;
+
+				return *this;
+			}
+
 			~DenseFixedQueueBase()
 			{
 				impl_clear();
@@ -80,13 +102,13 @@ namespace reflective
 				return m_head == m_tail;
 			}
 
-			IteratorBase impl_begin() REFLECTIVE_NOEXCEPT
+			IteratorBase impl_begin() const REFLECTIVE_NOEXCEPT
 			{
 				void * first_element = m_head != m_tail ? address_upper_align( m_head + 1, m_head->alignment() ) : nullptr;
 				return IteratorBase(this, m_head, first_element); // to do: nullptr is not good
 			}
 
-			IteratorBase impl_end() REFLECTIVE_NOEXCEPT
+			IteratorBase impl_end() const REFLECTIVE_NOEXCEPT
 			{
 				return IteratorBase(this, m_tail);
 			}
@@ -118,7 +140,7 @@ namespace reflective
 			};
 
 			template <typename CONSTRUCTOR>
-				IteratorBase impl_push_back(const ELEMENT_TYPE & i_source_type, CONSTRUCTOR && i_constructor)
+				bool impl_push_back(const ELEMENT_TYPE & i_source_type, CONSTRUCTOR && i_constructor)
 			{
 				auto const element_alignment = i_source_type.alignment();
 				auto const element_size = i_source_type.size();
@@ -129,7 +151,7 @@ namespace reflective
 					type = static_cast<ELEMENT_TYPE*>( m_buffer_start );
 					if (type + 1 > m_buffer_end)
 					{
-						return impl_end();
+						return false;
 					}
 				}
 
@@ -141,14 +163,24 @@ namespace reflective
 					end_of_new_element = address_add(new_element, element_size);
 					if (end_of_new_element > m_buffer_end)
 					{
-						return impl_end();
+						return false;
 					}
+				}
+
+				auto const new_tail = static_cast<ELEMENT_TYPE*>(address_upper_align(end_of_new_element, std::alignment_of<ELEMENT_TYPE>::value));
+				if (new_tail == m_head)
+				{
+					return false;
+				}
+				if ((m_tail >= m_head) != (new_tail >= m_head))
+				{
+					return false;
 				}
 
 				new(type) ELEMENT_TYPE(i_source_type);
 				i_constructor(new_element, i_source_type);
-				m_tail = static_cast<ELEMENT_TYPE*>( address_upper_align( end_of_new_element, std::alignment_of<ELEMENT_TYPE>::value) );
-				return IteratorBase(this, type, new_element);
+				m_tail = new_tail;
+				return true;
 			}
 
 			template <typename OPERATION>
@@ -240,12 +272,9 @@ namespace reflective
 			iterator(const IteratorBase & i_source) REFLECTIVE_NOEXCEPT
 				: IteratorBase(i_source) {  }
 
-			value_type & operator * () const REFLECTIVE_NOEXCEPT { return *curr_element(); }
-			value_type * operator -> () const REFLECTIVE_NOEXCEPT { return curr_element(); }
-			value_type * curr_element() const REFLECTIVE_NOEXCEPT
-			{
-				return static_cast<value_type *>(IteratorBase::m_curr_element);
-			}
+			value_type & operator * () const REFLECTIVE_NOEXCEPT { return *static_cast<value_type *>(IteratorBase::m_curr_element); }
+			value_type * operator -> () const REFLECTIVE_NOEXCEPT { return static_cast<value_type *>(IteratorBase::m_curr_element); }
+			value_type * curr_element() const REFLECTIVE_NOEXCEPT { return static_cast<value_type *>(IteratorBase::m_curr_element); }
 
 			iterator & operator ++ () REFLECTIVE_NOEXCEPT
 			{
@@ -255,7 +284,7 @@ namespace reflective
 
 			iterator operator++ (int) REFLECTIVE_NOEXCEPT
 			{
-				iterator copy(*this);
+				const iterator copy(*this);
 				IteratorBase::move_next();
 				return copy;
 			}
@@ -302,12 +331,9 @@ namespace reflective
 			const_iterator(const iterator & i_source) REFLECTIVE_NOEXCEPT
 				: IteratorBase(i_source) {  }
 
-			value_type & operator * () const REFLECTIVE_NOEXCEPT { return *curr_element(); }
-			value_type * operator -> () const REFLECTIVE_NOEXCEPT { return curr_element(); }
-			value_type * curr_element() const REFLECTIVE_NOEXCEPT
-			{
-				return static_cast<value_type *>(IteratorBase::curr_element());
-			}
+			value_type & operator * () const REFLECTIVE_NOEXCEPT { return *static_cast<value_type *>(IteratorBase::m_curr_element); }
+			value_type * operator -> () const REFLECTIVE_NOEXCEPT { return static_cast<value_type *>(IteratorBase::m_curr_element); }
+			value_type * curr_element() const REFLECTIVE_NOEXCEPT { return static_cast<value_type *>(IteratorBase::m_curr_element); }
 
 			const_iterator & operator ++ () REFLECTIVE_NOEXCEPT
 			{
@@ -317,7 +343,7 @@ namespace reflective
 
 			const_iterator operator++ (int) REFLECTIVE_NOEXCEPT
 			{
-				iterator copy(*this);
+				const iterator copy(*this);
 				IteratorBase::move_next();
 				return copy;
 			}
@@ -362,7 +388,7 @@ namespace reflective
 		void clear() REFLECTIVE_NOEXCEPT { BaseClass::impl_clear(); }
 
 		template <typename ELEMENT_COMPLETE_TYPE>
-			iterator try_push_back(const ELEMENT_COMPLETE_TYPE & i_source)
+			bool try_push_back(const ELEMENT_COMPLETE_TYPE & i_source)
 				// REFLECTIVE_NOEXCEPT_V()
 		{
 			return BaseClass::impl_push_back(ElementType::template make<ELEMENT_COMPLETE_TYPE>(), CopyConstruct(&i_source));
@@ -374,6 +400,18 @@ namespace reflective
 			BaseClass::impl_consume_front([&i_operation](const ELEMENT_TYPE & i_type, void * i_element) {
 				i_operation(i_type, *static_cast<ELEMENT*>(i_element));
 			});
+		}
+
+		void pop_front()
+		{
+			BaseClass::impl_consume_front([](const ELEMENT_TYPE &, void *) {});
+		}
+
+		const ELEMENT & front()
+		{
+			assert(!empty());
+			const auto it = BaseClass::impl_begin();
+			return *static_cast<value_type *>(it.m_curr_element);
 		}
 
 	}; // class DenseFixedQueue
