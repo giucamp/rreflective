@@ -319,6 +319,34 @@ namespace reflective
 		}
 	}
 
+	/** Finds the aligned placement for a block with the specified size and alignment, such that it is
+			>= *io_top_pointer, and sets *io_top_pointer to the end of the block. The actual pointed memory is not read\written.
+		@param io_top_pointer pointer to the current address, which is incremented to make space for the new block. After
+			the function exits, *io_top_pointer will point to the first address after the new block.
+		@param i_size size (in bytes) of the block to allocate
+		@param i_alignment alignment (in bytes) of the block to allocate (must be a positive power of 2).
+		@return address of the new block. */
+	inline void * linear_alloc(void * * io_top_pointer, size_t i_size, size_t i_alignment)
+	{
+		auto top = *io_top_pointer;
+		auto new_block = top = address_upper_align(top, i_alignment);
+		top = address_add(top, i_size);
+		*io_top_pointer = top;
+		return new_block;
+	}
+
+	/** Finds the aligned placement for a block with the size and alignment of the template parameter TYPE, , such that it is
+			>= *io_top_pointer, and sets *io_top_pointer to the end of the block. The actual pointed memory is not read\written.
+		@param io_top_pointer pointer to the current address, which is incremented to make space for the new block. After
+			the function exits, *io_top_pointer will point to the first address after the new block.
+		@param i_size size (in bytes) of the block to allocate
+		@param i_alignment alignment (in bytes) of the block to allocate (must be a positive power of 2).
+		@return address of the new block. */
+	template <typename TYPE>
+		inline TYPE * linear_alloc(void * * io_top_pointer)
+	{
+		return static_cast<TYPE *>(io_top_pointer, sizeof(TYPE), alignof(TYPE) );
+	}
 
 	template <typename BASE_CLASS, typename... TYPES>
 		struct AllCovariant

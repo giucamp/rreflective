@@ -21,7 +21,7 @@ namespace reflective
 					if (progr % 11)
 					{
 						int i = 0;
-						while (queue.try_push_back(i))
+						while (queue.try_push(i))
 						{
 							vector.push_back(i);
 							i++;
@@ -46,13 +46,15 @@ namespace reflective
 							break;
 						}
 						REFLECTIVE_TEST_ASSERT(*it1 == *it2);
+						++it1;
+						++it2;
 					}
 				}
 
-				queue.try_push_back(1);
-				queue.try_push_back(2);
-				queue.try_push_back(3);
-				queue.try_push_back(4);
+				queue.try_push(1);
+				queue.try_push(2);
+				queue.try_push(3);
+				queue.try_push(4);
 				for (auto & i : queue)
 				{
 					std::cout << i << std::endl;
@@ -61,7 +63,7 @@ namespace reflective
 				std::cout << "---" << std::endl;
 				while (!queue.empty())
 				{
-					queue.consume_front([](DenseFixedQueue<int>::ElementType, int i) {
+					queue.consume([](DenseFixedQueue<int>::ElementType, int i) {
 						std::cout << i << std::endl;
 					});
 				}

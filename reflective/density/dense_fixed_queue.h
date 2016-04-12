@@ -17,29 +17,59 @@ namespace reflective
 			{
 				IteratorBase() {}
 
-				IteratorBase(const DenseFixedQueueBase * i_queue, ELEMENT_TYPE * i_type) REFLECTIVE_NOEXCEPT // used to construct end
-					: m_curr_type(i_type), m_queue(i_queue) { }
+				IteratorBase(ELEMENT_TYPE * i_type) REFLECTIVE_NOEXCEPT // used to construct end
+					: m_curr_type(i_type) { }
 
 				IteratorBase(const DenseFixedQueueBase * i_queue, ELEMENT_TYPE * i_type, void * i_element ) REFLECTIVE_NOEXCEPT
 					: m_curr_type(i_type), m_curr_element(i_element), m_queue(i_queue) { }
 
 				void move_next() REFLECTIVE_NOEXCEPT
 				{
-					void * end_of_curr = address_add(m_curr_element, m_curr_type->size());
-					m_curr_type = static_cast<ELEMENT_TYPE*>(address_upper_align(end_of_curr, std::alignment_of<ELEMENT_TYPE>::value));
+					// advance m_curr_type
+					auto const prev_type_ptr = m_curr_type;
+					auto end_of_curr = address_add(m_curr_element, m_curr_type->size());
+					m_curr_type = static_cast<ELEMENT_TYPE*>(address_upper_align(end_of_curr, alignof(ELEMENT_TYPE)));
 					if (m_curr_type + 1 > m_queue->m_buffer_end)
 					{
-						m_curr_type = static_cast<ELEMENT_TYPE*>(m_queue->m_buffer_start);
-						assert(m_curr_type + 1 <= m_queue->m_buffer_end);
+						m_curr_type = static_cast<ELEMENT_TYPE*>(address_upper_align(m_queue->m_buffer_start, alignof(ELEMENT_TYPE)));
+						if (m_curr_type + 1 >= m_queue->m_head) // we use >=, because the condition head==tail is reserved for an empty queue
+						{
+							// stop
+							m_curr_type = m_queue->m_tail;
+						}
 					}
+					else
+					{
+						if( (prev_type_ptr >= m_queue->m_head) != (m_curr_type >= m_queue->m_head) )
+						{
+							// stop
+							m_curr_type = m_queue->m_tail;
+						}
+					}
+
 					if (m_curr_type != m_queue->m_tail)
 					{
+						// advance m_curr_element
+						auto const prev_curr_element = m_curr_element;
 						m_curr_element = address_upper_align(m_curr_type + 1, m_curr_type->alignment());
-						void * end_of_element = address_add(m_curr_element, m_curr_type->size());
+						auto end_of_element = address_add(m_curr_element, m_curr_type->size());
 						if (end_of_element > m_queue->m_buffer_end)
 						{
 							m_curr_element = address_upper_align(m_queue->m_buffer_start, m_curr_type->alignment());
-							assert(address_add(m_curr_element, m_curr_type->size()) <= m_queue->m_buffer_end);
+							end_of_element = address_add(m_curr_element, m_curr_type->size());
+							if (end_of_element >= m_queue->m_head) // we use >=, because the condition head==tail is reserved for an empty queue
+							{
+								// stop
+								m_curr_type = m_queue->m_tail;
+							}
+						}
+						else
+						{
+							if ((prev_curr_element >= m_queue->m_head) != (m_curr_element >= m_queue->m_head))
+							{
+								// stop
+								m_curr_type = m_queue->m_tail;
+							}
 						}
 					}
 				}
@@ -104,13 +134,21 @@ namespace reflective
 
 			IteratorBase impl_begin() const REFLECTIVE_NOEXCEPT
 			{
-				void * first_element = m_head != m_tail ? address_upper_align( m_head + 1, m_head->alignment() ) : nullptr;
-				return IteratorBase(this, m_head, first_element); // to do: nullptr is not good
+				if (m_head == m_tail)
+				{
+					return IteratorBase(m_tail);
+				}
+				else
+				{
+					auto type = static_cast<ELEMENT_TYPE*>(address_upper_align(m_head, alignof(ELEMENT_TYPE)));
+					auto element = address_upper_align(type + 1, type->alignment());
+					return IteratorBase(this, type, element);
+				}
 			}
 
 			IteratorBase impl_end() const REFLECTIVE_NOEXCEPT
 			{
-				return IteratorBase(this, m_tail);
+				return IteratorBase(m_tail);
 			}
 			
 			struct CopyConstruct
@@ -139,59 +177,58 @@ namespace reflective
 				}
 			};
 
-			template <typename CONSTRUCTOR>
-				bool impl_push_back(const ELEMENT_TYPE & i_source_type, CONSTRUCTOR && i_constructor)
+			void * single_push(void * * io_tail, size_t i_size, size_t i_alignment)
 			{
-				auto const element_alignment = i_source_type.alignment();
-				auto const element_size = i_source_type.size();
-
-				ELEMENT_TYPE * type = m_tail;
-				if (type + 1 > m_buffer_end)
+				auto const prev_tail = *io_tail;
+				auto start_of_block = linear_alloc(io_tail, i_size, i_alignment);
+				if (*io_tail > m_buffer_end)
 				{
-					type = static_cast<ELEMENT_TYPE*>( m_buffer_start );
-					if (type + 1 > m_buffer_end)
+					// wrap to the start...
+					*io_tail = m_buffer_start;
+					start_of_block = linear_alloc(io_tail, i_size, i_alignment);
+					if (*io_tail >= m_head)
 					{
-						return false;
+						// ...not enough space before the head, failed!
+						start_of_block = nullptr;
+						*io_tail = prev_tail;
 					}
 				}
-
-				void * new_element = address_upper_align(type + 1, element_alignment);
-				void * end_of_new_element = address_add(new_element, element_size);
-				if (end_of_new_element > m_buffer_end)
+				if ((prev_tail >= m_head) != (*io_tail >= m_head))
 				{
-					new_element = address_upper_align(m_buffer_start, element_alignment);
-					end_of_new_element = address_add(new_element, element_size);
-					if (end_of_new_element > m_buffer_end)
-					{
-						return false;
-					}
+					// ...crossed the head, failed!
+					start_of_block = nullptr;
+					*io_tail = prev_tail;
 				}
+				return start_of_block;
+			}
 
-				auto const new_tail = static_cast<ELEMENT_TYPE*>(address_upper_align(end_of_new_element, std::alignment_of<ELEMENT_TYPE>::value));
-				if (new_tail == m_head)
+			template <typename CONSTRUCTOR>
+				bool impl_push(const ELEMENT_TYPE & i_source_type, CONSTRUCTOR && i_constructor)
+			{
+				auto tail = static_cast<void*>( m_tail );
+				const auto type_block = single_push(&tail, sizeof(ELEMENT_TYPE), alignof(ELEMENT_TYPE) );
+				const auto element_block = single_push(&tail, i_source_type.size(), i_source_type.alignment());
+				if (element_block == nullptr || type_block == nullptr)
 				{
 					return false;
 				}
-				if ((m_tail >= m_head) != (new_tail >= m_head))
-				{
-					return false;
-				}
 
-				new(type) ELEMENT_TYPE(i_source_type);
-				i_constructor(new_element, i_source_type);
-				m_tail = new_tail;
+				// commit the push
+				new(type_block) ELEMENT_TYPE(i_source_type);
+				i_constructor(element_block, i_source_type);
+				m_tail = static_cast<ELEMENT_TYPE*>(tail);
 				return true;
 			}
 
 			template <typename OPERATION>
-				void impl_consume_front(OPERATION && i_operation)
+				void impl_consume(OPERATION && i_operation)
 			{
 				assert(m_head != m_tail); // the queue must not be empty
 				auto const element_alignment = m_head->alignment();
 				auto const element_size = m_head->size();
 
-				void * element = address_upper_align(m_head + 1, element_alignment);
-				void * element_end = address_add(element, element_size);
+				auto element = address_upper_align(m_head + 1, element_alignment);
+				auto element_end = address_add(element, element_size);
 				if (element_end > m_buffer_end)
 				{
 					element = address_upper_align(m_buffer_start, element_alignment);
@@ -388,21 +425,21 @@ namespace reflective
 		void clear() REFLECTIVE_NOEXCEPT { BaseClass::impl_clear(); }
 
 		template <typename ELEMENT_COMPLETE_TYPE>
-			bool try_push_back(const ELEMENT_COMPLETE_TYPE & i_source)
+			bool try_push(const ELEMENT_COMPLETE_TYPE & i_source)
 				// REFLECTIVE_NOEXCEPT_V()
 		{
-			return BaseClass::impl_push_back(ElementType::template make<ELEMENT_COMPLETE_TYPE>(), CopyConstruct(&i_source));
+			return BaseClass::impl_push(ElementType::template make<ELEMENT_COMPLETE_TYPE>(), CopyConstruct(&i_source));
 		}
 
 		template <typename OPERATION>
-			void consume_front(OPERATION && i_operation)
+			void consume(OPERATION && i_operation)
 		{
-			BaseClass::impl_consume_front([&i_operation](const ELEMENT_TYPE & i_type, void * i_element) {
+			BaseClass::impl_consume([&i_operation](const ELEMENT_TYPE & i_type, void * i_element) {
 				i_operation(i_type, *static_cast<ELEMENT*>(i_element));
 			});
 		}
 
-		void pop_front()
+		void pop()
 		{
 			BaseClass::impl_consume_front([](const ELEMENT_TYPE &, void *) {});
 		}
