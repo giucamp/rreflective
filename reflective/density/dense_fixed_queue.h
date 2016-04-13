@@ -10,12 +10,11 @@ namespace reflective
 		template < typename ALLOCATOR, typename ELEMENT_TYPE >
 			class DenseFixedQueueBase : private ALLOCATOR
 		{
-
 		public:
 
 			struct IteratorBase
 			{
-				IteratorBase() {}
+				IteratorBase() REFLECTIVE_NOEXCEPT {}
 
 				IteratorBase(ELEMENT_TYPE * i_type) REFLECTIVE_NOEXCEPT // used to construct end
 					: m_curr_type(i_type) { }
@@ -88,7 +87,7 @@ namespace reflective
 				return *this;
 			}
 
-			~DenseFixedQueueBase()
+			~DenseFixedQueueBase() REFLECTIVE_NOEXCEPT
 			{
 				impl_clear();
 
@@ -160,14 +159,14 @@ namespace reflective
 				MoveConstruct(void * i_source)
 					: m_source(i_source) { }
 
-				void operator () (void * i_dest, const ELEMENT_TYPE & i_element_type)
+				void operator () (void * i_dest, const ELEMENT_TYPE & i_element_type) REFLECTIVE_NOEXCEPT
 				{
 					i_element_type.move_construct(i_dest, m_source);
 				}
 			};
 
 			/* Inserts an object on the queue. The return value is the address of the new object */
-			void * single_push(void * * io_tail, size_t i_size, size_t i_alignment)
+			void * single_push(void * * io_tail, size_t i_size, size_t i_alignment) REFLECTIVE_NOEXCEPT
 			{
 				auto const prev_tail = *io_tail;
 				auto start_of_block = linear_alloc(io_tail, i_size, i_alignment);
@@ -215,7 +214,7 @@ namespace reflective
 
 			template <typename OPERATION>
 				void impl_consume(OPERATION && i_operation)
-					noexcept(noexcept(i_operation(std::declval<ELEMENT_TYPE>(), std::declval<void*>())))
+					REFLECTIVE_NOEXCEPT_V(REFLECTIVE_NOEXCEPT_V(i_operation(std::declval<ELEMENT_TYPE>(), std::declval<void*>())))
 			{
 				assert(m_head != m_tail); // the queue must not be empty
 		
@@ -287,10 +286,8 @@ namespace reflective
 	} // namespace details
 
 	template <typename ELEMENT = void, typename ALLOCATOR = std::allocator<ELEMENT>, typename ELEMENT_TYPE = ElementType<ELEMENT> >
-		class DenseFixedQueue : private details::DenseFixedQueueBase<ALLOCATOR, ELEMENT_TYPE>
-	{
-		using BaseClass = details::DenseFixedQueueBase<ALLOCATOR, ELEMENT_TYPE>;
-
+		class DenseFixedQueue final
+	{		
 	public:
 
 		using ElementType = ELEMENT_TYPE;
@@ -306,9 +303,9 @@ namespace reflective
 		class const_iterator;
 
 		DenseFixedQueue(size_t i_buffer_byte_capacity)
-			: BaseClass(i_buffer_byte_capacity) { }
+			: m_impl(i_buffer_byte_capacity) { }
 
-		class iterator : private IteratorBase
+		class iterator final
 		{
 		public:
 			using iterator_category = std::forward_iterator_tag;
@@ -320,51 +317,54 @@ namespace reflective
 			using pointer = typename std::allocator_traits<allocator_type>::pointer;
 			using const_pointer = typename std::allocator_traits<allocator_type>::const_pointer;
 
-			iterator(const IteratorBase & i_source) REFLECTIVE_NOEXCEPT
-				: IteratorBase(i_source) {  }
+			iterator(const typename details::DenseFixedQueueBase<ALLOCATOR, ELEMENT_TYPE>::IteratorBase & i_source) REFLECTIVE_NOEXCEPT
+				: m_impl(i_source) {  }
 
-			value_type & operator * () const REFLECTIVE_NOEXCEPT { return *static_cast<value_type *>(IteratorBase::m_curr_element); }
-			value_type * operator -> () const REFLECTIVE_NOEXCEPT { return static_cast<value_type *>(IteratorBase::m_curr_element); }
-			value_type * curr_element() const REFLECTIVE_NOEXCEPT { return static_cast<value_type *>(IteratorBase::m_curr_element); }
+			value_type & operator * () const REFLECTIVE_NOEXCEPT { return *static_cast<value_type *>(m_impl.m_curr_element); }
+			value_type * operator -> () const REFLECTIVE_NOEXCEPT { return static_cast<value_type *>(m_impl.m_curr_element); }
+			value_type * curr_element() const REFLECTIVE_NOEXCEPT { return static_cast<value_type *>(m_impl.m_curr_element); }
 
 			iterator & operator ++ () REFLECTIVE_NOEXCEPT
 			{
-				IteratorBase::move_next();
+				m_impl.move_next();
 				return *this;
 			}
 
 			iterator operator++ (int) REFLECTIVE_NOEXCEPT
 			{
 				const iterator copy(*this);
-				IteratorBase::move_next();
+				m_impl.move_next();
 				return copy;
 			}
 
 			bool operator == (const iterator & i_other) const REFLECTIVE_NOEXCEPT
 			{
-				return IteratorBase::m_curr_type == i_other.curr_type();
+				return m_impl.m_curr_type == i_other.curr_type();
 			}
 
 			bool operator != (const iterator & i_other) const REFLECTIVE_NOEXCEPT
 			{
-				return IteratorBase::m_curr_type != i_other.curr_type();
+				return m_impl.m_curr_type != i_other.curr_type();
 			}
 
 			bool operator == (const const_iterator & i_other) const REFLECTIVE_NOEXCEPT
 			{
-				return IteratorBase::m_curr_type == i_other.curr_type();
+				return m_impl.m_curr_type == i_other.curr_type();
 			}
 
 			bool operator != (const const_iterator & i_other) const REFLECTIVE_NOEXCEPT
 			{
-				return IteratorBase::m_curr_type != i_other.curr_type();
+				return m_impl.m_curr_type != i_other.curr_type();
 			}
 
-			const ELEMENT_TYPE * curr_type() const REFLECTIVE_NOEXCEPT { return IteratorBase::m_curr_type; }
+			const ELEMENT_TYPE * curr_type() const REFLECTIVE_NOEXCEPT { return m_impl.m_curr_type; }
+
+		private:
+			typename details::DenseFixedQueueBase<ALLOCATOR, ELEMENT_TYPE>::IteratorBase m_impl;
 
 		}; // class iterator
 
-		class const_iterator final : private IteratorBase
+		class const_iterator final
 		{
 		public:
 			using iterator_category = std::forward_iterator_tag;
@@ -376,26 +376,26 @@ namespace reflective
 			using pointer = typename std::allocator_traits<allocator_type>::pointer;
 			using const_pointer = typename std::allocator_traits<allocator_type>::const_pointer;
 
-			const_iterator(const IteratorBase & i_source) REFLECTIVE_NOEXCEPT
-				: IteratorBase(i_source) {  }
+			const_iterator(const typename details::DenseFixedQueueBase<ALLOCATOR, ELEMENT_TYPE>::IteratorBase & i_source) REFLECTIVE_NOEXCEPT
+				: m_impl(i_source) {  }
 
 			const_iterator(const iterator & i_source) REFLECTIVE_NOEXCEPT
-				: IteratorBase(i_source) {  }
+				: m_impl(i_source.m_impl) {  }
 
-			value_type & operator * () const REFLECTIVE_NOEXCEPT { return *static_cast<value_type *>(IteratorBase::m_curr_element); }
-			value_type * operator -> () const REFLECTIVE_NOEXCEPT { return static_cast<value_type *>(IteratorBase::m_curr_element); }
-			value_type * curr_element() const REFLECTIVE_NOEXCEPT { return static_cast<value_type *>(IteratorBase::m_curr_element); }
+			value_type & operator * () const REFLECTIVE_NOEXCEPT { return *static_cast<value_type *>(m_impl.m_curr_element); }
+			value_type * operator -> () const REFLECTIVE_NOEXCEPT { return static_cast<value_type *>(m_impl.m_curr_element); }
+			value_type * curr_element() const REFLECTIVE_NOEXCEPT { return static_cast<value_type *>(m_impl.m_curr_element); }
 
 			const_iterator & operator ++ () REFLECTIVE_NOEXCEPT
 			{
-				IteratorBase::move_next();
+				m_impl.move_next();
 				return *this;
 			}
 
 			const_iterator operator++ (int) REFLECTIVE_NOEXCEPT
 			{
 				const iterator copy(*this);
-				IteratorBase::move_next();
+				m_impl.move_next();
 				return copy;
 			}
 
@@ -411,69 +411,73 @@ namespace reflective
 
 			bool operator == (const const_iterator & i_other) const REFLECTIVE_NOEXCEPT
 			{
-				return IteratorBase::m_curr_type == i_other.curr_type();
+				return m_impl.m_curr_type == i_other.curr_type();
 			}
 
 			bool operator != (const const_iterator & i_other) const REFLECTIVE_NOEXCEPT
 			{
-				return IteratorBase::m_curr_type != i_other.curr_type();
+				return m_impl.m_curr_type != i_other.curr_type();
 			}
 
-			const ELEMENT_TYPE * curr_type() const REFLECTIVE_NOEXCEPT { return IteratorBase::m_curr_type; }
+			const ELEMENT_TYPE * curr_type() const REFLECTIVE_NOEXCEPT { return m_impl.m_curr_type; }
 
-			friend class DenseList;
-
+		private:
+			typename details::DenseFixedQueueBase<ALLOCATOR, ELEMENT_TYPE>::IteratorBase m_impl;
 		}; // class const_iterator
 
-		iterator begin() REFLECTIVE_NOEXCEPT { return iterator(BaseClass::impl_begin()); }
-		iterator end() REFLECTIVE_NOEXCEPT { return iterator(BaseClass::impl_end()); }
+		iterator begin() REFLECTIVE_NOEXCEPT { return iterator(m_impl.impl_begin()); }
+		iterator end() REFLECTIVE_NOEXCEPT { return iterator(m_impl.impl_end()); }
 
-		const_iterator begin() const REFLECTIVE_NOEXCEPT { return const_iterator(BaseClass::impl_begin()); }
-		const_iterator end() const REFLECTIVE_NOEXCEPT { return const_iterator(BaseClass::impl_end()); }
+		const_iterator begin() const REFLECTIVE_NOEXCEPT { return const_iterator(m_impl.impl_begin()); }
+		const_iterator end() const REFLECTIVE_NOEXCEPT { return const_iterator(m_impl.impl_end()); }
 
-		const_iterator cbegin() const REFLECTIVE_NOEXCEPT { return const_iterator(BaseClass::impl_begin()); }
-		const_iterator cend() const REFLECTIVE_NOEXCEPT { return const_iterator(BaseClass::impl_end()); }
+		const_iterator cbegin() const REFLECTIVE_NOEXCEPT { return const_iterator(m_impl.impl_begin()); }
+		const_iterator cend() const REFLECTIVE_NOEXCEPT { return const_iterator(m_impl.impl_end()); }
 
-		bool empty() const REFLECTIVE_NOEXCEPT { return BaseClass::impl_empty(); }
+		bool empty() const REFLECTIVE_NOEXCEPT { return m_impl.impl_empty(); }
 
-		void clear() REFLECTIVE_NOEXCEPT { BaseClass::impl_clear(); }
+		void clear() REFLECTIVE_NOEXCEPT { m_impl.impl_clear(); }
 
 		template <typename ELEMENT_COMPLETE_TYPE>
 			bool try_push(const ELEMENT_COMPLETE_TYPE & i_source)
 				// REFLECTIVE_NOEXCEPT_V()
 		{
-			return BaseClass::impl_push(ElementType::template make<ELEMENT_COMPLETE_TYPE>(), CopyConstruct(&i_source));
+			return m_impl.impl_push(ElementType::template make<ELEMENT_COMPLETE_TYPE>(), 
+					typename details::DenseFixedQueueBase<ALLOCATOR, ELEMENT_TYPE>::CopyConstruct(&i_source));
 		}
 
 		template <typename OPERATION>
 			void consume(OPERATION && i_operation)
 		{
-			BaseClass::impl_consume([&i_operation](const ELEMENT_TYPE & i_type, void * i_element) {
+			m_impl.impl_consume([&i_operation](const ELEMENT_TYPE & i_type, void * i_element) {
 				i_operation(i_type, *static_cast<ELEMENT*>(i_element));
 			});
 		}
 
 		void pop()
 		{
-			BaseClass::impl_consume_front([](const ELEMENT_TYPE &, void *) {});
+			m_impl.impl_consume_front([](const ELEMENT_TYPE &, void *) {});
 		}
 
 		const ELEMENT & front()
 		{
 			assert(!empty());
-			const auto it = BaseClass::impl_begin();
+			const auto it = m_impl.impl_begin();
 			return *static_cast<value_type *>(it.m_curr_element);
 		}
 
 		size_t mem_capacity() const REFLECTIVE_NOEXCEPT
 		{
-			return BaseClass::impl_mem_capacity();
+			return m_impl.impl_mem_capacity();
 		}
 
 		size_t mem_size() const REFLECTIVE_NOEXCEPT
 		{
-			return BaseClass::impl_mem_size();
+			return m_impl.impl_mem_size();
 		}
+
+	private:
+		details::DenseFixedQueueBase<ALLOCATOR, ELEMENT_TYPE> m_impl;
 
 	}; // class DenseFixedQueue
 }
