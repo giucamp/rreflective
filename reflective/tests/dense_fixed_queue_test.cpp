@@ -18,8 +18,9 @@ namespace reflective
 
 				for (int progr = 0; progr < 1000; progr++)
 				{
-					if (progr % 11)
+					if ( (progr % 4) == 0 )
 					{
+						std::cout << "* Push until full" << std::endl;
 						int i = 0;
 						while (queue.try_push(i))
 						{
@@ -27,8 +28,48 @@ namespace reflective
 							i++;
 						}
 					}
+					else if ((progr % 3) == 0)
+					{
+						std::cout << "* Push " << progr << " times" << std::endl;
+						int i = 0;
+						while (queue.try_push(i) && i < progr)
+						{
+							vector.push_back(i);
+							i++;
+						}
+					}
+					else if ((progr % 2) == 0)
+					{
+						std::cout << "* Pop " << progr << " times" << std::endl;
+						int i = 0;
+						while (!queue.empty() && i < progr)
+						{
+							queue.consume([&vector](DenseFixedQueue<int>::ElementType, int val) {
+								REFLECTIVE_TEST_ASSERT(vector.size() > 0 && val == vector.front());
+								vector.pop_front();
+							});
+							i++;
+						}
+					}
+					else
+					{
+						std::cout << "* Pop until empty" << std::endl;
+						int i = 0;
+						while (!queue.empty())
+						{
+							queue.consume([&vector](DenseFixedQueue<int>::ElementType, int val) {
+								REFLECTIVE_TEST_ASSERT(vector.size() > 0 && val == vector.front());
+								vector.pop_front();
+							});
+							i++;
+						}
+						REFLECTIVE_TEST_ASSERT(vector.empty());
+					}
 
 					// check for equality queue and vector
+					auto mem_capacity = queue.mem_capacity();
+					auto mem_size = queue.mem_size();
+					std::cout << "used: " << mem_size << ", els: " << vector.size() << ", free: " << mem_capacity - mem_size << std::endl;
 					REFLECTIVE_TEST_ASSERT(queue.empty() == vector.empty());
 					if (!vector.empty())
 					{
@@ -36,6 +77,7 @@ namespace reflective
 					}
 					auto it1 = queue.cbegin();
 					auto it2 = vector.cbegin();
+					int u = 0;
 					for (;;)
 					{
 						bool end1 = it1 == queue.cend();
@@ -48,6 +90,7 @@ namespace reflective
 						REFLECTIVE_TEST_ASSERT(*it1 == *it2);
 						++it1;
 						++it2;
+						u++;
 					}
 				}
 

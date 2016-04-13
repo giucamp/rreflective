@@ -328,6 +328,8 @@ namespace reflective
 		@return address of the new block. */
 	inline void * linear_alloc(void * * io_top_pointer, size_t i_size, size_t i_alignment)
 	{
+		assert(is_power_of_2(i_alignment));
+
 		auto top = *io_top_pointer;
 		auto new_block = top = address_upper_align(top, i_alignment);
 		top = address_add(top, i_size);

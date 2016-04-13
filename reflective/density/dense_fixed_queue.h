@@ -140,9 +140,26 @@ namespace reflective
 				}
 				else
 				{
-					auto type = static_cast<ELEMENT_TYPE*>(address_upper_align(m_head, alignof(ELEMENT_TYPE)));
-					auto element = address_upper_align(type + 1, type->alignment());
-					return IteratorBase(this, type, element);
+					auto type_ptr = static_cast<ELEMENT_TYPE*>(address_upper_align(m_head, alignof(ELEMENT_TYPE)));
+					auto type_end = static_cast<void*>(type_ptr + 1);
+					if (type_end > m_buffer_end)
+					{
+						type_ptr = static_cast<ELEMENT_TYPE*>(address_upper_align(m_buffer_start, alignof(ELEMENT_TYPE)));
+						type_end = static_cast<void*>(type_ptr + 1);
+					}
+
+					auto const element_size = type_ptr->size();
+					auto const element_alignment = type_ptr->alignment();
+
+					auto element_end = type_end;
+					auto element_ptr = linear_alloc(&element_end, element_size, element_alignment);
+					if (element_end > m_buffer_end)
+					{
+						element_end = m_buffer_start;
+						element_ptr = linear_alloc(&element_end, element_size, element_alignment);
+					}
+
+					return IteratorBase(this, type_ptr, element_ptr);
 				}
 			}
 
@@ -177,6 +194,7 @@ namespace reflective
 				}
 			};
 
+			/* Inserts an object on the queue. The return value is the address of the new object */
 			void * single_push(void * * io_tail, size_t i_size, size_t i_alignment)
 			{
 				auto const prev_tail = *io_tail;
@@ -193,7 +211,7 @@ namespace reflective
 						*io_tail = prev_tail;
 					}
 				}
-				if ((prev_tail >= m_head) != (*io_tail >= m_head))
+				else if ((prev_tail >= m_head) != (*io_tail >= m_head))
 				{
 					// ...crossed the head, failed!
 					start_of_block = nullptr;
@@ -205,7 +223,7 @@ namespace reflective
 			template <typename CONSTRUCTOR>
 				bool impl_push(const ELEMENT_TYPE & i_source_type, CONSTRUCTOR && i_constructor)
 			{
-				auto tail = static_cast<void*>( m_tail );
+				auto tail = static_cast<void*>(m_tail);
 				const auto type_block = single_push(&tail, sizeof(ELEMENT_TYPE), alignof(ELEMENT_TYPE) );
 				const auto element_block = single_push(&tail, i_source_type.size(), i_source_type.alignment());
 				if (element_block == nullptr || type_block == nullptr)
@@ -222,28 +240,49 @@ namespace reflective
 
 			template <typename OPERATION>
 				void impl_consume(OPERATION && i_operation)
+					noexcept(noexcept(i_operation(std::declval<ELEMENT_TYPE>(), std::declval<void*>())))
 			{
 				assert(m_head != m_tail); // the queue must not be empty
-				auto const element_alignment = m_head->alignment();
-				auto const element_size = m_head->size();
+		
+				auto type_ptr = static_cast<ELEMENT_TYPE*>(address_upper_align(m_head, alignof(ELEMENT_TYPE)));
+				auto type_end = static_cast<void*>(type_ptr + 1);
+				if (type_end > m_buffer_end)
+				{
+					type_ptr = static_cast<ELEMENT_TYPE*>(address_upper_align(m_buffer_start, alignof(ELEMENT_TYPE)));
+					type_end = static_cast<void*>(type_ptr + 1);
+				}
 
-				auto element = address_upper_align(m_head + 1, element_alignment);
-				auto element_end = address_add(element, element_size);
+				auto const element_size = type_ptr->size();
+				auto const element_alignment = type_ptr->alignment();
+
+				auto element_end = type_end;
+				auto element_ptr = linear_alloc(&element_end, element_size, element_alignment);
 				if (element_end > m_buffer_end)
 				{
-					element = address_upper_align(m_buffer_start, element_alignment);
-					element_end = address_add(element, element_size);
-					assert(element_end <= m_buffer_end);
+					element_end = m_buffer_start;
+					element_ptr = linear_alloc(&element_end, element_size, element_alignment);
 				}
 
-				i_operation(*m_head, element);
+				// commit
+				i_operation(*type_ptr, element_ptr);
+				m_head = static_cast<ELEMENT_TYPE*>(element_end);
+			}
 
-				m_head = static_cast<ELEMENT_TYPE*>(address_upper_align(element_end, std::alignment_of<ELEMENT_TYPE>::value));
-				if (m_head + 1 > m_buffer_end)
+			size_t impl_mem_capacity() const REFLECTIVE_NOEXCEPT
+			{
+				return address_diff(m_buffer_end, m_buffer_start);
+			}
+
+			size_t impl_mem_size() const REFLECTIVE_NOEXCEPT
+			{
+				if (m_head <= m_tail)
 				{
-					m_head = static_cast<ELEMENT_TYPE*>(address_upper_align(m_buffer_start, std::alignment_of<ELEMENT_TYPE>::value));
-					assert(m_head <= m_buffer_end);
+					return address_diff(m_tail, m_head);
 				}
+				else
+				{
+					return address_diff(m_buffer_end, m_head) + address_diff(m_tail, m_buffer_start);
+				}				
 			}
 
 		private:
@@ -449,6 +488,16 @@ namespace reflective
 			assert(!empty());
 			const auto it = BaseClass::impl_begin();
 			return *static_cast<value_type *>(it.m_curr_element);
+		}
+
+		size_t mem_capacity() const REFLECTIVE_NOEXCEPT
+		{
+			return BaseClass::impl_mem_capacity();
+		}
+
+		size_t mem_size() const REFLECTIVE_NOEXCEPT
+		{
+			return BaseClass::impl_mem_size();
 		}
 
 	}; // class DenseFixedQueue
