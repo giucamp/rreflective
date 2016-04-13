@@ -24,52 +24,24 @@ namespace reflective
 					: m_curr_type(i_type), m_curr_element(i_element), m_queue(i_queue) { }
 
 				void move_next() REFLECTIVE_NOEXCEPT
-				{
+				{					
 					// advance m_curr_type
-					auto const prev_type_ptr = m_curr_type;
-					auto end_of_curr = address_add(m_curr_element, m_curr_type->size());
-					m_curr_type = static_cast<ELEMENT_TYPE*>(address_upper_align(end_of_curr, alignof(ELEMENT_TYPE)));
-					if (m_curr_type + 1 > m_queue->m_buffer_end)
-					{
-						m_curr_type = static_cast<ELEMENT_TYPE*>(address_upper_align(m_queue->m_buffer_start, alignof(ELEMENT_TYPE)));
-						if (m_curr_type + 1 >= m_queue->m_head) // we use >=, because the condition head==tail is reserved for an empty queue
-						{
-							// stop
-							m_curr_type = m_queue->m_tail;
-						}
-					}
-					else
-					{
-						if( (prev_type_ptr >= m_queue->m_head) != (m_curr_type >= m_queue->m_head) )
-						{
-							// stop
-							m_curr_type = m_queue->m_tail;
-						}
-					}
-
+					m_curr_type = static_cast<ELEMENT_TYPE*>(address_add(m_curr_element, m_curr_type->size()));
 					if (m_curr_type != m_queue->m_tail)
 					{
+						m_curr_type = static_cast<ELEMENT_TYPE*>(address_upper_align(m_curr_type, alignof(ELEMENT_TYPE)));
+						if (m_curr_type + 1 > m_queue->m_buffer_end)
+						{
+							m_curr_type = static_cast<ELEMENT_TYPE*>(address_upper_align(m_queue->m_buffer_start, alignof(ELEMENT_TYPE)));
+						}
+
 						// advance m_curr_element
-						auto const prev_curr_element = m_curr_element;
 						m_curr_element = address_upper_align(m_curr_type + 1, m_curr_type->alignment());
 						auto end_of_element = address_add(m_curr_element, m_curr_type->size());
 						if (end_of_element > m_queue->m_buffer_end)
 						{
 							m_curr_element = address_upper_align(m_queue->m_buffer_start, m_curr_type->alignment());
 							end_of_element = address_add(m_curr_element, m_curr_type->size());
-							if (end_of_element >= m_queue->m_head) // we use >=, because the condition head==tail is reserved for an empty queue
-							{
-								// stop
-								m_curr_type = m_queue->m_tail;
-							}
-						}
-						else
-						{
-							if ((prev_curr_element >= m_queue->m_head) != (m_curr_element >= m_queue->m_head))
-							{
-								// stop
-								m_curr_type = m_queue->m_tail;
-							}
 						}
 					}
 				}
@@ -136,7 +108,7 @@ namespace reflective
 			{
 				if (m_head == m_tail)
 				{
-					return IteratorBase(m_tail);
+					return IteratorBase(static_cast<ELEMENT_TYPE*>(m_tail));
 				}
 				else
 				{
@@ -165,7 +137,7 @@ namespace reflective
 
 			IteratorBase impl_end() const REFLECTIVE_NOEXCEPT
 			{
-				return IteratorBase(m_tail);
+				return IteratorBase(static_cast<ELEMENT_TYPE*>(m_tail));
 			}
 			
 			struct CopyConstruct
@@ -232,9 +204,12 @@ namespace reflective
 				}
 
 				// commit the push
-				new(type_block) ELEMENT_TYPE(i_source_type);
 				i_constructor(element_block, i_source_type);
+				new(type_block) ELEMENT_TYPE(i_source_type);				
 				m_tail = static_cast<ELEMENT_TYPE*>(tail);
+
+				assert(tail == address_add(element_block, i_source_type.size()));
+
 				return true;
 			}
 
@@ -299,12 +274,12 @@ namespace reflective
 					type->destroy(element);
 					type->ELEMENT_TYPE::~ELEMENT_TYPE();
 				}
-				m_head = m_tail;
+				m_head = static_cast<ELEMENT_TYPE*>(m_tail);
 			}
 
 		private:
-			ELEMENT_TYPE * m_head;
-			ELEMENT_TYPE * m_tail;
+			ELEMENT_TYPE * m_head; // poinnts to the first ELEMENT_TYPE
+			void * m_tail; // points to the end of the last element - if = m_tail the queue is empty
 			void * m_buffer_start;
 			void * m_buffer_end;
 		}; // class DenseFixedQueueBase

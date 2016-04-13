@@ -13,7 +13,9 @@ namespace reflective
 		{
 			void test1(size_t i_size)
 			{
-				DenseFixedQueue<int> queue(i_size);
+				NoLeakScope no_leak_scope;
+
+				DenseFixedQueue<int, TestAllocator<int> > queue(i_size);
 				std::deque<int> vector;
 
 				for (int progr = 0; progr < 1000; progr++)
@@ -32,7 +34,7 @@ namespace reflective
 					{
 						std::cout << "* Push " << progr << " times" << std::endl;
 						int i = 0;
-						while (queue.try_push(i) && i < progr)
+						while (i < progr && queue.try_push(i))
 						{
 							vector.push_back(i);
 							i++;
@@ -93,23 +95,6 @@ namespace reflective
 						u++;
 					}
 				}
-
-				queue.try_push(1);
-				queue.try_push(2);
-				queue.try_push(3);
-				queue.try_push(4);
-				for (auto & i : queue)
-				{
-					std::cout << i << std::endl;
-				}
-
-				std::cout << "---" << std::endl;
-				while (!queue.empty())
-				{
-					queue.consume([](DenseFixedQueue<int>::ElementType, int i) {
-						std::cout << i << std::endl;
-					});
-				}
 			}
 		}
 	}
@@ -117,6 +102,9 @@ namespace reflective
 	void dense_fixed_queue_test()
 	{
 		details::DenseFixedQueueTest::test1(1024 * 16);
+		details::DenseFixedQueueTest::test1(16);
+		details::DenseFixedQueueTest::test1(1);
+		details::DenseFixedQueueTest::test1(0);
 	}
 
 }
