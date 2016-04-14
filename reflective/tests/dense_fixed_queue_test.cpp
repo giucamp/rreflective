@@ -101,6 +101,7 @@ namespace reflective
 
 	void dense_fixed_queue_test()
 	{
+		details::DenseFixedQueueTest::test1(1024 * 16 + 1);
 		details::DenseFixedQueueTest::test1(1024 * 16);
 		details::DenseFixedQueueTest::test1(16);
 		details::DenseFixedQueueTest::test1(1);

@@ -36,7 +36,6 @@ namespace reflective
 	void reference_globals()
 	{	
 		dense_fixed_queue_test();
-
 		dense_list_test();
 		for (int i = 0; i < 20; i++ )
 			dense_list_benchmark();

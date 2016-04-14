@@ -12,14 +12,14 @@ namespace reflective
 		{
 		public:
 
-			struct IteratorBase
+			struct IteratorBaseImpl
 			{
-				IteratorBase() REFLECTIVE_NOEXCEPT {}
+				IteratorBaseImpl() REFLECTIVE_NOEXCEPT {}
 
-				IteratorBase(ELEMENT_TYPE * i_type) REFLECTIVE_NOEXCEPT // used to construct end
+				IteratorBaseImpl(ELEMENT_TYPE * i_type) REFLECTIVE_NOEXCEPT // used to construct end
 					: m_curr_type(i_type) { }
 
-				IteratorBase(const DenseFixedQueueBase * i_queue, ELEMENT_TYPE * i_type, void * i_element ) REFLECTIVE_NOEXCEPT
+				IteratorBaseImpl(const DenseFixedQueueBase * i_queue, ELEMENT_TYPE * i_type, void * i_element ) REFLECTIVE_NOEXCEPT
 					: m_curr_type(i_type), m_curr_element(i_element), m_queue(i_queue) { }
 
 				void move_next() REFLECTIVE_NOEXCEPT
@@ -45,7 +45,7 @@ namespace reflective
 					}
 				}
 
-				bool operator == (const IteratorBase & i_source) REFLECTIVE_NOEXCEPT
+				bool operator == (const IteratorBaseImpl & i_source) REFLECTIVE_NOEXCEPT
 				{
 					return i_source.m_curr_type == i_source.m_curr_type;
 				}
@@ -103,11 +103,11 @@ namespace reflective
 				return m_head == m_tail;
 			}
 
-			IteratorBase impl_begin() const REFLECTIVE_NOEXCEPT
+			IteratorBaseImpl impl_begin() const REFLECTIVE_NOEXCEPT
 			{
 				if (m_head == m_tail)
 				{
-					return IteratorBase(static_cast<ELEMENT_TYPE*>(m_tail));
+					return IteratorBaseImpl(static_cast<ELEMENT_TYPE*>(m_tail));
 				}
 				else
 				{
@@ -130,13 +130,13 @@ namespace reflective
 						element_ptr = linear_alloc(&element_end, element_size, element_alignment);
 					}
 
-					return IteratorBase(this, type_ptr, element_ptr);
+					return IteratorBaseImpl(this, type_ptr, element_ptr);
 				}
 			}
 
-			IteratorBase impl_end() const REFLECTIVE_NOEXCEPT
+			IteratorBaseImpl impl_end() const REFLECTIVE_NOEXCEPT
 			{
-				return IteratorBase(static_cast<ELEMENT_TYPE*>(m_tail));
+				return IteratorBaseImpl(static_cast<ELEMENT_TYPE*>(m_tail));
 			}
 			
 			struct CopyConstruct
@@ -263,7 +263,7 @@ namespace reflective
 			
 			void impl_clear() REFLECTIVE_NOEXCEPT
 			{
-				IteratorBase it = impl_begin();
+				IteratorBaseImpl it = impl_begin();
 				while (it.m_curr_type != m_tail)
 				{
 					auto const type = it.m_curr_type;
@@ -317,7 +317,7 @@ namespace reflective
 			using pointer = typename std::allocator_traits<allocator_type>::pointer;
 			using const_pointer = typename std::allocator_traits<allocator_type>::const_pointer;
 
-			iterator(const typename details::DenseFixedQueueBase<ALLOCATOR, ELEMENT_TYPE>::IteratorBase & i_source) REFLECTIVE_NOEXCEPT
+			iterator(const typename details::DenseFixedQueueBase<ALLOCATOR, ELEMENT_TYPE>::IteratorBaseImpl & i_source) REFLECTIVE_NOEXCEPT
 				: m_impl(i_source) {  }
 
 			value_type & operator * () const REFLECTIVE_NOEXCEPT { return *static_cast<value_type *>(m_impl.m_curr_element); }
@@ -360,7 +360,7 @@ namespace reflective
 			const ELEMENT_TYPE * curr_type() const REFLECTIVE_NOEXCEPT { return m_impl.m_curr_type; }
 
 		private:
-			typename details::DenseFixedQueueBase<ALLOCATOR, ELEMENT_TYPE>::IteratorBase m_impl;
+			typename details::DenseFixedQueueBase<ALLOCATOR, ELEMENT_TYPE>::IteratorBaseImpl m_impl;
 
 		}; // class iterator
 
@@ -376,7 +376,7 @@ namespace reflective
 			using pointer = typename std::allocator_traits<allocator_type>::pointer;
 			using const_pointer = typename std::allocator_traits<allocator_type>::const_pointer;
 
-			const_iterator(const typename details::DenseFixedQueueBase<ALLOCATOR, ELEMENT_TYPE>::IteratorBase & i_source) REFLECTIVE_NOEXCEPT
+			const_iterator(const typename details::DenseFixedQueueBase<ALLOCATOR, ELEMENT_TYPE>::IteratorBaseImpl & i_source) REFLECTIVE_NOEXCEPT
 				: m_impl(i_source) {  }
 
 			const_iterator(const iterator & i_source) REFLECTIVE_NOEXCEPT
@@ -422,7 +422,7 @@ namespace reflective
 			const ELEMENT_TYPE * curr_type() const REFLECTIVE_NOEXCEPT { return m_impl.m_curr_type; }
 
 		private:
-			typename details::DenseFixedQueueBase<ALLOCATOR, ELEMENT_TYPE>::IteratorBase m_impl;
+			typename details::DenseFixedQueueBase<ALLOCATOR, ELEMENT_TYPE>::IteratorBaseImpl m_impl;
 		}; // class const_iterator
 
 		iterator begin() REFLECTIVE_NOEXCEPT { return iterator(m_impl.impl_begin()); }
