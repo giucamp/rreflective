@@ -282,6 +282,8 @@ namespace reflective
 
 				// commit
 				i_operation(*type_ptr, element_ptr);
+				type_ptr->destroy(element_ptr);
+				type_ptr->RUNTIME_TYPE::~RUNTIME_TYPE();
 				m_head = static_cast<RUNTIME_TYPE*>(element_end);
 			}
 
