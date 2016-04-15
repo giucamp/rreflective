@@ -3,38 +3,43 @@
 #include "..\unit_testing\testing_utils.h"
 #include <deque>
 #include <complex>
-#include <iostream>
+#include <tuple>
 #include "..\reflective_settings.h"
 
 namespace reflective
 {
 	namespace details
 	{
-		namespace DenseFixedQueueTest
-		{
-			template <typename TYPE, typename UINT_TO_TYPE >
-				void basic_test(size_t i_size, UINT_TO_TYPE && i_uint_to_type)
+		template <typename ... UINT_TO_TYPE >
+			class DenseFixedQueueTest
+		{			
+		public:
+			static void basic_test(size_t i_size, UINT_TO_TYPE && ... i_uint_to_type)
 			{
 				NoLeakScope no_leak_scope;
 
-				using Queue = DenseFixedQueue<TYPE, TestAllocator<TYPE> >;
+				using Type = std::common_type< decltype(i_uint_to_type(0u))... >::type;
+				using Queue = DenseFixedQueue<Type, TestAllocator<Type> >;
+				
+				auto func_tuple = std::make_tuple(i_uint_to_type...);
+
 				Queue queue(i_size);
-				std::deque<TYPE> std_deque;
+				std::deque<Type> std_deque;
 
 				for (unsigned progr = 0; progr < 1000; progr++)
 				{
-					auto element = i_uint_to_type(progr);
+					auto element = std::get<0>(func_tuple)(progr);
 
 					/* Try a try_copy_push, try_emplace, and try_emplace. std_deque is modified 
 						to reflect these changes (they must always be equals). */
 					size_t pushes = 0;
-					if (queue.try_copy_push(Queue::RuntimeType::make<TYPE>(), &element))
+					if (queue.try_copy_push(Queue::RuntimeType::make<Type>(), &element))
 						pushes++;
-					if (queue.try_emplace<TYPE>(element))
+					if (queue.try_emplace<Type>(element))
 						pushes++;
 					{
 						auto tmp = element;
-						if (queue.try_move_push(Queue::RuntimeType::make<TYPE>(), &tmp))
+						if (queue.try_move_push(Queue::RuntimeType::make<Type>(), &tmp))
 							pushes++;
 					}
 					while (pushes > 0)
@@ -59,16 +64,16 @@ namespace reflective
 					{
 						/* fill the queue with try_emplace until there is no more place. */
 						unsigned i = 0;
-						while (queue.try_emplace<TYPE>(i_uint_to_type(i)))
+						while (queue.try_emplace<Type>(std::get<0>(func_tuple)(i)))
 						{
-							std_deque.push_back(i_uint_to_type(i));
+							std_deque.push_back(std::get<0>(func_tuple)(i));
 							i++;
 						}
 
 						/* check that the free space is not enough not insert new elements. We must take
 							account of alignment padding and buffer wrapping padding */
 						const auto free = queue.mem_free();
-						const auto max_element_requirement = ( sizeof(TYPE) + alignof(TYPE)+
+						const auto max_element_requirement = ( sizeof(Type) + alignof(Type)+
 							sizeof(Queue::RuntimeType) + alignof(Queue::RuntimeType) ) * 2;
 						REFLECTIVE_TEST_ASSERT(free < max_element_requirement);
 					}
@@ -76,16 +81,16 @@ namespace reflective
 					{
 						/* fill the queue with try_push until there is no more place. */
 						unsigned i = 0;
-						while (queue.try_push(i_uint_to_type(i)))
+						while (queue.try_push(std::get<0>(func_tuple)(i)))
 						{
-							std_deque.push_back(i_uint_to_type(i));
+							std_deque.push_back(std::get<0>(func_tuple)(i));
 							i++;
 						}
 
 						/* check that the free space is not enough not insert new elements. We must take
 							account of alignment padding and buffer wrapping padding */
 						const auto free = queue.mem_free();
-						const auto max_element_requirement = ( sizeof(TYPE) + alignof(TYPE)+
+						const auto max_element_requirement = ( sizeof(Type) + alignof(Type)+
 							sizeof(Queue::RuntimeType) + alignof(Queue::RuntimeType) ) * 2;
 						REFLECTIVE_TEST_ASSERT(free < max_element_requirement);
 					}
@@ -93,9 +98,9 @@ namespace reflective
 					{
 						/* use try_push for progr times, or until there is no more place. */
 						unsigned i = 0;
-						while (i < progr && queue.try_push(i_uint_to_type(i)))
+						while (i < progr && queue.try_push(std::get<0>(func_tuple)(i)))
 						{
-							std_deque.push_back(i_uint_to_type(i));
+							std_deque.push_back(std::get<0>(func_tuple)(i));
 							i++;
 						}
 					}
@@ -105,7 +110,7 @@ namespace reflective
 						unsigned i = 0;
 						while (!queue.empty() && i < progr)
 						{
-							queue.consume([&std_deque](const DenseFixedQueue<TYPE>::RuntimeType &, TYPE val) {
+							queue.consume([&std_deque](const DenseFixedQueue<Type>::RuntimeType &, Type val) {
 								REFLECTIVE_TEST_ASSERT(std_deque.size() > 0 && val == std_deque.front());
 								std_deque.pop_front();
 							});
@@ -118,7 +123,7 @@ namespace reflective
 						unsigned i = 0;
 						while (!queue.empty())
 						{
-							queue.consume([&std_deque](const DenseFixedQueue<TYPE>::RuntimeType &, TYPE val) {
+							queue.consume([&std_deque](const DenseFixedQueue<Type>::RuntimeType &, Type val) {
 								REFLECTIVE_TEST_ASSERT(std_deque.size() > 0 && val == std_deque.front());
 								std_deque.pop_front();
 							});
@@ -161,39 +166,39 @@ namespace reflective
 				REFLECTIVE_TEST_ASSERT(queue.empty());
 			}
 
-			template< typename UINT_TO_TYPE>
-				void typed_basic_test(UINT_TO_TYPE && i_uint_to_type)
-			{
-				NoLeakScope no_leak_scope;
+				
+		}; // class DenseFixedQueueTest
+	
+		template <typename ... UINT_TO_TYPE >
+			void dense_fixed_queue_test(UINT_TO_TYPE && ... i_uint_to_type)
+		{
+			NoLeakScope no_leak_scope;
+			details::DenseFixedQueueTest<UINT_TO_TYPE...>::basic_test(1024 * 16 + 1, std::forward<UINT_TO_TYPE>(i_uint_to_type)...);
+			details::DenseFixedQueueTest<UINT_TO_TYPE...>::basic_test(1024 * 16, std::forward<UINT_TO_TYPE>(i_uint_to_type)...);
+			details::DenseFixedQueueTest<UINT_TO_TYPE...>::basic_test(16, std::forward<UINT_TO_TYPE>(i_uint_to_type)...);
+			details::DenseFixedQueueTest<UINT_TO_TYPE...>::basic_test(1, std::forward<UINT_TO_TYPE>(i_uint_to_type)...);
+			details::DenseFixedQueueTest<UINT_TO_TYPE...>::basic_test(0, std::forward<UINT_TO_TYPE>(i_uint_to_type)...);
+		}
 
-				using Type = decltype(i_uint_to_type(0u));
-				details::DenseFixedQueueTest::basic_test<Type>(1024 * 16 + 1, i_uint_to_type);
-				details::DenseFixedQueueTest::basic_test<Type>(1024 * 16, i_uint_to_type);
-				details::DenseFixedQueueTest::basic_test<Type>(16, i_uint_to_type);
-				details::DenseFixedQueueTest::basic_test<Type>(1, i_uint_to_type);
-				details::DenseFixedQueueTest::basic_test<Type>(0, i_uint_to_type);
-			}
-
-
-
-		} // namespace DenseFixedQueueTest
 	} // namespace details
 
 	void dense_fixed_queue_test()
 	{
-		details::DenseFixedQueueTest::typed_basic_test( [](unsigned i_input)->unsigned {
-			return i_input; } );
+		details::dense_fixed_queue_test(
+			[](unsigned i_input)->unsigned { return i_input; } );
 
-		details::DenseFixedQueueTest::typed_basic_test( [](unsigned i_input) {
-			return static_cast<char>(i_input & 0xFF); } );
+		details::dense_fixed_queue_test(
+			[](unsigned i_input) { return static_cast<char>(i_input & 0xFF); } );
 
-		details::DenseFixedQueueTest::typed_basic_test( [](unsigned i_input) {
-			return static_cast<double>(i_input); } );
+		details::dense_fixed_queue_test(
+			[](unsigned i_input) { return static_cast<double>(i_input); } );
 
-		details::DenseFixedQueueTest::typed_basic_test( [](unsigned i_input) { 
-			return std::complex<double>(i_input); });
+		details::dense_fixed_queue_test(
+			[](unsigned i_input) { return std::complex<double>(i_input); } );
 
-		details::DenseFixedQueueTest::typed_basic_test( [](unsigned i_input) { 
+		details::dense_fixed_queue_test(
+			[](unsigned i_input) {
+
 			switch (i_input % 6)
 			{
 				default:
@@ -205,7 +210,6 @@ namespace reflective
 				case 5: return TestString("5");
 			}
 		});
-
 	}
 
 }
