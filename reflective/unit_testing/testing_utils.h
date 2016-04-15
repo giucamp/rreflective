@@ -112,6 +112,21 @@ namespace reflective
 		NoLeakScope(const NoLeakScope &) = delete;
 		NoLeakScope & operator = (const NoLeakScope &) = delete;
 	};
+
+	class TestString : public std::basic_string<char, std::char_traits<char>, TestAllocator<char> >
+	{
+	public:
+		TestString() = default;
+		TestString(const char * i_str) : std::basic_string<char, std::char_traits<char>, TestAllocator<char> >(i_str) {}
+
+		TestString(const TestString&) = default;
+		TestString & operator = (const TestString&) = default;
+
+		TestString(TestString&&) noexcept = default;
+		TestString & operator = (TestString&&) noexcept = default;
+
+		virtual ~TestString() {}
+	};
 	
 	/** Runs an exception safeness test, calling the provided function many times.
 		First the provided function is called without raising any exception. 

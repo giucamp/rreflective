@@ -11,21 +11,6 @@ namespace reflective
 	{
 		namespace DenseListTest
 		{
-			class TestString : public std::basic_string<char, std::char_traits<char>, TestAllocator<char> >
-			{
-			public:
-				TestString() = default;
-				TestString(const char * i_str) : std::basic_string<char, std::char_traits<char>, TestAllocator<char> >(i_str) {}
-
-				TestString(const TestString&) = default;
-				TestString & operator = (const TestString&) = default;
-
-				TestString(TestString&&) noexcept = default;
-				TestString & operator = (TestString&&) noexcept = default;
-				
-				virtual ~TestString() {}
-			};
-
 			using TestDenseListString = DenseList< TestString, TestAllocator<TestString> >;
 
 			void dense_list_test_insert(TestDenseListString i_list, size_t i_at, size_t i_count)
@@ -118,7 +103,7 @@ namespace reflective
 				REFLECTIVE_TEST_ASSERT(list == list_1);
 				auto list_2 = list_1;
 				static_assert( std::is_copy_constructible<TestDenseListString::value_type>::value, "");
-				//static_assert( (TestDenseListString::ElementType::s_caps & ElementTypeCaps::copy_only) == TestDenseListString::ElementType::s_caps, "");
+				//static_assert( (TestDenseListString::RuntimeType::s_caps & ElementTypeCaps::copy_only) == TestDenseListString::RuntimeType::s_caps, "");
 				static_assert( (details::GetAutoCopyMoveCap<TestDenseListString::value_type>::value & ElementTypeCaps::copy_only) == ElementTypeCaps::copy_only, "");
 				list_2 = list_1;
 				REFLECTIVE_TEST_ASSERT(list == list_2);

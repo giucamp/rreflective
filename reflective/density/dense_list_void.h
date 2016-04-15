@@ -8,11 +8,11 @@ namespace reflective
 		Insertions\removals of a non-zero number of elements and clear() always reallocate the memory blocks and invalidate existing iterators.
 		The inline storage of DenseList is the same of a pointer. An empty DenseList does not use heap memory.
 		All the functions of DenseList gives at least the strong exception guarantee. */
-	template <typename ALLOCATOR, typename ELEMENT_TYPE>
-		class DenseList<void, ALLOCATOR, ELEMENT_TYPE> final
+	template <typename ALLOCATOR, typename RUNTIME_TYPE>
+		class DenseList<void, ALLOCATOR, RUNTIME_TYPE> final
 	{
 	private:
-		using ListImpl = details::DenseListImpl<ALLOCATOR, ELEMENT_TYPE>;
+		using ListImpl = details::DenseListImpl<ALLOCATOR, RUNTIME_TYPE>;
 		using IteratorImpl = typename ListImpl::IteratorBaseImpl;
 
 	public:
@@ -25,7 +25,7 @@ namespace reflective
 		using const_pointer = typename std::allocator_traits<allocator_type>::const_pointer;
 
 		/** Alias for the template parameters */
-		using ElementType = ELEMENT_TYPE;
+		using RuntimeType = RUNTIME_TYPE;
 		
 		/** Creates a DenseList containing all the elements specified in the parameter list. 
 			For each object of the parameter pack, an element is added to the list by copy-construction or move-construction.
@@ -121,7 +121,7 @@ namespace reflective
 				return m_impl.m_curr_type != i_other.m_impl.m_curr_type;
 			}
 			
-			const ELEMENT_TYPE * curr_type() const REFLECTIVE_NOEXCEPT { return m_impl.m_curr_type; }
+			const RUNTIME_TYPE * curr_type() const REFLECTIVE_NOEXCEPT { return m_impl.m_curr_type; }
 
 		private:
 			friend class const_iterator;
@@ -180,7 +180,7 @@ namespace reflective
 				return m_impl.m_curr_type != i_other.m_impl.m_curr_type;
 			}
 
-			const ELEMENT_TYPE * curr_type() const REFLECTIVE_NOEXCEPT { return m_impl.m_curr_type; }
+			const RUNTIME_TYPE * curr_type() const REFLECTIVE_NOEXCEPT { return m_impl.m_curr_type; }
 		
 		private:
 			friend class DenseList;
@@ -203,7 +203,7 @@ namespace reflective
 			CopyConstruct(const void * i_source)
 				: m_source(i_source) { }
 
-			void * operator () (typename ListImpl::ListBuilder & i_builder, const ElementType & i_element_type)
+			void * operator () (typename ListImpl::ListBuilder & i_builder, const RuntimeType & i_element_type)
 			{
 				return i_builder.add_by_copy(i_element_type, m_source);
 			}
@@ -216,7 +216,7 @@ namespace reflective
 			MoveConstruct(void * i_source)
 				: m_source(i_source) { }
 
-			void * operator () (typename ListImpl::ListBuilder & i_builder, const ElementType & i_element_type) REFLECTIVE_NOEXCEPT
+			void * operator () (typename ListImpl::ListBuilder & i_builder, const RuntimeType & i_element_type) REFLECTIVE_NOEXCEPT
 			{
 				return i_builder.add_by_move(i_element_type, m_source);
 			}
@@ -226,7 +226,7 @@ namespace reflective
 			void push_back(const ELEMENT_COMPLETE_TYPE & i_source)
 		{
 			m_impl.insert_impl(m_impl.m_types + m_impl.size(),
-				ElementType::template make<ELEMENT_COMPLETE_TYPE>(),
+				RuntimeType::template make<ELEMENT_COMPLETE_TYPE>(),
 				CopyConstruct(&i_source) );
 		}
 
@@ -234,7 +234,7 @@ namespace reflective
 			void push_front(const ELEMENT_COMPLETE_TYPE & i_source)
 		{
 			m_impl.insert_impl(m_impl.m_types,
-				ElementType::template make<ELEMENT_COMPLETE_TYPE>(),
+				RuntimeType::template make<ELEMENT_COMPLETE_TYPE>(),
 				CopyConstruct(&i_source) );
 		}
 
@@ -242,7 +242,7 @@ namespace reflective
 			void push_back(ELEMENT_COMPLETE_TYPE && i_source)
 		{
 			m_impl.insert_impl(m_impl.m_types + m_impl.size(),
-				ElementType::template make<ELEMENT_COMPLETE_TYPE>(),
+				RuntimeType::template make<ELEMENT_COMPLETE_TYPE>(),
 				MoveConstruct(&i_source) );
 		}
 
@@ -250,7 +250,7 @@ namespace reflective
 			void push_front(ELEMENT_COMPLETE_TYPE && i_source)
 		{
 			m_impl.insert_impl(m_impl.m_types,
-				ElementType::template make<ELEMENT_COMPLETE_TYPE>(),
+				RuntimeType::template make<ELEMENT_COMPLETE_TYPE>(),
 				MoveConstruct(&i_source) );
 		}
 
@@ -271,7 +271,7 @@ namespace reflective
 			iterator insert(const_iterator i_position, const ELEMENT_COMPLETE_TYPE & i_source)
 		{
 			return m_impl.insert_impl(i_position.m_curr_type,
-				ElementType::template make<ELEMENT_COMPLETE_TYPE>(),
+				RuntimeType::template make<ELEMENT_COMPLETE_TYPE>(),
 				CopyConstruct(&i_source) );
 		}
 
@@ -281,7 +281,7 @@ namespace reflective
 			if (i_count > 0)
 			{
 				return m_impl.insert_n_impl(i_position.m_curr_type, i_count,
-					ElementType::template make<ELEMENT_COMPLETE_TYPE>(),
+					RuntimeType::template make<ELEMENT_COMPLETE_TYPE>(),
 					CopyConstruct(&i_source) );
 			}
 			else
@@ -296,7 +296,7 @@ namespace reflective
 			iterator insert(const_iterator i_position, ELEMENT_COMPLETE_TYPE && i_source)
 		{
 			return ListImpl::insert_impl(i_position.m_curr_type,
-				ElementType::template make<ELEMENT_COMPLETE_TYPE>(),
+				RuntimeType::template make<ELEMENT_COMPLETE_TYPE>(),
 				MoveConstruct(&i_source) );
 		}*/
 
@@ -352,7 +352,7 @@ namespace reflective
 		bool operator != (const DenseList & i_source) const { return !equal_to(i_source); }
 
 	private:
-		details::DenseListImpl<ALLOCATOR, ELEMENT_TYPE> m_impl;
+		details::DenseListImpl<ALLOCATOR, RUNTIME_TYPE> m_impl;
 	}; // class DenseList<void>;
 	
 } // namespace reflective

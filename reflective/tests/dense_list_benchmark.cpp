@@ -50,7 +50,7 @@ namespace reflective
 		{
 		public:
 
-			using List = DenseList < TestObjectBase, std::allocator<TestObjectBase>, ElementType<TestObjectBase, ElementTypeCaps::nothrow_move_construtible, SizeAlignmentMode::compact> >;
+			using List = DenseList < TestObjectBase, std::allocator<TestObjectBase>, RuntimeType<TestObjectBase, ElementTypeCaps::nothrow_move_construtible, SizeAlignmentMode::compact> >;
 
 			TestContainerList()
 			{
